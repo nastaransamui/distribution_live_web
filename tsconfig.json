@@ -15,8 +15,14 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": ["./src/*"],
+      "@/redux/*": ["./redux/*"],
+      "@/theme/*": ["./theme/*"],
+      "@/helpers/*":["./helpers/*"],
+      "@/public/*":["./public/*"],
+      "@/components/*":["./src/components/*"],
+      "@/shared/*":["./src/components/shared/*"],
+    },
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

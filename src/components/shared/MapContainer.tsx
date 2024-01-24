@@ -1,0 +1,120 @@
+/* eslint-disable @next/next/no-img-element */
+import { FC, useState, Fragment } from 'react'
+import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
+import { useTheme } from '@mui/material';
+
+
+
+export const MapContainer = (props: any) => {
+  const theme = useTheme();
+  const [state, setState] = useState({
+    showingInfoWindow: false,
+    activeMarker: {},
+    selectedPlace: {} as any,
+  });
+
+  const onMarkerClick = (props: any, marker: any, e: any) => {
+    setState({
+      selectedPlace: props.place_,
+      activeMarker: marker,
+      showingInfoWindow: true,
+    });
+  };
+
+
+  return (
+    <div className="map-container" >
+      {/* @ts-ignore */}
+      <Map
+        google={props.google}
+        className="map"
+        zoom={4}
+        initialCenter={props.center}
+      >
+
+        {props.places.map((place: any, i: number) => {
+          return (
+            <Marker
+              // @ts-ignore
+              icon={{
+                url: `/assets/images/marker_${theme.palette.primary.main.slice(1)}.png`,
+              }}
+              onClick={onMarkerClick}
+              key={place.id}
+              place_={place}
+              position={{ lat: place.lat, lng: place.lng }}
+            />
+          );
+        })}
+        {/* @ts-ignore */}
+        <InfoWindow
+          marker={state.activeMarker}
+          visible={state.showingInfoWindow}
+        >
+          <div
+            className="profile-widget"
+            style={{ width: "100%", display: "inline-block" }}
+          >
+            <div className="doc-img" >
+              <a
+                href={state.selectedPlace.profile_link}
+                tabIndex={0}
+                target="_blank"
+              >
+                <img
+                  style={{ height: "auto", width: "200px" }}
+                  alt={state.selectedPlace.doc_name}
+                  src={state.selectedPlace.image}
+                />
+              </a>
+            </div>
+            <div className="pro-content"
+              style={{ marginLeft: 14 }}
+            >
+              <h3 className="title">
+                <a
+                  href={state.selectedPlace.profile_link}
+                  tabIndex={0}
+                  target="_blank"
+                >
+                  {" "}
+                  {state.selectedPlace.doc_name}{" "}
+                </a>
+                <i className="fas fa-check-circle verified" />
+              </h3>
+              <p className="speciality"> {state.selectedPlace.speciality} </p>
+              <div className="rating">
+                <i className="fas fa-star filled" />
+                <i className="fas fa-star filled" />
+                <i className="fas fa-star filled" />
+                <i className="fas fa-star filled" />
+                <i className="fas fa-star" />
+                <span className="d-inline-block average-rating">
+                  ( {state.selectedPlace.total_review} )
+                </span>
+              </div>
+              <ul className="available-info">
+                <li>
+                  <i className="fas fa-map-marker-alt" />
+                  {state.selectedPlace.address}
+                </li>
+                <li>
+                  <i className="far fa-clock" />{" "}
+                  {state.selectedPlace.next_available}{" "}
+                </li>
+                <li>
+                  <i className="far fa-money-bill-alt" />{" "}
+                  {state.selectedPlace.amount}{" "}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </InfoWindow>
+      </Map>
+    </div>
+  );
+};
+
+export default GoogleApiWrapper({
+  apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY as string,
+})(MapContainer);
