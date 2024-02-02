@@ -86,6 +86,17 @@ export const initialListRowHeight = 350 + 10
 
 const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSortBy, parentWidth, parentHeight, doctorResults, totalDoctors, limit, skip, setLimit, setSkip, isLoading, }) => {
   dayjs.extend(preciseDiff)
+  const maxWidth991 = useMediaQuery('(max-width:991px)');
+  const maxWidth767 = useMediaQuery('(max-width:767px)');
+  const minWidth767 = useMediaQuery('(min-width:767px)');
+  const maxWidth650 = useMediaQuery('(max-width:650px)');
+  const maxWidth638 = useMediaQuery('(max-width:638px)');
+  const minWidth1400 = useMediaQuery('(min-width:1400px)');
+  const minWidth991max1200 = useMediaQuery('@media (min-width:991px) and (max-width: 1200px)');
+  const minWidth767max991 = useMediaQuery('@media (min-width:767px) and (max-width: 991px)');
+  const minWidth639max766 = useMediaQuery('@media (min-width:639px) and (max-width: 766px)');
+  const minWidth470max638 = useMediaQuery('@media (min-width: 470px) and (max-width:638px)');
+
   const theme = useTheme();
   var nextTenDays = new Date();
   nextTenDays.setDate(nextTenDays.getDate() + 10)
@@ -95,7 +106,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
   const searchParams = useSearchParams();
   const [dispalyType, setDispalyType] = useState<'list' | 'grid'>('list')
   const [gridRowHeight, setGridRowHeight] = useState<number>(initialGridRowHeight)
-  const [listRowHeight, setListRowHeight] = useState<number>(initialListRowHeight)
+  const [listRowHeight, setListRowHeight] = useState<number>(minWidth767 ? initialListRowHeight + 10 : initialListRowHeight)
   const [columnCount, setColumnCount] = useState<1 | 2 | 3>(3)
   const [virtualGridMinHeight, setVirtualGridMinHeight] = useState<number>(0)
   const [virtualGridHight, setVirtualGridHight] = useState<number>(parentHeight)
@@ -138,18 +149,6 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
     setVirtualGridHight(() => rowCount * gridRowHeight)
     setVirtualGridMinHeight(0)
   }, [columnCount, gridRowHeight, totalDoctors])
-
-
-  const maxWidth991 = useMediaQuery('(max-width:991px)');
-  const maxWidth767 = useMediaQuery('(max-width:767px)');
-  const minWidth767 = useMediaQuery('(min-width:767px)');
-  const maxWidth650 = useMediaQuery('(max-width:650px)');
-  const maxWidth638 = useMediaQuery('(max-width:638px)');
-  const minWidth1400 = useMediaQuery('(min-width:1400px)');
-  const minWidth991max1200 = useMediaQuery('@media (min-width:991px) and (max-width: 1200px)');
-  const minWidth767max991 = useMediaQuery('@media (min-width:767px) and (max-width: 991px)');
-  const minWidth639max766 = useMediaQuery('@media (min-width:639px) and (max-width: 766px)');
-  const minWidth470max638 = useMediaQuery('@media (min-width: 470px) and (max-width:638px)');
 
 
   const _rowRenderer = ({
@@ -1280,7 +1279,6 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
       }
     });
   };
-
 
   return (
     <Fragment>

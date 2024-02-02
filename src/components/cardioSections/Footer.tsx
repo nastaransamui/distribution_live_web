@@ -27,7 +27,7 @@ const Footer: FC = (() => {
 
   return (
     <Fragment>
-      <footer className="footer footer-one footer-ten" style={muiVar}>
+      <footer className="footer footer-one footer-ten" style={{ ...muiVar, overflowY: "hidden" }}>
         <div className="footer-ten-bg">
           <img src={hexagon_group_4} alt="#" className='img' />
           <img src={hexagon_group_5} alt="#" className='img' />

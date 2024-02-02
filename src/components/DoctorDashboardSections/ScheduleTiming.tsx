@@ -218,9 +218,8 @@ const ScheduleTiming: FC = (() => {
 
   useEffect(() => {
     let isActive = true;
+    let userId = userProfile?._id
     if (isActive && homeSocket.current !== undefined) {
-      let userId = userProfile?._id
-      // Get availiable timeslots on entrance of page
       if (userProfile?.timeSlotId && userProfile?.timeSlotId.length !== 0) {
         homeSocket.current.emit('getDoctorTimeSlots', { userId })
         homeSocket.current.once('getDoctorTimeSlotsReturn', (msg: { status: number, timeSlots: DoctorsTimeSlotType[], message?: string }) => {
@@ -253,21 +252,15 @@ const ScheduleTiming: FC = (() => {
                 return newState
               })
 
-              // doctorAvailableTimeSlot?.reservations &&
-              //     doctorAvailableTimeSlot?.reservations.length > 0 ? doctorAvailableTimeSlot?.reservations : []
               //Update calendar from Db data
               setCalendarValue((prevState: any) => {
                 let newState = prevState
-                if (newState) {
-                  // console.log('have record calendar value')
-                } else {
-                  newState = []
-                  newAvailableSlotFromDb.forEach((element: AvailableType) => {
-                    let formatStartDay = dayjs(element.startDate).format('YYYY/MM/DD')
-                    let formatFinishDay = dayjs(element.finishDate).format('YYYY/MM/DD')
-                    newState.push([new DateObject(formatStartDay), new DateObject(formatFinishDay)])
-                  })
-                }
+                newState = []
+                newAvailableSlotFromDb.forEach((element: AvailableType) => {
+                  let formatStartDay = dayjs(element.startDate).format('YYYY/MM/DD')
+                  let formatFinishDay = dayjs(element.finishDate).format('YYYY/MM/DD')
+                  newState.push([new DateObject(formatStartDay), new DateObject(formatFinishDay)])
+                })
                 return newState
               })
               //Update time slot from db data
@@ -367,8 +360,19 @@ const ScheduleTiming: FC = (() => {
 
         })
       } else {
-        setIsLoading(false)
+        //reset all on delete
+        isLoading && setIsLoading(false)
+        doctorAvailableTimeSlot !== null && setDoctorAvailableTimeSlot(null);
+        !_.isEmpty(afterNoonCheck) && setAfterNoonCheck({});
+        !!calendarValue && setCalendarValue(undefined);
+        !_.isEmpty(eveningCheck) && setEveningCheck({});
+        !_.isEmpty(isPeriodExist) && setIsPeriodExist({});
+        !_.isEmpty(morningCheck) && setMorningCheck({});
+        rows.length !== 0 && setRows([]);
+        !_.isEmpty(timeSlot) && setTimeSlot({})
       }
+    } else {
+      setIsLoading(false)
     }
     return () => {
       isActive = false;
@@ -377,47 +381,6 @@ const ScheduleTiming: FC = (() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeSocket, reload, userProfile])
 
-  // const closeFromClick = (index: number, stateKey: string) => {
-  //   setCalendarValue((prevState: any) => {
-  //     let newState = [...prevState]
-  //     console.log(newState)
-  //     console.log(newState[index] && newState[index].length == 1)
-  //     if (newState[index] && newState[index].length == 1) {
-  //       newState[index] = undefined
-  //     } else {
-  //       console.log({ else: newState[index] })
-  //       newState[index].splice(0, 1)
-  //       //   newState[index][1] = newState[index][1]
-  //     }
-  //     // if (newState[index] && typeof newState[index][1] == 'undefined') {
-  //     //   newState[index].splice(0, 1)
-  //     //   newState[index].splice(1, 1)
-  //     // } else if (newState[index]) {
-  //     //   newState[index].splice(0, 1)
-  //     //   newState[index][1] = newState[index][1]
-  //     // }
-  //     return [...newState]
-  //   })
-  //   setTimeSlot((prevState: { [key: string]: number }) => {
-  //     const newState = { ...prevState }
-  //     delete newState[stateKey]
-  //     return { ...newState }
-  //   })
-  // }
-
-  // const closeToClick = (index: number) => {
-  //   setCalendarValue((prevState: any) => {
-  //     let newState = [...prevState]
-  //     console.log(newState)
-  //     if (newState[index] && typeof newState[index][0] == 'undefined') {
-  //       newState[index] = undefined
-  //     } else if (newState[index]) {
-  //       newState[index][0] = newState[index][0]
-  //       newState[index].splice(1, 1)
-  //     }
-  //     return [...newState]
-  //   })
-  // }
 
   const fixMultipleState = (index: number, keyState: string) => {
     setCalendarValue((prevState: any) => {
