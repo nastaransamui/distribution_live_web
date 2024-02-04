@@ -41,6 +41,7 @@ export interface UserProfileType {
     roleName: 'doctors' | 'patient' | 'pharmacist';
     accessToken: string;
     timeSlotId: string[];
+    favs_id: string[];
     online: boolean;
     idle?: boolean;
     lastLogin?: {

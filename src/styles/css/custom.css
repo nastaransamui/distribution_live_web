@@ -2332,8 +2332,8 @@ chat-attachment-list,
 }
 
 .book-btn {
-  background-color: #0de0fe;
-  border: 2px solid #0de0fe;
+  background-color: var(--primaryMain);
+  border: 2px solid var(--primaryMain);
   color: #ffffff;
   font-size: 13px;
   text-align: center;
@@ -12999,7 +12999,7 @@ table .table-hover tbody tr:hover td {
 }
 
 .profile-widget .fav-btn {
-  background-color: var(--bgPaper);
+  background-color: var(--secondaryMain);
   width: 30px;
   height: 30px;
   color: var(--color);
@@ -13024,7 +13024,7 @@ table .table-hover tbody tr:hover td {
 }
 
 .profile-widget:hover .fav-btn:hover {
-  background-color: var(--secondaryMain);
+  background-color: var(--bgPaper);
   color: #ffffff;
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);

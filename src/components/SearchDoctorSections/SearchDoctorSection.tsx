@@ -94,10 +94,13 @@ export interface DoctorProfileType {
   registrations: RegistrationsType[];
   accessToken: string;
   isActive: boolean;
-  isVerified: boolean | 'google';
-  online: boolean;
   timeSlotId?: string;
   timeslots: DoctorsTimeSlotType[];
+  patients_id: string[];
+  favs_id: string[];
+  reservations_id: string[];
+  isVerified: boolean | 'google';
+  online: boolean;
   idle?: boolean;
   lastLogin?: {
     date: Date;

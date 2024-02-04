@@ -1,155 +1,457 @@
-
 @import url("https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,500,600,700,800,900|Roboto:300,400,500,600,700,800,900&display=swap");
+
 .about {
-   $cubic: cubic-bezier(0.64, 0.01, 0.07, 1.65);
-   $transition: 0.6s $cubic;
-   $size: 40px;
-   position: fixed;
-   z-index: 10;
-   bottom: 10px;
-   right: 10px;
-   width: $size;
-   height: $size;
-   display: flex;
-   justify-content: flex-end;
-   align-items: flex-end;
-   transition: all 0.2s ease;
+    $cubic: cubic-bezier(0.64, 0.01, 0.07, 1.65);
+    $transition: 0.6s $cubic;
+    $size: 40px;
+    position: fixed;
+    z-index: 10;
+    bottom: 10px;
+    right: 10px;
+    width: $size;
+    height: $size;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    transition: all 0.2s ease;
 
-   .bg_links {
-      width: $size;
-      height: $size;
-      border-radius: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: var( --primaryMain);//#000000; //rgba(#000000, 0.2);
-      border-radius: 100%;
-      backdrop-filter: blur(5px);
-      position: absolute;
-   }
+    .bg_links {
+        width: $size;
+        height: $size;
+        border-radius: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--primaryMain); //#000000; //rgba(#000000, 0.2);
+        border-radius: 100%;
+        backdrop-filter: blur(5px);
+        position: absolute;
+    }
 
-   .logo404 {
-      width: $size;
-      height: $size;
-      z-index: 9;
-      background-image: url(../../public/logo.png);
-      background-size: 50%;
-      background-repeat: no-repeat;
-      background-position: 10px 7px;
-      opacity: 0.9;
-      transition: all 1s 0.2s ease;
-      bottom: 0;
-      right: 0;
-      cursor: pointer;
-   }
+    .logo404 {
+        width: $size;
+        height: $size;
+        z-index: 9;
+        background-image: url(../../public/logo.png);
+        background-size: 50%;
+        background-repeat: no-repeat;
+        background-position: 10px 7px;
+        opacity: 0.9;
+        transition: all 1s 0.2s ease;
+        bottom: 0;
+        right: 0;
+        cursor: pointer;
+    }
 
-   .social {
-      opacity: 0;
-      right: 0;
-      bottom: 0;
+    .social {
+        opacity: 0;
+        right: 0;
+        bottom: 0;
 
-      .icon {
-         width: 100%;
-         height: 100%;
-         background-size: 20px;
-         background-repeat: no-repeat;
-         background-position: center;
-         background-color: var( --secondaryMain);
-         display: flex;
-         transition: all 0.2s ease, background-color 0.4s ease;
-         opacity: 0;
-         border-radius: 100%;
-      }
+        .icon {
+            width: 100%;
+            height: 100%;
+            background-size: 20px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: var(--secondaryMain);
+            display: flex;
+            transition: all 0.2s ease, background-color 0.4s ease;
+            opacity: 0;
+            border-radius: 100%;
+        }
 
-      &.portfolio {
-         transition: all 0.8s ease;
+        &.fbMessenger {
+            transition: all 0.8s ease;
 
-         .icon {
-            background-image: url(https://rafaelavlucas.github.io/assets/codepen/link.svg);
-         }
-      }
+            .icon {}
+        }
 
-      &.dribbble {
-         transition: all 0.3s ease;
-         .icon {
-            background-image: url(https://rafaelavlucas.github.io/assets/codepen/dribbble.svg);
-         }
-      }
+        &.fb {
+            transition: all 0.3s ease;
 
-      &.linkedin {
-         transition: all 0.8s ease;
-         .icon {
-            background-image: url(https://rafaelavlucas.github.io/assets/codepen/linkedin.svg);
-         }
-      }
-   }
+        }
 
-   &:hover {
-      width: 105px;
-      height: 105px;
-      transition: all $transition;
+        &.twitter {
+            transition: all 0.8s ease;
+        }
+        &.telegram {
+            transition: all 0.8s ease;
+        }
 
-      .logo404 {
-         opacity: 1;
-         transition: all 0.6s ease;
-      }
+        &.portfolio {
+            transition: all 0.8s ease;
 
-      .social {
-         opacity: 1;
-
-         .icon {
-            opacity: 0.9;
-         }
-
-         &:hover {
-            background-size: 28px;
             .icon {
-               background-size: 65%;
-               opacity: 1;
+                background-image: url(https://rafaelavlucas.github.io/assets/codepen/link.svg);
             }
-         }
+        }
 
-         &.portfolio {
-            right: 0;
-            bottom: calc(100% - 40px);
-            transition: all 0.3s 0s $cubic;
-            .icon {
-               &:hover {
-                  background-color: #698fb7;
-               }
-            }
-         }
+        &.dribbble {
+            transition: all 0.3s ease;
 
-         &.dribbble {
-            bottom: 45%;
-            right: 45%;
-            transition: all 0.3s 0.15s $cubic;
             .icon {
-               &:hover {
-                  background-color: #ea4c89;
-               }
+                background-image: url(https://rafaelavlucas.github.io/assets/codepen/dribbble.svg);
             }
-         }
+        }
 
-         &.linkedin {
-            bottom: 0;
-            right: calc(100% - 40px);
-            transition: all 0.3s 0.25s $cubic;
+        &.linkedin {
+            transition: all 0.8s ease;
+
             .icon {
-               &:hover {
-                  background-color: #0077b5;
-               }
+                background-image: url(https://rafaelavlucas.github.io/assets/codepen/linkedin.svg);
             }
-         }
-      }
-   }
+        }
+    }
+
+    &:hover {
+        width: 105px;
+        height: 105px;
+        transition: all $transition;
+        
+        .logo404 {
+            opacity: 1;
+            transition: all 0.6s ease;
+        }
+
+        .social {
+            opacity: 1;
+
+            .icon {
+                opacity: 0.9;
+            }
+
+            &:hover {
+                background-size: 28px;
+
+                .icon {
+                    background-size: 65%;
+                    opacity: 1;
+                }
+            }
+            &.portfolio {
+                right: 0;
+                bottom: calc(100% - 40px);
+                transition: all 0.3s 0s $cubic;
+
+                .icon {
+                    &:hover {
+                        background-color: #698fb7;
+                    }
+                }
+            }
+
+            &.dribbble {
+                bottom: 45%;
+                right: 45%;
+                transition: all 0.3s 0.15s $cubic;
+
+                .icon {
+                    &:hover {
+                        background-color: #ea4c89;
+                    }
+                }
+            }
+
+            &.linkedin {
+                bottom: 0;
+                right: calc(100% - 40px);
+                transition: all 0.3s 0.25s $cubic;
+
+                .icon {
+                    &:hover {
+                        background-color: #0077b5;
+
+                        circle {
+                            fill: var(--secondaryMain);
+                        }
+
+                        path {
+                            fill: var(--primaryContrastText);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.share {
+    $cubic: cubic-bezier(0.64, 0.01, 0.07, 1.65);
+    $transition: 0.6s $cubic;
+    $size: 30px;
+    position: absolute;
+    z-index: 10;
+    bottom: var(--bottom);
+    left: 50px;
+    width: $size;
+    height: $size;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    transition: all 0.2s ease;
+
+    .bg_links {
+        width: $size;
+        height: $size;
+        border-radius: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        // background-color: var(--primaryMain); 
+        border-radius: 100%;
+        backdrop-filter: blur(5px);
+        position: absolute;
+    }
+
+    .logo404 {
+        width: $size;
+        height: $size;
+        z-index: 9;
+        background-size: 50%;
+        background-repeat: no-repeat;
+        background-position: 10px 7px;
+        opacity: 0.9;
+        transition: all 1s 0.2s ease;
+        bottom: 0;
+        right: 0;
+        cursor: pointer;
+    }
+
+    .social {
+        opacity: 0;
+        right: 0;
+        bottom: 0;
+
+        .icon {
+            width: 100%;
+            height: 100%;
+            background-size: 20px;
+            background-repeat: no-repeat;
+            background-position: center;
+            // background-color: var(--secondaryMain);
+            display: flex;
+            transition: all 0.2s ease, background-color 0.4s ease;
+            opacity: 0;
+            border-radius: 100%;
+        }
+
+        &.fbMessenger {
+            transition: all 0.8s ease;
+        }
+
+        &.fb {
+            transition: all 0.3s ease;
+        }
+
+        &.line {
+            transition: all 0.3s ease;
+        }
+
+        &.whatsApp {
+            transition: all 0.3s ease;
+        }
+
+        &.twitter {
+            transition: all 0.8s ease;
+        }
+        &.telegram {
+            transition: all 0.8s ease;
+        }
+
+        &.portfolio {
+            transition: all 0.8s ease;
+
+            .icon {
+                background-image: url(https://rafaelavlucas.github.io/assets/codepen/link.svg);
+            }
+        }
+
+        &.dribbble {
+            transition: all 0.3s ease;
+
+            .icon {
+                background-image: url(https://rafaelavlucas.github.io/assets/codepen/dribbble.svg);
+            }
+        }
+
+        &.linkedin {
+            transition: all 0.8s ease;
+
+            .icon {
+                background-image: url(https://rafaelavlucas.github.io/assets/codepen/linkedin.svg);
+            }
+        }
+    }
+
+    
+    &:hover {
+        width: 210px;
+        height: 120px;
+        transition: all $transition;
+        // background-color: rebeccapurple;
+        .logo404 {
+            opacity: 1;
+            transition: all 0.6s ease;
+        }
+        .shareIconButton{
+            color: var(--primaryMain);
+        }
+        .social {
+            opacity: 1;
+
+            .icon {
+                opacity: 0.9;
+            }
+
+            &:hover {
+                background-size: 28px;
+
+                .icon {
+                    background-size: 65%;
+                    opacity: 1;
+                }
+            }
+
+
+            &.linkedin {
+                bottom: 0;
+                left: 0;
+                // right: calc(100% - 40px);
+                transition: all 0.3s 0.25s $cubic;
+
+                .icon {
+                    &:hover {
+                        background-color: #0077b5;
+
+                        circle {
+                            fill: var(--secondaryMain);
+                        }
+
+                        path {
+                            fill: var(--primaryContrastText);
+                        }
+                    }
+                }
+            }
+
+            &.fb {
+                bottom: calc(100% - 80px);
+                left: 10%;
+                transition: all 0.3s 0.15s $cubic;
+
+                .icon {
+                    &:hover {
+                        circle {
+                            fill: var(--secondaryMain);
+                        }
+
+                        path {
+                            fill: var(--primaryContrastText);
+                        }
+                    }
+                }
+            }
+
+
+            &.line {
+                top: 20px;
+                left: 25%;
+                transition: all 0.3s 0.15s $cubic;
+
+                .icon {
+                    &:hover {
+                        circle {
+                            fill: var(--secondaryMain);
+                        }
+
+                        path {
+                            fill: var(--primaryContrastText);
+                        }
+                    }
+                }
+            }
+
+            &.fbMessenger {
+                right: calc(50% - 15px);
+                // bottom: calc(100% - 40px);
+                top: 10%;
+                transition: all 0.3s 0s $cubic;
+
+                .icon {
+                    &:hover {
+                        circle {
+                            fill: var(--secondaryMain);
+                        }
+
+                        path {
+                            fill: var(--primaryContrastText);
+                        }
+                    }
+                }
+            }
+            &.whatsApp {
+                top: 20px;
+                right: 25%;
+                transition: all 0.3s 0.15s $cubic;
+
+                .icon {
+                    &:hover {
+                        circle {
+                            fill: var(--secondaryMain);
+                        }
+
+                        path {
+                            fill: var(--primaryContrastText);
+                        }
+                    }
+                }
+            }
+
+            &.twitter {
+                bottom: calc(100% - 80px);
+                right: 10%;
+                transition: all 0.3s 0.15s $cubic;
+
+                .icon {
+                    &:hover {
+                        circle {
+                            fill: var(--secondaryMain);
+                        }
+
+                        path {
+                            fill: var(--primaryContrastText);
+                        }
+                    }
+                }
+            }
+            &.telegram {
+                bottom: 0;
+                right: 0;
+                transition: all 0.3s 0.25s $cubic;
+
+                .icon {
+                    &:hover {
+
+                        circle {
+                            fill: var(--secondaryMain);
+                        }
+
+                        path {
+                            fill: var(--primaryContrastText);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 
 $font-01: "Roboto",
-sans-serif;
+    sans-serif;
 $font-02: "Roboto Condensed",
-sans-serif;
+    sans-serif;
 
 
 $m-01: #FB8A8A;
@@ -166,9 +468,9 @@ $cubic: cubic-bezier(0.4, 0.35, 0, 1.53);
 $cubic2: cubic-bezier(0.18, 0.89, 0.32, 1.15);
 
 $circleShadow: inset 5px 20px 40px rgba(black, 0.25),
-inset 5px 0px 5px rgba($bg-03, 0.3),
-inset 5px 5px 20px rgba($bg-03, 0.25),
-2px 2px 5px rgba(white, 0.2);
+    inset 5px 0px 5px rgba($bg-03, 0.3),
+    inset 5px 5px 20px rgba($bg-03, 0.25),
+    2px 2px 5px rgba(white, 0.2);
 
 
 @mixin sm {
@@ -420,7 +722,7 @@ nav {
             left: 20% !important;
             min-width: 400px;
             min-height: 400px;
-            
+
             .content {
                 width: 600px;
                 height: 600px;
@@ -611,13 +913,13 @@ nav {
         // Bigger Circle
         .circle {
             position: absolute;
-            
+
             &:before {
                 content: '';
                 position: absolute;
                 width: 800px;
                 height: 800px;
-                background-color: var(--secondaryDark);//rgba($bg-02, 0.2);
+                background-color: var(--secondaryDark); //rgba($bg-02, 0.2);
                 border-radius: 100%;
                 top: 50%;
                 left: 50%;
@@ -650,7 +952,7 @@ nav {
                     position: absolute;
                     width: 600px;
                     height: 600px;
-                    background-color: var(--primaryLight);//rgba($bg-02, 0.3);
+                    background-color: var(--primaryLight); //rgba($bg-02, 0.3);
                     border-radius: 100%;
                     box-shadow: $circleShadow;
                     animation: circle 0.8s 0.4s cubic-bezier(1, 0.06, 0.25, 1) backwards;

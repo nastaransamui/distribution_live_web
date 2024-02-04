@@ -1,7 +1,7 @@
 
 
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, createRef, useEffect, useRef, useState } from 'react'
+import { CSSProperties, FC, Fragment, createRef, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { FiCalendar, FiClock, FiDollarSign, FiInfo, FiThumbsUp } from 'react-icons/fi';
 import { doctors_profile, } from '@/public/assets/imagepath';
@@ -22,6 +22,7 @@ import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
+import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { CardActionArea, useTheme } from '@mui/material';
 import { ClinicImagesType, DoctorProfileType } from './SearchDoctorSection';
@@ -47,11 +48,78 @@ import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import MuiList from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
-import { useDispatch } from 'react-redux';
+
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import SyncIcon from '@mui/icons-material/Sync';
 import Zoom from '@mui/material/Zoom';
 import { AvailableType } from '../DoctorDashboardSections/ScheduleTiming';
 
+
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { LoginBox } from '@/components/AuthSections/LoginSection';
+import useScssVar from '@/hooks/useScssVar'
+import { Transition } from '@/components/shared/Dialog';
+
+
+import {
+  EmailIcon,
+  EmailShareButton,
+  FacebookIcon,
+  FacebookMessengerIcon,
+  FacebookMessengerShareButton,
+  FacebookShareButton,
+  FacebookShareCount,
+  GabIcon,
+  GabShareButton,
+  HatenaIcon,
+  HatenaShareButton,
+  HatenaShareCount,
+  InstapaperIcon,
+  InstapaperShareButton,
+  LineIcon,
+  LineShareButton,
+  LinkedinIcon,
+  LinkedinShareButton,
+  LivejournalIcon,
+  LivejournalShareButton,
+  MailruIcon,
+  MailruShareButton,
+  OKIcon,
+  OKShareButton,
+  OKShareCount,
+  PinterestIcon,
+  PinterestShareButton,
+  PinterestShareCount,
+  PocketIcon,
+  PocketShareButton,
+  RedditIcon,
+  RedditShareButton,
+  RedditShareCount,
+  TelegramIcon,
+  TelegramShareButton,
+  TumblrIcon,
+  TumblrShareButton,
+  TumblrShareCount,
+  TwitterShareButton,
+  ViberIcon,
+  ViberShareButton,
+  VKIcon,
+  VKShareButton,
+  VKShareCount,
+  WeiboIcon,
+  WeiboShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+  WorkplaceIcon,
+  WorkplaceShareButton,
+  XIcon,
+} from "react-share";
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux/store';
+import { toast } from 'react-toastify';
 export interface DoctorSearchResultsPropsType {
   doctorResults: DoctorProfileType[];
   totalDoctors: number;
@@ -86,6 +154,7 @@ export const initialListRowHeight = 350 + 10
 
 const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSortBy, parentWidth, parentHeight, doctorResults, totalDoctors, limit, skip, setLimit, setSkip, isLoading, }) => {
   dayjs.extend(preciseDiff)
+  const { muiVar, bounce } = useScssVar()
   const maxWidth991 = useMediaQuery('(max-width:991px)');
   const maxWidth767 = useMediaQuery('(max-width:767px)');
   const minWidth767 = useMediaQuery('(min-width:767px)');
@@ -96,6 +165,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
   const minWidth767max991 = useMediaQuery('@media (min-width:767px) and (max-width: 991px)');
   const minWidth639max766 = useMediaQuery('@media (min-width:639px) and (max-width: 766px)');
   const minWidth470max638 = useMediaQuery('@media (min-width: 470px) and (max-width:638px)');
+  const userProfile = useSelector((state: AppState) => state.userProfile.value)
 
   const theme = useTheme();
   var nextTenDays = new Date();
@@ -111,9 +181,12 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
   const [virtualGridMinHeight, setVirtualGridMinHeight] = useState<number>(0)
   const [virtualGridHight, setVirtualGridHight] = useState<number>(parentHeight)
   const [openAvailabilityTooltip, setOpenAvailabilityTooltip] = useState<{ [key: string]: boolean }>({ 0: false });
+  const [favIconLoading, setFavIconLoading] = useState<{ [key: string]: boolean }>({ 0: false });
   const [virtualListMinHeight, setVirtualListMinHeight] = useState<number>(0)
   const [virtualListHight, setVirtualListHight] = useState<number>(parentHeight)
-  const dispatch = useDispatch();
+  const [loginDialog, setLoginDialog] = useState<boolean>(false)
+  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+
   const handleChange = (event: SelectChangeEvent) => {
     setSortBy(event.target.value as string);
     window.localStorage.setItem('sortBy', event.target.value as string)
@@ -151,6 +224,209 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
   }, [columnCount, gridRowHeight, totalDoctors])
 
 
+
+  const _share_buttons = (shareUrl: string, title: string, component: 'grid' | 'list') => {
+    const marrgin = component == 'grid' ?
+      { ["--bottom" as string]: `35px` as CSSProperties } :
+      { ["--bottom" as string]: `10px` as CSSProperties }
+    return (
+      <div className="share" style={marrgin}>
+        <a className="bg_links social fbMessenger" href="" onClick={(e) => e.preventDefault()}>
+          <FacebookMessengerShareButton
+            url={shareUrl}
+            appId={process.env.NEXT_PUBLIC_FACEBOOK_APP_ID as string}
+            title={title}
+          >
+            <FacebookMessengerIcon size={38} round className='icon' />
+          </FacebookMessengerShareButton>
+        </a>
+        <a className="bg_links social fb" href="" onClick={(e) => e.preventDefault()} >
+
+          <FacebookShareButton
+            url={shareUrl}
+            title={title}
+          >
+            <FacebookIcon size={38} round className='icon' />
+          </FacebookShareButton>
+          <div>
+            <FacebookShareCount
+              url={shareUrl}
+              title={title}
+            >
+              {(count) => count}
+            </FacebookShareCount>
+          </div>
+        </a>
+        <a className="bg_links social line" href="" onClick={(e) => e.preventDefault()} >
+          <LineShareButton
+            url={shareUrl}
+            title={title}
+          >
+            <LineIcon size={38} round className='icon' />
+          </LineShareButton>
+        </a>
+        <a className="bg_links social linkedin" href="" onClick={(e) => e.preventDefault()}>
+          <LinkedinShareButton
+            url={shareUrl}
+          >
+            <LinkedinIcon size={38} round className='icon' />
+          </LinkedinShareButton>
+        </a>
+        <a className="bg_links social whatsApp" href="" onClick={(e) => e.preventDefault()} >
+          <WhatsappShareButton
+            url={shareUrl}
+            title={title}
+          >
+            <WhatsappIcon size={38} round className='icon' />
+          </WhatsappShareButton>
+        </a>
+        <a className="bg_links social twitter" href="" onClick={(e) => e.preventDefault()}>
+          <TwitterShareButton
+            url={shareUrl}
+            title={title}
+          >
+            <XIcon size={38} round className='icon' />
+          </TwitterShareButton>
+        </a>
+        <a className="bg_links social telegram" href="" onClick={(e) => e.preventDefault()}>
+          <TelegramShareButton
+            url={shareUrl}
+            title={title}
+          >
+            <TelegramIcon size={38} round className='icon' />
+          </TelegramShareButton>
+        </a>
+        <IconButton
+          aria-label="share"
+          disableFocusRipple
+          disableRipple
+          disableTouchRipple
+          className='shareIconButton'
+          sx={{
+            "&:hover": {
+              transform: "scale(1.15)",
+              transition: theme.transitions.create('all', { duration: 200, }),
+              color: theme.palette.primary.main
+            },
+          }}>
+          <ShareIcon />
+        </IconButton>
+      </div>
+    )
+  }
+
+
+  const _fav_button = (doctor: DoctorProfileType, index: number) => {
+    let isFav = !!userProfile ? doctor?.favs_id?.includes(userProfile?._id as string) : false
+
+    return (
+      <Tooltip arrow title={!userProfile ? 'Login in to add to favorit.' : `${isFav ? 'Remove' : 'Add'} doctor to favorite.`}>
+        <IconButton
+          disableFocusRipple
+          disableRipple
+          aria-label="add to favorites"
+          onClick={() => {
+            if (!userProfile) {
+              setLoginDialog(true)
+            } else {
+              setFavIconLoading((prevState: { [key: string]: boolean }) => {
+                return {
+                  ...prevState,
+                  [index]: true
+                }
+              });
+              if (!isFav) {
+                if (homeSocket?.current && typeof favIconLoading[index] == 'undefined' ||
+                  !favIconLoading[index]) {
+                  homeSocket.current.emit('addDocToFav', { doctorId: doctor?._id, patientId: userProfile?._id })
+                  homeSocket.current.once('addDocToFavReturn', (msg: { status: number, message: string }) => {
+                    const { status, message } = msg;
+                    if (status !== 200) {
+                      toast.error(message, {
+                        position: "bottom-center",
+                        toastId: 'error',
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        transition: bounce,
+                        onClose: () => {
+                          toast.dismiss('error')
+                        }
+                      });
+                    } else {
+                      doctor?.favs_id.push(userProfile._id)
+                      setFavIconLoading((prevState: { [key: string]: boolean }) => {
+                        return {
+                          ...prevState,
+                          [index]: false
+                        }
+                      });
+                    }
+                  })
+                }
+              } else {
+                if (homeSocket?.current && typeof favIconLoading[index] == 'undefined' ||
+                  !favIconLoading[index]) {
+                  homeSocket.current.emit('removeDocFromFav', { doctorId: doctor?._id, patientId: userProfile?._id })
+                  homeSocket.current.once('removeDocFromFavReturn', (msg: { status: number, message: string }) => {
+                    const { status, message } = msg;
+                    if (status !== 200) {
+                      toast.error(message, {
+                        position: "bottom-center",
+                        toastId: 'error',
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        transition: bounce,
+                        onClose: () => {
+                          toast.dismiss('error')
+                        }
+                      });
+                    } else {
+                      setFavIconLoading((prevState: { [key: string]: boolean }) => {
+                        return {
+                          ...prevState,
+                          [index]: false
+                        }
+                      });
+                      const codeIndex = doctor?.favs_id.indexOf(userProfile._id);
+                      if (codeIndex > -1) {
+                        doctor?.favs_id.splice(codeIndex, 1);
+                      }
+                    }
+                  })
+                }
+              }
+            }
+          }}
+        >
+          {typeof favIconLoading[index] == 'undefined' ||
+            !favIconLoading[index] ?
+            <FavoriteIcon sx={{
+              animation: isFav ? `heartbeat 1s infinite` : 'unset',
+              color: isFav ? 'deeppink' : 'unset',
+              "&:hover": {
+                animation: `heartbeat 1s infinite`,
+                color: 'deeppink'
+              },
+            }} />
+            :
+            <SyncIcon sx={{
+              color: 'primary.main',
+              animation: `rotate 3s infinite`,
+            }} />
+          }
+        </IconButton>
+      </Tooltip>
+    )
+  }
+
   const _rowRenderer = ({
     key,
     index,
@@ -159,7 +435,8 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
     const doctor = doctorResults[index];
     //@ts-ignore
     let { years, } = dayjs.preciseDiff(doctor?.dob, dayjs(), true)
-
+    let shareUrl = `${process.env.NEXT_PUBLIC_webUrl}/doctors/profile/${btoa(doctor?._id)}`
+    const title = `Dr. ${doctor?.firstName} ${doctor?.lastName}`;
     return (
       <div key={key} style={{ ...style }} >
         {
@@ -458,24 +735,9 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                   // sx={setListCardActionStyle(index, expanded)}
                   sx={{ flex: 1 }}
                 >
-                  <IconButton disableFocusRipple disableRipple aria-label="add to favorites"
-                  >
-                    <FavoriteIcon sx={{
-                      "&:hover": {
-                        animation: `heartbeat 1s infinite`,
-                        color: 'deeppink'
-                      }
-                    }} />
-                  </IconButton>
-                  <IconButton aria-label="share" sx={{
-                    "&:hover": {
-                      transform: "scale(1.15)",
-                      transition: theme.transitions.create('all', { duration: 200, }),
-                      color: theme.palette.primary.main
-                    },
-                  }}>
-                    <ShareIcon />
-                  </IconButton>
+
+                  {_fav_button(doctor, index)}
+                  {_share_buttons(shareUrl, title, 'list')}
                   <Link
                     style={{ marginLeft: 'auto' }}
                     data-bs-toggle="collapse"
@@ -678,6 +940,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
     let index = rowIndex * columnCount + columnIndex
     const doctor = doctorResults[index];
     const doctorName = `Dr. ${doctor?.firstName} ${doctor?.lastName}`
+    let shareUrl = `${process.env.NEXT_PUBLIC_webUrl}/doctors/profile/${btoa(doctor?._id)}`
     return (
       <div key={key} style={style} >
         {
@@ -721,11 +984,6 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                             <img className="img-fluid" src={doctors_profile} alt="" />
                           </Avatar>
                         }
-                        // action={
-                        //   <IconButton aria-label="settings">
-                        //     <MoreVertIcon />
-                        //   </IconButton>
-                        // }
                         title={<h6 className="doc-name">
                           <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
                             {doctorName.slice(0, 18)}{doctorName.length > 18 ? '...' : ''}
@@ -763,24 +1021,8 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                   zIndex: 5,
 
                 }}>
-                  <IconButton disableFocusRipple disableRipple aria-label="add to favorites"
-                  >
-                    <FavoriteIcon sx={{
-                      "&:hover": {
-                        animation: `heartbeat 1s infinite`,
-                        color: 'deeppink'
-                      }
-                    }} />
-                  </IconButton>
-                  <IconButton aria-label="share" sx={{
-                    "&:hover": {
-                      transform: "scale(1.15)",
-                      transition: theme.transitions.create('all', { duration: 200, }),
-                      color: theme.palette.primary.main
-                    },
-                  }}>
-                    <ShareIcon />
-                  </IconButton>
+                  {_fav_button(doctor, index)}
+                  {_share_buttons(shareUrl, doctorName, 'grid')}
                   <ExpandMore
                     expand={expanded[index as keyof typeof expanded]}
                     onClick={() => {
@@ -1282,6 +1524,51 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
 
   return (
     <Fragment>
+      <Dialog
+        TransitionComponent={Transition}
+        open={loginDialog}
+        onClose={() => {
+          document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+          setTimeout(() => {
+            setLoginDialog(false)
+          }, 500);
+        }}
+        scroll='body'
+        aria-labelledby="login"
+        aria-describedby="login"
+        maxWidth="xs"
+      >
+        <DialogTitle id="login" >
+          Login
+          <IconButton
+            color="inherit"
+            onClick={() => {
+              document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+              setTimeout(() => {
+                setLoginDialog(false)
+              }, 500);
+            }}
+            aria-label="close"
+            sx={{ float: 'right', "&:hover": { color: 'primary.main' } }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          <div style={muiVar}>
+            <div className="col-md-12">
+              <div className="account-content">
+                <div className="col-md-12 col-lg-12 login-right">
+                  <LoginBox />
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+
+        </DialogActions>
+      </Dialog>
       <Lightbox
         open={openImage}
         close={() => setOpenImage(false)}
