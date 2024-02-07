@@ -3,6 +3,7 @@ import { FC, Fragment, ReactNode, useEffect, useMemo, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { patient_profile } from '@/public/assets/imagepath'
 
+
 //Mui
 import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -30,15 +31,16 @@ import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 
 //next
-import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
-
+import { deleteCookie, getCookie, setCookie } from 'cookies-next';
 
 
 
 import { useTheme } from '@mui/material';
 import GeoLocationAutocomplete from '@/shared/GeoLocationAutocomplete';
 import { toast } from 'react-toastify';
+import isJsonString from '@/helpers/isJson';
+import chunkString from '@/helpers/chunkString';
 
 
 
@@ -85,7 +87,7 @@ const ProfileSetting: FC = (() => {
     homeSocket.current.emit('profileUpdate', data)
     homeSocket.current.once('profileUpdateReturn', (msg: any) => {
       if (msg?.status !== 200) {
-        toast.error(msg?.message, {
+        toast.error(msg?.message || 'null', {
           position: "bottom-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -99,24 +101,86 @@ const ProfileSetting: FC = (() => {
           }
         });
       } else if (msg?.status == 200) {
-        dispatch(updateHomeAccessToken(msg?.accessToken))
-        setCookie('homeAccessToken', msg?.accessToken);
-        const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-        dispatch(updateUserProfile(userProfile))
-        toast.info('Profile update successfully.', {
-          position: "bottom-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          transition: bounce,
-          onClose: () => {
-            dispatch(updateHomeFormSubmit(false))
-            setUploadImage(patient_profile)
-          }
-        });
+        switch (true) {
+          //AccessToken length is equal or less that 4095
+          case msg?.accessToken.length <= 4095:
+            switch (true) {
+              case isJsonString(getCookie('homeAccessToken') as string):
+                const { length } = JSON.parse(getCookie('homeAccessToken') as string)
+                for (var i = 0; i < parseInt(length); i++) {
+                  deleteCookie(`${i}`);
+                }
+                dispatch(updateHomeAccessToken(msg?.accessToken))
+                setCookie('homeAccessToken', msg?.accessToken);
+                var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
+                console.log({ accessToken, user_id, services, roleName, iat, exp, userProfile })
+                dispatch(updateUserProfile(userProfile))
+                toast.info('Profile update successfully.', {
+                  position: "bottom-center",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  transition: bounce,
+                  onClose: () => {
+                    dispatch(updateHomeFormSubmit(false))
+                  }
+                });
+                break;
+
+              default:
+                dispatch(updateHomeAccessToken(msg?.accessToken))
+                setCookie('homeAccessToken', msg?.accessToken);
+                var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
+                dispatch(updateUserProfile(userProfile))
+                toast.info('Profile update successfully.', {
+                  position: "bottom-center",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  transition: bounce,
+                  onClose: () => {
+                    dispatch(updateHomeFormSubmit(false))
+                    setUploadImage(patient_profile)
+                  }
+                });
+                break;
+            }
+            break;
+
+          default:
+            const result = chunkString(msg?.accessToken, 4095)
+            if (result !== null) {
+              setCookie('homeAccessToken', { isSplit: true, length: result.length });
+              for (let index = 0; index < result.length; index++) {
+                const element = result[index];
+                setCookie(`${index}`, element)
+              }
+              var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
+              dispatch(updateHomeAccessToken(msg?.accessToken))
+              dispatch(updateUserProfile(userProfile))
+              toast.info('Profile update successfully.', {
+                position: "bottom-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                transition: bounce,
+                onClose: () => {
+                  dispatch(updateHomeFormSubmit(false))
+                  setUploadImage(patient_profile)
+                }
+              });
+            }
+            break;
+        }
       }
     })
   }
@@ -207,14 +271,14 @@ const ProfileSetting: FC = (() => {
                               userProfile?.profileImage == "" ?
                                 uploadImage : uploadImage.startsWith('blob') ?
                                   uploadImage :
-                                  `${userProfile?.profileImage}`}
+                                  `${userProfile?.profileImage}?random=${new Date().getTime()}`}
                               key={userProfile?.profileImage}
                             >
                               <img src={patient_profile} alt="" />
                             </Avatar>
                           </div>
-                          <div className="upload-img">
-                            <div className="change-photo-btn">
+                          <div className="upload-img" >
+                            <div className="change-photo-btn" style={{ cursor: 'pointer' }}>
                               <span><i className="fa fa-upload"></i> Upload Photo</span>
                               <input type="file" id='profile' className="upload" accept="image/png, image/jpg, image/jpeg" onChange={uploadFile} />
                             </div>

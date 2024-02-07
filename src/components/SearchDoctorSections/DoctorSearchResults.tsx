@@ -120,6 +120,7 @@ import {
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
+import { ProfileImageStyledBadge } from '../DoctorDashboardSections/MyPtients';
 export interface DoctorSearchResultsPropsType {
   doctorResults: DoctorProfileType[];
   totalDoctors: number;
@@ -479,26 +480,41 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
               >
                 <Grid container >
                   <Grid item xl={3} lg={2.87} md={2.87} sm={2} xs={12} >
-                    <CardMedia>
+                    <CardMedia sx={{
+                      '& .MuiBadge-root': {
+                        display: 'grid',
+                      },
+                      '& .MuiBadge-badge': {
+                        top: '5%',
+                        left: '5%'
+                      }
+                    }}>
                       <Link href={`/doctors/profile/${btoa(doctor?._id)}`} >
-                        <Avatar sx={{
-                          width: 'auto',
-                          height: 'auto',
-                          borderRadius: `5px 0px 15px 0px`,
-                          transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
-                          "&:hover": {
-                            boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
-                            transform: "scale(1.15)",
-                          },
-
-                        }}
-                          variant="square"
-                          alt=""
-                          src={`${doctor?.profileImage}?random=${new Date().getTime()}`}
-                          key={doctor?.profileImage}
+                        <ProfileImageStyledBadge
+                          overlap="circular"
+                          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                          variant="dot"
+                          online={doctor.online as boolean}
                         >
-                          <img className="img-fluid" src={doctors_profile} alt="" />
-                        </Avatar>
+                          <Avatar sx={{
+                            width: 'auto',
+                            height: 'auto',
+                            borderRadius: `5px 0px 15px 0px`,
+                            transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
+                            "&:hover": {
+                              boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+                              transform: "scale(1.15)",
+                            },
+
+                          }}
+                            variant="square"
+                            alt=""
+                            src={`${doctor?.profileImage}?random=${new Date().getTime()}`}
+                            key={doctor?.profileImage}
+                          >
+                            <img className="img-fluid" src={doctors_profile} alt="" />
+                          </Avatar>
+                        </ProfileImageStyledBadge>
                       </Link>
                       <ul className="clinic-gallery" >
                         {doctor && doctor.clinicImages &&

@@ -103,7 +103,8 @@ const DoctorDashboardSidebar: FC = (() => {
                     </Link>
                   </li>
                   <li className={router.pathname == "/doctors/dashboard/schedule-timing" ? "active" : ""}>
-                    <Link href="/doctors/dashboard/schedule-timing">
+                    {/* <Link href={`/doctors/dashboard/schedule-timing?filters=${btoa(JSON.parse({ limit: 5, skip: 0 }))}`}> */}
+                    <Link href={{ pathname: "/doctors/dashboard/schedule-timing", query: { filters: btoa(JSON.stringify({ limit: 5, skip: 0 })) } }} >
                       <i className="fas fa-hourglass-start" />
                       <span>Schedule Timings</span>
                     </Link>

@@ -13053,6 +13053,16 @@ table .table-hover tbody tr:hover td {
   border-radius: 4px;
 }
 
+.profile-widget .doc-img .MuiBadge-root{
+  display: inline !important;
+}
+.profile-widget .doc-img .MuiBadge-badge{
+ top: 1%;
+ left: 1%;
+ bottom: unset;
+ right: unset;
+}
+
 .profile-widget .doc-img img {
   border-radius: 4px;
   transform: translateZ(0);

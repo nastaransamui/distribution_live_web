@@ -30,6 +30,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid, GridColDef, GridRenderCellParams, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
+import Pagination from '@mui/material/Pagination';
 
 
 //utilites
@@ -63,6 +64,9 @@ import { AppointmentReservationType } from '@/components/DoctorsSections/CheckOu
 import Chip from '@mui/material/Chip';
 import { patient_profile } from '@/public/assets/imagepath';
 import CustomNoRowsOverlay from '@/shared/CustomNoRowsOverlay';
+import { useSearchParams } from 'next/navigation';
+import { base64regex } from '../DoctorsSections/Profile/ProfilePage';
+import isJsonString from '@/helpers/isJson';
 
 export const StyledBadge = styled(Badge, {
   shouldForwardProp: (prop) => prop !== 'online'
@@ -155,7 +159,7 @@ export const afterNoonHours = afterNoonFinish.diff(afterNoonStart, "minutes")
 export const eveningStart = dayjs().hour(17)
 export const eveningFinish = dayjs().hour(20)
 export const eveningHours = eveningFinish.diff(eveningStart, "minutes")
-
+const perPage = 5
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -190,6 +194,7 @@ const ScheduleTiming: FC = (() => {
   const { muiVar, bounce } = useScssVar();
   dayjs.extend(isBetween)
   const theme = useTheme();
+  const searchParams = useSearchParams();
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [calendarValue, setCalendarValue] = useState<any>()
@@ -208,6 +213,23 @@ const ScheduleTiming: FC = (() => {
   const [tabIndex, setTabIndex] = useState(0);
   const dispatch = useDispatch()
   const router = useRouter()
+  const [dataGridFilters, setDataGridFilters] = useState({
+    limit: 5,
+    skip: 0
+  });
+
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
+    setDataGridFilters({
+      limit: perPage * value,
+      skip: (value - 1) * perPage
+    })
+
+    router.push({
+      pathname: router.pathname, //undefined, {shallow: true, scroll: false,}
+      query: { filters: btoa(JSON.stringify({ limit: perPage * value, skip: (value - 1) * perPage })) },
+
+    }, undefined, { shallow: true, scroll: false })
+  };
 
   const widthOnlyXl = useMediaQuery(theme.breakpoints.only('xl'));
   const widthOnlyLg = useMediaQuery(theme.breakpoints.only('lg'));
@@ -217,11 +239,22 @@ const ScheduleTiming: FC = (() => {
 
 
   useEffect(() => {
+    if (searchParams.get('filters') !== null) {
+      if (base64regex.test(searchParams.get('filters') as string)) {
+        let filters = atob(searchParams.get('filters') as string)
+        if (isJsonString(filters)) {
+          setDataGridFilters(JSON.parse(filters))
+        }
+      }
+    }
+  }, [searchParams])
+
+  useEffect(() => {
     let isActive = true;
     let userId = userProfile?._id
     if (isActive && homeSocket.current !== undefined) {
       if (userProfile?.timeSlotId && userProfile?.timeSlotId.length !== 0) {
-        homeSocket.current.emit('getDoctorTimeSlots', { userId })
+        homeSocket.current.emit('getDoctorTimeSlots', { userId: userId, ...dataGridFilters })
         homeSocket.current.once('getDoctorTimeSlotsReturn', (msg: { status: number, timeSlots: DoctorsTimeSlotType[], message?: string }) => {
           const { status, timeSlots, message } = msg;
           if (status !== 200) {
@@ -229,6 +262,7 @@ const ScheduleTiming: FC = (() => {
               position: "bottom-center",
               autoClose: 5000,
               hideProgressBar: false,
+              toastId: 'schedule_error',
               closeOnClick: true,
               pauseOnHover: true,
               draggable: true,
@@ -236,6 +270,7 @@ const ScheduleTiming: FC = (() => {
               transition: bounce,
               onClose: () => {
                 setIsLoading(false)
+                // toast.dismiss('schedule_error')
               }
             });
           } else {
@@ -379,7 +414,7 @@ const ScheduleTiming: FC = (() => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, reload, userProfile])
+  }, [homeSocket, reload, dataGridFilters])
 
 
   const fixMultipleState = (index: number, keyState: string) => {
@@ -842,9 +877,9 @@ const ScheduleTiming: FC = (() => {
       if (doctorAvailableTimeSlot.availableSlots.length == 0) {
         setCalendarValue(undefined)
       } else {
-        console.log({ doctorAvailableTimeSlot })
+        // console.log({ doctorAvailableTimeSlot })
       }
-      // console.log({ doctorAvailableTimeSlot })
+
     }
   }
   const todayFunc = () => {
@@ -1162,7 +1197,6 @@ const ScheduleTiming: FC = (() => {
     }
   }
 
-  // console.log(doctorAvailableTimeSlot)
   const slotSwipeable = () => {
     return (
       <div className="tab-content schedule-cont">
@@ -1669,7 +1703,7 @@ const ScheduleTiming: FC = (() => {
 
   }
 
-  const ReservationsComponent = () => {
+  const reservationsComponent = () => {
     const columns: GridColDef[] = [
       {
         field: 'startDate',
@@ -1686,8 +1720,7 @@ const ScheduleTiming: FC = (() => {
       {
         field: 'dayPeriod',
         headerName: 'Day time',
-        width: 150,
-        flex: 1,
+        width: 90,
         align: 'center',
         headerAlign: 'center',
         valueGetter(params: GridRenderCellParams) {
@@ -1699,8 +1732,7 @@ const ScheduleTiming: FC = (() => {
         field: 'selectedDate',
         headerName: `Apointment Time`,
         align: 'center',
-        width: 200,
-        flex: 1,
+        width: 150,
         headerAlign: 'center',
         renderCell: (params) => {
           return (
@@ -1741,15 +1773,20 @@ const ScheduleTiming: FC = (() => {
                   </Avatar>
                 </StyledBadge>
               </Link>
-              <Link href={`/dashboard/doctor/${btoa(row._id)}`} onClick={(e) => e.preventDefault()} style={{ color: theme.palette.secondary.main }}>{formattedValue}</Link></>
+              <Link href={`/dashboard/doctor/${btoa(row._id)}`}
+                onClick={(e) => e.preventDefault()}
+                style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
+                {formattedValue}
+              </Link>
+            </>
           )
         }
       },
       {
         field: 'paymentType',
         headerName: `Payment status`,
-        width: 150,
-        flex: 1,
+        width: 120,
+        // flex: 1,
         align: 'center',
         headerAlign: 'center',
         renderCell: (data: any) => {
@@ -1763,8 +1800,6 @@ const ScheduleTiming: FC = (() => {
       },
     ]
 
-    // let isSelected = rows.filter((a) => (a?._id && rowsSelected.includes(a?._id)))?.map((b) => b._id)
-    // console.log(isSelected)
     return (
       <Fragment>
         {
@@ -1782,8 +1817,11 @@ const ScheduleTiming: FC = (() => {
 
                   transition: 'all 1s linear',
                 }}>
+                <Typography variant='h5' align='center' gutterBottom>Total: {userProfile?.reservations_id.length} reservations</Typography>
+
                 <DataGrid
                   autoHeight
+                  hideFooter
                   getRowId={(params) => params._id}
                   rowHeight={screen.height / 15.2}
                   rows={rows}
@@ -1823,6 +1861,23 @@ const ScheduleTiming: FC = (() => {
                     }
                   }}
                 />
+                <Pagination
+                  showFirstButton
+                  showLastButton
+                  hideNextButton
+                  hidePrevButton
+                  boundaryCount={1}
+                  variant="outlined"
+                  color="secondary"
+                  count={userProfile ? Math.ceil(userProfile?.reservations_id.length / perPage) : 0}
+                  page={dataGridFilters.limit / perPage}
+                  sx={{
+                    justifyContent: 'center',
+                    display: 'flex',
+                    minHeight: 70
+                  }}
+                  onChange={handlePageChange}
+                />
               </Box>
             </div> :
             <div className="tab-content schedule-cont">
@@ -1855,7 +1910,7 @@ const ScheduleTiming: FC = (() => {
               {slotSwipeable()}
             </div>
             <div className="card schedule-widget mb-3">
-              <ReservationsComponent />
+              {reservationsComponent()}
             </div>
           </div>
         </div>

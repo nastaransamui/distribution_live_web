@@ -53,7 +53,11 @@ const PatientDashboardSidebar: FC = (() => {
 
   //@ts-ignore
   let { years, months, days } = dayjs.preciseDiff(userProfile?.dob, dayjs(), true)
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   return (
     <Fragment>
@@ -63,7 +67,7 @@ const PatientDashboardSidebar: FC = (() => {
             <div className="widget-profile pro-widget-content">
               <div className="profile-info-widget">
                 <Link href="#0" className="booking-doc-img">
-                  <Avatar alt="" src={`${userProfile?.profileImage}`} sx={{ width: "120px", height: '120px' }} key={userProfile?.profileImage}>
+                  <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${new Date().getTime()}` : ''}`} sx={{ width: "120px", height: '120px' }} key={userProfile?.profileImage}>
                     <img src={patient_profile} alt="" />
                   </Avatar>
                 </Link>

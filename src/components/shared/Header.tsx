@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 import { FC, useState, useEffect, Fragment } from 'react';
 import FeatherIcon from 'feather-icons-react';
@@ -129,7 +130,7 @@ const Header: FC = () => {
           <li className="nav-item dropdown has-arrow logged-item">
             <Link href="#" className="dropdown-toggle nav-link" data-bs-toggle="dropdown">
               <span className="user-img">
-                <Avatar alt="" src={`${userProfile?.profileImage}`} key={userProfile?.profileImage}>
+                <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${new Date().getTime()}` : ''}`} key={userProfile?.profileImage}>
                   <img src={patient_profile} alt="" className="rounded-circle" />
                 </Avatar>
               </span>
@@ -137,7 +138,7 @@ const Header: FC = () => {
             <div className="dropdown-menu dropdown-menu-end">
               <div className="user-header">
                 <div className="avatar avatar-sm">
-                  <Avatar alt="" src={`${userProfile?.profileImage}`} >
+                  <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${new Date().getTime()}` : ''}`} >
                     <img src={patient_profile} alt="" className="avatar-img rounded-circle" />
                   </Avatar>
                 </div>

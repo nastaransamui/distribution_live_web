@@ -10,8 +10,13 @@ import Pagination from '@mui/material/Pagination';
 import Rating from '@mui/material/Rating';
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
+import Tooltip from '@mui/material/Tooltip';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 //redux
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 
 //liberies
@@ -20,10 +25,7 @@ import { toast } from 'react-toastify';
 import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection';
 
 import ReadMoreText from 'read-more-less-react';
-import Button from '@mui/material/Button';
-import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
-import Tooltip from '@mui/material/Tooltip';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { ProfileImageStyledBadge } from '../DoctorDashboardSections/MyPtients';
 
 export interface FavDoctorProfile {
   _id: string;
@@ -35,6 +37,7 @@ const Favourits: FC = (() => {
   const { muiVar, bounce } = useScssVar();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [reload, setReload] = useState<boolean>(false)
   const [favDoctorsProfile, setFavDoctorsProfile] = useState<FavDoctorProfile[]>([])
   const theme = useTheme();
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
@@ -80,6 +83,9 @@ const Favourits: FC = (() => {
                 return newState
               })
             }
+            homeSocket.current.once(`updateGetUserFavProfile`, () => {
+              setReload(!reload)
+            })
             setIsLoading(false)
           }
 
@@ -94,7 +100,7 @@ const Favourits: FC = (() => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, page])
+  }, [homeSocket, page, reload])
 
   const LoadingCompoenent = () => (
     <CircleToBlockLoading color={theme.palette.primary.main} size="small"
@@ -151,27 +157,37 @@ const Favourits: FC = (() => {
 
             return (
               <Grid item xl={3} lg={4} md={minWidth767max923 ? 12 : 6} sm={minWidth767max923 ? 12 : 6} key={doctor?._id}>
+
                 <div className="profile-widget">
                   <div className="doc-img">
                     <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
-                      <Avatar sx={{
-                        width: 'auto',
-                        height: 'auto',
-                        borderRadius: `5px 0px 15px 0px`,
-                        transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
-                        "&:hover": {
-                          boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
-                          transform: "scale(1.15)",
-                        },
-
-                      }}
-                        variant="square"
-                        alt=""
-                        src={`${doctor?.profile?.profileImage}?random=${new Date().getTime()}`}
-                        key={doctor?.profile?.profileImage}
+                      <ProfileImageStyledBadge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        variant="dot"
+                        online={doctor?.profile?.online as boolean}
                       >
-                        <img className="img-fluid" src={doctors_profile} alt="" />
-                      </Avatar>
+                        <Avatar sx={{
+                          width: 'auto',
+                          height: 'auto',
+                          maxHeight: '269px',
+                          borderRadius: `5px`,
+                          transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
+                          "&:hover": {
+                            boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+                            transform: "scale(1.15)",
+                          },
+
+                        }}
+                          variant="square"
+                          alt=""
+                          src={`${doctor?.profile?.profileImage}?random=${new Date().getTime()}`}
+                          key={doctor?.profile?.profileImage}
+                        >
+                          <img className="img-fluid" src={doctors_profile} alt="" />
+                        </Avatar>
+
+                      </ProfileImageStyledBadge>
                     </Link>
                     <Tooltip arrow title={`Remove doctor to favorite.`}>
                       <Link href="" onClick={(e) => {
@@ -258,8 +274,8 @@ const Favourits: FC = (() => {
   return (
     <Fragment>
       <div className="col-md-7 col-lg-8 col-xl-9 " style={muiVar}>
-        <div className="">
-          <div className='d-flex align-items-center justify-content-center' >
+        <div style={{ position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', position: 'absolute', minWidth: '100%', top: '-50px' }}>
 
             {!isLoading &&
               favDoctorsProfile.length !== 0 &&
@@ -274,7 +290,6 @@ const Favourits: FC = (() => {
                 count={userProfile ? Math.ceil(userProfile?.favs_id.length / perPage) : 0}
                 page={page}
                 onChange={handlePageChange}
-                sx={{ mb: 3 }}
               />}
           </div>
 
