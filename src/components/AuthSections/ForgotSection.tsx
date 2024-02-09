@@ -116,6 +116,7 @@ const ForgotSection: FC = (() => {
                       <div className="form-group form-focus">
                         <Controller
                           rules={{
+                            required: "This field is required",
                             pattern: {
                               value: emailRegex,
                               message: 'Email should looks like an email.'

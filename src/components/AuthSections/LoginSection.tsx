@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
 import { Controller, useForm } from 'react-hook-form';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { setCookie } from 'cookies-next';
+import { hasCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
 import { updateUserProfile } from '@/redux/userProfile';
 import { useGoogleLogin } from '@react-oauth/google';
@@ -114,93 +114,72 @@ export const LoginBox: FC = (() => {
   })
 
   const onLoginSubmit = (data: FormType) => {
-    data.ipAddr = userData?.query;
-    data.userAgent = navigator.userAgent;
-    dispatch(updateHomeFormSubmit(true))
-    if (homeSocket?.current) {
-      homeSocket.current.emit('loginFormSubmit', data)
-      homeSocket.current.once('loginFormReturn', (msg: any) => {
-        if (msg?.status !== 200) {
-          //Handle logout other users
-          if (msg?.status == 410) {
-            toast.error(() => (
-              <div style={muiVar}>
-                <Typography align='center' >{msg.reason}</Typography>
-                <br />
-                <div style={{ display: 'flex', gap: 5 }}>
-                  <Button
-                    className="btnDelete btn-primary submit-btn"
-                    onClick={() => {
-                      homeSocket.current.emit('logOutAllUsersSubmit', { email: data.email, services: 'password', password: data.password })
-                      homeSocket.current.once('logOutAllUsersReturn', (msg: any) => {
-                        if (msg.status !== 200) {
-                          alert(msg.reason)
-                        } else {
-                          dispatch(updateHomeFormSubmit(false))
-                          toast.dismiss()
+    if (hasCookie('cc_cookie')) {
+
+      data.ipAddr = userData?.query;
+      data.userAgent = navigator.userAgent;
+      dispatch(updateHomeFormSubmit(true))
+      if (homeSocket?.current) {
+        homeSocket.current.emit('loginFormSubmit', data)
+        homeSocket.current.once('loginFormReturn', (msg: any) => {
+          if (msg?.status !== 200) {
+            //Handle logout other users
+            if (msg?.status == 410) {
+              toast.error(() => (
+                <div style={muiVar}>
+                  <Typography align='center' >{msg.reason}</Typography>
+                  <br />
+                  <div style={{ display: 'flex', gap: 5 }}>
+                    <Button
+                      className="btnDelete btn-primary submit-btn"
+                      onClick={() => {
+                        homeSocket.current.emit('logOutAllUsersSubmit', { email: data.email, services: 'password', password: data.password })
+                        homeSocket.current.once('logOutAllUsersReturn', (msg: any) => {
+                          if (msg.status !== 200) {
+                            alert(msg.reason)
+                          } else {
+                            dispatch(updateHomeFormSubmit(false))
+                            toast.dismiss()
+                          }
+
+                        })
+                      }}
+                      variant='contained'
+                      fullWidth
+                      size='small'
+                      sx={{ bgcolor: "primary.main" }}>
+                      Logout others
+                    </Button>
+                    <Button
+                      fullWidth
+                      className="btn btn-primary submit-btn"
+                      onClick={() => { toast.dismiss() }}
+                      variant='contained'
+                      sx={{
+                        bgcolor: "secondary.main",
+                        "&:hover": {
+                          bgcolor: 'secondary.dark'
                         }
-
-                      })
-                    }}
-                    variant='contained'
-                    fullWidth
-                    size='small'
-                    sx={{ bgcolor: "primary.main" }}>
-                    Logout others
-                  </Button>
-                  <Button
-                    fullWidth
-                    className="btn btn-primary submit-btn"
-                    onClick={() => { toast.dismiss() }}
-                    variant='contained'
-                    sx={{
-                      bgcolor: "secondary.main",
-                      "&:hover": {
-                        bgcolor: 'secondary.dark'
-                      }
-                    }}>close</Button>
+                      }}>close</Button>
+                  </div>
                 </div>
-              </div>
-            ), {
-              position: "bottom-center",
-              autoClose: false,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: false,
-              draggable: false,
-              progress: undefined,
-              transition: bounce,
-              closeButton: false,
-              icon: false,
-              onClose: () => {
-                dispatch(updateHomeFormSubmit(false))
-              }
-            });
-          } else {
-            toast.error(msg.reason, {
-              position: "bottom-center",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              transition: bounce,
-              onClose: () => {
-                dispatch(updateHomeFormSubmit(false))
-              }
-            });
-          }
-        } else if (msg?.status == 200) {
-          const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-
-          switch (true) {
-            //AccessToken length is equal or less that 4095
-            case msg?.accessToken.length <= 4095:
-              dispatch(updateHomeAccessToken(msg?.accessToken))
-              setCookie('homeAccessToken', msg?.accessToken);
-              dispatch(updateUserProfile(userProfile))
-              toast.info('Login successfully', {
+              ), {
+                position: "bottom-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                transition: bounce,
+                closeButton: false,
+                icon: false,
+                onClose: () => {
+                  dispatch(updateHomeFormSubmit(false))
+                }
+              });
+            } else {
+              toast.error(msg.reason, {
                 position: "bottom-center",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -211,20 +190,17 @@ export const LoginBox: FC = (() => {
                 transition: bounce,
                 onClose: () => {
                   dispatch(updateHomeFormSubmit(false))
-                  reset()
-                  router.reload();
                 }
               });
-              break;
-            default:
-              const result = chunkString(msg?.accessToken, 4095)
-              if (result !== null) {
-                setCookie('homeAccessToken', { isSplit: true, length: result.length });
-                for (let index = 0; index < result.length; index++) {
-                  const element = result[index];
-                  setCookie(`${index}`, element)
-                }
+            }
+          } else if (msg?.status == 200) {
+            const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
+
+            switch (true) {
+              //AccessToken length is equal or less that 4095
+              case msg?.accessToken.length <= 4095:
                 dispatch(updateHomeAccessToken(msg?.accessToken))
+                setCookie('homeAccessToken', msg?.accessToken);
                 dispatch(updateUserProfile(userProfile))
                 toast.info('Login successfully', {
                   position: "bottom-center",
@@ -237,15 +213,44 @@ export const LoginBox: FC = (() => {
                   transition: bounce,
                   onClose: () => {
                     dispatch(updateHomeFormSubmit(false))
-                    // reset()
+                    reset()
                     router.reload();
                   }
                 });
-              }
-              break;
+                break;
+              default:
+                const result = chunkString(msg?.accessToken, 4095)
+                if (result !== null) {
+                  setCookie('homeAccessToken', { isSplit: true, length: result.length });
+                  for (let index = 0; index < result.length; index++) {
+                    const element = result[index];
+                    setCookie(`${index}`, element)
+                  }
+                  dispatch(updateHomeAccessToken(msg?.accessToken))
+                  dispatch(updateUserProfile(userProfile))
+                  toast.info('Login successfully', {
+                    position: "bottom-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    transition: bounce,
+                    onClose: () => {
+                      dispatch(updateHomeFormSubmit(false))
+                      // reset()
+                      router.reload();
+                    }
+                  });
+                }
+                break;
+            }
           }
-        }
-      })
+        })
+      }
+    } else {
+      alert('Please accept necessary cookies first')
     }
   }
 
@@ -547,6 +552,7 @@ export const LoginBox: FC = (() => {
         <div className="form-group ">
           <Controller
             rules={{
+              required: "This field is required",
               pattern: {
                 value: emailRegex,
                 message: 'Email should looks like an email.'
@@ -635,8 +641,11 @@ export const LoginBox: FC = (() => {
                         </div> */}
           <div className="col-12">
             <Button className=" btn-google w-100" onClick={() => {
-              setOpenUserType(() => true)
-              // googleLogin()
+              if (hasCookie('cc_cookie')) {
+                setOpenUserType(() => true)
+              } else {
+                alert('Please accept necessary cookies first')
+              }
             }}>
               <i className="fab fa-google me-1" /> Login
             </Button>

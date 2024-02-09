@@ -102,10 +102,10 @@ export const StyledBadge = styled(Badge, {
     }
   });
 
-const getSelectedBackgroundColor = (color: string, mode: string) =>
+export const getSelectedBackgroundColor = (color: string, mode: string) =>
   mode === 'dark' ? darken(color, 0.5) : lighten(color, 0.5);
 
-const getSelectedHoverBackgroundColor = (color: string, mode: string) =>
+export const getSelectedHoverBackgroundColor = (color: string, mode: string) =>
   mode === 'dark' ? darken(color, 0.4) : lighten(color, 0.4);
 
 export interface TimeType {
@@ -1793,7 +1793,11 @@ const ScheduleTiming: FC = (() => {
           const { row } = data;
           return (
             <>
-              <Chip color={row.paymentType == '' ? 'success' : 'secondary'} label={'paid'} size="small" />
+              <Chip
+                color={row.paymentType == '' ? 'success' : 'secondary'}
+                label={'paid'}
+                size="small"
+                sx={{ color: theme.palette.primary.contrastText }} />
             </>
           )
         }

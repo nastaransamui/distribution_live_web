@@ -13,11 +13,16 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import dayjs from 'dayjs';
 
+import CircleLoading from 'react-loadingg/lib/TouchBallLoading';
+
 const DashboardMain: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
   const [value, setValue] = useState('1');
   const [index, setIndex] = useState(0);
+  const [isToday, setIsToday] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [total, setTotal] = useState(0);
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
 
   return (
@@ -104,8 +109,13 @@ const DashboardMain: FC = (() => {
                         className="dash-widget-info"
                         style={{ position: "relative", top: "-18px" }}
                       >
-                        <h6>Today Patient</h6>
-                        <h3>160</h3>
+                        <h6>{isToday ? `Today Patients` : `This week Patients`}</h6>
+                        <h3>{isLoading ? <CircleLoading color={theme.palette.primary.main} size='small'
+                          style={{
+                            position: 'relative',
+                            maxHeight: 12,
+                          }}
+                        /> : total}</h3>
                         <p className="text-muted">{dayjs().format('DD, MMM YYYY')}</p>
                       </div>
                     </div>
@@ -158,7 +168,7 @@ const DashboardMain: FC = (() => {
         </div>
         <div className="row">
           <div className="col-md-12">
-            <h4 className="mb-4">Patient Appoinment</h4>
+            <h4 className="mb-4">{isToday ? `Today Patients` : `This week Patients`}</h4>
             <TabContext value={value}>
               <div className="appointment-tab">
                 <ul className="nav nav-tabs nav-tabs-solid nav-tabs-rounded">
@@ -171,6 +181,7 @@ const DashboardMain: FC = (() => {
                         e.preventDefault();
                         setValue('1')
                         setIndex(0)
+                        setIsToday(false)
                       }}
                     >
                       Upcoming
@@ -185,6 +196,7 @@ const DashboardMain: FC = (() => {
                         e.preventDefault();
                         setValue('2')
                         setIndex(1)
+                        setIsToday(true)
                       }}
                     >
                       Today
@@ -195,15 +207,16 @@ const DashboardMain: FC = (() => {
                   <div className="card-body">
                     <SwipeableViews
                       axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                      index={index} onChangeIndex={(index: number) => {
+                      index={index}
+                      onChangeIndex={(index: number) => {
                         setIndex(index);
                         setValue(index.toString())
                       }}>
                       <TabPanel value="1">
-                        <DashboardAppoinment isToday={false} />
+                        <DashboardAppoinment isLoading={isLoading} setIsLoading={setIsLoading} total={total} setTotal={setTotal} isToday={isToday} />
                       </TabPanel>
                       <TabPanel value="2">
-                        <DashboardAppoinment isToday />
+                        <DashboardAppoinment isLoading={isLoading} setIsLoading={setIsLoading} total={total} setTotal={setTotal} isToday={isToday} />
                       </TabPanel>
                     </SwipeableViews>
                   </div>

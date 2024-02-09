@@ -2,15 +2,28 @@
 /* eslint-disable react/jsx-key */
 import { FC, Fragment, useEffect, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridValueFormatterParams, GridRenderCellParams } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
-import { PatientImg1, PatientImg2, PatientImg3, PatientImg4, PatientImg5, PatientImg6 } from '@/public/assets/imagepath';
+import { PatientImg1, PatientImg2, PatientImg3, PatientImg4, PatientImg5, PatientImg6, patient_profile } from '@/public/assets/imagepath';
 import Stack from '@mui/material/Stack';
 import Link from 'next/link';
+import { AppointmentReservationExtendType } from './Appointment';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux/store';
+
+
+//liberies
+import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
+import { toast } from 'react-toastify';
+import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
+import Pagination from '@mui/material/Pagination';
+import { StyledBadge, getSelectedBackgroundColor, getSelectedHoverBackgroundColor } from './ScheduleTiming';
+import Avatar from '@mui/material/Avatar';
+import Chip from '@mui/material/Chip';
 
 export interface ValueType {
   id: number;
@@ -24,164 +37,279 @@ export interface ValueType {
 }
 
 export interface PropType {
-  isToday: boolean
+  isToday: boolean;
+  total: number;
+  setTotal: Function;
+  isLoading: boolean;
+  setIsLoading: Function;
 }
 
-
-const AppointmentTab: FC<PropType> = (({ isToday }) => {
-  const { muiVar } = useScssVar();
-  const theme = useTheme()
-  const matches = useMediaQuery(theme.breakpoints.down('lg'));
-  const grdiRef = useRef<any>(null)
-  const [data, setData] = useState<ValueType[]>([
-    { id: 0, appointmentId: '#PT0016', patientName: "Richard Wilson", apptDate: dayjs('27 Sep 2019').format('DD MMM YYYY'), patientImage: PatientImg1, purpose: 'General', paidAmount: '150', type: 'Old Patient' },
-    { id: 1, appointmentId: '#PT0001', patientName: "Charlene Reed", apptDate: dayjs("1 Nov 2019").format('DD MMM YYYY'), patientImage: PatientImg2, purpose: 'General', paidAmount: '200', type: 'New Patient' },
-    { id: 2, appointmentId: '#PT0002', patientName: "Travis Trimble", apptDate: dayjs("3 Nov 2019").format('DD MMM YYYY'), patientImage: PatientImg3, purpose: 'General', paidAmount: '75', type: 'Old Patient' },
-    { id: 3, appointmentId: '#PT0003', patientName: "Carl Kelly", apptDate: dayjs("16 Jun 2019").format('DD MMM YYYY'), patientImage: PatientImg4, purpose: 'General', paidAmount: '100', type: 'New Patient' },
-    { id: 4, appointmentId: '#PT0004', patientName: "Michelle Fairfax", apptDate: dayjs("16 Jun 2019").format('DD MMM YYYY'), patientImage: PatientImg5, purpose: 'General', paidAmount: '350', type: 'Old Patient' },
-    { id: 5, appointmentId: '#PT0005', patientName: "Gina Moore", apptDate: dayjs("16 Jun 2019").format('DD MMM YYYY'), patientImage: PatientImg6, purpose: 'General', paidAmount: '250', type: 'New Patient' },
-    { id: 6, appointmentId: '#PT0006', patientName: "Elsie Gilley", apptDate: dayjs(new Date()).format('DD MMM YYYY'), patientImage: PatientImg1, purpose: 'Fever', paidAmount: '300', type: 'Old Patient' },
-    { id: 7, appointmentId: '#PT0007', patientName: "Joan Gardner", apptDate: dayjs(new Date()).format('DD MMM YYYY'), patientImage: PatientImg2, purpose: 'Fever', paidAmount: '100', type: 'New Patient' },
-    { id: 8, appointmentId: '#PT0008', patientName: "Daniel Griffing", apptDate: dayjs(new Date()).format('DD MMM YYYY'), patientImage: PatientImg3, purpose: 'Fever', paidAmount: '199', type: 'Old Patient' },
-    { id: 9, appointmentId: '#PT0009', patientName: "Walter Roberson", apptDate: dayjs(new Date()).format('DD MMM YYYY'), patientImage: PatientImg4, purpose: 'Fever', paidAmount: '150', type: 'Old Patient' },
-    { id: 10, appointmentId: '#PT0010', patientName: "Robert Rhodes", apptDate: dayjs(new Date()).format('DD MMM YYYY'), patientImage: PatientImg5, purpose: 'Fever', paidAmount: '350', type: 'New Patient' },
-    { id: 11, appointmentId: '#PT0011', patientName: "Harry Williams", apptDate: dayjs(new Date()).format('DD MMM YYYY'), patientImage: PatientImg6, purpose: 'Fever', paidAmount: '200', type: 'Old Patient' },
-  ])
-  const columns: GridColDef[] = [
-    {
-      field: 'id',
-      headerName: "ID",
-      width: 50,
-      headerAlign: 'center',
-      align: 'center',
-    },
-    {
-      field: 'patientName',
-      headerName: "Patient Name",
-      width: 200,
-      headerAlign: 'left',
-      align: 'left',
-      renderCell: (data: any) => {
-        const { row } = data;
-        return (
-          <>
-            <span className="avatar avatar-sm me-2">
-              <img className="avatar-img rounded-circle" src={row.patientImage} alt="User Image" />
-            </span>
-            <Stack >
-              <Link href="/doctors/dashboard/patient-profile" style={{ marginBottom: -20, zIndex: 1 }}>{row.patientName}</Link><br />
-              <small>  {row.appointmentId}</small>
-            </Stack>
-          </>
-        )
-      },
-    },
-    {
-      field: 'apptDate',
-      headerName: "Date",
-      width: 150,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (data: any) => {
-        const { row } = data;
-        return (
-          <>
-            <Stack >
-              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.apptDate).format(`MMM D, YYYY`)}</span>
-              <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.date).format(` h:mm A`)}</span>
-            </Stack>
-          </>
-        )
-      }
-    },
-    {
-      field: 'purpose',
-      headerName: "Purpose",
-      width: 100,
-      headerAlign: 'center',
-      align: 'center',
-    },
-    {
-      field: 'type',
-      headerName: "Type",
-      width: 100,
-      headerAlign: 'center',
-      align: 'center',
-    },
-    {
-      field: 'paidAmount',
-      headerName: "Paid Amount",
-      width: 100,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (data: any) => {
-        const { row } = data;
-        return (
-          <>
-            {row.paidAmount + " $"}
-          </>
-        )
-      }
-    },
-    {
-      field: "actions",
-      type: 'actions',
-      headerName: "Action",
-      headerAlign: 'center',
-      flex: matches ? 0 : 1,
-      align: 'center',
-      getActions: (params: GridRowParams) => [
-        <GridActionsCellItem disableFocusRipple disableRipple disableTouchRipple icon={<i className="far fa-eye" style={{ color: theme.palette.secondary.main }}></i>} label="View" />,
-        <GridActionsCellItem disableFocusRipple disableRipple disableTouchRipple icon={<DoneIcon sx={{ color: theme.palette.success.main }} />} label="Accept" />,
-        <GridActionsCellItem disableFocusRipple disableRipple disableTouchRipple icon={<CloseIcon sx={{ color: theme.palette.warning.main }} />} label="Cancel" />,
-      ]
-    }
-  ]
-
-
-  const [paginationModel, setPaginationModel] = useState({
-    pageSize: 5,
-    page: 0,
+const perPage = 5
+const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, setIsLoading }) => {
+  const theme = useTheme();
+  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  const [dataGridFilters, setDataGridFilters] = useState({
+    limit: 5,
+    skip: 0
   });
 
-  useEffect(() => {
-    setData((prevState: ValueType[]) => {
-      let newState: ValueType[] = prevState.filter((a: ValueType) => {
-        if (isToday) {
-          if (dayjs(a.apptDate).isSame(new Date(), 'day')) return a
-        } else {
-          return a
-        }
 
-      })
-      return newState
+  const { bounce } = useScssVar();
+
+
+
+
+  const [reload, setReload] = useState<boolean>(false)
+  const [dashAppointmentData, setDashAppointmentData] = useState<AppointmentReservationExtendType[]>([])
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setDataGridFilters({
+      limit: perPage * value,
+      skip: (value - 1) * perPage
     })
-  }, [isToday])
+  };
+  useEffect(() => {
+    let isActive = true;
+    let userId = userProfile?._id
+    let reservationsIdArray = userProfile?.reservations_id
+    if (isActive && homeSocket.current !== undefined && userProfile !== null) {
+      if (userProfile?.reservations_id && userProfile?.reservations_id.length !== 0) {
+        homeSocket.current.emit('getDocDashAppointments', { userId, reservationsIdArray, ...dataGridFilters, isToday })
+        homeSocket.current.once('getDocDashAppointmentsReturn', (msg:
+          { status: number, docDashAppointments: { reservations: AppointmentReservationExtendType[], totalCount: { count: number }[] }[], message?: string }) => {
+          const { status, docDashAppointments, message } = msg;
 
+          const { reservations, totalCount } = docDashAppointments[0]
+          if (status !== 200) {
+            toast.error(message || `${status}`, {
+              position: "bottom-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              toastId: 'socketEror',
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              transition: bounce,
+              onClose: () => {
+                setIsLoading(false)
+                toast.dismiss('socketEror')
+              }
+            });
+          } else {
+            if (reservations.length !== 0) {
+              setDashAppointmentData(() => {
+                let newState = []
+                newState = [...reservations]
+                return newState
+              })
+            }
+            if (totalCount.length !== 0) {
+              const { count } = totalCount[0]
+              setTotal(count)
+            }
+            homeSocket.current.once(`updateGetDocDashAppointments`, () => {
+              setReload(!reload)
+            })
+            setIsLoading(false)
+          }
+        })
+      } else {
+        isLoading && setIsLoading(false)
 
-  return (
-    <Fragment>
+      }
+    }
+    return () => {
+      isActive = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeSocket, dataGridFilters, reload, isToday, userProfile])
+
+  const LoadingCompoenent = () => (
+    <CircleToBlockLoading color={theme.palette.primary.main} size="small"
+      style={{
+        minWidth: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+      }} />
+  )
+
+  const appointmentComponents = () => {
+
+    return (
       <DataGrid
         autoHeight
-        rows={data}
-        rowCount={data.length}
-        ref={grdiRef}
-        // localeText={muiLocaleText()}
+        hideFooter
+        getRowId={(params) => params._id}
+        rowHeight={screen.height / 15.2}
+        rows={dashAppointmentData}
         columns={columns}
-        disableRowSelectionOnClick
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        pageSizeOptions={[5, 10]}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 5,
+            },
+          },
+        }}
+        pageSizeOptions={[5]}
         showCellVerticalBorder
-        isRowSelectable={(params: GridRowParams) => params.row.disabled}
         showColumnVerticalBorder
+        slots={{
+          // toolbar: CustomToolbar,
+          noResultsOverlay: CustomNoRowsOverlay,
+          noRowsOverlay: CustomNoRowsOverlay
+        }}
         sx={{
           ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
             "marginTop": "1em",
             "marginBottom": "1em"
+          },
+          "&.MuiDataGrid-root .MuiDataGrid-row": {
+            backgroundColor:
+              false ? getSelectedBackgroundColor(
+                theme.palette.primary.dark,
+                theme.palette.mode,
+              ) : '',
+            '&:hover': {
+              backgroundColor: getSelectedHoverBackgroundColor(
+                theme.palette.primary.light,
+                theme.palette.mode,
+              ),
+            }
           }
         }}
       />
+    )
+  }
+
+  const columns: GridColDef[] = [
+    {
+      field: 'startDate',
+      headerName: 'From - To Period',
+      width: 250,
+      flex: 1,
+      align: 'center',
+      headerAlign: 'center',
+      valueFormatter(params: GridValueFormatterParams) {
+        const { id, api } = params
+        return `From: ${api.getCellValue(id as string, 'startDate')} To: ${api.getCellValue(id as string, 'finishDate')}`
+      },
+    },
+    {
+      field: 'dayPeriod',
+      headerName: 'Day time',
+      width: 90,
+      align: 'center',
+      headerAlign: 'center',
+      valueGetter(params: GridRenderCellParams) {
+        const { value } = params
+        return value.charAt(0).toUpperCase() + value.slice(1)
+      }
+    },
+    {
+      field: 'selectedDate',
+      headerName: `Apointment Time`,
+      align: 'center',
+      width: 150,
+      headerAlign: 'center',
+      renderCell: (params) => {
+        return (
+          <Stack >
+            <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.selectedDate}</span>
+            <span className="d-block" >{params?.row?.timeSlot?.period}</span>
+          </Stack>
+        )
+      }
+    },
+    {
+      field: 'patientProfile',
+      headerName: `Patient Name`,
+      width: 210,
+      flex: 1,
+      align: 'center',
+      headerAlign: 'center',
+      valueFormatter(params: GridValueFormatterParams) {
+        const { value } = params
+        return `${value.gender}.${value?.firstName} ${value?.lastName}`
+      },
+      renderCell: (params: GridRenderCellParams) => {
+        const { row, formattedValue } = params;
+        const profileImage = row?.patientProfile?.profileImage == '' ? patient_profile : row?.patientProfile?.profileImage
+        const online = row?.patientProfile?.online || false
+        return (
+          <>
+            <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}>
+              <StyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                variant="dot"
+                online={online}
+              >
+                <Avatar alt="" src={`${profileImage}?random=${new Date().getTime()}`} >
+                  <img src={patient_profile} alt="" className="avatar" />
+                </Avatar>
+              </StyledBadge>
+            </Link>
+            <Link href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}
+              style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
+              {formattedValue}
+            </Link>
+          </>
+        )
+      }
+    },
+    {
+      field: 'paymentType',
+      headerName: `Payment status`,
+      width: 120,
+      // flex: 1,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (data: any) => {
+        const { row } = data;
+        return (
+          <>
+            <Chip
+              color={row.paymentType == '' ? 'success' : 'secondary'}
+              label={'paid'}
+              size="small"
+              sx={{ color: theme.palette.primary.contrastText }} />
+          </>
+        )
+      }
+    },
+  ]
+
+  return (
+    <Fragment>
+      {isLoading ?
+        <LoadingCompoenent /> :
+        dashAppointmentData.length !== 0 ?
+          <>
+            <div className="appointments">{appointmentComponents()}</div>
+
+            <Pagination
+              showFirstButton
+              showLastButton
+              hideNextButton
+              hidePrevButton
+              boundaryCount={1}
+              variant="outlined"
+              color="secondary"
+              count={Math.ceil(total / perPage)}
+              page={dataGridFilters.limit / perPage}
+              sx={{
+                justifyContent: 'center',
+                display: 'flex',
+                minHeight: 70
+              }}
+              onChange={handlePageChange}
+            /></> :
+          <div className='card' style={{ minHeight: '90vh', justifyContent: 'center' }}>
+            <CustomNoRowsOverlay text='No Recent  appointment' />
+          </div>}
+
     </Fragment>
   )
 })
