@@ -18,9 +18,10 @@ import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
+import { doctorPatientInitialLimitsAndSkips } from '@/components/DoctorPatientProfile/DoctorPatientProfile';
 
-const DashboardPage: NextPage = () => {
-
+const DashboardPage: NextPage = (props: any) => {
+  const { doctorPatientProfile } = props;
 
   return (
     <>
@@ -39,7 +40,7 @@ const DashboardPage: NextPage = () => {
         <div className="container-fluid">
           <div className="row">
             <PatientDashboardSidebar />
-            <DashboardMain />
+            <DashboardMain doctorPatientProfile={doctorPatientProfile} />
             <Footer />
           </div>
         </div>
@@ -94,7 +95,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
           default:
             var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(getCookie('homeAccessToken', ctx))
-
             if (roleName == 'patient') {
               store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
               store.dispatch(updateUserProfile(userProfile))
@@ -113,6 +113,31 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           ...props,
           redirect: {
             destination: `/login`,
+            permanent: false,
+          },
+        }
+      }
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/methods/findDocterPatientProfileById`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ _id: user_id, ...doctorPatientInitialLimitsAndSkips }),
+      })
+      const data = await res.json();
+      const { status, user: doctorPatientProfile } = data
+      if (status == 200) {
+        props = {
+          ...props,
+          doctorPatientProfile: doctorPatientProfile
+        }
+      } else {
+        console.log(data)
+        return {
+          ...props,
+          redirect: {
+            destination: `/patient/dashboard`,
             permanent: false,
           },
         }
@@ -146,7 +171,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
                 return {
                   redirect: {
                     destination: `/${roleName}/dashboard`,
-                    permanent: false,
+                    permanent: true,
                   },
                 }
               }

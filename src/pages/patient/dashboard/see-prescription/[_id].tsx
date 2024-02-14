@@ -12,14 +12,15 @@ import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import Footer from '@/components/sections/Footer';
-import PatientProfile from '@/components/DoctorDashboardSections/PatientProfile';
-import PatientSidebarDoctorDashboard from '@/components/shared/PatientSidebarDoctorDashboard';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
-
-const PatientProfilePage: NextPage = () => {
+import PrescriptionPage from '@/components/PrescriptionsPage/PrescriptionPage';
+import { Params } from '@/pages/doctors/dashboard/patient-profile/[_id]';
+import { base64regex } from '@/components/DoctorsSections/Profile/ProfilePage';
+const SeePrescriptionPage: NextPage = (props: any) => {
+  const { doctorPatientProfile } = props;
 
 
   return (
@@ -34,15 +35,11 @@ const PatientProfilePage: NextPage = () => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Distribution Live data</title>
       </Head>
-      <BreadCrumb subtitle='Patient Profile' title='Patient Profile' />
+      <BreadCrumb subtitle='Prescription Details' title='Prescription Details' />
       <div className="content">
         <div className="container-fluid">
           <div className="row">
-            <PatientSidebarDoctorDashboard />
-
-            <div className="col-md-7 col-lg-8 col-xl-9 dct-appoinment" >
-              <PatientProfile userType='doctor' />
-            </div>
+            <PrescriptionPage pageType='see' userType='patient' doctorPatientProfile={doctorPatientProfile} />
             <Footer />
           </div>
         </div>
@@ -54,6 +51,8 @@ const PatientProfilePage: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx) => {
     try {
+      const { params } = ctx
+      const { _id: encryptID } = params as Params
       let props = {}
       const result = await fetch('http://ip-api.com/json/', {
         method: 'GET',
@@ -81,7 +80,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             }
             if (fullToken !== '') {
               var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(fullToken)
-              if (roleName == 'doctors') {
+              if (roleName == 'patient') {
                 store.dispatch(updateHomeAccessToken(fullToken))
                 store.dispatch(updateUserProfile(userProfile))
               } else {
@@ -98,7 +97,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           default:
             var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(getCookie('homeAccessToken', ctx))
 
-            if (roleName == 'doctors') {
+            if (roleName == 'patient') {
               store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
               store.dispatch(updateUserProfile(userProfile))
             } else {
@@ -111,7 +110,41 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             }
             break;
         }
-
+        if (base64regex.test(encryptID)) {
+          let prescription_id = atob(encryptID as string)
+          const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/methods/findPrescriptionForDoctorProfileById`, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ _id: prescription_id, }),
+          })
+          const data = await res.json();
+          const { status, user: doctorPatientProfile } = data
+          console.log({ data })
+          if (status == 200) {
+            props = {
+              ...props,
+              doctorPatientProfile: doctorPatientProfile
+            }
+          } else {
+            return {
+              ...props,
+              redirect: {
+                destination: `/doctors/dashboard`,
+                permanent: false,
+              },
+            }
+          }
+        } else {
+          return {
+            ...props,
+            redirect: {
+              destination: `/doctors/dashboard`,
+              permanent: false,
+            },
+          }
+        }
       } else {
         return {
           ...props,
@@ -143,7 +176,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             }
             if (fullToken !== '') {
               var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(fullToken)
-              if (roleName == 'doctors') {
+              if (roleName == 'patient') {
                 store.dispatch(updateHomeAccessToken(fullToken))
                 store.dispatch(updateUserProfile(userProfile))
               } else {
@@ -160,7 +193,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           default:
             var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(getCookie('homeAccessToken', ctx))
 
-            if (roleName == 'doctors') {
+            if (roleName == 'patient') {
               store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
               store.dispatch(updateUserProfile(userProfile))
             } else {
@@ -173,7 +206,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             }
             break;
         }
-
       } else {
         return {
           ...props,
@@ -189,4 +221,4 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     }
   })
 
-export default connect((state: AppState) => state)(PatientProfilePage);
+export default connect((state: AppState) => state)(SeePrescriptionPage);

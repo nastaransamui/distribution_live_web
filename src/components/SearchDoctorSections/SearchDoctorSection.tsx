@@ -99,6 +99,7 @@ export interface DoctorProfileType {
   patients_id: string[];
   favs_id: string[];
   reservations_id: string[];
+  prescriptions_id: string[];
   isVerified: boolean | 'google';
   online: boolean;
   idle?: boolean;

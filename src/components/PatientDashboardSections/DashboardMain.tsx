@@ -4,14 +4,16 @@ import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import { Dashboard1, Dashboard2, Dashboard6, Dashboard5, Graph1, Graph2, Graph3, Graph4, } from '@/public/assets/imagepath';
 
-import PatientProfile from '@/components/DoctorDashboardSections/PatientProfile';
+import PatientProfileTabs from '@/components/DoctorDashboardSections/PatientProfileTabs';
 import TextField from '@mui/material/TextField';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { useRouter } from 'next/router';
-
+import _ from 'lodash'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import { toast } from 'react-toastify';
+import { DoctorPatientInitialLimitsAndSkipsTypes, DoctorPatientProfileTypes, PatientProfileExtendType, doctorPatientInitialLimitsAndSkips } from '../DoctorPatientProfile/DoctorPatientProfile';
 export interface VitalTypeObject {
   value: string;
   date: Date;
@@ -28,11 +30,15 @@ export interface VitalSignTypes {
   updateAt: Date;
 }
 
-const DashboardMain: FC = (() => {
-  const { muiVar } = useScssVar();
+const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) => {
+  const { muiVar, bounce } = useScssVar();
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const router = useRouter();
+  const [reload, setReload] = useState<boolean>(false)
+  const [dataGridFilters, setDataGridFilters] = useState<DoctorPatientInitialLimitsAndSkipsTypes>(doctorPatientInitialLimitsAndSkips);
+  const [profile, setProfile] = useState<PatientProfileExtendType>(doctorPatientProfile);
+
   dayjs.extend(duration)
 
   const [vitalSign, setvitalSign] = useState<VitalSignTypes[]>([])
@@ -97,10 +103,40 @@ const DashboardMain: FC = (() => {
       homeSocket.current.once('getVitalSignReturn', (msg: any) => {
         setvitalSign(msg)
       })
+      homeSocket.current.emit(`findDocterPatientProfileById`, { _id: userId, ...dataGridFilters })
+      homeSocket.current.once(`findDocterPatientProfileByIdReturn`, (msg: { status: number, user: PatientProfileExtendType, reason?: string }) => {
+        const { status, user, reason } = msg;
+        if (status !== 200) {
+          toast.error(reason || `Error ${status} find Doctor`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+              router.back()
+            }
+          });
+        } else {
+          homeSocket.current.once(`updatefindDocterPatientProfileById`, () => {
+            setReload(!reload)
+          })
+          if (!_.isEqual(user, doctorPatientProfile)) {
+            setProfile(user)
+          }
+        }
+      })
     }
-  }, [router, homeSocket, userProfile])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router, homeSocket, userProfile, dataGridFilters, doctorPatientProfile, reload])
 
-
+  const [isMobile, setIsmobile] = useState(false)
+  useEffect(() => {
+    setIsmobile(typeof window !== 'undefined' && window.mobileCheck())
+  }, [])
 
   return (
     <Fragment>
@@ -297,7 +333,7 @@ const DashboardMain: FC = (() => {
             </div>
           </div>
         </div>
-        <PatientProfile userType='patient' />
+        <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='patient' dataGridFilters={dataGridFilters} setDataGridFilters={setDataGridFilters} />
       </div>
     </Fragment>
   )

@@ -125,7 +125,6 @@ const Appointment: FC = (() => {
             const { period } = timeSlot
             const { profileImage, address1, address2, mobileNumber, userName, online } = patientProfile
             const patientName = `${patientProfile?.gender}. ${patientProfile?.firstName} ${patientProfile?.lastName}`;
-            console.log(appointment)
             return (
               <div className="appointment-list" key={index}>
                 <div className="profile-info-widget" >

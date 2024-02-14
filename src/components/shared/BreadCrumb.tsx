@@ -14,6 +14,7 @@ const BreadCrumb: FC<BreadCrumbProps> = (({ title, subtitle }: BreadCrumbProps) 
   const { muiVar } = useScssVar();
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const router = useRouter();
+
   return (
     <Fragment>
       <div className="breadcrumb-bar-two" style={muiVar}>
@@ -30,20 +31,29 @@ const BreadCrumb: FC<BreadCrumbProps> = (({ title, subtitle }: BreadCrumbProps) 
                     router.pathname.split('/').length > 2 &&
                     router.pathname.split('/')[router.pathname.split('/').length - 1] !== 'dashboard' &&
                     <li className="breadcrumb-item">
-                      <Link href={
-                        router.pathname.split('/')[router.pathname.split('/').length - 2] == 'dashboard' ?
-                          `/${userProfile?.roleName}/${router.pathname.split('/')[router.pathname.split('/').length - 2]}` :
-                          `/${router.pathname.split('/')?.[router.pathname.split('/').length - 2]}`
-                      } onClick={(e) => {
+                      <Link href='' onClick={(e) => {
                         e.preventDefault();
-                        if (router.pathname.split('/')[router.pathname.split('/').length - 2] == 'dashboard') {
-                          router.push(`/${userProfile?.roleName}/${router.pathname.split('/')[router.pathname.split('/').length - 2]}`)
+                        if (router.pathname.split('/')[2] == 'dashboard') {
+                          router.push(`/${userProfile?.roleName}/dashboard`)
                         } else {
-                          // router.back()
+                          router.push(`/${router.pathname.split('/')[1]}`)
+                          if (document.referrer == '') {
+
+                          } else {
+                            // console.log('first')
+                            // router.back()
+                          }
+
                         }
                       }}>
-                        {router.pathname.split('/')?.[router.pathname.split('/').length - 2].charAt(0).toUpperCase() + router.pathname.split('/')?.[router.pathname.split('/').length - 2].slice(1)}</Link>
+                        {
+                          router.pathname.split('/')[2] == 'dashboard' ?
+                            'Dashboard' :
+                            `${router.pathname.split('/')[1].charAt(0).toUpperCase()}${router.pathname.split('/')[1].slice(1)}`
+                        }
+                      </Link>
                     </li>
+
                   }
                   <li className="breadcrumb-item" aria-current="page">
                     {subtitle}

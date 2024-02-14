@@ -19,7 +19,8 @@ import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 
-const EditBillingPage: NextPage = () => {
+const EditBillingPage: NextPage = (props: any) => {
+  const { doctorPatientProfile } = props;
 
 
   return (
@@ -38,7 +39,7 @@ const EditBillingPage: NextPage = () => {
       <div className="content">
         <div className="container-fluid">
           <div className="row">
-            <PatientSidebarDoctorDashboard />
+            <PatientSidebarDoctorDashboard doctorPatientProfile={doctorPatientProfile} />
             <AddBilling />
             <Footer />
           </div>

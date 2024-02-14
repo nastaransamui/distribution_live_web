@@ -52,7 +52,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       if (userData['status'] == 'success') {
         store.dispatch(updateUserData(userData))
       }
-      console.log(hasCookie('cc_cookie'))
       if (hasCookie('homeThemeType', ctx)) {
         store.dispatch(updateHomeThemeType(getCookie('homeThemeType', ctx)))
       }

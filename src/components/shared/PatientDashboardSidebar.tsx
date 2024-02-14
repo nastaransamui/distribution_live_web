@@ -66,7 +66,7 @@ const PatientDashboardSidebar: FC = (() => {
           <div className="profile-sidebar">
             <div className="widget-profile pro-widget-content">
               <div className="profile-info-widget">
-                <Link href="#0" className="booking-doc-img">
+                <Link href="" className="booking-doc-img" onClick={(e) => e.preventDefault()}>
                   <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${new Date().getTime()}` : ''}`} sx={{ width: "120px", height: '120px' }} key={userProfile?.profileImage}>
                     <img src={patient_profile} alt="" />
                   </Avatar>

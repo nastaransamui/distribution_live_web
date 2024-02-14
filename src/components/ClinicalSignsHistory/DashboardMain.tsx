@@ -4,7 +4,7 @@ import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import { Dashboard1, Dashboard2, Dashboard6, Dashboard5, Graph1, Graph2, Graph3, Graph4, } from '@/public/assets/imagepath';
 
-import PatientProfile from '@/components/DoctorDashboardSections/PatientProfile';
+// import PatientProfile from '@/components/DoctorDashboardSections/PatientProfile';
 import TextField from '@mui/material/TextField';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
@@ -316,7 +316,8 @@ const DashboardMain: FC = (() => {
             </div>
           </div>
         </div>
-        <PatientProfile userType='patient' />
+        {/* <PatientProfile userType='patient' /> */}
+        Patient Profile not find in clinical signs history
       </div>
     </Fragment>
   )

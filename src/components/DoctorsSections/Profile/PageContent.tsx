@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
+import { ProfileImageStyledBadge } from '@/components/DoctorDashboardSections/MyPtients';
 
 
 
@@ -36,20 +37,28 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
             <div className="doctor-widget">
               <div className="doc-info-left">
                 <div className="doctor-img">
-                  <Avatar sx={{
-                    width: 'auto',
-                    height: 'auto',
-                    transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
-                    "&:hover": {
-                      boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
-                      transform: "scale(1.15)",
-                    },
 
-                  }} variant="square" alt="" src={profile?.profileImage}
-                    key={profile?.profileImage}
+                  <ProfileImageStyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                    variant="dot"
+                    online={profile.online as boolean}
                   >
-                    <img className="img-fluid" src={doctors_profile} alt="" />
-                  </Avatar>
+                    <Avatar sx={{
+                      width: 'auto',
+                      height: 'auto',
+                      transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
+                      "&:hover": {
+                        boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+                        transform: "scale(1.15)",
+                      },
+
+                    }} variant="square" alt="" src={profile?.profileImage}
+                      key={profile?.profileImage}
+                    >
+                      <img className="img-fluid" src={doctors_profile} alt="" />
+                    </Avatar>
+                  </ProfileImageStyledBadge>
                 </div>
                 <div className="doc-info-cont">
                   <h4 className="doc-name">Dr. {profile?.firstName} {" "} {profile?.lastName}</h4>

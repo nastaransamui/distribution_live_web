@@ -415,7 +415,7 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
         <div className="submit-section proceed-btn text-end" style={{ marginTop: 40 }}>
           {occupyTime && <Button
             href={`/doctors/check-out/${btoa(`${JSON.stringify(occupyTime)}`)}`}
-            disabled={profile?._id === userProfile?._id}
+            disabled={profile?._id === userProfile?._id || userProfile?.roleName == 'doctors'}
             onClick={(e) => {
               if (!userProfile || profile?._id === userProfile?._id) {
                 e.preventDefault()
@@ -423,7 +423,13 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
               }
             }}
             className="btn btn-primary prime-btn justify-content-center align-items-center">
-            {!userProfile ? `Login to reserve` : profile?._id === userProfile?._id ? `You can't reserve to your own account.` : <>Next <i className="feather-arrow-right-circle" /></>}
+            {!userProfile ? `Login to reserve` :
+              profile?._id === userProfile?._id ?
+                `You can't reserve to your own account.` :
+                userProfile?.roleName == 'doctors' ?
+                  `You can't reserve with doctor user please create patient user.` :
+                  <>Next <i className="feather-arrow-right-circle" />
+                  </>}
           </Button>}
         </div>
       </div>

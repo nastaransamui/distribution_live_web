@@ -11,15 +11,20 @@ import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
-import PatientDashboardSidebar from '@/components/shared/PatientDashboardSidebar';
 import Footer from '@/components/sections/Footer';
-import AddPescription from '@/components/DoctorDashboardSections/AddPescription';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
-const SeePrescriptionPage: NextPage = () => {
+import { ParsedUrlQuery } from "querystring";
+import { base64regex } from '@/components/DoctorsSections/Profile/ProfilePage';
+import DoctorPatientProfile, { doctorPatientInitialLimitsAndSkips } from '@/components/DoctorPatientProfile/DoctorPatientProfile';
+export interface Params extends ParsedUrlQuery {
+  _id: string;
+}
 
+const PatientProfilePage: NextPage = (props: any) => {
+  const { doctorPatientProfile } = props;
 
   return (
     <>
@@ -33,12 +38,12 @@ const SeePrescriptionPage: NextPage = () => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Distribution Live data</title>
       </Head>
-      <BreadCrumb subtitle='Medical Details' title='Medical Details' />
+      <BreadCrumb subtitle='Patient Profile' title='Patient Profile' />
       <div className="content">
         <div className="container-fluid">
           <div className="row">
-            <PatientDashboardSidebar />
-            <AddPescription />
+            <DoctorPatientProfile doctorPatientProfile={doctorPatientProfile} />
+            {/* */}
             <Footer />
           </div>
         </div>
@@ -50,6 +55,8 @@ const SeePrescriptionPage: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx) => {
     try {
+      const { params } = ctx
+      const { _id: encryptID } = params as Params
       let props = {}
       const result = await fetch('http://ip-api.com/json/', {
         method: 'GET',
@@ -57,6 +64,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           'Accept': 'application/json',
         }
       })
+
       const userData = await result.json();
       if (userData['status'] == 'success') {
         store.dispatch(updateUserData(userData))
@@ -77,7 +85,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             }
             if (fullToken !== '') {
               var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(fullToken)
-              if (roleName == 'patient') {
+              if (roleName == 'doctors') {
                 store.dispatch(updateHomeAccessToken(fullToken))
                 store.dispatch(updateUserProfile(userProfile))
               } else {
@@ -94,7 +102,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           default:
             var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(getCookie('homeAccessToken', ctx))
 
-            if (roleName == 'patient') {
+            if (roleName == 'doctors') {
               store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
               store.dispatch(updateUserProfile(userProfile))
             } else {
@@ -106,6 +114,41 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
               }
             }
             break;
+        }
+
+        if (base64regex.test(encryptID)) {
+          let patient_id = atob(encryptID as string)
+          const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/methods/findDocterPatientProfileById`, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ _id: patient_id, ...doctorPatientInitialLimitsAndSkips }),
+          })
+          const data = await res.json();
+          const { status, user: doctorPatientProfile } = data
+          if (status == 200) {
+            props = {
+              ...props,
+              doctorPatientProfile: doctorPatientProfile
+            }
+          } else {
+            return {
+              ...props,
+              redirect: {
+                destination: `/doctors/dashboard`,
+                permanent: false,
+              },
+            }
+          }
+        } else {
+          return {
+            ...props,
+            redirect: {
+              destination: `/doctors/dashboard`,
+              permanent: false,
+            },
+          }
         }
       } else {
         return {
@@ -138,7 +181,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             }
             if (fullToken !== '') {
               var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(fullToken)
-              if (roleName == 'patient') {
+              if (roleName == 'doctors') {
                 store.dispatch(updateHomeAccessToken(fullToken))
                 store.dispatch(updateUserProfile(userProfile))
               } else {
@@ -155,7 +198,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           default:
             var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(getCookie('homeAccessToken', ctx))
 
-            if (roleName == 'patient') {
+            if (roleName == 'doctors') {
               store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
               store.dispatch(updateUserProfile(userProfile))
             } else {
@@ -168,6 +211,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             }
             break;
         }
+
       } else {
         return {
           ...props,
@@ -178,9 +222,13 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         }
       }
       return {
-        props
+        ...props,
+        redirect: {
+          destination: `/doctors/dashboard`,
+          permanent: false,
+        },
       }
     }
   })
 
-export default connect((state: AppState) => state)(SeePrescriptionPage);
+export default connect((state: AppState) => state)(PatientProfilePage);

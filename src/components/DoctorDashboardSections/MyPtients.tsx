@@ -61,6 +61,7 @@ export const ProfileImageStyledBadge = styled(Badge, {
   });
 
 export interface PatientProfile {
+  _id: string;
   createdAt: Date;
   firstName: string;
   lastName: string;
@@ -85,6 +86,7 @@ export interface PatientProfile {
   reservations_id: any[];
   doctors_id: any[];
   favs_id: any[];
+  prescriptions_id: string[];
   online: boolean;
   isActive: boolean;
   lastUpdate: Date;
