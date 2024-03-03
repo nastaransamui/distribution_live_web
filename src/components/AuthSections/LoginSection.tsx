@@ -640,7 +640,7 @@ export const LoginBox: FC = (() => {
                           </Button>
                         </div> */}
           <div className="col-12">
-            <Button className=" btn-google w-100" onClick={() => {
+            <Button sx={{ backgroundColor: '#dd4b39', color: '#fff' }} className=" btn-google w-100" onClick={() => {
               if (hasCookie('cc_cookie')) {
                 setOpenUserType(() => true)
               } else {
