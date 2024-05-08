@@ -179,7 +179,8 @@ const SearchDoctorSection: FC = (() => {
             }
           });
         } else {
-          homeSocket.current.once(`updateDoctorSearch`, (msg: any) => {
+          homeSocket.current.on(`updateDoctorSearch`, (msg: any) => {
+            console.log(msg);
             setReload(!reload)
           })
           setDoctorResults((prevState) => {

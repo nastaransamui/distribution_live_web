@@ -65,56 +65,20 @@ import { Transition } from '@/components/shared/Dialog';
 
 
 import {
-  EmailIcon,
-  EmailShareButton,
   FacebookIcon,
   FacebookMessengerIcon,
   FacebookMessengerShareButton,
   FacebookShareButton,
   FacebookShareCount,
-  GabIcon,
-  GabShareButton,
-  HatenaIcon,
-  HatenaShareButton,
-  HatenaShareCount,
-  InstapaperIcon,
-  InstapaperShareButton,
   LineIcon,
   LineShareButton,
   LinkedinIcon,
   LinkedinShareButton,
-  LivejournalIcon,
-  LivejournalShareButton,
-  MailruIcon,
-  MailruShareButton,
-  OKIcon,
-  OKShareButton,
-  OKShareCount,
-  PinterestIcon,
-  PinterestShareButton,
-  PinterestShareCount,
-  PocketIcon,
-  PocketShareButton,
-  RedditIcon,
-  RedditShareButton,
-  RedditShareCount,
   TelegramIcon,
   TelegramShareButton,
-  TumblrIcon,
-  TumblrShareButton,
-  TumblrShareCount,
   TwitterShareButton,
-  ViberIcon,
-  ViberShareButton,
-  VKIcon,
-  VKShareButton,
-  VKShareCount,
-  WeiboIcon,
-  WeiboShareButton,
   WhatsappIcon,
   WhatsappShareButton,
-  WorkplaceIcon,
-  WorkplaceShareButton,
   XIcon,
 } from "react-share";
 import { useSelector } from 'react-redux';
@@ -228,7 +192,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
 
   const _share_buttons = (shareUrl: string, title: string, component: 'grid' | 'list') => {
     const marrgin = component == 'grid' ?
-      { ["--bottom" as string]: `35px` as CSSProperties } :
+      {} :
       { ["--bottom" as string]: `10px` as CSSProperties }
     return (
       <div className="share" style={marrgin}>
@@ -303,11 +267,13 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
           disableRipple
           disableTouchRipple
           className='shareIconButton'
+          edge="start"
           sx={{
+            paddingBottom: component == 'grid' ? `2px` : '5px',
             "&:hover": {
               transform: "scale(1.15)",
               transition: theme.transitions.create('all', { duration: 200, }),
-              color: theme.palette.primary.main
+              color: theme.palette.primary.main,
             },
           }}>
           <ShareIcon />
@@ -1012,9 +978,21 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                 </Fragment>
                 <CardMedia
                   component="img"
-                  sx={{ borderRadius: '5px', overflow: 'hidden', transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms', }}
+                  sx={{
+                    borderRadius: '5px',
+                    overflow: 'hidden',
+                    transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
+                    minHeight:
+                      minWidth1400 ? 319 :
+                        minWidth767max991 ? 500 :
+                          minWidth991max1200 || minWidth639max766 ? 350 :
+                            minWidth767 ? 270 :
+                              100
+                  }}
                   height="194"
-                  image={doctor?.profileImage == '' ? doctors_profile : doctor?.profileImage}
+                  image={doctor?.profileImage == ''
+                    ? doctors_profile :
+                    `${doctor?.profileImage}?random=${new Date().getTime()}`}
                   alt=""
                 />
                 <CardContent

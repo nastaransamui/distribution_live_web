@@ -255,7 +255,7 @@ const DoctorsSections: FC = (() => {
             }
           });
         } else {
-          homeSocket.current.once(`updateDoctorSearch`, (msg: any) => {
+          homeSocket.current.on(`updateDoctorSearch`, (msg: any) => {
             setReload(!reload)
           })
           setDoctorResults((prevState) => {
