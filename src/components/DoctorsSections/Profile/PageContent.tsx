@@ -45,7 +45,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                     online={profile.online as boolean}
                   >
                     <Avatar sx={{
-                      width: 'auto',
+                      width: 'fit-content',
                       height: 'auto',
                       transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
                       "&:hover": {

@@ -341,7 +341,6 @@ const DoctorsSections: FC = (() => {
     ]
   }, [])
 
-  console.log({ doctorResults, totalDoctors, width, height })
 
   return (
     <Fragment>
