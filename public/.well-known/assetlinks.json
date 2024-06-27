@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.healthCareApp",
+      "sha256_cert_fingerprints": [
+        "82:B9:41:BE:34:5F:76:03:D1:1F:C1:66:05:0E:66:AA:BB:1C:6C:2C:74:18:5A:79:EA:E5:6F:28:C0:47:E0:20"
+      ]
+    }
+  }
+]
