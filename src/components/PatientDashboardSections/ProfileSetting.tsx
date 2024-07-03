@@ -15,6 +15,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar'
 import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 
 //redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -46,6 +48,7 @@ import chunkString from '@/helpers/chunkString';
 
 const ProfileSetting: FC = (() => {
   const { muiVar, bounce } = useScssVar();
+  const matches = useMediaQuery('(max-width:370px)');
   const dispatch = useDispatch();
   const router = useRouter();
   const theme = useTheme()
@@ -242,7 +245,64 @@ const ProfileSetting: FC = (() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userProfile, isClient])
 
+  const deleteUser = () => {
 
+    document.getElementById('delete_modal')?.classList.replace('animate__backOutDown', 'animate__backInDown')
+    window.$('#delete_modal').modal('toggle')
+  }
+
+  const confirmDeleteClick = () => {
+    let data = {
+      userId: userProfile?._id,
+      ipAddr: userData?.query,
+      userAgent: navigator.userAgent,
+    }
+    dispatch(updateHomeFormSubmit(true))
+    if (homeSocket?.current) {
+      homeSocket.current.emit('deleteUser', data)
+      homeSocket.current.once('deleteUserReturn', (msg: any) => {
+        console.log(msg)
+        if (msg?.status !== 200) {
+          toast.error(msg?.message || 'null', {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+              dispatch(updateHomeFormSubmit(false))
+            }
+          });
+        } else if (msg?.status == 200) {
+          if (isJsonString(getCookie('homeAccessToken') as string)) {
+            const { length } = JSON.parse(getCookie('homeAccessToken') as string)
+            for (var i = 0; i < parseInt(length); i++) {
+              deleteCookie(`${i}`);
+            }
+          }
+          deleteCookie('homeAccessToken')
+          dispatch(updateHomeAccessToken(null))
+          toast.info(msg?.message || 'null', {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+              dispatch(updateHomeFormSubmit(false))
+              router.reload();
+            }
+          });
+        }
+      })
+    }
+  }
   return (
     <Fragment>
       <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
@@ -261,7 +321,6 @@ const ProfileSetting: FC = (() => {
                       <div className="form-group">
                         <div className="change-avatar">
                           <div className="profile-img">
-                            {/* <img src={userProfile?.profileImage == '' ? uploadImage : uploadImage.startsWith('blob') ? uploadImage : userProfile?.profileImage} alt="" /> */}
                             <Avatar variant="square" sx={{
                               height: { md: `100px`, xs: '80px' },
                               width: { md: `100px`, xs: '80px' },
@@ -324,7 +383,7 @@ const ProfileSetting: FC = (() => {
                     <div className="col-12 col-md-6">
                       <div className="form-group">
                         <Controller
-                          rules={{ required: 'This field is required' }}
+                          // rules={{ required: 'This field is required' }}
                           name='dob'
                           control={control}
                           render={(props: any) => {
@@ -362,7 +421,7 @@ const ProfileSetting: FC = (() => {
                     <div className="col-12 col-md-3">
                       <div className="form-group">
                         <Controller
-                          rules={{ required: 'This field is required' }}
+                          // rules={{ required: 'This field is required' }}
                           name='gender'
                           control={control}
                           render={(props: any) => {
@@ -403,7 +462,7 @@ const ProfileSetting: FC = (() => {
                     <div className="col-12 col-md-3">
                       <div className="form-group">
                         <Controller
-                          rules={{ required: 'This field is required' }}
+                          // rules={{ required: 'This field is required' }}
                           name='bloodG'
                           control={control}
                           render={(props: any) => {
@@ -499,14 +558,14 @@ const ProfileSetting: FC = (() => {
                     <div className="col-12 col-md-6">
                       <div className="form-group">
                         <TextField
-                          required
+                          // required
                           id="address1"
                           label="Address 1"
                           error={errors.address1 == undefined ? false : true}
                           helperText={errors.address1 && errors['address1']['message'] as ReactNode}
                           {
                           ...register('address1', {
-                            required: "This field is required",
+                            // required: "This field is required",
                           })
                           }
                           fullWidth
@@ -528,6 +587,7 @@ const ProfileSetting: FC = (() => {
                     <div className="col-12 col-md-6">
                       <div className="form-group">
                         <GeoLocationAutocomplete
+                          required={false}
                           errors={errors}
                           register={register}
                           name='city'
@@ -547,6 +607,7 @@ const ProfileSetting: FC = (() => {
                     <div className="col-12 col-md-6">
                       <div className="form-group">
                         <GeoLocationAutocomplete
+                          required={false}
                           errors={errors}
                           register={register}
                           name='state'
@@ -566,6 +627,7 @@ const ProfileSetting: FC = (() => {
                     <div className="col-12 col-md-6">
                       <div className="form-group">
                         <GeoLocationAutocomplete
+                          required={false}
                           errors={errors}
                           register={register}
                           name='country'
@@ -585,7 +647,7 @@ const ProfileSetting: FC = (() => {
                     <div className="col-12 col-md-6">
                       <div className="form-group">
                         <TextField
-                          required
+                          // required
                           id="zipCode"
                           label="Zip Code"
                           onKeyDown={(e) => {
@@ -598,7 +660,7 @@ const ProfileSetting: FC = (() => {
                           helperText={errors.zipCode && errors['zipCode']['message'] as ReactNode}
                           {
                           ...register('zipCode', {
-                            required: "This field is required",
+                            // required: "This field is required",
                           })
                           }
                           fullWidth
@@ -606,12 +668,70 @@ const ProfileSetting: FC = (() => {
                       </div>
                     </div>
                   </div>
-                  <div className="submit-section">
-                    <button type="submit" className="btn btn-primary submit-btn" >Save Changes</button>
+                  <div className="submit-section submit-btn-bottom " style={{ display: 'flex', justifyContent: "space-between", flexDirection: matches ? 'column' : "row" }}>
+                    <button type="submit" className="btn btn-primary submit-btn" >
+                      Save Changes
+                    </button>
+                    <button className="btn-primary " style={{
+                      marginLeft: '0px',
+                      marginTop: matches ? 10 : 0,
+                      fontWeight: 700,
+                      fontSize: 16,
+                      minWidth: 120,
+                      padding: '12px 40px',
+                      backgroundColor: "crimson",
+                      border: `1px solid ${theme.palette.primary}`,
+                      lineHeight: '16px',
+                      transition: 'all 0.3s ease',
+                      display: 'unset',
+                      borderRadius: '.25rem'
+                    }} onClick={(e) => {
+                      e.preventDefault();
+                      deleteUser();
+                    }}>
+                      Delete User
+                    </button>
+
                   </div>
                 </form>
 
             }
+          </div>
+        </div>
+      </div>
+      <div className="modal fade  animate__animated animate__backInDown" id="delete_modal" aria-hidden="true" role="dialog" style={muiVar}>
+        <div className="modal-dialog modal-dialog-centered" role="document" >
+          <div className="modal-content" >
+            <div className="modal-body">
+              <div className="form-content p-2">
+                <h4 className="modal-title" style={{ display: 'flex', justifyContent: 'center' }}>Deactive</h4>
+                <p className="mb-4" style={{ display: 'flex', justifyContent: 'center' }}>
+                  By continue this you confirm to delete all your private information
+                  from our panel
+                  imidiately and deactivate your account and logout.
+                  we keep internal data for 6 month and then delete.
+                </p>
+                <span style={{ display: 'flex', justifyContent: 'center' }}><button type="button" className="btnLogin mx-1"
+                  onClick={() => {
+                    document.getElementById('delete_modal')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+
+                    setTimeout(() => {
+                      window.$('#delete_modal').modal("hide")
+                      confirmDeleteClick()
+                    }, 500);
+
+                  }}>Delete </button>
+                  <button type="button" className="btnLogout" style={muiVar}
+                    onClick={() => {
+                      document.getElementById('delete_modal')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+                      setTimeout(() => {
+                        window.$('#delete_modal').modal("hide")
+                      }, 500);
+
+                    }}>Cancell</button>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

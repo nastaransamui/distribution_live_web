@@ -183,6 +183,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
 
 
   useEffect(() => {
+    console.log(gridRowHeight)
     let rowCount = totalDoctors % columnCount == 0 ? totalDoctors / columnCount : Math.ceil(totalDoctors / columnCount)
     setVirtualGridHight(() => rowCount * gridRowHeight)
     setVirtualGridMinHeight(0)
@@ -1470,7 +1471,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
   useEffect(() => {
     if (maxWidth638) {
       setColumnCount(1)
-      setGridRowHeight(720)
+      setGridRowHeight(890)
     }
   }, [maxWidth638])
   useEffect(() => {

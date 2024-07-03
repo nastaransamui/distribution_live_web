@@ -118,6 +118,7 @@ export const LoginBox: FC = (() => {
 
       data.ipAddr = userData?.query;
       data.userAgent = navigator.userAgent;
+      data.email = data.email.toLowerCase();
       dispatch(updateHomeFormSubmit(true))
       if (homeSocket?.current) {
         homeSocket.current.emit('loginFormSubmit', data)
@@ -443,7 +444,6 @@ export const LoginBox: FC = (() => {
           }
         })
       } catch (error: any) {
-        console.log(error)
         toast.error(error.toString(), {
           position: "bottom-center",
           autoClose: 5000,
@@ -573,6 +573,7 @@ export const LoginBox: FC = (() => {
                   helperText={errors.email && errors['email']['message'] as ReactNode}
                   fullWidth
                   ref={ref}
+                  inputProps={{ style: { textTransform: 'lowercase' } }}
                   onChange={(e: any) => {
                     e.target.value = e.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
                     onChange(e)

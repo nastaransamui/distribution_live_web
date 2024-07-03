@@ -325,7 +325,7 @@ const GeoLocationAutocomplete: FC<GeoLocationAutocompleteProps> = ((props: GeoLo
                 helperText={errors[name as keyof typeof errors] && errors[name as keyof typeof errors]?.['message' as keyof typeof errors.message] as ReactNode}
                 {
                 ...register(name, {
-                  required: "This field is required",
+                  required: required == undefined || required ? "This field is required" : '',
                 })
                 }
                 InputProps={{

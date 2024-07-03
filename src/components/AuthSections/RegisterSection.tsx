@@ -93,6 +93,7 @@ const RegisterSection: FC = (() => {
 
   const onRegisterSubmit = (data: FormType) => {
     delete data.repeatPassword;
+    data.email = data.email.toLowerCase();
     dispatch(updateHomeFormSubmit(true))
     homeSocket.current.emit('registerFormSubmit', data)
     homeSocket.current.once('registerFormReturn', (msg: any) => {
@@ -581,6 +582,7 @@ const RegisterSection: FC = (() => {
                                 helperText={errors.email && errors['email']['message'] as ReactNode}
                                 fullWidth
                                 ref={ref}
+                                inputProps={{ style: { textTransform: 'lowercase' } }}
                                 onChange={(e: any) => {
                                   e.target.value = e.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
                                   onChange(e)

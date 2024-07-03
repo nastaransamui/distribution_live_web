@@ -41999,6 +41999,7 @@ input:checked + .tog-slider:before {
 
 .terms-section .terms-content .terms-text {
   padding-bottom: 24px;
+  word-break: break-all;
 }
 
 .terms-section .terms-content .terms-text:last-child {

@@ -34,6 +34,7 @@ const Header: FC = () => {
   const theme = useTheme();
   const router = useRouter();
   const maxWidth991 = useMediaQuery('(max-width:991px)');
+  const minWidth1200 = useMediaQuery('(min-width:1200px)');
   const clinicStatus = useSelector((state: AppState) => state.clinicStatus.value)
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
@@ -664,11 +665,21 @@ const Header: FC = () => {
                   e.preventDefault();
                   onhandleCloseMenu();
                 }}>
-                  <MenuIcon color={router.pathname !== '/home4' && router.pathname !== '/homecare' ? 'primary' : 'secondary'} fontSize='large' />
+                  <MenuIcon
+                    color={router.pathname !== '/home4'
+                      && router.pathname !== '/homecare'
+                      && router.pathname !== '/eyecarehome' ?
+                      'primary' : 'secondary'}
+                    fontSize='large' />
                 </Link>
               </ClickAwayListener>
-              <Link href="/" className="navbar-brand logo" style={{ marginTop: 10 }}>
-                <img src={logo_white} className={`img-fluid ${router.pathname !== '/home4' && router.pathname !== '/homecare' ? 'imgColorPrimary' : "imgColorSecondary"}`} alt="Logo" onClick={() => router.push('/')} />
+              <Link href="/" className="navbar-brand logo" style={{ marginLeft: minWidth1200 ? 100 : 0 }}>
+                <img style={{
+                  maxWidth: maxWidth991 ? "60px" : "70px",
+                  height: 'auto',
+                  float: maxWidth991 ? 'right' : 'unset'
+                }} src={logo} className={`img-fluid `} alt="Logo" onClick={() => router.push('/')} />
+                {/* ${router.pathname !== '/home4' && router.pathname !== '/homecare' && router.pathname !== '/eyecarehome' ? 'imgColorPrimary' : "imgColorSecondary"} */}
               </Link>
               {
                 maxWidth991 &&
@@ -699,7 +710,7 @@ const Header: FC = () => {
                   <div className="main-menu-wrapper"  >
                     <div className="menu-header" >
                       <Link href="/home" className="menu-logo">
-                        <img src={logo} className="img-fluid img" alt="Logo" />
+                        <img src={logo} className="img-fluid " alt="Logo" />
                       </Link>
                       <Link href="" id="menu_close" className="menu-close"
                         onClick={(e) => {

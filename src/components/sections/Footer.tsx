@@ -57,12 +57,14 @@ const Footer: FC = (() => {
                 <div className="col-lg-3 col-md-4">
                   <div className="footer-widget footer-about">
                     <div className="footer-logo">
-                      <img src={logo} alt="logo" className='img' />
+                      <img src={logo} alt="logo" style={{
+                        maxWidth: "100px",
+                        height: 'auto'
+                      }} />
                     </div>
                     <div className="footer-about-content">
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                        eiusmod tempor incididunt ut labore.
+                        On line panel for health care and doctors and patients
                       </p>
                     </div>
                   </div>
@@ -131,14 +133,14 @@ const Footer: FC = (() => {
                         <p>
                           <i>
                             <FeatherIcon icon="map-pin" style={{ width: "16px", height: "16px" }} />
-                          </i> 3556 Beech Street, USA
+                          </i> Thailand
                         </p>
                       </div>
                       <div className="footer-address">
                         <p>
                           <i>
                             <FeatherIcon icon="phone-call" style={{ width: "16px", height: "16px" }} />
-                          </i> +1 315 369 5943
+                          </i> +66(0)870 624648
                         </p>
                       </div>
                       <div className="footer-address mb-0">
