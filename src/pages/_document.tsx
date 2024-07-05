@@ -23,7 +23,7 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
   return (
     <Html lang="en" className={roboto.className} id='htmlId'>
       <Head>
-        <link rel="icon" href="favicon/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
         {emotionStyleTags}
       </Head>
       <body>
