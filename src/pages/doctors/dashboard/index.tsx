@@ -33,7 +33,7 @@ const DashboardPage: NextPage = () => {
         <meta name='description' />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
-        <title>Welcome to Distribution Live data</title>
+        <title>Welcome to Health care</title>
       </Head>
       <BreadCrumb subtitle='Dashboard' title='Dashboard' />
       <div className="content">
