@@ -18,7 +18,6 @@ import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
-// try to solve git conflict
 
 const DashboardPage: NextPage = () => {
 
@@ -33,7 +32,7 @@ const DashboardPage: NextPage = () => {
         <meta name='description' />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
-        <title>Welcome to Distribution Live data</title>
+        <title>Welcome conflict</title>
       </Head>
       <BreadCrumb subtitle='Dashboard' title='Dashboard' />
       <div className="content">
