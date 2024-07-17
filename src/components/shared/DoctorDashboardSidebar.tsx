@@ -140,8 +140,8 @@ const DoctorDashboardSidebar: FC = (() => {
                       <small className="unread-msg">23</small>
                     </Link>
                   </li>
-                  <li className={router.pathname == "/doctors/dashboard/profile-setting" ? "active" : ""}>
-                    <Link href="/doctors/dashboard/profile-setting">
+                  <li className={router.pathname == "/doctors/dashboard/profile" ? "active" : ""}>
+                    <Link href="/doctors/dashboard/profile">
                       <i className="fas fa-user-cog" />
                       <span>Profile Settings</span>
                     </Link>

@@ -251,7 +251,7 @@ const Header: FC = () => {
               </div>
             </div>
             <Link className="dropdown-item" href={`/${userProfile?.roleName}/dashboard`}>Dashboard</Link>
-            <Link className="dropdown-item" href={`/${userProfile?.roleName}/dashboard/profile-setting`}>Profile Settings</Link>
+            <Link className="dropdown-item" href={`/${userProfile?.roleName}/dashboard/profile`}>Profile Settings</Link>
             <Link className="dropdown-item" href="" onClick={(e) => {
               e.preventDefault()
               logOut()
@@ -310,8 +310,8 @@ const Header: FC = () => {
                   onhandleCloseMenu()
                 }}>Dashboard</Link></li>
             <li><Link
-              className={router.pathname == `/${userProfile?.roleName}/dashboard/profile-setting` ? 'active' : ''}
-              href={`/${userProfile?.roleName}/dashboard/profile-setting`} onClick={(e) => {
+              className={router.pathname == `/${userProfile?.roleName}/dashboard/profile` ? 'active' : ''}
+              href={`/${userProfile?.roleName}/dashboard/profile`} onClick={(e) => {
                 onhandleCloseMenu()
               }}>Profile Settings</Link></li>
             <li><Link

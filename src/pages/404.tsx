@@ -81,10 +81,10 @@ const Custom404: NextPage = (props: any) => {
             router.push('/', undefined, { shallow: true })
           }}><Image
               priority
-              src="/logo.png"
+              src="/assets/images/health_logo_clear.png"
               width={50}
               height={50}
-              alt="Picture of the author"
+              alt=""
             /></p>
           <div className="menu_links">
             {/* <a href="" className="link"
