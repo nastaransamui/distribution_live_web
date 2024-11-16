@@ -101,7 +101,7 @@ const Specialities: FC = (() => {
                   <div className="special-img">
                     <Link href="/consultation">
                       <img
-                        // src="assets/img/clinic/clinic-02.png"
+                        // src="assets/img/clinic/clinic-02.webp"
                         src={clinic_012}
                         alt=""
                         className="img-fluid"
@@ -123,7 +123,7 @@ const Specialities: FC = (() => {
                   <div className="special-img">
                     <Link href="/consultation">
                       <img
-                        // src="assets/img/clinic/clinic-03.png"
+                        // src="assets/img/clinic/clinic-03.webp"
                         src={clinic_013}
                         alt=""
                         className="img-fluid"
@@ -145,7 +145,7 @@ const Specialities: FC = (() => {
                   <div className="special-img">
                     <Link href="/consultation">
                       <img
-                        // src="assets/img/clinic/clinic-01.png"
+                        // src="assets/img/clinic/clinic-01.webp"
                         src={clinic_011}
                         alt=""
                         className="img-fluid"
@@ -167,7 +167,7 @@ const Specialities: FC = (() => {
                   <div className="special-img">
                     <Link href="/consultation">
                       <img
-                        // src="assets/img/clinic/clinic-05.png"
+                        // src="assets/img/clinic/clinic-05.webp"
                         src={clinic_015}
                         alt=""
                         className="img-fluid"

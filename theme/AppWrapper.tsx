@@ -94,7 +94,7 @@ const AppWrapper = ({ children }: ChildrenProps) => {
 
       });
       socket.current.on('connect', () => {
-        console.log('connect in Appwrapper page first')
+        // console.log('connect in Appwrapper page first')
         dispatch(updateHomeSocket(socket))
         setPercent(() => 100)
         setShowLoading(false)

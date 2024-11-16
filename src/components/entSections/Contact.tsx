@@ -21,7 +21,7 @@ const Contact: FC = (() => {
     <Fragment>
       <section className="appointment-section-fifteen" style={{
         ...muiVar,
-        backgroundImage: `url(/assets/images/book-appointment-bg_${theme.palette.primary.main.slice(1)}.png)`
+        backgroundImage: `url(/assets/images/book-appointment-bg_${theme.palette.primary.main.slice(1)}.webp)`
       }}>
         <div className="container">
           <div className="row ">

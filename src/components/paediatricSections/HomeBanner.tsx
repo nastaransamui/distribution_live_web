@@ -98,7 +98,7 @@ const HomeBanner: FC = (() => {
       <section className="banner-section-thirteen common-padding aos" data-aos="fade-down"
         style={{
           ...muiVar,
-          backgroundImage: `url('/assets/images/bg/home-13-banner_${theme.palette.primary.main.slice(1)}.png')`
+          backgroundImage: `url('/assets/images/bg/home-13-banner_${theme.palette.primary.main.slice(1)}.webp')`
         }}>
         <div className="container">
           <div className="row">
@@ -524,7 +524,7 @@ const HomeBanner: FC = (() => {
             <img src={baby_star} alt="#" />
           </div>
           <div className="banner-section-thirteen-bgs">
-            <img src={`/assets/images/bg/heart-1_${theme.palette.mode}.png`} alt="#" />
+            <img src={`/assets/images/bg/heart-1_${theme.palette.mode}.webp`} alt="#" />
           </div>
         </div>
       </section>

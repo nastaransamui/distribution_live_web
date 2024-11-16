@@ -151,7 +151,13 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
   const [virtualListHight, setVirtualListHight] = useState<number>(parentHeight)
   const [loginDialog, setLoginDialog] = useState<boolean>(false)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  // remove blinking image 
+  const [imageTimestamp, setImageTimestamp] = useState(new Date().getTime());
 
+  // Update the timestamp only when the profile image URL changes
+  useEffect(() => {
+    setImageTimestamp(new Date().getTime());
+  }, [userProfile]);
   const handleChange = (event: SelectChangeEvent) => {
     setSortBy(event.target.value as string);
     window.localStorage.setItem('sortBy', event.target.value as string)
@@ -183,7 +189,6 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
 
 
   useEffect(() => {
-    console.log(gridRowHeight)
     let rowCount = totalDoctors % columnCount == 0 ? totalDoctors / columnCount : Math.ceil(totalDoctors / columnCount)
     setVirtualGridHight(() => rowCount * gridRowHeight)
     setVirtualGridMinHeight(0)
@@ -476,7 +481,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                           }}
                             variant="square"
                             alt=""
-                            src={`${doctor?.profileImage}?random=${new Date().getTime()}`}
+                            src={`${doctor?.profileImage}?random=${imageTimestamp}`}
                             key={doctor?.profileImage}
                           >
                             <img className="img-fluid" src={doctors_profile} alt="" />
@@ -977,7 +982,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                     </span>
                   </Tooltip>
                 </Fragment>
-                <CardMedia
+                {/* <CardMedia
                   component="img"
                   sx={{
                     borderRadius: '5px',
@@ -993,9 +998,27 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                   height="194"
                   image={doctor?.profileImage == ''
                     ? doctors_profile :
-                    `${doctor?.profileImage}?random=${new Date().getTime()}`}
+                    `${doctor?.profileImage}?random=${imageTimestamp}`}
                   alt=""
-                />
+                /> */}
+                <Avatar sx={{
+                  width: 'auto',
+                  height: 'auto',
+                  borderRadius: '5px',
+                  transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
+                  "&:hover": {
+                    boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+                    transform: "scale(1.15)",
+                  },
+
+                }}
+                  variant="square"
+                  alt=""
+                  src={`${doctor?.profileImage}?random=${imageTimestamp}`}
+                  key={doctor?.profileImage}
+                >
+                  <img className="img-fluid" src={doctors_profile} alt="" />
+                </Avatar>
                 <CardContent
                   sx={{
                     bgcolor: theme.palette.background.default,
@@ -1592,7 +1615,10 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                   })
 
                 }} />
-                <label htmlFor="status_6" className="checktoggle">
+                <label htmlFor="status_6" className="checktoggle" style={{
+                  ["--beforeUrl" as string]: `url('/assets/images/icons/${dispalyType == 'grid' ? 'x-icon' : 'check'}.svg')` as CSSProperties,
+                  ["--afterUrl" as string]: `url('/assets/images/icons/${dispalyType == 'grid' ? 'check' : 'x-icon'}.svg')` as CSSProperties,
+                }}>
                   checkbox
                 </label>
               </div>

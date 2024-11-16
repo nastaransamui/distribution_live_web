@@ -98,7 +98,7 @@ const Dependent: FC = (() => {
       let metadata = {
         type: 'image/jpeg'
       };
-      let file = new File([data], `${params.row.name}.jpg`, metadata);
+      let file = new File([data], `${params.row.name}.webp`, metadata);
       setImageName(file.name)
     }
     createFile();
@@ -216,7 +216,7 @@ const Dependent: FC = (() => {
                     setEditValues((prevState: ValueType) => {
                       return {
                         ...prevState,
-                        Photo: '/assets/images/patients/patient.jpg',
+                        Photo: '/assets/images/patients/patient.webp',
                         Dob: dayjs(new Date()).format('DD MMM YYYY')
                       }
                     })

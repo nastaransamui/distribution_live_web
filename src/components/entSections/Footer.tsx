@@ -24,7 +24,7 @@ const Footer: FC = (() => {
     <Fragment>
       <footer className="footer footer-fifteen" style={{
         ...muiVar,
-        backgroundImage: `url(/assets/images/footer-fift-bg_${theme.palette.primary.main.slice(1)}.png)`
+        backgroundImage: `url(/assets/images/footer-fift-bg_${theme.palette.primary.main.slice(1)}.webp)`
       }}>
         <div className="footer-top footer-top-fifteen aos" data-aos="fade-up">
           <div className="container">

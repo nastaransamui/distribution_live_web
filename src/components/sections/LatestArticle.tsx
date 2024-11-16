@@ -28,7 +28,7 @@ const LatestArticle: FC = (() => {
               <div className="articles-grid w-100">
                 <div className="articles-info">
                   <div className="articles-left">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label="blog-details">
                       <div className="articles-img">
                         <img
                           src={BlogIMG11}
@@ -49,7 +49,7 @@ const LatestArticle: FC = (() => {
                         </li>
                       </ul>
                       <h4>
-                        <Link href="/blog/blog-details">
+                        <Link href="/blog/blog-details" aria-label="blog-details">
                           Doccure – Making your clinic painless visit?
                         </Link>
                       </h4>
@@ -71,7 +71,7 @@ const LatestArticle: FC = (() => {
               <div className="articles-grid w-100">
                 <div className="articles-info">
                   <div className="articles-left">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label="blog-details">
                       <div className="articles-img">
                         <img
                           src={BlogIMG12}
@@ -92,7 +92,7 @@ const LatestArticle: FC = (() => {
                         </li>
                       </ul>
                       <h4>
-                        <Link href="/blog/blog-details">
+                        <Link href="/blog/blog-details" aria-label="blog-details">
                           What are the benefits of Online Doctor Booking?
                         </Link>
                       </h4>
@@ -114,7 +114,7 @@ const LatestArticle: FC = (() => {
               <div className="articles-grid w-100">
                 <div className="articles-info">
                   <div className="articles-left">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label="blog-details">
                       <div className="articles-img">
                         <img
                           src={BlogIMG13}
@@ -135,7 +135,7 @@ const LatestArticle: FC = (() => {
                         </li>
                       </ul>
                       <h4>
-                        <Link href="/blog/blog-details">
+                        <Link href="/blog/blog-details" aria-label="blog-details">
                           Benefits of consulting with an Online Doctor
                         </Link>
                       </h4>
@@ -157,7 +157,7 @@ const LatestArticle: FC = (() => {
               <div className="articles-grid w-100">
                 <div className="articles-info">
                   <div className="articles-left">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label="blog-details">
                       <div className="articles-img">
                         <img
                           src={BlogIMG14}
@@ -178,7 +178,7 @@ const LatestArticle: FC = (() => {
                         </li>
                       </ul>
                       <h4>
-                        <Link href="/blog/blog-details">
+                        <Link href="/blog/blog-details" aria-label="blog-details">
                           5 Great reasons to use an Online Doctor
                         </Link>
                       </h4>

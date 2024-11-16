@@ -31,7 +31,7 @@ const SearchSection: FC = (() => {
                         InputProps={{
                           endAdornment: <InputAdornment position="end">
                             <span className="search-detect" style={{
-                              background: `${theme.palette.background.default} url(/assets/images/google-map.png) no-repeat 9px center`
+                              background: `${theme.palette.background.default} url(/assets/images/google-map.webp) no-repeat 9px center`
                             }}>Detect</span>
                           </InputAdornment>
                         }}

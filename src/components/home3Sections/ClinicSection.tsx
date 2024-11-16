@@ -132,8 +132,8 @@ const ClinicSection: FC = (() => {
                         }
                         let bgImage =
                           UrlExists(spec.imageId, spec.specialities) ?
-                            `/assets/images/clinics/${spec.imageId}.jpg` :
-                            `/assets/images/clinics/defaultBg.jpg`
+                            `/assets/images/clinics/${spec.imageId}.webp` :
+                            `/assets/images/clinics/defaultBg.webp`
                         return (
                           <div className="item" key={spec._id}>
                             <div className="clinic-item">

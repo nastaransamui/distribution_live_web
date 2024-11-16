@@ -2,7 +2,7 @@
 import { FC, Fragment, useEffect, useState, MouseEvent, useMemo, useRef } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
-import { IMG02, IMG03, IMG04, PatientImg1, PatientImg2, PatientImg4, PatientImg5, IMG09, IMG010, IMG011, doctor_17, PatientImg3 } from '@/public/assets/imagepath';
+import { IMG02, IMG03, IMG04, PatientImg1, PatientImg2, PatientImg4, PatientImg5, IMG09, IMG010, IMG011, doctor_17, PatientImg3, patient_profile } from '@/public/assets/imagepath';
 import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
 import Close from '@mui/icons-material/Close'
@@ -25,7 +25,10 @@ import match from 'autosuggest-highlight/match'
 import throttle from 'lodash/throttle';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material';
+import { Avatar, useTheme } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux/store';
+import { StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
 
 export function escapeRegExp(value: string) {
   return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -81,6 +84,7 @@ const ChatComponent: FC = (() => {
   dayjs.extend(weekday)
   dayjs.extend(updateLocale)
   const theme = useTheme();
+  const userProfile = useSelector((state: AppState) => state.userProfile.value)
   let weekdays: string[] = dayjs.updateLocale('en', {}).weekdays as string[]
   const { muiVar } = useScssVar();
   useEffect(() => {
@@ -101,299 +105,300 @@ const ChatComponent: FC = (() => {
 
   const currentUserId = '1'
   const userChatData: ChatDataType[] = useMemo(() => {
-    return [
-      // {
-      //   userType: 'D',
-      //   userData: {
-      //     userId: '1',
-      //     name: 'George Anderson',
-      //     image: doctor_17,
-      //     online: true,
-      //     idle: false,
-      //   },
-      //   messages: [
-      //     {
-      //       senderId: '1',
-      //       reciverId: '2',
-      //       message: 'Hey, How are you?',
-      //       time: new Date('2023-08-23T13:20:13.577+07:00'),
-      //       read: false,
-      //     },
-      //   ]
-      // },
-      {
-        userType: 'D',
-        userData: {
-          userId: '2',
-          name: 'Megan Bird',
-          image: IMG02,
-          online: true,
-          idle: true,
-        },
-        messages: [
-          {
-            senderId: '2',
-            reciverId: '1',
-            message: 'I\'ll call you later',
-            time: new Date('2023-08-22 09:20:13.577+07:00'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'D',
-        userData: {
-          userId: '3',
-          name: 'Alvin Boykin',
-          image: IMG03,
-          online: false,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '1',
-            reciverId: '3',
-            message: 'Hello. What can I do for you?',
-            time: new Date('2023-08-19T17:30:13.577+07:00'),
-            read: false,
-            attachment: ''
-          },
-          {
-            senderId: '3',
-            reciverId: '1',
-            message: 'I\'m just looking around. Will you tell me something about yourself?',
-            time: new Date('2023-08-18T10:20:13.577+07:00'),
-            read: false,
-            attachment: [
-              {
-                src: IMG010,
-                name: 'placeholder.jpg'
-              },
-              {
-                src: IMG09,
-                name: 'placeholder.jpg'
-              },
-            ]
-          },
-          {
-            senderId: '3',
-            reciverId: '1',
-            message: 'Are you there? That time!',
-            time: new Date('Mon Aug 17 2023 08:39:16'),
-            read: false,
-            attachment: ''
-          },
-          {
-            senderId: '1',
-            reciverId: '3',
-            message: 'Where?',
-            time: new Date('2023-08-19T17:25:13.577+07:00'),
-            read: false,
-            attachment: ''
-          },
-          {
-            senderId: '1',
-            reciverId: '3',
-            message: 'OK, my name is Limingqiang. I like singing, playing basketballand so on.',
-            time: new Date('2023-08-19T19:20:13.577+07:00'),
-            read: false,
-            attachment: [
-              {
-                src: IMG010,
-                name: 'placeholder.jpg'
-              },
-            ]
-          },
-          {
-            senderId: '3',
-            reciverId: '1',
-            message: `You wait for notice.
-            Consectetuorem ipsum dolor sit?
-            Ok?`,
-            time: new Date('2023-08-19T17:20:13.577+07:00'),
-            read: false,
-            attachment: ''
-          },
-          {
-            senderId: '3',
-            reciverId: '1',
-            message: `Lorem ipsum dolor sit amet, consectetur adipiscing elit,`,
-            time: new Date('2023-08-19T17:20:13.577+07:00'),
-            read: false,
-            attachment: ''
-          },
-          {
-            senderId: '1',
-            reciverId: '3',
-            message: `Lorem ipsum dollar sit`,
-            time: new Date('2023-08-19T17:20:13.577+07:00'),
-            read: false,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'P',
-        userData: {
-          userId: '4',
-          name: 'Nicholas Hicks',
-          image: IMG04,
-          online: true,
-          idle: true,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'Thats very good UI design',
-            time: new Date('Mon Aug 21 2023 17:39:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'P',
-        userData: {
-          userId: '5',
-          name: 'Sherri McCarthy',
-          image: IMG04,
-          online: false,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '5',
-            reciverId: '3',
-            message: 'Yesterday i completed the task',
-            time: new Date('Tue Aug 23 2023 12:31:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'P',
-        userData: {
-          userId: '6',
-          name: 'Roger Loyd',
-          image: PatientImg1,
-          online: false,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'What is the major functionality?',
-            time: new Date('Tue Aug 17 2023 02:39:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'P',
-        userData: {
-          userId: '7',
-          name: 'Francis Giordano',
-          image: PatientImg2,
-          online: false,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'This has allowed me to showcase not only my technical skills',
-            time: new Date('Tue Aug 22 2023 11:39:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'P',
-        userData: {
-          userId: '8',
-          name: 'Kate Mason',
-          image: PatientImg4,
-          online: true,
-          idle: true,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'Let\'s talk briefly in the evening.',
-            time: new Date('Tue Jul 10 2023 10:59:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'P',
-        userData: {
-          userId: '9',
-          name: 'Glenn Johnson',
-          image: PatientImg5,
-          online: true,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'Do you have any collections? If so, what of?',
-            time: new Date('Tue Aug 18 2023 13:29:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'D',
-        userData: {
-          userId: '10',
-          name: 'Megan Smith',
-          image: PatientImg3,
-          online: true,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'Connect the two modules with in 1 day.',
-            time: new Date('Tue Aug 12 2023 08:39:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'D',
-        userData: {
-          userId: '11',
-          name: 'Monty Smith',
-          image: PatientImg2,
-          online: true,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'Connect the two modules with in 1 day.',
-            time: new Date('Tue Jul 12 2022 23:39:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-    ]
+    return []
+    // return [
+    //   // {
+    //   //   userType: 'D',
+    //   //   userData: {
+    //   //     userId: '1',
+    //   //     name: 'George Anderson',
+    //   //     image: doctor_17,
+    //   //     online: true,
+    //   //     idle: false,
+    //   //   },
+    //   //   messages: [
+    //   //     {
+    //   //       senderId: '1',
+    //   //       reciverId: '2',
+    //   //       message: 'Hey, How are you?',
+    //   //       time: new Date('2023-08-23T13:20:13.577+07:00'),
+    //   //       read: false,
+    //   //     },
+    //   //   ]
+    //   // },
+    //   {
+    //     userType: 'D',
+    //     userData: {
+    //       userId: '2',
+    //       name: 'Megan Bird',
+    //       image: IMG02,
+    //       online: true,
+    //       idle: true,
+    //     },
+    //     messages: [
+    //       {
+    //         senderId: '2',
+    //         reciverId: '1',
+    //         message: 'I\'ll call you later',
+    //         time: new Date('2023-08-22 09:20:13.577+07:00'),
+    //         read: true,
+    //         attachment: ''
+    //       },
+    //     ]
+    //   },
+    //   {
+    //     userType: 'D',
+    //     userData: {
+    //       userId: '3',
+    //       name: 'Alvin Boykin',
+    //       image: IMG03,
+    //       online: false,
+    //       idle: false,
+    //     },
+    //     messages: [
+    //       {
+    //         senderId: '1',
+    //         reciverId: '3',
+    //         message: 'Hello. What can I do for you?',
+    //         time: new Date('2023-08-19T17:30:13.577+07:00'),
+    //         read: false,
+    //         attachment: ''
+    //       },
+    //       {
+    //         senderId: '3',
+    //         reciverId: '1',
+    //         message: 'I\'m just looking around. Will you tell me something about yourself?',
+    //         time: new Date('2023-08-18T10:20:13.577+07:00'),
+    //         read: false,
+    //         attachment: [
+    //           {
+    //             src: IMG010,
+    //             name: 'placeholder.webp'
+    //           },
+    //           {
+    //             src: IMG09,
+    //             name: 'placeholder.webp'
+    //           },
+    //         ]
+    //       },
+    //       {
+    //         senderId: '3',
+    //         reciverId: '1',
+    //         message: 'Are you there? That time!',
+    //         time: new Date('Mon Aug 17 2023 08:39:16'),
+    //         read: false,
+    //         attachment: ''
+    //       },
+    //       {
+    //         senderId: '1',
+    //         reciverId: '3',
+    //         message: 'Where?',
+    //         time: new Date('2023-08-19T17:25:13.577+07:00'),
+    //         read: false,
+    //         attachment: ''
+    //       },
+    //       {
+    //         senderId: '1',
+    //         reciverId: '3',
+    //         message: 'OK, my name is Limingqiang. I like singing, playing basketballand so on.',
+    //         time: new Date('2023-08-19T19:20:13.577+07:00'),
+    //         read: false,
+    //         attachment: [
+    //           {
+    //             src: IMG010,
+    //             name: 'placeholder.webp'
+    //           },
+    //         ]
+    //       },
+    //       {
+    //         senderId: '3',
+    //         reciverId: '1',
+    //         message: `You wait for notice.
+    //         Consectetuorem ipsum dolor sit?
+    //         Ok?`,
+    //         time: new Date('2023-08-19T17:20:13.577+07:00'),
+    //         read: false,
+    //         attachment: ''
+    //       },
+    //       {
+    //         senderId: '3',
+    //         reciverId: '1',
+    //         message: `Lorem ipsum dolor sit amet, consectetur adipiscing elit,`,
+    //         time: new Date('2023-08-19T17:20:13.577+07:00'),
+    //         read: false,
+    //         attachment: ''
+    //       },
+    //       {
+    //         senderId: '1',
+    //         reciverId: '3',
+    //         message: `Lorem ipsum dollar sit`,
+    //         time: new Date('2023-08-19T17:20:13.577+07:00'),
+    //         read: false,
+    //         attachment: ''
+    //       },
+    //     ]
+    //   },
+    //   {
+    //     userType: 'P',
+    //     userData: {
+    //       userId: '4',
+    //       name: 'Nicholas Hicks',
+    //       image: IMG04,
+    //       online: true,
+    //       idle: true,
+    //     },
+    //     messages: [
+    //       {
+    //         senderId: '',
+    //         reciverId: '3',
+    //         message: 'Thats very good UI design',
+    //         time: new Date('Mon Aug 21 2023 17:39:16'),
+    //         read: true,
+    //         attachment: ''
+    //       },
+    //     ]
+    //   },
+    //   {
+    //     userType: 'P',
+    //     userData: {
+    //       userId: '5',
+    //       name: 'Sherri McCarthy',
+    //       image: IMG04,
+    //       online: false,
+    //       idle: false,
+    //     },
+    //     messages: [
+    //       {
+    //         senderId: '5',
+    //         reciverId: '3',
+    //         message: 'Yesterday i completed the task',
+    //         time: new Date('Tue Aug 23 2023 12:31:16'),
+    //         read: true,
+    //         attachment: ''
+    //       },
+    //     ]
+    //   },
+    //   {
+    //     userType: 'P',
+    //     userData: {
+    //       userId: '6',
+    //       name: 'Roger Loyd',
+    //       image: PatientImg1,
+    //       online: false,
+    //       idle: false,
+    //     },
+    //     messages: [
+    //       {
+    //         senderId: '',
+    //         reciverId: '3',
+    //         message: 'What is the major functionality?',
+    //         time: new Date('Tue Aug 17 2023 02:39:16'),
+    //         read: true,
+    //         attachment: ''
+    //       },
+    //     ]
+    //   },
+    //   {
+    //     userType: 'P',
+    //     userData: {
+    //       userId: '7',
+    //       name: 'Francis Giordano',
+    //       image: PatientImg2,
+    //       online: false,
+    //       idle: false,
+    //     },
+    //     messages: [
+    //       {
+    //         senderId: '',
+    //         reciverId: '3',
+    //         message: 'This has allowed me to showcase not only my technical skills',
+    //         time: new Date('Tue Aug 22 2023 11:39:16'),
+    //         read: true,
+    //         attachment: ''
+    //       },
+    //     ]
+    //   },
+    //   {
+    //     userType: 'P',
+    //     userData: {
+    //       userId: '8',
+    //       name: 'Kate Mason',
+    //       image: PatientImg4,
+    //       online: true,
+    //       idle: true,
+    //     },
+    //     messages: [
+    //       {
+    //         senderId: '',
+    //         reciverId: '3',
+    //         message: 'Let\'s talk briefly in the evening.',
+    //         time: new Date('Tue Jul 10 2023 10:59:16'),
+    //         read: true,
+    //         attachment: ''
+    //       },
+    //     ]
+    //   },
+    //   {
+    //     userType: 'P',
+    //     userData: {
+    //       userId: '9',
+    //       name: 'Glenn Johnson',
+    //       image: PatientImg5,
+    //       online: true,
+    //       idle: false,
+    //     },
+    //     messages: [
+    //       {
+    //         senderId: '',
+    //         reciverId: '3',
+    //         message: 'Do you have any collections? If so, what of?',
+    //         time: new Date('Tue Aug 18 2023 13:29:16'),
+    //         read: true,
+    //         attachment: ''
+    //       },
+    //     ]
+    //   },
+    //   {
+    //     userType: 'D',
+    //     userData: {
+    //       userId: '10',
+    //       name: 'Megan Smith',
+    //       image: PatientImg3,
+    //       online: true,
+    //       idle: false,
+    //     },
+    //     messages: [
+    //       {
+    //         senderId: '',
+    //         reciverId: '3',
+    //         message: 'Connect the two modules with in 1 day.',
+    //         time: new Date('Tue Aug 12 2023 08:39:16'),
+    //         read: true,
+    //         attachment: ''
+    //       },
+    //     ]
+    //   },
+    //   {
+    //     userType: 'D',
+    //     userData: {
+    //       userId: '11',
+    //       name: 'Monty Smith',
+    //       image: PatientImg2,
+    //       online: true,
+    //       idle: false,
+    //     },
+    //     messages: [
+    //       {
+    //         senderId: '',
+    //         reciverId: '3',
+    //         message: 'Connect the two modules with in 1 day.',
+    //         time: new Date('Tue Jul 12 2022 23:39:16'),
+    //         read: true,
+    //         attachment: ''
+    //       },
+    //     ]
+    //   },
+    // ]
   }, [])
 
   const [allCurrentUserMessage, setAllCurrentUserMessage] = useState<MessageType[]>([])
@@ -406,6 +411,8 @@ const ChatComponent: FC = (() => {
 
     }, 100);
   }, [activeChat, userChatData])
+
+  console.log(userChatData)
   const [options, setOptions] = useState<readonly ChatDataType[]>([]);
   const [value, setValue] = useState<ChatDataType | null>(null);
   const [inputValue, setInputValue] = useState('');
@@ -497,7 +504,18 @@ const ChatComponent: FC = (() => {
     }
   }
 
+  // remove blinking image 
+  const [imageTimestamp, setImageTimestamp] = useState(new Date().getTime());
 
+  // Update the timestamp only when the profile image URL changes
+  useEffect(() => {
+    setImageTimestamp(new Date().getTime());
+  }, [userProfile]);
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
   return (
     <Fragment>
       <div className="content top-space" style={muiVar}>
@@ -691,6 +709,9 @@ const ChatComponent: FC = (() => {
                   <div className="chat-users-list">
                     <div className="chat-scroll">
                       {
+                        userChatData.length == 0 ? <div style={{ width: '100%', height: "calc(100vh - 324px)", display: "flex", justifyContent: "center", alignItems: "center" }}>Start chat</div> : "chat persons comehiere"
+                      }
+                      {/* {
                         userChatData
                           .sort((a, b) => new Date(b?.messages[0]?.time).valueOf() - new Date(a?.messages[0]?.time).valueOf())
                           .map((users, index) => {
@@ -765,7 +786,7 @@ const ChatComponent: FC = (() => {
                               )
                             }
                           })
-                      }
+                      } */}
                     </div>
                   </div>
                 </div>
@@ -777,12 +798,17 @@ const ChatComponent: FC = (() => {
                     </Link>
                     <div className="media d-flex">
                       <div className="media-img-wrap flex-shrink-0">
-                        <div className="avatar avatar-online">
-                          <img src={doctor_17} alt="User" className="avatar-img rounded-circle" />
-                        </div>
+                        <StyledBadge
+                          overlap="circular"
+                          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                          variant="dot"
+                          online={userProfile!.online}
+                        >
+                          <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${imageTimestamp}` : ''}`} />
+                        </StyledBadge>
                       </div>
                       <div className="media-body flex-grow-1">
-                        <div className="user-name">George Anderson</div>
+                        <div className="user-name">{`${userProfile?.firstName} ${userProfile?.lastName}`}</div>
                         <div className="user-status">online</div>
                       </div>
                     </div>

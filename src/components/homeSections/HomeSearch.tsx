@@ -365,7 +365,7 @@ const HomeSearch: FC = (() => {
 
         </div>
       </div>
-      <img src='/assets/images/search-bg1.png' alt='' />
+      <img src='/assets/images/search-bg1.webp' alt='' />
     </section>
   )
 })

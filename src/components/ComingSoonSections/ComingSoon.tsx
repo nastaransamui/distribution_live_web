@@ -18,7 +18,7 @@ const ComingSoon: FC = (() => {
               <div className="error-info">
                 <div className="error-img">
                   <img
-                    src={`/assets/images/coming-soon_${theme.palette.primary.main.slice(1)}.png`}
+                    src={`/assets/images/coming-soon_${theme.palette.primary.main.slice(1)}.webp`}
                     className="img-fluid"
                     alt=""
                   />

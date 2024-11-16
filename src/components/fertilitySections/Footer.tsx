@@ -136,9 +136,9 @@ const Footer: FC = (() => {
                               'aria-labelledby': 'basic-button',
                             }}
                           >
-                            <MenuItem data-lang-value="en" onClick={handleClose}><img width={20} height={20} src={`/lang/en.png`} alt='' style={{ marginBottom: -6 }} />&nbsp;English</MenuItem>
+                            <MenuItem data-lang-value="en" onClick={handleClose}><img width={20} height={20} src={`/lang/en.webp`} alt='' style={{ marginBottom: -6 }} />&nbsp;English</MenuItem>
 
-                            <MenuItem data-lang-value="th" onClick={handleClose}><img width={20} height={20} src={`/lang/th.png`} alt='' style={{ marginBottom: -6 }} />&nbsp;Thai</MenuItem>
+                            <MenuItem data-lang-value="th" onClick={handleClose}><img width={20} height={20} src={`/lang/th.webp`} alt='' style={{ marginBottom: -6 }} />&nbsp;Thai</MenuItem>
                           </Menu>
                         </Box>
                         <Box sx={{ display: { xl: 'flex', lg: 'flex', md: 'flex', sm: 'none', xs: 'none' } }}>
@@ -150,9 +150,9 @@ const Footer: FC = (() => {
                             onChange={handleChange}
                             fullWidth
                           >
-                            <MenuItem value="en"><img width={20} height={20} src={`/lang/en.png`} alt='' style={{ marginBottom: -6 }} />&nbsp;English</MenuItem>
+                            <MenuItem value="en"><img width={20} height={20} src={`/lang/en.webp`} alt='' style={{ marginBottom: -6 }} />&nbsp;English</MenuItem>
 
-                            <MenuItem value="th"><img width={20} height={20} src={`/lang/th.png`} alt='' style={{ marginBottom: -6 }} />&nbsp;Thai</MenuItem>
+                            <MenuItem value="th"><img width={20} height={20} src={`/lang/th.webp`} alt='' style={{ marginBottom: -6 }} />&nbsp;Thai</MenuItem>
                           </Select>
                         </Box>
                       </FormControl>

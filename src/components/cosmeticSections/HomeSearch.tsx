@@ -525,7 +525,7 @@ const HomeSearch: FC = (() => {
             <div className="col-lg-6">
               <div className="banner-image-sixteen"
                 style={{
-                  backgroundImage: `url(/assets/images/banner-sixteen-bg_${theme.palette.primary.main.slice(1)}.png)`
+                  backgroundImage: `url(/assets/images/banner-sixteen-bg_${theme.palette.primary.main.slice(1)}.webp)`
                 }}>
                 <div className="banner-inner-img-sixteen">
                   <img src={banrightimg1} alt="" className="img-fluid" />

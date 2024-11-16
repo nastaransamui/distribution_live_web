@@ -79,7 +79,7 @@ const HomeBanner: FC = (() => {
 
   return (
     <Fragment>
-      <section className="banner-section" style={{ ...muiVar, background: `url(/assets/images/bg/home-10-banner_${theme.palette.primary.main.slice(1)}.png)` }}>
+      <section className="banner-section" style={{ ...muiVar, background: `url(/assets/images/bg/home-10-banner_${theme.palette.primary.main.slice(1)}.webp)` }}>
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-7">

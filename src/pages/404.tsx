@@ -81,7 +81,7 @@ const Custom404: NextPage = (props: any) => {
             router.push('/', undefined, { shallow: true })
           }}><Image
               priority
-              src="/assets/images/health_logo_clear.png"
+              src="/assets/images/health_logo_clear.webp"
               width={50}
               height={50}
               alt=""

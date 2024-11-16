@@ -94,7 +94,7 @@ const HomeSearchBox: FC<HomeSearchBoxProps> = (({ showFilter, setShowFilter }) =
               InputProps={{
                 startAdornment:
                   <InputAdornment position="start" >
-                    <IconButton disableTouchRipple onClick={() => {
+                    <IconButton aria-label='search-icon' disableTouchRipple onClick={() => {
                       keyWord !== '' && setKeyWord('')
                     }}>
                       {keyWord == '' ? <FeatherIcon
@@ -108,7 +108,7 @@ const HomeSearchBox: FC<HomeSearchBoxProps> = (({ showFilter, setShowFilter }) =
                     </IconButton>
                   </InputAdornment>,
                 endAdornment: <InputAdornment position='end'>
-                  <IconButton disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
+                  <IconButton aria-label='filter-icon' disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
                     <FeatherIcon icon="filter" style={{ width: "16px", color: theme.palette.secondary.main }} />
                   </IconButton>
                 </InputAdornment>,

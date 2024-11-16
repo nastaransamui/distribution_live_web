@@ -33,7 +33,7 @@ const WhyChooseUs: FC = (() => {
               <div className="you-get-list">
                 <ul>
                   <li>
-                    <div className="get-list-content" style={{ backgroundImage: `url(/assets/images/chooseus-ryt-1_${theme.palette.mode}.png)` }}>
+                    <div className="get-list-content" style={{ backgroundImage: `url(/assets/images/chooseus-ryt-1_${theme.palette.mode}.webp)` }}>
                       <div className="get-icon">
                         <ChooseIconOneSvg />
                       </div>
@@ -47,7 +47,7 @@ const WhyChooseUs: FC = (() => {
                     </div>
                   </li>
                   <li>
-                    <div className="get-list-content second-bg" style={{ backgroundImage: `url(/assets/images/chooseus-ryt-2_${theme.palette.mode}.png)` }}>
+                    <div className="get-list-content second-bg" style={{ backgroundImage: `url(/assets/images/chooseus-ryt-2_${theme.palette.mode}.webp)` }}>
                       <div className="get-icon">
                         <ChooseIconTwoSvg />
                       </div>
@@ -61,7 +61,7 @@ const WhyChooseUs: FC = (() => {
                     </div>
                   </li>
                   <li>
-                    <div className="get-list-content" style={{ backgroundImage: `url(/assets/images/chooseus-ryt-1_${theme.palette.mode}.png)` }}>
+                    <div className="get-list-content" style={{ backgroundImage: `url(/assets/images/chooseus-ryt-1_${theme.palette.mode}.webp)` }}>
                       <div className="get-icon">
                         <ChooseIconThreeSvg />
                       </div>
@@ -75,7 +75,7 @@ const WhyChooseUs: FC = (() => {
                     </div>
                   </li>
                   <li>
-                    <div className="get-list-content second-bg" style={{ backgroundImage: `url(/assets/images/chooseus-ryt-2_${theme.palette.mode}.png)` }}>
+                    <div className="get-list-content second-bg" style={{ backgroundImage: `url(/assets/images/chooseus-ryt-2_${theme.palette.mode}.webp)` }}>
                       <div className="get-icon">
                         <ChooseIconFourSvg />
                       </div>

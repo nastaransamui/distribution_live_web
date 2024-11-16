@@ -89,7 +89,7 @@ const HomeSearch: FC = (() => {
 
   return (
     <Fragment>
-      <section className="banner-section-fifteen" style={{ ...muiVar, backgroundImage: `url(/assets/images/banner-fifteen_${theme.palette.primary.main.slice(1)}.png)` }}>
+      <section className="banner-section-fifteen" style={{ ...muiVar, backgroundImage: `url(/assets/images/banner-fifteen_${theme.palette.primary.main.slice(1)}.webp)` }}>
         <div className="container">
           <div className="row">
             <div className="col-lg-7">
@@ -583,7 +583,7 @@ const HomeSearch: FC = (() => {
             <div className="col-lg-5">
               <div className="banner-right-fifteen">
                 <img
-                  src={`/assets/images/banner-fifteen-ryt_${theme.palette.secondary.main.slice(1)}.png`}
+                  src={`/assets/images/banner-fifteen-ryt_${theme.palette.secondary.main.slice(1)}.webp`}
                   alt="image"
                   className="img-fluid"
                 />

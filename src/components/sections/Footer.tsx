@@ -175,22 +175,22 @@ const Footer: FC = (() => {
                     <div className="social-icon">
                       <ul>
                         <li>
-                          <Link href="#" target="_blank">
+                          <Link href="#" target="_blank" aria-label="socialmedia">
                             <i className="fab fa-facebook" />{" "}
                           </Link>
                         </li>
                         <li>
-                          <Link href="#" target="_blank">
+                          <Link href="#" target="_blank" aria-label="socialmedia">
                             <i className="fab fa-instagram" />
                           </Link>
                         </li>
                         <li>
-                          <Link href="#" target="_blank">
+                          <Link href="#" target="_blank" aria-label="socialmedia">
                             <i className="fab fa-twitter" />{" "}
                           </Link>
                         </li>
                         <li>
-                          <Link href="#" target="_blank">
+                          <Link href="#" target="_blank" aria-label="socialmedia">
                             <i className="fab fa-linkedin-in" />
                           </Link>
                         </li>
@@ -213,7 +213,7 @@ const Footer: FC = (() => {
                         Copyright © 2023{" "}
                         <Link
                           href="https://nastaransamui.github.io/"
-                          target="_blank"
+                          target="_blank" aria-label="socialmedia"
                         >
                           Mj.
                         </Link>{" "}

@@ -30,7 +30,7 @@ const OurBest: FC = (() => {
   return (
     <section className="our-best-work-sec" style={{
       ...muiVar,
-      backgroundImage: `url(/assets/images/bg/video-sec-bg_${theme.palette.secondary.main.slice(1)}.png)`
+      backgroundImage: `url(/assets/images/bg/video-sec-bg_${theme.palette.secondary.main.slice(1)}.webp)`
     }}>
       <div className="container">
         <div className="section-head-fourteen" data-aos="fade-down">

@@ -3529,7 +3529,7 @@ table .table-hover tbody tr:hover td {
   position: relative;
   padding: 52px 0 0 0;
   background-color: #ffffff;
-  background-image: url(/assets/images/footer-fift-bg.png);
+  background-image: url(/assets/images/footer-fift-bg.webp);
   background-position: top left;
   background-repeat: no-repeat;
   background-size: 50% 100%;
@@ -3805,7 +3805,7 @@ table .table-hover tbody tr:hover td {
   background: #ffffff;
   border-top: 1px solid #E2E2E2;
   position: relative;
-  background-image: url(/assets/images/map-bg.png);
+  background-image: url(/assets/images/map-bg.webp);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: top center;
@@ -7112,7 +7112,7 @@ html.menu-opened body {
   color: #6B7280;
   position: relative;
   overflow: hidden;
-  background: url(/assets/images/footer-arrow.png) no-repeat -10px;
+  background: url(/assets/images/footer-arrow.webp) no-repeat -10px;
   -webkit-transition: all 0.5s ease-in-out;
   -ms-transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
@@ -7121,7 +7121,7 @@ html.menu-opened body {
 }
 .footer-one .footer-top .footer-widget.footer-menu ul li a:hover {
   color: #0E82FD;
-  background: url(/assets/images/footer-arrow.png) no-repeat 4px;
+  background: url(/assets/images/footer-arrow.webp) no-repeat 4px;
   padding-left: 20px;
   -webkit-transition: all 0.5s ease-in-out;
   -ms-transition: all 0.5s ease-in-out;
@@ -7523,7 +7523,7 @@ html.menu-opened body {
   }
 }
 .footer-three .footer-bottom .copyright {
-  borde-top: 1px solid #D9D9D9;
+  border-top: 1px solid #D9D9D9;
 }
 .footer-three .footer-bottom .copyright .copyright-menu p {
   color: #000000;
@@ -7743,7 +7743,7 @@ html.menu-opened body {
 
 .footer.footer-thirteen {
   background: #ffffff;
-  background-image: url(/assets/images/bg/Map-thirteen.png);
+  background-image: url(/assets/images/bg/Map-thirteen.webp);
   background-repeat: no-repeat;
   background-position: center;
   position: relative;
@@ -8195,7 +8195,7 @@ html.menu-opened body {
 
 /****** PAGES ******/
 .section-search {
-  background: #f9f9f9 url(/assets/images/search-bg.png) no-repeat bottom center;
+  background: #f9f9f9 url(/assets/images/search-bg.webp) no-repeat bottom center;
   min-height: 450px;
   background-size: 100% auto;
   position: relative;
@@ -8314,7 +8314,7 @@ html.menu-opened body {
   }
 }
 .section-search .banner-wrapper .search-box .search-location .form-control {
-  background: #ffffff url(/assets/images/location.png) no-repeat 10px center;
+  background: #ffffff url(/assets/images/location.webp) no-repeat 10px center;
 }
 .section-search .banner-wrapper .search-box .search-info {
   -ms-flex: 0 0 490px;
@@ -8345,7 +8345,7 @@ html.menu-opened body {
   }
 }
 .section-search .banner-wrapper .search-box .search-info .form-control {
-  background: #ffffff url(/assets/images/search.png) no-repeat 10px center;
+  background: #ffffff url(/assets/images/search.webp) no-repeat 10px center;
 }
 .section-search .banner-wrapper .search-box .search-btn {
   width: 46px;
@@ -8962,7 +8962,7 @@ html.menu-opened body {
 }
 .banner-section::after {
   content: "";
-  background: url(/assets/images/banner-bg.png);
+  background: url(/assets/images/banner-bg.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -9578,7 +9578,7 @@ html.menu-opened body {
 }
 .doctors-section::after {
   content: "";
-  background: url(/assets/images/bg/doctor-shape-img1.png);
+  background: url(/assets/images/bg/doctor-shape-img1.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: left;
@@ -9597,7 +9597,7 @@ html.menu-opened body {
 }
 .doctors-section::before {
   content: "";
-  background: url(/assets/images/bg/doctor-shape-img2.png);
+  background: url(/assets/images/bg/doctor-shape-img2.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: right;
@@ -9645,7 +9645,7 @@ html.menu-opened body {
   }
 }
 
-@-webkit-keyframes blinker {
+@keyframes blinker {
   from {
     opacity: 1;
   }
@@ -9815,7 +9815,7 @@ html.menu-opened body {
 }
 .work-section::after {
   content: "";
-  background: url(/assets/images/bg/doctor-shape-img1.png);
+  background: url(/assets/images/bg/doctor-shape-img1.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: left;
@@ -9834,7 +9834,7 @@ html.menu-opened body {
 }
 .work-section::before {
   content: "";
-  background: url(/assets/images/bg/doctor-shape-img2.png);
+  background: url(/assets/images/bg/doctor-shape-img2.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: right;
@@ -9962,7 +9962,7 @@ html.menu-opened body {
 }
 .work-section::after {
   content: "";
-  background: url(/assets/images/bg/doctor-shape-img1.png);
+  background: url(/assets/images/bg/doctor-shape-img1.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: left;
@@ -9981,7 +9981,7 @@ html.menu-opened body {
 }
 .work-section::before {
   content: "";
-  background: url(/assets/images/bg/doctor-shape-img2.png);
+  background: url(/assets/images/bg/doctor-shape-img2.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: right;
@@ -10275,7 +10275,7 @@ html.menu-opened body {
 
 .app-bg {
   background: #0E82FD;
-  background-image: url(/assets/images/app-bg.png);
+  background-image: url(/assets/images/app-bg.webp);
   background-position: right top;
   background-repeat: no-repeat;
   border-radius: 25px;
@@ -10616,7 +10616,7 @@ html.menu-opened body {
   color: #6B7280;
   position: relative;
   overflow: hidden;
-  background: url(/assets/images/footer-arrow.png) no-repeat -20px 20px;
+  background: url(/assets/images/footer-arrow.webp) no-repeat -20px 20px;
   -webkit-transition: all 0.5s ease-in-out;
   -ms-transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
@@ -11048,7 +11048,7 @@ html.menu-opened body {
   padding: 0;
 }
 .social-share > li {
-  display: inline-block;
+  display: block;
   float: left;
   margin-left: 10px;
   text-align: center;
@@ -14984,22 +14984,22 @@ span.agree {
   cursor: pointer;
 }
 .country-select .select-col .flagstrap-icon.flagstrap-in, .country-select .select-col .flagstrap-icon.flagstrap-ng, .country-select .select-col .flagstrap-icon.flagstrap-gb, .country-select .select-col .flagstrap-icon.flagstrap-us {
-  /* background-image: url(/assets/images/flag/india.png); */
+  /* background-image: url(/assets/images/flag/india.webp); */
   background-position: center;
   width: 33px;
   height: 22px;
   background-size: cover;
   border-radius: 4px;
 }
-.country-select .select-col .flagstrap-icon.flagstrap-ng {
-  /* background-image: url(/assets/images/flag/ng.png); */
-}
-.country-select .select-col .flagstrap-icon.flagstrap-gb {
-  /* background-image: url(/assets/images/flag/gb.png); */
-}
-.country-select .select-col .flagstrap-icon.flagstrap-us {
-  /* background-image: url(/assets/images/flag/usa.png); */
-}
+/* .country-select .select-col .flagstrap-icon.flagstrap-ng {
+  background-image: url(/assets/images/flag/ng.webp);
+} */
+/* .country-select .select-col .flagstrap-icon.flagstrap-gb {
+  background-image: url(/assets/images/flag/gb.webp);
+} */
+/* .country-select .select-col .flagstrap-icon.flagstrap-us {
+  background-image: url(/assets/images/flag/usa.webp);
+} */
 .country-select .number-col input {
   padding-left: 96px;
 }
@@ -16039,7 +16039,7 @@ span.call-duration.float-end {
 }
 .breadcrumb-bar-one::after {
   content: "";
-  background: url(/assets/images/banner-bg.png);
+  background: url(/assets/images/banner-bg.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -17797,7 +17797,7 @@ span.call-duration.float-end {
 }
 
 .section-search-1 {
-  background: #f9f9f9 url(/assets/images/slider-bg.jpg) no-repeat bottom center;
+  background: #f9f9f9 url(/assets/images/slider-bg.webp) no-repeat bottom center;
   min-height: 450px;
   position: relative;
   background-blend-mode: Darken;
@@ -18063,7 +18063,7 @@ span.call-duration.float-end {
   }
 }
 .pharmacy-home-slider .banner-wrapper .search-box form .search-location .form-control {
-  background: #ffffff url(/assets/images/location.png) no-repeat 10px center;
+  background: #ffffff url(/assets/images/location.webp) no-repeat 10px center;
 }
 .pharmacy-home-slider .banner-wrapper .search-box form .form-control {
   border: 1px solid #cccccc;
@@ -18104,7 +18104,7 @@ span.call-duration.float-end {
   }
 }
 .pharmacy-home-slider .banner-wrapper .search-box form .search-info .form-control {
-  background: #ffffff url(/assets/images/search.png) no-repeat 10px center;
+  background: #ffffff url(/assets/images/search.webp) no-repeat 10px center;
 }
 .pharmacy-home-slider .banner-wrapper .search-box form .search-btn {
   width: 46px;
@@ -18205,7 +18205,7 @@ span.call-duration.float-end {
   width: 240px;
 }
 .banner-wrapper .search-box-3 .search-location .form-control {
-  background: #ffffff url(/assets/images/location.png) no-repeat 10px center;
+  background: #ffffff url(/assets/images/location.webp) no-repeat 10px center;
 }
 .banner-wrapper .search-box-3 .form-group {
   margin-bottom: 0px;
@@ -18224,10 +18224,10 @@ span.call-duration.float-end {
   width: 490px;
 }
 .banner-wrapper .search-box-3 .search-info .form-control {
-  background: #ffffff url(/assets/images/search.png) no-repeat 10px center;
+  background: #ffffff url(/assets/images/search.webp) no-repeat 10px center;
 }
 .banner-wrapper .search-box-3 .form-control {
-  background: #ffffff url(/assets/images/search.png) no-repeat 10px center;
+  background: #ffffff url(/assets/images/search.webp) no-repeat 10px center;
 }
 .banner-wrapper .search-box-3 .search-btn {
   width: 46px;
@@ -18553,18 +18553,18 @@ span.call-duration.float-end {
 }
 
 .patient-select {
-  background: url(/assets/images/slider/blue-bg.png);
+  background: url(/assets/images/slider/blue-bg.webp);
   background-size: cover;
   padding: 50px 0;
 }
 @media (max-width: 767.98px) {
   .patient-select {
-    background: #2264C5 url(/assets/images/slider/blue-bg.png);
+    background: #2264C5 url(/assets/images/slider/blue-bg.webp);
     padding: 30px 0 0;
   }
 }
 .patient-select .select-box {
-  background: url(/assets/images/slider/doctor-bg.jpg);
+  background: url(/assets/images/slider/doctor-bg.webp);
   border-radius: 60px 10px 10px 60px;
   border: 5px solid rgba(255, 255, 255, 0.8);
   padding: 30px;
@@ -18662,7 +18662,7 @@ span.call-duration.float-end {
   background-color: #0E82FD;
 }
 .patient-select .select-box.theme {
-  background: url(/assets/images/slider/patient-bg.jpg);
+  background: url(/assets/images/slider/patient-bg.webp);
   border-radius: 10px 60px 60px 10px;
   position: relative;
   z-index: 1;
@@ -18915,7 +18915,7 @@ span.call-duration.float-end {
   }
 }
 .aval-features .feature {
-  background: url(/assets/images/slider/feature-img.jpg);
+  background: url(/assets/images/slider/feature-img.webp);
   padding: 40px;
   background-repeat: no-repeat;
   background-size: cover;
@@ -19031,7 +19031,7 @@ span.call-duration.float-end {
 .doctor-search-section {
   padding-top: 95px;
   position: relative;
-  background: url(/assets/images/banner-2.jpg);
+  background: url(/assets/images/banner-2.webp);
   background-position: 50% 0;
   background-size: cover;
   background-repeat: no-repeat;
@@ -19190,7 +19190,7 @@ span.call-duration.float-end {
 .specialities-section {
   padding: 80px 0 55px;
   position: relative;
-  background: url(/assets/images/specialist-bg.jpg);
+  background: url(/assets/images/specialist-bg.webp);
   background-position: 50% 0;
   background-size: cover;
   background-repeat: no-repeat;
@@ -19401,7 +19401,7 @@ span.call-duration.float-end {
 
 .clinic-features-section {
   position: relative;
-  background: url(/assets/images/featured-bg.jpg);
+  background: url(/assets/images/featured-bg.webp);
   background-position: 50% 0;
   background-size: cover;
   background-repeat: no-repeat;
@@ -19445,7 +19445,7 @@ span.call-duration.float-end {
 
 .section-search-3 {
   position: relative;
-  background: url(/assets/images/banner-3.jpg);
+  background: url(/assets/images/banner-3.webp);
   background-position: 50% 0;
   background-size: cover;
   background-repeat: no-repeat;
@@ -19691,7 +19691,7 @@ span.call-duration.float-end {
 }
 
 .clinic-specialities {
-  background: url(/assets/images/special-banner.jpg);
+  background: url(/assets/images/special-banner.webp);
   padding: 60px 0;
   background-size: cover;
   background-repeat: no-repeat;
@@ -19875,7 +19875,7 @@ span.call-duration.float-end {
   }
 }
 .doctor-divison .doc-background {
-  background: url(/assets/images/shapes/doctor-bg.jpg);
+  background: url(/assets/images/shapes/doctor-bg.webp);
   background-position: center;
   min-height: 350px;
   background-size: cover;
@@ -19968,7 +19968,7 @@ span.call-duration.float-end {
   background-color: #0E82FD;
 }
 .doctor-divison .pat-background {
-  background: url(/assets/images/shapes/doctor-right-bg.jpg);
+  background: url(/assets/images/shapes/doctor-right-bg.webp);
   background-position: center;
   min-height: 350px;
   background-size: cover;
@@ -20006,7 +20006,7 @@ span.call-duration.float-end {
 }
 
 .book-section {
-  background: url(/assets/images/special-banner.jpg);
+  background: url(/assets/images/special-banner.webp);
   padding: 60px 0;
   background-size: cover;
   background-repeat: no-repeat;
@@ -20267,7 +20267,7 @@ span.call-duration.float-end {
 }
 
 .home-search-section {
-  background: url(/assets/images/slider/banner-01.jpg);
+  background: url(/assets/images/slider/banner-01.webp);
   background-size: cover;
   background-repeat: no-repeat;
   z-index: 1;
@@ -20583,7 +20583,7 @@ span.call-duration.float-end {
 
 .browse-section.brower-category {
   padding: 60px 0;
-  background: url(/assets/images/slider/banner-02.jpg);
+  background: url(/assets/images/slider/banner-02.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -20616,7 +20616,7 @@ span.call-duration.float-end {
 }
 
 .doctor-divison.provider-select .doc-background {
-  background: url(/assets/images/shapes/doctor-bg.jpg);
+  background: url(/assets/images/shapes/doctor-bg.webp);
   background-size: cover;
   padding: 60px 30px;
 }
@@ -20635,7 +20635,7 @@ span.call-duration.float-end {
   color: #4B4B4B;
 }
 .doctor-divison.provider-select .pat-background {
-  background: url(/assets/images/shapes/doctor-right-bg.jpg);
+  background: url(/assets/images/shapes/doctor-right-bg.webp);
   background-size: cover;
   padding: 60px 30px;
 }
@@ -20842,7 +20842,7 @@ span.call-duration.float-end {
   row-gap: 24px;
 }
 .main-wrapper.home-ten .banner-section {
-  background: url(/assets/images/bg/home-10-banner.png);
+  background: url(/assets/images/bg/home-10-banner.webp);
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100% 101%;
@@ -21163,7 +21163,7 @@ span.call-duration.float-end {
   border: none;
   width: 87px;
   height: 100px;
-  background-image: url("/assets/images/icons/hex-shape.png");
+  background-image: url("/assets/images/icons/hex-shape.webp");
   background-repeat: no-repeat;
   background-position: center;
   border-radius: 0;
@@ -21185,7 +21185,7 @@ span.call-duration.float-end {
 }
 .main-wrapper.home-ten .service-section::after {
   content: "";
-  background: url(/assets/images/bg/service-bg.png);
+  background: url(/assets/images/bg/service-bg.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: top;
@@ -21530,7 +21530,7 @@ span.call-duration.float-end {
 }
 .main-wrapper.home-ten .need-to-know-section.testimonial-section-ten {
   background-color: #F8FAFC;
-  background-image: url("/assets/images/bg/map.png");
+  background-image: url("/assets/images/bg/map.webp");
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -21608,6 +21608,7 @@ span.call-duration.float-end {
   line-height: 20px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -21935,7 +21936,7 @@ span.call-duration.float-end {
 }
 .main-wrapper.home-ten .pricing-section.pricing-section-ten::after {
   content: "";
-  background: url(/assets/images/bg/pricing-bg.png);
+  background: url(/assets/images/bg/pricing-bg.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: top;
@@ -22843,7 +22844,7 @@ span.call-duration.float-end {
   margin: 0;
 }
 .choose-us-fourteen .you-get-list ul li .get-list-content {
-  background-image: url(/assets/images/chooseus-ryt-1.png);
+  background-image: url(/assets/images/chooseus-ryt-1.webp);
   background-repeat: no-repeat;
   background-size: contain;
   padding: 30px;
@@ -22875,7 +22876,7 @@ span.call-duration.float-end {
   }
 }
 .choose-us-fourteen .you-get-list ul li .get-list-content.second-bg {
-  background-image: url(/assets/images/chooseus-ryt-2.png);
+  background-image: url(/assets/images/chooseus-ryt-2.webp);
 }
 @media (max-width: 1199.98px) {
   .choose-us-fourteen .you-get-list ul li .get-list-content.second-bg {
@@ -23357,7 +23358,7 @@ span.call-duration.float-end {
 }
 
 .doctor-search-section.doctor-search-eleven {
-  background: url(/assets/images/bg/banner-11-bg.png);
+  background: url(/assets/images/bg/banner-11-bg.webp);
   padding: 115px 0 300px;
   background-position: bottom center;
 }
@@ -24023,6 +24024,7 @@ span.call-duration.float-end {
   margin: 0 0 10px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -24037,6 +24039,7 @@ span.call-duration.float-end {
   color: #6B7280;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -24062,7 +24065,7 @@ span.call-duration.float-end {
   position: absolute;
   top: -1px;
   left: 0;
-  background: url(/assets/images/bg/app-bg.jpg) no-repeat center top;
+  background: url(/assets/images/bg/app-bg.webp) no-repeat center top;
   content: "";
   width: 100%;
   height: 100%;
@@ -24269,7 +24272,7 @@ span.call-duration.float-end {
 .store-section {
   padding: 80px 0;
   position: relative;
-  background: #F0F4F7 url("/assets/images/bg/store-bg.png") no-repeat;
+  background: #F0F4F7 url("/assets/images/bg/store-bg.webp") no-repeat;
   background-position: top right;
 }
 
@@ -24766,7 +24769,7 @@ span.call-duration.float-end {
   width: 120px;
   height: 110px;
   content: "";
-  background-image: url("/assets/images/bg/header-after.png");
+  background-image: url("/assets/images/bg/header-after.webp");
   background-repeat: no-repeat;
   background-size: contain;
   transition: transform 0.2s ease-in-out;
@@ -25317,6 +25320,7 @@ span.call-duration.float-end {
 .main-wrapper.home-twelve .blog-section-fourteen .blog-inner-fourt-all .blog-inner-fourt-main .blog-inner-right-fourt .blog-inner-right-fourt-care {
   display: -webkit-box;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -25483,7 +25487,7 @@ span.call-duration.float-end {
   width: 42px;
   height: 42px;
   content: "";
-  background-image: url("/assets/images/check.png");
+  background-image: url("/assets/images/check.webp");
   margin-right: 30px;
   background-repeat: no-repeat;
   transition: transform 0.2s ease-in-out;
@@ -25572,7 +25576,7 @@ span.call-duration.float-end {
 }
 .main-wrapper.home-twelve.home-thirteen .banner-section-thirteen {
   position: relative;
-  background-image: url("/assets/images/bg/home-13-banner.png");
+  background-image: url("/assets/images/bg/home-13-banner.webp");
   background-repeat: no-repeat;
   background-size: 100% 80%;
   background-position: top;
@@ -26023,7 +26027,7 @@ span.call-duration.float-end {
   border: 1px dashed #0E82FD;
 }
 .main-wrapper.home-twelve.home-thirteen .our-doctor-thirteen {
-  background: url(/assets/images/cloud-bg.png);
+  background: url(/assets/images/cloud-bg.webp);
   background-repeat: no-repeat;
   background-position: top center;
   position: relative;
@@ -26400,11 +26404,12 @@ span.call-duration.float-end {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   width: 100%;
   overflow: hidden;
 }
 .main-wrapper.home-twelve.home-thirteen .feedback-section-thirteen {
-  background: url(/assets/images/feedback-bg.png);
+  background: url(/assets/images/feedback-bg.webp);
   background-repeat: no-repeat;
   background-position: top center;
   position: relative;
@@ -26595,7 +26600,7 @@ span.call-duration.float-end {
   padding: 85px 0 0 0;
   background-color: #ffffff;
   z-index: 1;
-  background-image: url(/assets/images/banner-fifteen.png);
+  background-image: url(/assets/images/banner-fifteen.webp);
   background-repeat: no-repeat;
   background-position: right top;
   background-size: 36% 100%;
@@ -27211,7 +27216,7 @@ span.call-duration.float-end {
   position: relative;
   padding: 80px 0;
   background-color: #0E82FD;
-  background-image: url(/assets/images/book-appointment-bg.png);
+  background-image: url(/assets/images/book-appointment-bg.webp);
   background-position: top left;
   background-repeat: no-repeat;
   background-size: 58% 100%;
@@ -27508,6 +27513,7 @@ span.call-duration.float-end {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 5;
+  line-clamp: 5;
   width: 100%;
   overflow: hidden;
 }
@@ -27760,7 +27766,7 @@ span.call-duration.float-end {
 }
 .banner-section-sixteen .banner-image-sixteen {
   padding: 41px 0;
-  background-image: url(/assets/images/banner-sixteen-bg.png);
+  background-image: url(/assets/images/banner-sixteen-bg.webp);
   background-repeat: no-repeat;
   background-position: right top;
   background-size: 75% 100%;
@@ -28582,7 +28588,7 @@ span.call-duration.float-end {
   font-size: 13px;
   color: #757575;
   border-radius: 5px;
-  background: #e3e3e3 url(/assets/images/google-map.png) no-repeat 9px center;
+  background: #e3e3e3 url(/assets/images/google-map.webp) no-repeat 9px center;
   cursor: pointer;
   position: absolute;
   top: 8px;
@@ -29924,7 +29930,7 @@ ul.benifits-col li i {
 }
 .testimonial-section::after {
   content: "";
-  background: url(/assets/images/bg/doctor-shape-img1.png);
+  background: url(/assets/images/bg/doctor-shape-img1.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: left;
@@ -29943,7 +29949,7 @@ ul.benifits-col li i {
 }
 .testimonial-section::before {
   content: "";
-  background: url(/assets/images/bg/doctor-shape-img2.png);
+  background: url(/assets/images/bg/doctor-shape-img2.webp);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: right;
@@ -29968,10 +29974,15 @@ ul.benifits-col li i {
   top: -30px;
   left: -40px;
   -webkit-animation-name: blinker;
+  animation-name: blinker;
   -webkit-animation-duration: 0.6s;
+  animation-duration: 0.6s;
   -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
   -webkit-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
   -webkit-animation-direction: alternate;
+  animation-direction: alternate;
 }
 .testimonial-section .testimonial-shape-img .testimonial-shape-left img {
   width: 100px;
@@ -29981,10 +29992,15 @@ ul.benifits-col li i {
   top: 60px;
   right: 0;
   -webkit-animation-name: blinker;
+  animation-name: blinker;
   -webkit-animation-duration: 0.6s;
+  animation-duration: 0.6s;
   -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
   -webkit-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
   -webkit-animation-direction: alternate;
+  animation-direction: alternate;
 }
 .testimonial-section .testimonial-shape-img .testimonial-shape-right img {
   width: 100px;
@@ -30491,7 +30507,7 @@ li:hover .onboarding-list h6 {
 }
 
 .mail-icon {
-  background: url("/assets/images/mail-box.png") no-repeat 99% 50%;
+  background: url("/assets/images/mail-box.webp") no-repeat 99% 50%;
 }
 
 .form-focus .focus-label span {
@@ -30901,7 +30917,7 @@ input:checked + .tog-slider:before {
 }
 
 .mail-icon2 {
-  background: url(/assets/images/icons/phone.png) no-repeat 99% 50%;
+  background: url(/assets/images/icons/phone.webp) no-repeat 99% 50%;
 }
 
 .pass-icon {

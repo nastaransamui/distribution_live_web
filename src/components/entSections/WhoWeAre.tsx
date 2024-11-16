@@ -30,7 +30,7 @@ const WhoWeAre: FC = (() => {
             <div className="col-lg-6">
               <div className="patients-left-front patients-left-img">
                 <img
-                  src={`/assets/images/patients-img-fifteen_${theme.palette.primary.main.slice(1)}.png`}
+                  src={`/assets/images/patients-img-fifteen_${theme.palette.primary.main.slice(1)}.webp`}
                   alt=""
                   style={{ zIndex: 2, position: 'relative' }}
                   className="img-fluid"

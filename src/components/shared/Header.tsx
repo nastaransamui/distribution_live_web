@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { deleteCookie, getCookie } from 'cookies-next';
 
-import { logo_white, patient_profile, doctors_profile, logo } from '@/public/assets/imagepath';
+import { patient_profile, doctors_profile, logo } from '@/public/assets/imagepath';
 import useScssVar from '@/hooks/useScssVar';
 
 //Redux
@@ -68,14 +68,24 @@ const Header: FC = () => {
     if (typeof window !== 'undefined') {
       window.addEventListener('scroll', changeBackground);
 
-      setStyle(() =>
-        router.pathname == "/eyecarehome" && navbar ? { background: theme.palette.background.default } : { background: "" } &&
-          router.pathname == "/enthome" && navbar ? { background: theme.palette.background.default } : { background: "" } &&
-            router.pathname == "/cosmeticshome" && navbar ? { background: theme.palette.background.default } : { background: "" } &&
-              router.pathname == "/home4" && navbar ? { background: theme.palette.primary.dark } : { background: "" } &&
-                router.pathname == "/home3" && navbar ? { background: theme.palette.background.default } : { background: "" } &&
-                  router.pathname == "/fertilityhome" && navbar ? { background: theme.palette.background.default } : { background: "" } &&
-                    router.pathname == "/home" && navbar ? { background: theme.palette.background.default } : { background: "" })
+      const getBackgroundStyle = () => {
+        if (!navbar) return { background: "" };
+
+        switch (router.pathname) {
+          case "/eyecarehome":
+          case "/enthome":
+          case "/cosmeticshome":
+          case "/fertilityhome":
+          case "/home":
+            return { background: theme.palette.background.default };
+          case "/home4":
+            return { background: theme.palette.primary.dark };
+          default:
+            return { background: "" };
+        }
+      };
+
+      setStyle(getBackgroundStyle());
     }
   }, [navbar, theme, router])
 
@@ -122,6 +132,14 @@ const Header: FC = () => {
       setAllClinicsDeactivate(() => true)
     }
   }, [clinicStatus])
+  // remove blinking image 
+  const [imageTimestamp, setImageTimestamp] = useState(new Date().getTime());
+
+  // Update the timestamp only when the profile image URL changes
+  useEffect(() => {
+    setImageTimestamp(new Date().getTime());
+  }, [userProfile]);
+
   const PatientHeaderUL = () => {
     return (
       <>
@@ -131,7 +149,7 @@ const Header: FC = () => {
           <li className="nav-item dropdown has-arrow logged-item">
             <Link href="#" className="dropdown-toggle nav-link" data-bs-toggle="dropdown">
               <span className="user-img">
-                <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${new Date().getTime()}` : ''}`} key={userProfile?.profileImage}>
+                <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${imageTimestamp}` : ''}`} key={userProfile?.profileImage}>
                   <img src={patient_profile} alt="" className="rounded-circle" />
                 </Avatar>
               </span>
@@ -139,7 +157,7 @@ const Header: FC = () => {
             <div className="dropdown-menu dropdown-menu-end">
               <div className="user-header">
                 <div className="avatar avatar-sm">
-                  <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${new Date().getTime()}` : ''}`} >
+                  <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${imageTimestamp}` : ''}`} >
                     <img src={patient_profile} alt="" className="avatar-img rounded-circle" />
                   </Avatar>
                 </div>
@@ -442,7 +460,16 @@ const Header: FC = () => {
     return (
       <ul className="nav header-navbar-rht">
         <li className={`${router.pathname == "/veterinaryhome" || router.pathname == "/home9" ? "login-in-fourteen" : "register-btn"}`}>
-          <Link href="/login" className={router.pathname === "/home9" ? "btn reg-btn" : "btn log-btn" && router.pathname === "/veterinaryhome" ? "btn reg-btn" : "btn log-btn"}>
+          <Link
+            href="/login"
+            className={
+              router.pathname === "/home9"
+                ? "btn reg-btn"
+                : (router.pathname === "/veterinaryhome"
+                  ? "btn reg-btn"
+                  : "btn log-btn")
+            }
+          >
             <i className="me-2">
               {router.pathname == "/veterinaryhome" ? (
                 <FeatherIcon icon="user" />
@@ -641,22 +668,23 @@ const Header: FC = () => {
   useEffect(() => {
     setIsClient(true)
   }, [])
-
+  const getHeaderClass = () => {
+    if (router.pathname === "/cosmeticshome") return "header-fixed header-fourteen header-sixteen";
+    if (router.pathname === "/enthome") return "header-fixed header-fourteen header-fifteen";
+    if (router.pathname === "/fertilityhome") return "header-fixed header-fourteen";
+    if (router.pathname === "/paediatrichome") return "header-fixed header-fourteen header-twelve header-thirteen";
+    if (router.pathname === "/veterinaryhome") return "header-fixed header-fourteen header-twelve";
+    if (router.pathname === "/eyecarehome") return userProfile == null ? "header-home4 header-one" : "header-home4 header-one";
+    if (router.pathname === "/home4") return userProfile == null ? "header-trans custom" : "header-home4 header-one";
+    if (router.pathname === "/cardiohome") return "header header-fixed header-ten";
+    if (router.pathname === "/homecare") return "header header-custom header-fixed header-ten home-care-header";
+    if (router.pathname === "/home" || router.pathname === "/home3") return userProfile == null ? "header-trans header-two" : "header-fixed header-one";
+    return "header-fixed header-one";
+  };
 
   return (
     <>
-      <header
-        className={`header ${router.pathname == "/cosmeticshome" ? "header-fixed header-fourteen header-sixteen" : "" ||
-          router.pathname == "/enthome" ? "header-fixed header-fourteen header-fifteen" : "" ||
-            router.pathname == "/fertilityhome" ? "header-fixed header-fourteen" : "" ||
-              router.pathname == "/paediatrichome" ? "header-fixed header-fourteen header-twelve header-thirteen" : "" ||
-                (router.pathname == "/veterinaryhome") ? "header-fixed header-fourteen header-twelve" : "" ||
-                  router.pathname == "/eyecarehome" ? userProfile == null ? "header-home4 header-one" : 'header-home4 header-one' : "" ||
-                    router.pathname == "/home4" ? userProfile == null ? "header-trans custom" : 'header-home4 header-one' : "" ||
-                      router.pathname == "/cardiohome" ? "header header-fixed header-ten" : "" ||
-                        router.pathname == '/homecare' ? 'header header-custom header-fixed header-ten home-care-header' : '' ||
-                          (router.pathname == "/home" || router.pathname == "/home3") ? userProfile == null ? "header-trans header-two" : "header-fixed header-one" : "header-fixed header-one"} `}
-        style={{ ...style, ...muiVar }} >
+      <header className={`header ${getHeaderClass()}`} style={{ ...style, ...muiVar }}>
         <div className='container'>
           <nav className={`navbar navbar-expand-lg header-nav`}  >
             <div className={`navbar-header col-lg-${userProfile == null ? '1' : userProfile?.roleName == "doctors" ? '2' : '1'}`}>
@@ -859,7 +887,7 @@ const Header: FC = () => {
                           Contact us </Link>
                       </li>
                       <li className="searchbar" style={{ marginRight: 10 }}>
-                        <Link href="#">
+                        <Link href="#" aria-label='search'>
                           <i> <FeatherIcon icon="search" /></i>
                         </Link>
                         <div className="togglesearch" style={{ display: "none" }}>

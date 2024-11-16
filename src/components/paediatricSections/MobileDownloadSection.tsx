@@ -12,7 +12,7 @@ const MobileDownloadSection: FC = (() => {
     <Fragment>
       <section className="feedback-section-thirteen common-padding" style={{
         ...muiVar,
-        background: `url(/assets/images/feedback-bg_${theme.palette.mode}.png)`
+        background: `url(/assets/images/feedback-bg_${theme.palette.mode}.webp)`
       }}>
         <div className="container">
           <div className="row align-items-center">

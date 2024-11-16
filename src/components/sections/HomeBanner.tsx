@@ -22,6 +22,7 @@ import { useTheme } from "@mui/material";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button'
 import HomeSearchBox from "@/shared/HomeSearchBox";
+import Head from "next/head";
 
 
 
@@ -40,6 +41,9 @@ const HomeBanner: FC = (() => {
 
   return (
     <Fragment>
+      <Head>
+        <link rel="preload" href={generalbanner_img} as="image" />
+      </Head>
       <section className="banner-section" style={muiVar}>
         <div className="container">
           <div className="row align-items-center">
@@ -54,7 +58,7 @@ const HomeBanner: FC = (() => {
                   alt="header-icon"
                 />
                 <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                  Try to search with or without filter in below box
                 </p>
                 <Link href="" scroll={false} className="btn" onClick={(e) => {
                   e.preventDefault();

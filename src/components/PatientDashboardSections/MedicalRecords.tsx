@@ -118,7 +118,7 @@ const MedicalRecords: FC = (() => {
       let metadata = {
         type: 'image/jpeg'
       };
-      let file = new File([data], `${params.row.name}.jpg`, metadata);
+      let file = new File([data], `${params.row.name}.webp`, metadata);
       setImageName(file.name)
     }
     createFile();

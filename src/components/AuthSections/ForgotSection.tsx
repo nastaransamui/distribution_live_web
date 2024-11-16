@@ -100,7 +100,7 @@ const ForgotSection: FC = (() => {
                 <div className="row align-items-center justify-content-center">
                   <div className="col-md-7 col-lg-6 login-left">
                     <img
-                      src={`/assets/images/login-banner_${theme.palette.mode}.png`}
+                      src={`/assets/images/login-banner_${theme.palette.mode}.webp`}
                       className="img-fluid"
                       alt="Login Banner"
                     />

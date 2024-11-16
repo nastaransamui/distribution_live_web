@@ -37,7 +37,7 @@ export const MapContainer = (props: any) => {
             <Marker
               // @ts-ignore
               icon={{
-                url: `/assets/images/marker_${theme.palette.primary.main.slice(1)}.png`,
+                url: `/assets/images/marker_${theme.palette.primary.main.slice(1)}.webp`,
               }}
               onClick={onMarkerClick}
               key={place.id}

@@ -26,7 +26,7 @@ const Specialities: FC = (() => {
           <div className="row">
             <div className="col-md-12 aos" data-aos="fade-up">
               <div className="section-header-one section-header-slider">
-                <h2 className="section-title">Why <span>Doccure?</span></h2>
+                <h2 className="section-title">Why <span>Us?</span></h2>
               </div>
             </div>
           </div>

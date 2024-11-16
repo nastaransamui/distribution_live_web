@@ -81,7 +81,7 @@ const HomeSearch: FC = (() => {
       <section className="doctor-search-section doctor-search-eleven"
         style={{
           ...muiVar,
-          backgroundImage: `url(/assets/images/bg/banner-11-bg_${theme.palette.primary.main.slice(1)}.png)`
+          backgroundImage: `url(/assets/images/bg/banner-11-bg_${theme.palette.primary.main.slice(1)}.webp)`
         }}>
         <div className="container">
           <div className="row align-items-center"

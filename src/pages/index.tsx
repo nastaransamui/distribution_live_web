@@ -8,18 +8,24 @@ import { hasCookie, getCookie } from 'cookies-next';
 import { wrapper } from '@/redux/store'
 import { AppState } from '@/redux/store'
 import { connect } from 'react-redux';
+import dynamic from 'next/dynamic';
+
+// Lazy load all components except HomeBanner
+const Specialties = dynamic(() => import('@/components/sections/Specialties'));
+const Doctors = dynamic(() => import('@/components/sections/Doctors'));
+const Pricing = dynamic(() => import('@/components/sections/Pricing'));
+const WorkSection = dynamic(() => import('@/components/sections/WorkSection'));
+const LatestArticle = dynamic(() => import('@/components/sections/LatestArticle'));
+const MobileAppSection = dynamic(() => import('@/components/sections/MobileAppSection'));
+const FaqSection = dynamic(() => import('@/components/sections/FaqSection'));
+const Testimonial = dynamic(() => import('@/components/sections/Testimonial'));
+const PartnersSection = dynamic(() => import('@/components/sections/PartnersSection'));
+const Footer = dynamic(() => import('@/components/sections/Footer'));
+const ScrollToTop = dynamic(() => import('@/components/sections/ScrollToTop'));
+const CookieConsentComponent = dynamic(() => import('@/components/shared/CookieConsentComponent'));
+
+// Non-lazy loaded component
 import HomeBanner from '@/components/sections/HomeBanner';
-import Specialties from '@/components/sections/Specialties';
-import Doctors from '@/components/sections/Doctors';
-import Pricing from '@/components/sections/Pricing';
-import WorkSection from '@/components/sections/WorkSection';
-import ScrollToTop from '@/components/sections/ScrollToTop';
-import LatestArticle from '@/components/sections/LatestArticle';
-import MobileAppSection from '@/components/sections/MobileAppSection';
-import FaqSection from '@/components/sections/FaqSection';
-import Testimonial from '@/components/sections/Testimonial';
-import PartnersSection from '@/components/sections/PartnersSection';
-import Footer from '@/components/sections/Footer';
 import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
@@ -27,7 +33,6 @@ import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
-import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 
 
 const Home: NextPage = () => {
@@ -39,7 +44,7 @@ const Home: NextPage = () => {
         <meta httpEquiv='X-UA-Compatible' content='IE=edge' />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
         <meta charSet='utf-8' />
-        <meta name='description' />
+        <meta name="description" content="We eager to bring health and health care service to you by easiest way that possible." />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Distribution Live data</title>

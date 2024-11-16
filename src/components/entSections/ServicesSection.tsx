@@ -22,7 +22,7 @@ const ServicesSection: FC = (() => {
     <Fragment>
       <section className="services-section-fifteen" style={muiVar}>
         <div className="service-bg-icon">
-          <img src={`/assets/images/serive-bg-icon_${theme.palette.secondary.light.slice(1)}.png`} alt="" />
+          <img src={`/assets/images/serive-bg-icon_${theme.palette.secondary.light.slice(1)}.webp`} alt="" />
         </div>
         <div className="container">
           <div className="row">

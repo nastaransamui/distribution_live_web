@@ -1,0 +1,68 @@
+name: Deploy to server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.HOST }}" >> ~/.ssh/known_hosts
+
+      
+      - name: Ensure Remote Directory Exists
+        env:
+          SERVER_USER: ${{ secrets.USERNAME }}
+          SERVER_IP: ${{ secrets.HOST }}
+          SERVER_PATH: ${{ secrets.PATH }}
+        run: |
+          ssh -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_IP "
+          if [ ! -d "$SERVER_PATH" ]; then
+          # Directory does not exist, so create it
+          echo 'Create $SERVER_PATH folder'
+          mkdir -p $SERVER_PATH
+          cd $SERVER_PATH
+          git clone https://github.com/nastaransamui/flybird-website.git .
+          else
+            echo 'Directory $SERVER_PATH already exist. pull request ' 
+            cd $SERVER_PATH
+            git reset --hard HEAD  # Discard local changes
+            git pull  # Pull the latest updates
+          fi"
+
+      - name: Sync Files to Remote Server
+        env:
+          SERVER_USER: ${{ secrets.USERNAME }}
+          SERVER_IP: ${{ secrets.HOST }}
+          SERVER_PATH: ${{ secrets.PATH }}
+        run: |
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa" .env.local $SERVER_USER@$SERVER_IP:$SERVER_PATH
+
+      - name: Install Production Dependencies on Server
+        env:
+          SERVER_USER: ${{ secrets.USERNAME }}
+          SERVER_IP: ${{ secrets.HOST }}
+          SERVER_PATH: ${{ secrets.PATH }}
+        run: |
+          ssh -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_IP "
+            cd $SERVER_PATH
+            export NVM_DIR=\$HOME/.nvm
+            [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\"
+            yarn install 
+            yarn build
+            export $(cat $SERVER_PATH/.env.local | xargs)  # Load all .env.local variables
+            pm2 describe distribution_live_web || pm2 start yarn --name "distribution_live_web" --interpreter node -- start
+            pm2 restart distribution_live_web
+            pm2 save
+          "

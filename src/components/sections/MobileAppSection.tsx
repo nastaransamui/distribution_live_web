@@ -17,7 +17,7 @@ const MobileAppSection: FC = (() => {
     <Fragment>
       <section className="app-section" style={muiVar}>
         <div className="container">
-          <div className="app-bg" style={{ backgroundImage: `url(/assets/images/app-bg_${theme.palette.secondary.main.slice(1)}.png)` }}>
+          <div className="app-bg" style={{ backgroundImage: `url(/assets/images/app-bg_${theme.palette.secondary.main.slice(1)}.webp)` }}>
             <div className="row align-items-center">
               <div className="col-lg-6 col-md-12">
                 <div className="app-content">
