@@ -41,14 +41,6 @@ jobs:
             git pull  # Pull the latest updates
           fi"
 
-      - name: Sync Files to Remote Server
-        env:
-          SERVER_USER: ${{ secrets.USERNAME }}
-          SERVER_IP: ${{ secrets.HOST }}
-          SERVER_PATH: ${{ secrets.PATH }}
-        run: |
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa" .env.local $SERVER_USER@$SERVER_IP:$SERVER_PATH
-
       - name: Install Production Dependencies on Server
         env:
           SERVER_USER: ${{ secrets.USERNAME }}
