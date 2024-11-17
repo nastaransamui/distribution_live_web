@@ -85,6 +85,7 @@ const AppWrapper = ({ children }: ChildrenProps) => {
     if (socket.current == undefined) {
 
       createBrowserDb().catch(err => console.log(err))
+      // NEXT_PUBLIC_SOCKET_URL
       socket.current = io(process.env.NEXT_PUBLIC_SOCKET_URL as string, {
         extraHeaders: {
           userData: JSON.stringify(userData),
@@ -224,8 +225,8 @@ const AppWrapper = ({ children }: ChildrenProps) => {
       socket.current.on('disconnect', () => {
         console.log('disconnect')
       });
-      socket.current.on('connect_error', async () => {
-        console.log('connect_error')
+      socket.current.on('connect_error', async (error: any) => {
+        console.log(error)
         const clinicStatusBrowserTable = await browserDb.clinicStatusBrowserTable.toArray();
 
         const specialitiesBrowserTable = await browserDb.specialitiesBrowserTable.toArray();
