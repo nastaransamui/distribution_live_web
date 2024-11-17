@@ -91,7 +91,8 @@ const AppWrapper = ({ children }: ChildrenProps) => {
           token: `Bearer ${accessToken}`,
           userid: user_id
         },
-
+        transports: ['websocket'], // Ensure WebSocket is used
+        secure: true // Explicitly use secure connection
       });
       socket.current.on('connect', () => {
         // console.log('connect in Appwrapper page first')
