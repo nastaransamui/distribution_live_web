@@ -33,7 +33,7 @@ jobs:
           echo 'Create $SERVER_PATH folder'
           mkdir -p $SERVER_PATH
           cd $SERVER_PATH
-          git clone https://github.com/nastaransamui/flybird-website.git .
+          git clone https://github.com/nastaransamui/distribution_live_web.git .
           else
             echo 'Directory $SERVER_PATH already exist. pull request ' 
             cd $SERVER_PATH

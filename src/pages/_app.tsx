@@ -7,13 +7,11 @@ import '@/styles/404.scss'
 import '@/styles/login.scss'
 // import '@/styles/scss/home-7.scss'
 import '@/styles/css/bootstrap.min.css'
-import '@/styles/css/all.css'
+// import '@/styles/css/all.css'
 import '@/styles/css/all.min.css';
-import '@/styles/css/fontawesome.css';
+// import '@/styles/css/fontawesome.css';
 import '@/styles/css/feather.css'
 import '@/styles/css/custom.css'
-// import '@/styles/css/custom1.css'
-// import '@/styles/css/style.css'
 import '@/styles/css/aos.css'
 import 'read-more-less-react/dist/index.css'
 import 'react-toastify/dist/ReactToastify.css';

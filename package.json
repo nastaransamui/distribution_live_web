@@ -26,6 +26,7 @@
     "@mui/styles": "^5.13.2",
     "@mui/x-data-grid": "6.9.1",
     "@mui/x-date-pickers": "^6.10.0",
+    "@next/bundle-analyzer": "^15.0.3",
     "@react-oauth/google": "^0.11.1",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/jquery": "^3.5.32",

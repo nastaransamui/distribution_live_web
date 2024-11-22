@@ -22,7 +22,7 @@ const FaqSection: FC = (() => {
                 className="section-header-one text-center aos"
                 data-aos="fade-up"
               >
-                <h5>Get Your Answer</h5>
+                <h1>Get Your Answer</h1>
                 <h2 className="section-title">Frequently Asked Questions</h2>
               </div>
             </div>
@@ -36,12 +36,12 @@ const FaqSection: FC = (() => {
                     <img src={smiling_icon} alt="icon" />
                   </div>
                   <div className="faq-patients-content">
-                    <h4>
+                    <h3>
                       <span className="count-digit">
                         <CountUp start={1} end={95} />
                       </span>
                       k+
-                    </h4>
+                    </h3>
                     <p>Happy Patients</p>
                   </div>
                 </div>

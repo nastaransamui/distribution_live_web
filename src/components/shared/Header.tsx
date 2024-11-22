@@ -378,8 +378,18 @@ const Header: FC = () => {
                     clinicStatus.length > 0 &&
                     clinicStatus.map((clinic: ClinicStatusType, index: number) => {
                       let primaryColor = theme.palette.primary.main
-                      const url = clinic.hasThemeImage ? `${clinic?.image.replace('primaryMain', primaryColor.slice(1))}`
-                        : `${clinic?.image}`
+                      // const url = clinic.hasThemeImage ? `${clinic?.image.replace('primaryMain', primaryColor.slice(1))}`
+                      //   : `${clinic?.image}`
+                      // console.log(url)
+                      const url = clinic.hasThemeImage
+                        ? `${clinic?.image
+                          .replace('primaryMain', primaryColor.slice(1))
+                          .slice(0, clinic?.image
+                            .replace('primaryMain', primaryColor.slice(1)).lastIndexOf('.'))}_small${clinic?.image
+                              .replace('primaryMain', primaryColor.slice(1)).slice(clinic?.image
+                                .replace('primaryMain', primaryColor.slice(1)).lastIndexOf('.'))}`
+                        : `${clinic?.image.slice(0, clinic.image.lastIndexOf('.'))}_small${clinic.image.slice(clinic.image.lastIndexOf('.'))}`;
+
                       if (clinic.active) {
                         return (
                           <Fragment key={index}>

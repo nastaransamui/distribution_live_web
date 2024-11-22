@@ -15,11 +15,12 @@ const WorkSection: FC = (() => {
   const { muiVar } = useScssVar()
 
   useEffect(() => {
-    AOS.init({
-      duration: 1200,
-      once: true
-    });
-
+    if (typeof window !== 'undefined') {
+      AOS.init({
+        duration: 1200,
+        once: true
+      });
+    }
   }, []);
   return (
     <Fragment>
@@ -36,7 +37,7 @@ const WorkSection: FC = (() => {
             </div>
             <div className="col-lg-8 col-md-12 work-details">
               <div className="section-header-one aos" data-aos="fade-up">
-                <h5>How it Works</h5>
+                <h1>How it Works</h1>
                 <h2 className="section-title imgColorPrimary">4 easy steps to get your solution</h2>
               </div>
               <div className="row">
@@ -48,10 +49,9 @@ const WorkSection: FC = (() => {
                       </span>
                     </div>
                     <div className="work-content">
-                      <h5>Search Doctor</h5>
+                      <h3>Search Doctor</h3>
                       <p>
-                        Lorem ipsum dolor consectetur adipiscing elit, tempor
-                        incididunt labore dolore magna aliqua.
+                        Search doctors base on their specialities and availablity.
                       </p>
                     </div>
                   </div>
@@ -64,10 +64,9 @@ const WorkSection: FC = (() => {
                       </span>
                     </div>
                     <div className="work-content">
-                      <h5>Check Doctor Profile</h5>
+                      <h3>Check Doctor Profile</h3>
                       <p>
-                        Lorem ipsum dolor consectetur adipiscing elit, tempor
-                        incididunt labore dolore magna aliqua.
+                        Check doctor profile and Availablitity and their stars.
                       </p>
                     </div>
                   </div>
@@ -80,10 +79,9 @@ const WorkSection: FC = (() => {
                       </span>
                     </div>
                     <div className="work-content">
-                      <h5>Schedule Appointment</h5>
+                      <h3>Schedule Appointment</h3>
                       <p>
-                        Lorem ipsum dolor consectetur adipiscing elit, tempor
-                        incididunt labore dolore magna aliqua.
+                        Check their schedule and book appointment with doctor.
                       </p>
                     </div>
                   </div>
@@ -96,10 +94,9 @@ const WorkSection: FC = (() => {
                       </span>
                     </div>
                     <div className="work-content">
-                      <h5>Get Your Solution</h5>
+                      <h3>Get Your Solution</h3>
                       <p>
-                        Lorem ipsum dolor consectetur adipiscing elit, tempor
-                        incididunt labore dolore magna aliqua.
+                        Attend to meeting and discuss with doctor.
                       </p>
                     </div>
                   </div>

@@ -31,8 +31,8 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
         <NextScript />
 
         <Script src="/js/parallax.min.js" strategy="beforeInteractive" />
-        <Script src="/js/2.1.3.jquery.min.js" strategy="beforeInteractive" />
-        <Script src="/js/bootstrap.bundle.js" strategy="beforeInteractive" />
+        <Script src="/js/jquery-2.1.3.min.js" strategy="beforeInteractive" />
+        <Script src="/js/bootstrap.bundle.min.js" strategy="beforeInteractive" />
       </body>
     </Html>
   );

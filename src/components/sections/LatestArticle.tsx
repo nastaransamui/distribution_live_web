@@ -48,11 +48,11 @@ const LatestArticle: FC = (() => {
                           <i><FeatherIcon icon="calendar" /></i> 13 Aug, 2023
                         </li>
                       </ul>
-                      <h4>
+                      <h3>
                         <Link href="/blog/blog-details" aria-label="blog-details">
-                          Doccure – Making your clinic painless visit?
+                          Making your clinic painless visit?
                         </Link>
-                      </h4>
+                      </h3>
                       <p>
                         Sed perspiciatis unde omnis iste natus error sit voluptatem
                         accusantium{" "}

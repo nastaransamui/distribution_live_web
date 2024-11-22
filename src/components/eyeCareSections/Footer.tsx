@@ -3,7 +3,7 @@ import { FC, Fragment, useState } from 'react'
 import Link from 'next/link'
 import { FiClock, FiMail, FiPhone } from "react-icons/fi";
 import useScssVar from '@/hooks/useScssVar';
-import { logo_03, payment } from "../../../public/assets/imagepath";
+import { logo, payment } from "../../../public/assets/imagepath";
 
 //Mui
 
@@ -132,7 +132,7 @@ const Footer: FC = (() => {
                       <InputLabel id="demo-select-small-label">Language</InputLabel>
 
                       <Select
-                        value={'en' || ''}
+                        value={'en'}
                         label="Language"
                         onChange={handleChange}
                         fullWidth
@@ -211,7 +211,9 @@ const Footer: FC = (() => {
                   <div className="footer-bottom-logo">
                     <Link href="/index-10">
                       <img
-                        src={logo_03}
+                        src={logo}
+                        height={50}
+                        width={50}
                         className="img-fluid"
                         alt="Logo"
                       />

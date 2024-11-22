@@ -1,8 +1,3 @@
-@charset "UTF-8";
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 .upload-wrap,
 .login-page .login-right,
@@ -139,6 +134,7 @@
 .hours-info .btn.btn-danger.trash,
 .blogs-section .blog-wrapper .wrap-content .date-cart,
 .partners-slider li a,
+.partners-slider span a,
 .work-info .work-icon span,
 .specialities-section-one .specialities-img span,
 .specialities-section-one .specialities-item,
@@ -1537,6 +1533,7 @@ button:focus {
 .hours-info .btn.btn-danger.trash,
 .blogs-section .blog-wrapper .wrap-content .date-cart,
 .partners-slider li a,
+.partners-slider span a,
 .work-info .work-icon span,
 .specialities-section-one .specialities-img span,
 .specialities-section-one .specialities-item,
@@ -7114,7 +7111,9 @@ table .table-hover tbody tr:hover td {
 }
 
 .header-one .main-menu-wrapper .main-nav > li .submenu li a {
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 10px 15px;
   clear: both;
   white-space: nowrap;
@@ -12631,6 +12630,12 @@ table .table-hover tbody tr:hover td {
   color: var(--secondaryMain);
   margin-bottom: 10px;
 }
+.section-header h1 {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--secondaryMain);
+  margin-bottom: 10px;
+}
 
 .section-header h2 {
   font-size: 36px;
@@ -14041,7 +14046,7 @@ table .table-hover tbody tr:hover td {
   }
 }
 
-.section-header-one h5 {
+.section-header-one h1 {
   font-weight: 600;
   font-size: 18px;
   color: var(--secondaryMain);
@@ -14701,9 +14706,18 @@ table .table-hover tbody tr:hover td {
   color: var(--secondaryDark);
   margin-bottom: 14px;
 }
+.work-info .work-content h3 {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--secondaryDark);
+  margin-bottom: 14px;
+}
 
 @media (max-width: 767.98px) {
   .work-info .work-content h5 {
+    margin-bottom: 10px;
+  }
+  .work-info .work-content h3 {
     margin-bottom: 10px;
   }
 }
@@ -14845,14 +14859,26 @@ table .table-hover tbody tr:hover td {
   margin-bottom: 10px;
   max-width: 320px;
 }
+.articles-content h3 {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 10px;
+  max-width: 320px;
+}
 
 @media (max-width: 991.98px) {
   .articles-content h4 {
     max-width: inherit;
   }
+  .articles-content h3 {
+    max-width: inherit;
+  }
 }
 
 .articles-content h4 a:hover {
+  color: var(--secondaryMain);
+}
+.articles-content h3 a:hover {
   color: var(--secondaryMain);
 }
 
@@ -15291,7 +15317,8 @@ table .table-hover tbody tr:hover td {
   list-style: none;
 }
 
-.partners-slider li a {
+.partners-slider li a,
+.partners-slider span a {
   background: var(--bgDefault);
   border: 2px solid var(--secondaryMain);
   padding: 14px 20px;
@@ -39621,8 +39648,19 @@ ul.benifits-col li i {
   margin-bottom: 0;
   color: #9ca3af;
 }
+.testimonial-details h3 {
+  font-weight: normal;
+  font-size: 14px;
+  margin-bottom: 0;
+  color: #9ca3af;
+}
 
 .testimonial-details h6 span {
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--primaryDark);
+}
+.testimonial-details h3 span {
   font-weight: 500;
   font-size: 16px;
   color: var(--primaryDark);

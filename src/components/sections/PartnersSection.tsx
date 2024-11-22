@@ -71,9 +71,9 @@ const PartnersSection: FC = (() => {
             </div>
           </div>
           <div className="partners-info aos" data-aos="fade-up">
-            <ul className="owl-carousel partners-slider d-flex">
+            <span className="owl-carousel partners-slider d-flex">
               <OwlCarousel {...specialitysettings}>
-                <li>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -81,8 +81,8 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
-                <li>
+                </span>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -90,8 +90,8 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
-                <li>
+                </span>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -99,8 +99,8 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
-                <li>
+                </span>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -108,8 +108,8 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
-                <li>
+                </span>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -117,8 +117,8 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
-                <li>
+                </span>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -126,8 +126,8 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
-                <li>
+                </span>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -135,8 +135,8 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
-                <li>
+                </span>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -144,8 +144,8 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
-                <li>
+                </span>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -153,8 +153,8 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
-                <li>
+                </span>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -162,8 +162,8 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
-                <li>
+                </span>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -171,8 +171,8 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
-                <li>
+                </span>
+                <span>
                   <Link href="#">
                     <img
                       className="img-fluid"
@@ -180,9 +180,9 @@ const PartnersSection: FC = (() => {
                       alt="partners"
                     />
                   </Link>
-                </li>
+                </span>
               </OwlCarousel>
-            </ul>
+            </span>
           </div>
         </div>
       </section>

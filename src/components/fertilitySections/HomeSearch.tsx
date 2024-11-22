@@ -7,9 +7,6 @@ import { BanSixIconFiveSvg, BanSixIconFourSvg, BanSixIconOneSvg, BanSixIconSixSv
 import TextField from '@mui/material/TextField'
 import InputAdornment from "@mui/material/InputAdornment";
 import FeatherIcon from "feather-icons-react";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { useTheme } from "@mui/material";
 import { useRouter } from 'next/router';
 import useMediaQuery from '@mui/material/useMediaQuery';

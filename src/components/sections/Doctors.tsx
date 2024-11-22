@@ -5,7 +5,7 @@ import AOS from 'aos'
 import FeatherIcon from 'feather-icons-react';
 import dynamic from 'next/dynamic'
 import useScssVar from '@/hooks/useScssVar';
-import { useTheme } from '@mui/material';
+// import { useTheme } from '@mui/material';
 import { Doc03, Doc04, Doc05, doctors_profile } from '@/public/assets/imagepath';
 const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
   ssr: false,
@@ -13,7 +13,7 @@ const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
 
 const Doctors: FC = (() => {
   const { muiVar } = useScssVar()
-  const theme = useTheme();
+  // const theme = useTheme();
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -29,7 +29,7 @@ const Doctors: FC = (() => {
     nav: true,
     navContainer: '.slide-nav-2',
     navText: ['<i class="fas fa-chevron-left custom-arrow"></i>', '<i class="fas fa-chevron-right custom-arrow"></i>'],
-
+    navElement: "button    aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     autoplay: false,
     infinite: "true",
 

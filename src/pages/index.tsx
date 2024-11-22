@@ -11,21 +11,22 @@ import { connect } from 'react-redux';
 import dynamic from 'next/dynamic';
 
 // Lazy load all components except HomeBanner
-const Specialties = dynamic(() => import('@/components/sections/Specialties'));
-const Doctors = dynamic(() => import('@/components/sections/Doctors'));
-const Pricing = dynamic(() => import('@/components/sections/Pricing'));
-const WorkSection = dynamic(() => import('@/components/sections/WorkSection'));
-const LatestArticle = dynamic(() => import('@/components/sections/LatestArticle'));
-const MobileAppSection = dynamic(() => import('@/components/sections/MobileAppSection'));
-const FaqSection = dynamic(() => import('@/components/sections/FaqSection'));
-const Testimonial = dynamic(() => import('@/components/sections/Testimonial'));
-const PartnersSection = dynamic(() => import('@/components/sections/PartnersSection'));
-const Footer = dynamic(() => import('@/components/sections/Footer'));
-const ScrollToTop = dynamic(() => import('@/components/sections/ScrollToTop'));
-const CookieConsentComponent = dynamic(() => import('@/components/shared/CookieConsentComponent'));
+const Specialties = dynamic(() => import('@/components/sections/Specialties'), { ssr: true });
+const Doctors = dynamic(() => import('@/components/sections/Doctors'), { ssr: true });
+// const Pricing = dynamic(() => import('@/components/sections/Pricing'), { ssr: true });
+// const WorkSection = dynamic(() => import('@/components/sections/WorkSection'), { ssr: false });
+const LatestArticle = dynamic(() => import('@/components/sections/LatestArticle'), { ssr: true });
+const MobileAppSection = dynamic(() => import('@/components/sections/MobileAppSection'), { ssr: true });
+const FaqSection = dynamic(() => import('@/components/sections/FaqSection'), { ssr: true });
+const Testimonial = dynamic(() => import('@/components/sections/Testimonial'), { ssr: true });
+const PartnersSection = dynamic(() => import('@/components/sections/PartnersSection'), { ssr: true });
+const Footer = dynamic(() => import('@/components/sections/Footer'), { ssr: true });
 
 // Non-lazy loaded component
 import HomeBanner from '@/components/sections/HomeBanner';
+import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
+import WorkSection from '@/components/sections/WorkSection';
+import ScrollToTop from '@/components/sections/ScrollToTop';
 import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
@@ -33,7 +34,33 @@ import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
+import { useEffect, useRef, useState } from 'react';
+const LazyLoadWrapper = ({ children }: { children: React.ReactNode }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      {
+        rootMargin: '200px',
+        threshold: 0.2,
+      }
+    );
+    const currentRef = ref.current; // Store ref.current in a variable
+    if (currentRef) observer.observe(currentRef);
+
+    return () => {
+      if (currentRef) observer.unobserve(currentRef);
+    };
+  }, []);
+
+  return <div ref={ref}>{isVisible && children}</div>;
+};
 
 const Home: NextPage = () => {
 
@@ -47,19 +74,36 @@ const Home: NextPage = () => {
         <meta name="description" content="We eager to bring health and health care service to you by easiest way that possible." />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
+        <link rel="preload" href="/assets/images/banner-bg.webp" as="image"></link>
         <title>Welcome to Distribution Live data</title>
       </Head>
       <HomeBanner />
-      <Specialties />
-      <Doctors />
-      <Pricing />
+      <LazyLoadWrapper>
+        <Specialties />
+      </LazyLoadWrapper>
+      <LazyLoadWrapper>
+        <Doctors />
+      </LazyLoadWrapper>
+      {/* <Pricing /> */}
       <WorkSection />
-      <LatestArticle />
-      <MobileAppSection />
-      <FaqSection />
-      <Testimonial />
-      <PartnersSection />
-      <Footer />
+      <LazyLoadWrapper>
+        <LatestArticle />
+      </LazyLoadWrapper>
+      <LazyLoadWrapper>
+        <MobileAppSection />
+      </LazyLoadWrapper>
+      <LazyLoadWrapper>
+        <FaqSection />
+      </LazyLoadWrapper>
+      <LazyLoadWrapper>
+        <Testimonial />
+      </LazyLoadWrapper>
+      <LazyLoadWrapper>
+        <PartnersSection />
+      </LazyLoadWrapper>
+      <LazyLoadWrapper>
+        <Footer />
+      </LazyLoadWrapper>
       <ScrollToTop />
       <CookieConsentComponent />
     </>

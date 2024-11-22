@@ -8,9 +8,10 @@ import {
   ecg,
   footermap,
   hexagon_group_4,
-  hexagon_group_5
+  hexagon_group_5,
+  logo
 } from '../../../public/assets/imagepath'
-import { FooterLogoSvg } from '../../../public/assets/images/icons/IconsSvgs'
+
 //Mui
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
@@ -40,8 +41,7 @@ const Footer: FC = (() => {
                 <div className="col-lg-4 col-md-6 col-sm-12">
                   <div className="footer-widget footer-about">
                     <div className="footer-logo">
-                      {/* <img src={footerlogo} alt="logo" /> */}
-                      <FooterLogoSvg />
+                      <img src={logo} alt="logo" height={70} width={70} />
                     </div>
                     <div className="footer-about-content">
                       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod

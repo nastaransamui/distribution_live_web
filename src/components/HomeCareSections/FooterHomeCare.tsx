@@ -7,7 +7,7 @@ import {
   footer_img_02,
   footer_img_03,
   footer_img_04,
-  footer_logo,
+  logo,
 } from '@/public/assets/imagepath'
 import { useTheme } from "@mui/material";
 
@@ -87,7 +87,7 @@ const FooterHomeCare: FC = (() => {
             >
               <div className="footer-logo-col">
                 <div className="footer-logo">
-                  <img src={footer_logo} alt="Img" />
+                  <img src={logo} alt="Img" height={70} width={70} />
                 </div>
                 <p>
                   Connect with healthcare professionals, manage appointments

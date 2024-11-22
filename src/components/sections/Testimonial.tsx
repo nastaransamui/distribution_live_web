@@ -56,7 +56,7 @@ const Testimonial: FC = (() => {
                       </div>
                       <div className="testimonial-content">
                         <div className="section-header section-inner-header testimonial-header">
-                          <h5>Testimonials</h5>
+                          <h1>Testimonials</h1>
                           <h2>What Our Client Says</h2>
                         </div>
                         <div className="testimonial-details">
@@ -68,9 +68,9 @@ const Testimonial: FC = (() => {
                             Duis aute irure dolor in reprehenderit in voluptate velit
                             esse cillum dolore eu fugiat nulla pariatur.
                           </p>
-                          <h6>
+                          <h3>
                             <span>John Doe</span> New York
-                          </h6>
+                          </h3>
                         </div>
                       </div>
                     </div>

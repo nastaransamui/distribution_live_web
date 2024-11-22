@@ -119,12 +119,16 @@ const HomeSearchBox: FC<HomeSearchBoxProps> = (({ showFilter, setShowFilter }) =
             <FormControl fullWidth >
               <InputLabel id="availablity" size='small' sx={{ mt: { xl: 1, lg: 1, md: 1, sm: 2, xs: 3 }, mb: { xl: 1, lg: 1, md: 1, sm: 2, xs: 3 } }}>
                 Availablitity
-                <input id="availablity" hidden />
+                <input id="availablity_hidden" hidden />
               </InputLabel>
               <Select
+                inputProps={{
+                  id: "availablity",
+                  name: "availablity"
+                }}
                 size='small'
                 labelId="availablity"
-                id="availablity"
+
                 label="Availablitity"
                 value={availablityValue}
                 onChange={(e: SelectChangeEvent) => {
@@ -165,7 +169,7 @@ const HomeSearchBox: FC<HomeSearchBoxProps> = (({ showFilter, setShowFilter }) =
             transition: `visibility ${showFilter ? `0.75s` : `0s`} ease-in`,
             transitionDelay: showFilter ? `0.75s` : `0s`
           }} >
-            <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
+            {showFilter && <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
               {specialities.length !== 0 &&
                 <FormControl fullWidth >
                   <InputLabel id="specialities" size='small'>
@@ -205,8 +209,8 @@ const HomeSearchBox: FC<HomeSearchBoxProps> = (({ showFilter, setShowFilter }) =
                   </Select>
                 </FormControl>
               }
-            </Grid>
-            <Grid item xl={2} lg={2} md={2} sm={6} xs={12}>
+            </Grid>}
+            {showFilter && <Grid item xl={2} lg={2} md={2} sm={6} xs={12}>
               <FormControl fullWidth >
                 <InputLabel id="gender" size='small'>
                   Gender
@@ -235,8 +239,8 @@ const HomeSearchBox: FC<HomeSearchBoxProps> = (({ showFilter, setShowFilter }) =
                   <MenuItem value="Mss">👩 Mss</MenuItem>
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xl={6} lg={6} md={6} sm={6} xs={12} component="form"
+            </Grid>}
+            {showFilter && <Grid item xl={6} lg={6} md={6} sm={6} xs={12} component="form"
               noValidate
               autoComplete="off">
               <GeoLocationAutocomplete
@@ -256,8 +260,8 @@ const HomeSearchBox: FC<HomeSearchBoxProps> = (({ showFilter, setShowFilter }) =
                 size='small'
                 required={false}
               />
-            </Grid>
-            <Grid item xl={6} lg={6} md={6} sm={6} xs={12} component="form"
+            </Grid>}
+            {showFilter && <Grid item xl={6} lg={6} md={6} sm={6} xs={12} component="form"
               noValidate
               autoComplete="off">
               <GeoLocationAutocomplete
@@ -277,8 +281,8 @@ const HomeSearchBox: FC<HomeSearchBoxProps> = (({ showFilter, setShowFilter }) =
                 size='small'
                 required={false}
               />
-            </Grid>
-            <Grid item xl={6} lg={6} md={6} sm={6} xs={12} component="form"
+            </Grid>}
+            {showFilter && <Grid item xl={6} lg={6} md={6} sm={6} xs={12} component="form"
               noValidate
               autoComplete="off">
               <GeoLocationAutocomplete
@@ -298,7 +302,7 @@ const HomeSearchBox: FC<HomeSearchBoxProps> = (({ showFilter, setShowFilter }) =
                 size="small"
                 required={false}
               />
-            </Grid>
+            </Grid>}
           </Grid>
 
         </Box>

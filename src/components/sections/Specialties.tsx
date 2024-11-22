@@ -33,6 +33,7 @@ const Specialties: FC = (() => {
     nav: true,
     navContainer: '.slide-nav-1',
     navText: ['<i class="fas fa-chevron-left custom-arrow"></i>', '<i class="fas fa-chevron-right custom-arrow"></i>'],
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     autoplay: false,
     infinite: "true",
     slidestoscroll: 1,

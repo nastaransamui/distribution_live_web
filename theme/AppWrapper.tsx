@@ -280,18 +280,25 @@ const AppWrapper = ({ children }: ChildrenProps) => {
 
       }
     }
+    return () => {
+
+      socket.current.disconnect()
+      console.log(socket.current)
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    bounce,
-    dispatch,
-    homeLoadingBar,
-    router,
-    userData,
-    clinicStatus,
-    userProfile,
-    homeAccessToken,
-    specialities.length,
-    accessToken,
-    user_id
+    // bounce,
+    // dispatch,
+    // homeLoadingBar,
+    // router,
+    // userData,
+    // clinicStatus,
+    // userProfile,
+    // homeAccessToken,
+    // specialities.length,
+    // accessToken,
+    // user_id
   ])
 
 

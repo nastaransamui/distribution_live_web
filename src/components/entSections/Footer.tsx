@@ -5,7 +5,7 @@ import AOS from 'aos'
 import { RiPhoneLine } from 'react-icons/ri'
 import { AiOutlineClockCircle, AiOutlineMail } from 'react-icons/ai';
 import useScssVar from '@/hooks/useScssVar'
-import { logo_03, payment } from '../../../public/assets/imagepath';
+import { logo, payment } from '../../../public/assets/imagepath';
 import { useTheme } from '@mui/material';
 
 
@@ -32,7 +32,7 @@ const Footer: FC = (() => {
               <div className="col-lg-6">
                 <div className="footer-left-fifteen">
                   <div className="footer-fifteen-image">
-                    <img src={logo_03} alt="" />
+                    <img src={logo} width={70} height={70} alt="" />
                   </div>
                   <p>
                     Lorem Ipsum is simply dummy text of the printing and typesetting
