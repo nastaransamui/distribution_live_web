@@ -10,7 +10,7 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: "/(.*).webp",
+        source: "/",
         headers: [
           {
             key: "Cache-Control",
@@ -23,7 +23,7 @@ const nextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            value: "max-age=30, must-revalidate", // Adjust this as needed
+            value: "public, max-age=31536000, immutable", // Adjust this as needed
           },
         ],
       },

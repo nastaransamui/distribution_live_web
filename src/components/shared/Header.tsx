@@ -699,7 +699,7 @@ const Header: FC = () => {
           <nav className={`navbar navbar-expand-lg header-nav`}  >
             <div className={`navbar-header col-lg-${userProfile == null ? '1' : userProfile?.roleName == "doctors" ? '2' : '1'}`}>
               <ClickAwayListener onClickAway={handleClickAway}>
-                <Link href="" id="mobile_btn" onClick={(e) => {
+                <Link href="" id="mobile_btn" aria-label='mobile menu' onClick={(e) => {
                   e.preventDefault();
                   onhandleCloseMenu();
                 }}>
@@ -713,7 +713,7 @@ const Header: FC = () => {
               </ClickAwayListener>
               <Link href="/" className="navbar-brand logo" style={{ marginLeft: minWidth1200 ? 100 : 0 }}>
                 <img style={{
-                  maxWidth: maxWidth991 ? "60px" : "70px",
+                  maxWidth: maxWidth991 ? "70px" : "70px",
                   height: 'auto',
                   float: maxWidth991 ? 'right' : 'unset'
                 }} src={logo} className={`img-fluid `} alt="Logo" onClick={() => router.push('/')} />
@@ -750,7 +750,7 @@ const Header: FC = () => {
                       <Link href="/home" className="menu-logo">
                         <img src={logo} className="img-fluid " alt="Logo" />
                       </Link>
-                      <Link href="" id="menu_close" className="menu-close"
+                      <Link href="" id="menu_close" className="menu-close" aria-label='menu close'
                         onClick={(e) => {
                           e.preventDefault();
                           onhandleCloseMenu()

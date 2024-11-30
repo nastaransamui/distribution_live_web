@@ -25,6 +25,7 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { useForm } from 'react-hook-form';
 import GeoLocationAutocomplete from '@/shared/GeoLocationAutocomplete';
+import Head from "next/head";
 
 
 
@@ -79,6 +80,9 @@ const HomeBanner: FC = (() => {
 
   return (
     <Fragment>
+      <Head>
+        <link rel="preload" href={`/assets/images/bg/home-10-banner_${theme.palette.primary.main.slice(1)}.webp`} as="image" />
+      </Head>
       <section className="banner-section" style={{ ...muiVar, background: `url(/assets/images/bg/home-10-banner_${theme.palette.primary.main.slice(1)}.webp)` }}>
         <div className="container">
           <div className="row align-items-center">
