@@ -35,7 +35,7 @@ import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import { useEffect, useRef, useState } from 'react';
-const LazyLoadWrapper = ({ children }: { children: React.ReactNode }) => {
+export const LazyLoadWrapper = ({ children }: { children: React.ReactNode }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 

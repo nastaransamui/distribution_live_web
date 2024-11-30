@@ -41,7 +41,7 @@ const NeedToKnow: FC = (() => {
                         incompetence (where the valve does not close properly and blood is allowed
                         to leak backwards)....
                       </p>
-                      <Link href="/doctors/booking" className=" need-to-know-content-btn">Read More</Link>
+                      <Link href="/doctors/search" className=" need-to-know-content-btn" aria-label='Search for doctors'>Search for doctors</Link>
                     </div>
                   </div>
                   <div className="tab-pane fade" id="content_2" role="tabpanel" aria-labelledby="pills-profile-tab">
@@ -54,7 +54,7 @@ const NeedToKnow: FC = (() => {
                         incompetence (where the valve does not close properly and blood is allowed
                         to leak backwards)....
                       </p>
-                      <Link href="/doctors/booking" className=" need-to-know-content-btn">Read More</Link>
+                      <Link href="/doctors/search" className=" need-to-know-content-btn" aria-label='Search for doctors'>Search for doctors</Link>
                     </div>
                   </div>
                   <div className="tab-pane fade" id="content_3" role="tabpanel" aria-labelledby="pills-contact-tab">
@@ -67,7 +67,7 @@ const NeedToKnow: FC = (() => {
                         incompetence (where the valve does not close properly and blood is allowed
                         to leak backwards)....
                       </p>
-                      <Link href="/doctors/booking" className=" need-to-know-content-btn">Read More</Link>
+                      <Link href="/doctors/search" className=" need-to-know-content-btn" aria-label='Search for doctors'>Search for doctors</Link>
                     </div>
                   </div>
                 </div>

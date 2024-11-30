@@ -7922,7 +7922,7 @@ table .table-hover tbody tr:hover td {
   display: block;
   width: 100%;
   z-index: 9999;
-  background: var(--bgDefault);
+  background: var(--bgPaper);
   box-shadow: inherit;
   position: relative;
 }
@@ -25993,7 +25993,12 @@ span.call-duration.float-end {
   .banner-section
   .search-box-one.search-ten
   .search-title
-  h5 {
+  h5 ,
+  .main-wrapper.home-ten
+  .banner-section
+  .search-box-one.search-ten
+  .search-title
+  h1 {
   font-weight: 700;
 }
 
@@ -27811,7 +27816,12 @@ span.call-duration.float-end {
   .pricing-section.pricing-section-ten
   .section-header-one
   .options-group
-  span {
+  span,
+  .main-wrapper.home-ten
+  .pricing-section.pricing-section-ten
+  .section-header-one
+  .options-group
+  label {
   color: var(--secondaryLight);
   font-weight: 500;
   font-size: 18px;
@@ -31817,7 +31827,12 @@ span.call-duration.float-end {
   .banner-section-thirteen
   .search-box-one.search-box-thirteen
   .search-title
-  h5 {
+  h5 
+  .main-wrapper.home-twelve.home-thirteen
+  .banner-section-thirteen
+  .search-box-one.search-box-thirteen
+  .search-title
+  h1{
   font-weight: 600;
   font-size: 24px;
   margin-bottom: 0;
@@ -31828,7 +31843,12 @@ span.call-duration.float-end {
     .banner-section-thirteen
     .search-box-one.search-box-thirteen
     .search-title
-    h5 {
+    h5,
+    .main-wrapper.home-twelve.home-thirteen
+    .banner-section-thirteen
+    .search-box-one.search-box-thirteen
+    .search-title
+    h1 {
     font-size: 20px;
   }
 }
@@ -38802,8 +38822,21 @@ ul.benifits-col li i {
   transition: 0.7s;
 }
 
+.pricing-title h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--secondaryDark);
+  margin-bottom: 0;
+  -webkit-transition: 0.7s;
+  -ms-transition: 0.7s;
+  transition: 0.7s;
+}
+
 @media (max-width: 767.98px) {
   .pricing-title h4 {
+    font-size: 20px;
+  }
+  .pricing-title h3 {
     font-size: 20px;
   }
 }
@@ -44671,4 +44704,10 @@ svg.feather {
   color: #ffffff;
   font-size: 13px;
   margin-bottom: 0;
+}
+.fab.fa-twitter {
+  font-family: sans-serif;
+}
+.fab.fa-twitter::before {
+  content: "𝕏";
 }

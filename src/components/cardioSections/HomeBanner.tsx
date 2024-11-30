@@ -106,7 +106,7 @@ const HomeBanner: FC = (() => {
             <div className="col-md-12">
               <div className="search-box-one search-ten aos" data-aos="fade-up">
                 <div className="search-title">
-                  <h5>Book An Apppointment</h5>
+                  <h1 style={{ fontSize: '1rem', color: theme.palette.primary.main }}>Book An Apppointment</h1>
                   <img src={health_care_1} alt="#" />
                 </div>
                 <Box component="form"
@@ -132,7 +132,7 @@ const HomeBanner: FC = (() => {
                         InputProps={{
                           startAdornment: //keyWord !== '' &&
                             <InputAdornment position="start" >
-                              <IconButton disableTouchRipple onClick={() => {
+                              <IconButton aria-label="search" disableTouchRipple onClick={() => {
                                 keyWord !== '' && setKeyWord('')
                               }}>
                                 {keyWord == '' ? <FeatherIcon
@@ -146,7 +146,7 @@ const HomeBanner: FC = (() => {
                               </IconButton>
                             </InputAdornment>,
                           endAdornment: <InputAdornment position='end'>
-                            <IconButton disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
+                            <IconButton aria-label="filter" disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
                               <FeatherIcon icon="filter" style={{ width: "16px", color: theme.palette.secondary.main }} />
                             </IconButton>
                           </InputAdornment>,
@@ -155,14 +155,18 @@ const HomeBanner: FC = (() => {
                     </Grid>
                     <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
                       <FormControl fullWidth >
-                        <InputLabel id="availablity" size='small' sx={{ mt: { xl: 1, lg: 1, md: 1, sm: 2, xs: 2 }, mb: { xl: 1, lg: 1, md: 1, sm: 2, xs: 2 } }}>
+                        <InputLabel id="availability-label" htmlFor="availability" size='small' sx={{ mt: { xl: 1, lg: 1, md: 1, sm: 2, xs: 2 }, mb: { xl: 1, lg: 1, md: 1, sm: 2, xs: 2 } }}>
                           Availablitity
                           <input id="availablity" hidden />
                         </InputLabel>
                         <Select
                           size='small'
-                          labelId="availablity"
-                          id="availablity"
+                          labelId="availability-label"
+                          inputProps={{
+                            id: "availability",
+                            name: "availability"
+                          }}
+                          aria-label="availability"
                           label="Availablitity"
                           value={availablityValue}
                           onChange={(e: SelectChangeEvent) => {
@@ -206,14 +210,19 @@ const HomeBanner: FC = (() => {
                       <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
                         {specialities.length !== 0 &&
                           <FormControl fullWidth >
-                            <InputLabel id="specialities" size='small'>
+                            <InputLabel id="specialities-label" htmlFor="specialities" size='small'>
                               Speciality
-                              <input id="specialities" hidden />
+                              {/* <input id="specialities" hidden /> */}
                             </InputLabel>
                             <Select
                               size='small'
-                              labelId="specialities"
-                              id="specialities"
+                              labelId="specialities-lable"
+                              inputProps={{
+                                id: 'specialities',
+                                name: "specialities",
+                                "aria-label": "specialities"
+                              }}
+                              aria-label="specialities"
                               label="Speciality"
                               value={specialitiesValue}
                               sx={inputAutoSelectPaper}
@@ -246,14 +255,19 @@ const HomeBanner: FC = (() => {
                       </Grid>
                       <Grid item xl={2} lg={2} md={2} sm={6} xs={12}>
                         <FormControl fullWidth >
-                          <InputLabel id="gender" size='small'>
+                          <InputLabel id="gender-label" htmlFor="gender" size='small'>
                             Gender
-                            <input id="gender" hidden />
+                            {/* <input id="gender" hidden /> */}
                           </InputLabel>
                           <Select
                             size='small'
-                            labelId="gender"
-                            id="gender"
+                            labelId="gender-label"
+                            inputProps={{
+                              id: "gender",
+                              name: 'gender',
+                              "aria-label": "gender"
+                            }}
+                            aria-label="gender"
                             label="Gender"
                             value={genderValue}
                             onChange={(e: SelectChangeEvent) => {

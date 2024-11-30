@@ -2,7 +2,7 @@
 import { FC, Fragment } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { client07, client08, client09, healthcare } from '../../../public/assets/imagepath';
-import { useTheme } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 
 
 const Testimonals: FC = (() => {
@@ -38,7 +38,7 @@ const Testimonals: FC = (() => {
                         <i className="fa-solid fa-circle-half-stroke" />
                         <span>(4.8/5)</span>
                       </div>
-                      <h5 style={{ marginBottom: 30 }}>Overall Customer Ratings</h5>
+                      <Typography component="h2" style={{ marginBottom: 30, fontSize: 24 }}>Overall Customer Ratings</Typography>
                     </div>
                   </div>
                 </div>
@@ -53,9 +53,9 @@ const Testimonals: FC = (() => {
                         <img src={client07} className="img-fluid" alt="#" />
                       </div>
                       <div className="testimonial-user-name">
-                        <h5>
+                        <Typography component="h2">
                           Martin Philips
-                        </h5>
+                        </Typography>
                         <div className="circle-rating">
                           <i className="fa-solid fa-circle" />
                           <i className="fa-solid fa-circle" />
@@ -66,7 +66,7 @@ const Testimonals: FC = (() => {
                       </div>
                     </div>
                     <div className="testmonial-user-coments">
-                      <h6>“ Awesome Impact ”</h6>
+                      <Typography component="h3">“ Awesome Impact ”</Typography>
                       <p>After suffering from a heart condition for a number of years I was very happy
                         to meet Doccure, from the first consultation where he believed there was a
                         solution...</p>
@@ -78,9 +78,9 @@ const Testimonals: FC = (() => {
                         <img src={client08} className="img-fluid" alt="#" />
                       </div>
                       <div className="testimonial-user-name">
-                        <h5>
+                        <Typography component="h2">
                           James Anderson
-                        </h5>
+                        </Typography>
                         <div className="circle-rating">
                           <i className="fa-solid fa-circle" />
                           <i className="fa-solid fa-circle" />
@@ -91,7 +91,7 @@ const Testimonals: FC = (() => {
                       </div>
                     </div>
                     <div className="testmonial-user-coments">
-                      <h6>“ I am very grateful ”</h6>
+                      <Typography component="h3">“ I am very grateful ”</Typography>
                       <p>Doctors explains everything clearly and helps you to understand even the most
                         complex medical terms</p>
                     </div>
@@ -104,9 +104,9 @@ const Testimonals: FC = (() => {
                         <img src={client09} className="img-fluid" alt="#" />
                       </div>
                       <div className="testimonial-user-name">
-                        <h5>
+                        <Typography component="h2">
                           Christina Louis
-                        </h5>
+                        </Typography>
                         <div className="circle-rating">
                           <i className="fa-solid fa-circle" />
                           <i className="fa-solid fa-circle" />
@@ -117,7 +117,7 @@ const Testimonals: FC = (() => {
                       </div>
                     </div>
                     <div className="testmonial-user-coments">
-                      <h6>“ Excellent Clinician ”</h6>
+                      <Typography component="h3">“ Excellent Clinician ”</Typography>
                       <p>Excellent clinician. Endlessly patient and reassuring.Also a very efficient
                         back up team. He was prepared to spend as long as I needed to understand
                         what he was saying.</p>

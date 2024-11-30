@@ -4,6 +4,7 @@ import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 import { healthcare } from '../../../public/assets/imagepath';
 import { HeartPulseSvg } from '../../../public/assets/images/icons/IconsSvgs';
+import Typography from '@mui/material/Typography';
 
 const StepToFollow: FC = (() => {
   const { muiVar } = useScssVar();
@@ -25,7 +26,7 @@ const StepToFollow: FC = (() => {
                         {/* <img src={heartpulse} className="img-fluid" alt="#" /> */}
                         <HeartPulseSvg />
                       </div>
-                      <h6>Choose Your Doctor</h6>
+                      <Typography sx={{ fontWeight: 'bold' }} component="h1">Choose Your Doctor</Typography>
                       <p>Lorem Ipsum is simply dummy text of the printing..</p>
                     </div>
                   </div>
@@ -36,7 +37,7 @@ const StepToFollow: FC = (() => {
                         {/* <img src={heartpulse} className="img-fluid" alt="#" /> */}
                         <HeartPulseSvg />
                       </div>
-                      <h6>Consult with doctor</h6>
+                      <Typography sx={{ fontWeight: 'bold' }} component="h1">Consult with doctor</Typography>
                       <p>Lorem Ipsum is simply dummy text of the printing..</p>
                     </div>
                   </div>
@@ -49,7 +50,7 @@ const StepToFollow: FC = (() => {
                         {/* <img src={heartpulse} className="img-fluid" alt="#" /> */}
                         <HeartPulseSvg />
                       </div>
-                      <h6>Set Appointment</h6>
+                      <Typography sx={{ fontWeight: 'bold' }} component="h1">Set Appointment</Typography>
                       <p>Lorem Ipsum is simply dummy text of the printing..</p>
                     </div>
                   </div>
@@ -60,7 +61,7 @@ const StepToFollow: FC = (() => {
                         {/* <img src={heartpulse} className="img-fluid" alt="#" /> */}
                         <HeartPulseSvg />
                       </div>
-                      <h6>Get recommendation</h6>
+                      <Typography sx={{ fontWeight: 'bold' }} component="h1">Get recommendation</Typography>
                       <p>Lorem Ipsum is simply dummy text of the printing..</p>
                     </div>
                   </div>

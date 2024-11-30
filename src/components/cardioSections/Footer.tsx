@@ -23,7 +23,7 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 
 const Footer: FC = (() => {
-  const { muiVar } = useScssVar();
+  const { muiVar, theme } = useScssVar();
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
 
   return (
@@ -50,18 +50,18 @@ const Footer: FC = (() => {
                     <div className="social-icon">
                       <ul>
                         <li>
-                          <Link href="#" target="_blank"><i className="fab fa-facebook" />
+                          <Link href="#" target="_blank" aria-label='social media'><i className="fab fa-facebook" />
                           </Link>
                         </li>
                         <li>
-                          <Link href="#" target="_blank"><i className="fab fa-instagram" /></Link>
+                          <Link href="#" target="_blank" aria-label='social media'><i className="fab fa-instagram" /></Link>
                         </li>
                         <li>
-                          <Link href="#" target="_blank"><i className="fab fa-twitter" />
+                          <Link href="#" target="_blank" aria-label='social media'><i className="fab fa-twitter" />
                           </Link>
                         </li>
                         <li>
-                          <Link href="#" target="_blank"><i className="fab fa-linkedin-in" /></Link>
+                          <Link href="#" target="_blank" aria-label='social media'><i className="fab fa-linkedin-in" /></Link>
                         </li>
                       </ul>
                     </div>
@@ -72,13 +72,13 @@ const Footer: FC = (() => {
                     <h2 className="footer-title">&nbsp;</h2>
                     <div className="footer-contact-info">
                       <div className="footer-address">
-                        <p> <FontAwesomeIcon icon={faMapMarker} /> &nbsp; 3556 Beech Street, USA</p>
+                        <p> <FontAwesomeIcon icon={faMapMarker} style={{ width: '20px', height: "30px", color: theme.palette.primary.main }} /> &nbsp; Thailand</p>
                       </div>
                       <div className="footer-address">
-                        <p><FontAwesomeIcon icon={faPhone} />  &nbsp;+1 315 369 5943</p>
+                        <p><FontAwesomeIcon icon={faPhone} style={{ width: '20px', height: "30px", color: theme.palette.primary.main }} />  &nbsp;+66870 62 46 38</p>
                       </div>
                       <div className="footer-address mb-0">
-                        <p><FontAwesomeIcon icon={faEnvelope} />  &nbsp;doccure@example.com</p>
+                        <p><FontAwesomeIcon icon={faEnvelope} style={{ width: '20px', height: "30px", color: theme.palette.primary.main }} />  &nbsp;mjcode2020@gmail.com</p>
                       </div>
                     </div>
                   </div>

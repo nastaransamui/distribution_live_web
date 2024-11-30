@@ -3,7 +3,7 @@ import { FC, Fragment } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import { doctor_13, doctor_14, doctor_15, doctor_16, ecgwave, hexagon_group_1, hexagon_group_2 } from '../../../public/assets/imagepath';
-import { useTheme } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 
 const OurDoctors: FC = (() => {
   const { muiVar } = useScssVar();
@@ -31,7 +31,7 @@ const OurDoctors: FC = (() => {
               <div className="module-border-wrap">
                 <div className="listing-card">
                   <div className="listing-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='profile'>
                       <img
                         src={doctor_13}
                         className="img-fluid"
@@ -42,7 +42,7 @@ const OurDoctors: FC = (() => {
                       <div className="featured-rating">
                         <i className="fa fa-star " /> <span>4.5</span>
                       </div>
-                      <Link href="#" className="fav-icon">
+                      <Link href="#" className="fav-icon" aria-label='fav'>
                         <i className="fa fa-heart" />
                       </Link>
                     </div>
@@ -50,8 +50,8 @@ const OurDoctors: FC = (() => {
                   <div className="listing-content">
                     <div className="listing-details">
                       <div className="listing-category">
-                        <Link href="#" className="listing-category-tag tag-green">Cardiology</Link>
-                        <Link href="#" className="listing-category-tag tag-purple">physiology</Link>
+                        <Link href="#" className="listing-category-tag tag-green" aria-label='category'>Cardiology</Link>
+                        <Link href="#" className="listing-category-tag tag-purple" aria-label='category'>physiology</Link>
                       </div>
                       <div className="listing-profile-details">
                         <div className="listing-floating-img">
@@ -59,14 +59,14 @@ const OurDoctors: FC = (() => {
                         </div>
                         <div className="listing-user">
                           <div className="listing-user-details">
-                            <h6>
-                              <Link href="/doctors/profile">Dr Jonathan Behar </Link>
-                            </h6>
+                            <Typography component="h1">
+                              <Link href="/doctors/search" aria-label='profile'>Dr Jonathan Behar </Link>
+                            </Typography>
                             <span>Cardiologist</span>
                           </div>
                         </div>
                         <div className="listing-btn">
-                          <Link href="/doctors/booking" className="btn consult-btn">
+                          <Link href="/doctors/search" aria-label='profile' className="btn consult-btn">
                             Consult
                           </Link>
                         </div>
@@ -80,7 +80,7 @@ const OurDoctors: FC = (() => {
               <div className="module-border-wrap">
                 <div className="listing-card">
                   <div className="listing-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='profile'>
                       <img
                         src={doctor_14}
                         className="img-fluid"
@@ -91,7 +91,7 @@ const OurDoctors: FC = (() => {
                       <div className="featured-rating">
                         <i className="fa fa-star " /> <span>4.5</span>
                       </div>
-                      <Link href="#" className="fav-icon">
+                      <Link href="#" className="fav-icon" aria-label='fav'>
                         <i className="fa fa-heart" />
                       </Link>
                     </div>
@@ -99,8 +99,8 @@ const OurDoctors: FC = (() => {
                   <div className="listing-content">
                     <div className="listing-details">
                       <div className="listing-category">
-                        <Link href="#" className="listing-category-tag tag-red">Hypertension</Link>
-                        <Link href="#" className="listing-category-tag tag-green">Cardiology</Link>
+                        <Link href="#" className="listing-category-tag tag-red" aria-label='category'>Hypertension</Link>
+                        <Link href="#" className="listing-category-tag tag-green" aria-label='category'>Cardiology</Link>
                       </div>
                       <div className="listing-profile-details">
                         <div className="listing-floating-img">
@@ -108,14 +108,14 @@ const OurDoctors: FC = (() => {
                         </div>
                         <div className="listing-user">
                           <div className="listing-user-details">
-                            <h6>
-                              <Link href="/doctors/profile">Dr Piers Clifford</Link>
-                            </h6>
+                            <Typography component="h1">
+                              <Link href="/doctors/search" aria-label="profile">Dr Piers Clifford</Link>
+                            </Typography>
                             <span>Consultant Cardiologist</span>
                           </div>
                         </div>
                         <div className="listing-btn">
-                          <Link href="/doctors/booking" className="btn consult-btn">
+                          <Link href="/doctors/search" className="btn consult-btn" aria-label="consult">
                             Consult
                           </Link>
                         </div>
@@ -129,7 +129,7 @@ const OurDoctors: FC = (() => {
               <div className="module-border-wrap">
                 <div className="listing-card">
                   <div className="listing-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label="profile">
                       <img
                         src={doctor_15}
                         className="img-fluid"
@@ -140,7 +140,7 @@ const OurDoctors: FC = (() => {
                       <div className="featured-rating">
                         <i className="fa fa-star " /> <span>4.5</span>
                       </div>
-                      <Link href="#" className="fav-icon">
+                      <Link href="#" className="fav-icon" aria-label="fav">
                         <i className="fa fa-heart" />
                       </Link>
                     </div>
@@ -148,8 +148,8 @@ const OurDoctors: FC = (() => {
                   <div className="listing-content">
                     <div className="listing-details">
                       <div className="listing-category">
-                        <Link href="#" className="listing-category-tag tag-green">Cardiology</Link>
-                        <Link href="#" className="listing-category-tag tag-purple">physiology</Link>
+                        <Link href="#" className="listing-category-tag tag-green" aria-label="category">Cardiology</Link>
+                        <Link href="#" className="listing-category-tag tag-purple" aria-label="category">physiology</Link>
                       </div>
                       <div className="listing-profile-details">
                         <div className="listing-floating-img">
@@ -157,14 +157,14 @@ const OurDoctors: FC = (() => {
                         </div>
                         <div className="listing-user">
                           <div className="listing-user-details">
-                            <h6>
-                              <Link href="/doctors/profile">Dr Rajan Sharma</Link>
-                            </h6>
+                            <Typography component="h1">
+                              <Link href="/doctors/search" aria-label="profile">Dr Rajan Sharma</Link>
+                            </Typography>
                             <span>Cardiologist</span>
                           </div>
                         </div>
                         <div className="listing-btn">
-                          <Link href="/doctors/booking" className="btn consult-btn">
+                          <Link href="/doctors/search" className="btn consult-btn" aria-label="consult">
                             Consult
                           </Link>
                         </div>
@@ -178,7 +178,7 @@ const OurDoctors: FC = (() => {
               <div className="module-border-wrap">
                 <div className="listing-card">
                   <div className="listing-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label="profile">
                       <img
                         src={doctor_16}
                         className="img-fluid"
@@ -189,7 +189,7 @@ const OurDoctors: FC = (() => {
                       <div className="featured-rating">
                         <i className="fa fa-star " /> <span>4.5</span>
                       </div>
-                      <Link href="#" className="fav-icon">
+                      <Link href="#" className="fav-icon" aria-label="fav">
                         <i className="fa fa-heart" />
                       </Link>
                     </div>
@@ -197,8 +197,8 @@ const OurDoctors: FC = (() => {
                   <div className="listing-content">
                     <div className="listing-details">
                       <div className="listing-category">
-                        <Link href="#" className="listing-category-tag tag-red">Hypertension</Link>
-                        <Link href="#" className="listing-category-tag tag-green">Cardiology</Link>
+                        <Link href="#" className="listing-category-tag tag-red" aria-label="category">Hypertension</Link>
+                        <Link href="#" className="listing-category-tag tag-green" aria-label="category">Cardiology</Link>
                       </div>
                       <div className="listing-profile-details">
                         <div className="listing-floating-img">
@@ -206,14 +206,14 @@ const OurDoctors: FC = (() => {
                         </div>
                         <div className="listing-user">
                           <div className="listing-user-details">
-                            <h6>
-                              <Link href="/doctors/profile">Dr Julian Collinson</Link>
-                            </h6>
+                            <Typography component="h1">
+                              <Link href="/doctors/search" aria-label="profile">Dr Julian Collinson</Link>
+                            </Typography>
                             <span>Consultant Cardiologist</span>
                           </div>
                         </div>
                         <div className="listing-btn">
-                          <Link href="/doctors/booking" className="btn consult-btn">
+                          <Link href="/doctors/search" className="btn consult-btn" aria-label="category">
                             Consult
                           </Link>
                         </div>

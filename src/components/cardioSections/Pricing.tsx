@@ -19,7 +19,7 @@ const Pricing: FC = (() => {
                 <div className="pricing-options">
                   <p>Choose the package that best suit you</p>
                   <div className="options-group">
-                    <span>Monthly</span>
+                    <label htmlFor='flexSwitchCheckDefault'>Monthly</label>
                     <div className="form-check form-switch">
                       <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" />
                     </div>
@@ -36,7 +36,7 @@ const Pricing: FC = (() => {
                   <div className="pricing-header">
                     <div className="pricing-header-info">
                       <div className="pricing-title">
-                        <h4>Free</h4>
+                        <h3 style={{ color: '#000000' }}>Free</h3>
                       </div>
                       <div className="pricing-tag">
                         <div><img src={heartplus} alt="icon" /></div>
@@ -74,7 +74,7 @@ const Pricing: FC = (() => {
                   <div className="pricing-header">
                     <div className="pricing-header-info">
                       <div className="pricing-title">
-                        <h4>Essentials</h4>
+                        <h3>Essentials</h3>
                       </div>
                     </div>
                   </div>
@@ -109,7 +109,7 @@ const Pricing: FC = (() => {
                   <div className="pricing-header">
                     <div className="pricing-header-info">
                       <div className="pricing-title">
-                        <h4>Team</h4>
+                        <h3>Team</h3>
                       </div>
                     </div>
                   </div>
@@ -144,7 +144,7 @@ const Pricing: FC = (() => {
                   <div className="pricing-header">
                     <div className="pricing-header-info">
                       <div className="pricing-title">
-                        <h4>Enterprises</h4>
+                        <h3>Enterprises</h3>
                       </div>
                     </div>
                   </div>
