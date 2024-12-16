@@ -39,12 +39,12 @@ const MobileDownloadSection: FC = (() => {
                 </p>
                 <div className="feedback-inner-img">
                   <div className="feedback-inner-imgone">
-                    <Link href="#">
+                    <Link href="https://play.google.com/store/apps/details?id=com.healthCareApp&pli=1" target='_blank' aria-label='application'>
                       <img src={app_store} alt="" className='colorFill' />
                     </Link>
                   </div>
                   <div className="feedback-inner-imgtwo">
-                    <Link href="#">
+                    <Link href="https://play.google.com/store/apps/details?id=com.healthCareApp&pli=1" target='_blank' aria-label='application'>
                       <img src={google_play} alt="" className='colorFill' />
                     </Link>
                   </div>

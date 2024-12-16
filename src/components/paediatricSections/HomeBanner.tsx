@@ -130,7 +130,7 @@ const HomeBanner: FC = (() => {
               ref={boxRef}>
               <div className="search-box-one search-box-thirteen aos" data-aos="fade-up">
                 <div className="search-title">
-                  <h5>Fix Appointment</h5>
+                  <h2 style={{ fontSize: "1rem" }}>Fix Appointment</h2>
                 </div>
                 <Box component="form"
                   noValidate
@@ -155,7 +155,7 @@ const HomeBanner: FC = (() => {
                         InputProps={{
                           startAdornment: //keyWord !== '' &&
                             <InputAdornment position="start" >
-                              <IconButton disableTouchRipple onClick={() => {
+                              <IconButton aria-label='search' disableTouchRipple onClick={() => {
                                 keyWord !== '' && setKeyWord('')
                               }}>
                                 {keyWord == '' ? <FeatherIcon
@@ -169,7 +169,7 @@ const HomeBanner: FC = (() => {
                               </IconButton>
                             </InputAdornment>,
                           endAdornment: <InputAdornment position='end'>
-                            <IconButton disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
+                            <IconButton aria-label='filter' disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
                               <FeatherIcon icon="filter" style={{ width: "16px", color: theme.palette.secondary.main }} />
                             </IconButton>
                           </InputAdornment>,

@@ -3,11 +3,11 @@ import { FC, Fragment } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import dynamic from 'next/dynamic'
 import Link from 'next/link';
-import { AtomBondSvg } from '../../../public/assets/images/icons/IconsSvgs';
+import { AtomBondSvg } from '@/public/assets/images/icons/IconsSvgs';
 import {
-  add_circle, doctor_25, doctor_26, doctor_27, pulse_1, pulse_2, pulse_3
+  add_circle, doctor_25_aspect, doctor_26_aspect, doctor_27_aspect, pulse_1, pulse_2, pulse_3
 }
-  from '../../../public/assets/imagepath'
+  from '@/public/assets/imagepath'
 import { useTheme } from '@mui/material';
 
 const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
@@ -75,7 +75,7 @@ const DoctorsSection: FC = (() => {
               <div className="our-doctor-thirteen-all">
                 <div className="our-doctor-thirteen-img">
                   <img
-                    src={doctor_25}
+                    src={doctor_25_aspect}
                     alt=""
                     className="img-fluid"
                   />
@@ -109,7 +109,7 @@ const DoctorsSection: FC = (() => {
               <div className="our-doctor-thirteen-all">
                 <div className="our-doctor-thirteen-img">
                   <img
-                    src={doctor_27}
+                    src={doctor_27_aspect}
                     alt=""
                     className="img-fluid"
                   />
@@ -143,7 +143,7 @@ const DoctorsSection: FC = (() => {
               <div className="our-doctor-thirteen-all">
                 <div className="our-doctor-thirteen-img">
                   <img
-                    src={doctor_25}
+                    src={doctor_25_aspect}
                     alt=""
                     className="img-fluid"
                   />
@@ -177,7 +177,7 @@ const DoctorsSection: FC = (() => {
               <div className="our-doctor-thirteen-all">
                 <div className="our-doctor-thirteen-img">
                   <img
-                    src={doctor_26}
+                    src={doctor_26_aspect}
                     alt=""
                     className="img-fluid"
                   />
@@ -211,7 +211,7 @@ const DoctorsSection: FC = (() => {
               <div className="our-doctor-thirteen-all">
                 <div className="our-doctor-thirteen-img">
                   <img
-                    src={doctor_25}
+                    src={doctor_25_aspect}
                     alt=""
                     className="img-fluid"
                   />
@@ -245,7 +245,7 @@ const DoctorsSection: FC = (() => {
               <div className="our-doctor-thirteen-all">
                 <div className="our-doctor-thirteen-img">
                   <img
-                    src={doctor_27}
+                    src={doctor_27_aspect}
                     alt=""
                     className="img-fluid"
                   />
@@ -279,7 +279,7 @@ const DoctorsSection: FC = (() => {
               <div className="our-doctor-thirteen-all">
                 <div className="our-doctor-thirteen-img">
                   <img
-                    src={doctor_25}
+                    src={doctor_25_aspect}
                     alt=""
                     className="img-fluid"
                   />

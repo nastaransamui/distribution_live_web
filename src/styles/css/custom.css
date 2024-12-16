@@ -32489,7 +32489,7 @@ span.call-duration.float-end {
   left: 23%;
   padding: 20px;
   background: var(--secondaryLight);
-  color: #ffffff;
+  color: #000000;
   backdrop-filter: blur(8px);
   border-radius: 10px;
   font-size: 20px;
