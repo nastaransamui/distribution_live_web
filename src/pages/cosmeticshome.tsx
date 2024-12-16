@@ -51,9 +51,10 @@ const Home: NextPage = () => {
       <div className="main-wrapper">
         <HomeSearch />
         <ServicesSection />
-
-        <TreatmentSection />
-        <FeaturesSection />
+        <LazyLoadWrapper>
+          <TreatmentSection />
+          <FeaturesSection />
+        </LazyLoadWrapper>
         <FactSection />
         <LazyLoadWrapper>
           <ExpertTeam />
