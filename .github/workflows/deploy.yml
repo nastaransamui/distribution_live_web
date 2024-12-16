@@ -40,21 +40,3 @@ jobs:
             git reset --hard HEAD  # Discard local changes
             git pull  # Pull the latest updates
           fi"
-
-      - name: Install Production Dependencies on Server
-        env:
-          SERVER_USER: ${{ secrets.USERNAME }}
-          SERVER_IP: ${{ secrets.HOST }}
-          SERVER_PATH: ${{ secrets.PATH }}
-        run: |
-          ssh -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_IP "
-            cd $SERVER_PATH
-            export NVM_DIR=\$HOME/.nvm
-            [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\"
-            yarn install 
-            yarn build
-            export $(cat $SERVER_PATH/.env.local | xargs)  # Load all .env.local variables
-            pm2 describe distribution_live_web || pm2 start yarn --name "distribution_live_web" --interpreter node -- start
-            pm2 restart distribution_live_web
-            pm2 save
-          "
