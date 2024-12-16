@@ -29,7 +29,7 @@ const WhoWeAre: FC = (() => {
                     <i className="fa-solid fa-headphones" />
                   </span>
                   <div>
-                    <h6>24/7 Service</h6>
+                    <h1>24/7 Service</h1>
                     <p>We are available when you want</p>
                   </div>
                 </div>
@@ -62,7 +62,7 @@ const WhoWeAre: FC = (() => {
                     <span>
                       <Doc_1Svg />
                     </span>
-                    <h6>Expert Professionals and World Class Facilities</h6>
+                    <h1>Expert Professionals and World Class Facilities</h1>
                     <Link href="/doctor-search-grid">
                       Find Doctors
                       <i className="fa-solid fa-chevron-right" />
@@ -74,7 +74,7 @@ const WhoWeAre: FC = (() => {
                     <span>
                       <Doc_2Svg />
                     </span>
-                    <h6>Specialty Eyecare treatment for all</h6>
+                    <h1>Specialty Eyecare treatment for all</h1>
                     <Link href="/doctors/booking">
                       Book Now
                       <i className="fa-solid fa-chevron-right" />
@@ -86,7 +86,7 @@ const WhoWeAre: FC = (() => {
                     <span>
                       <Doc_3Svg />
                     </span>
-                    <h6>Online Appointment and Excellent Treatment</h6>
+                    <h1>Online Appointment and Excellent Treatment</h1>
                     <Link href="/doctors/booking-2">
                       Make an Appointment
                       <i className="fa-solid fa-chevron-right" />

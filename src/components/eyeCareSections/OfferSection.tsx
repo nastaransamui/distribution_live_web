@@ -26,9 +26,9 @@ const OfferSection: FC = (() => {
                   </div>
                   <div className="col-md-6">
                     <div className="off-info">
-                      <h6>NEW USER OFFER</h6>
+                      <h1>NEW USER OFFER</h1>
                       <p>21 - 25 April 2023</p>
-                      <h5>Free Eye Camp </h5>
+                      <h2>Free Eye Camp </h2>
                       <Link href="#" className="btn btn-light-blue" style={{ lineHeight: '30px ' }}>
                         Book Now
                       </Link>
@@ -51,9 +51,9 @@ const OfferSection: FC = (() => {
                   </div>
                   <div className="col-md-6">
                     <div className="off-info">
-                      <h6>Flat 30% OffER</h6>
+                      <h1>Flat 30% OffER</h1>
                       <p>21 April 2023</p>
-                      <h5>Crystal Clear </h5>
+                      <h2>Crystal Clear </h2>
                       <Link href="#" className="btn btn-light-blue" style={{ lineHeight: '30px ' }}>
                         Buy Now
                       </Link>

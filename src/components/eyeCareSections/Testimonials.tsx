@@ -2,11 +2,9 @@
 import { FC, Fragment, useEffect } from 'react'
 import AOS from 'aos'
 import useScssVar from '@/hooks/useScssVar'
-import Link from 'next/link'
 import dynamic from 'next/dynamic'
-import { useTheme } from '@mui/material';
 import { EyeIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
-import { client03, client04, client06, client07, eyeTestimonial } from '@/public/assets/imagepath'
+import { client03, client04, client06_small, client07, eyeTestimonial } from '@/public/assets/imagepath'
 const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
   ssr: false,
 })
@@ -14,7 +12,6 @@ const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
 
 const Testimonials: FC = (() => {
   const { muiVar } = useScssVar();
-  const theme = useTheme();
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -27,9 +24,11 @@ const Testimonials: FC = (() => {
     loop: true,
     margin: 15,
     dots: false,
+    dotelement: "button  aria-labelledby='slide-nav-1-dot' aria-label='slide-nav-1-dot'",
     nav: true,
     navContainer: '.slide-nav-2',
     navText: ['<i class="fas fa-chevron-left custom-arrow"></i>', '<i class="fas fa-chevron-right custom-arrow"></i>'],
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
 
     autoplay: false,
     infinite: "true",
@@ -100,7 +99,7 @@ const Testimonials: FC = (() => {
                   </li>
                   <li>
                     <img
-                      src={client06}
+                      src={client06_small}
                       alt=""
                       className="img-fluid"
                     />
@@ -119,10 +118,10 @@ const Testimonials: FC = (() => {
               <div className="eye-testislider">
                 <OwlCarousel {...doctersettings}>
                   <div className="testimonial-wrap">
-                    <h4>
+                    <h3>
                       Contrary to popular belief, Lorem Ipsum is not simply random text.
                       It has roots in a piece of classical
-                    </h4>
+                    </h3>
                     <p>
                       Lorem Ipsum is simply dummy text of the printing and typesetting
                       industry. Lorem Ipsum has been the industrys standard. The point
@@ -134,15 +133,15 @@ const Testimonials: FC = (() => {
                       uncover many web sites still in their infancy
                     </p>
                     <div className="testimonial-user">
-                      <h6>Elizabeth Forsyth</h6>
+                      <h4>Elizabeth Forsyth</h4>
                       <p>Las Vegas, USA</p>
                     </div>
                   </div>
                   <div className="testimonial-wrap">
-                    <h4>
+                    <h3>
                       Contrary to popular belief, Lorem Ipsum is not simply random text.
                       It has roots in a piece of classical
-                    </h4>
+                    </h3>
                     <p>
                       It is a long established fact that a reader will be distracted by
                       the readable content of a page when looking at its layout. The
@@ -154,15 +153,15 @@ const Testimonials: FC = (() => {
                       uncover many web sites still in their infancy
                     </p>
                     <div className="testimonial-user">
-                      <h6>Leigh Baley</h6>
+                      <h4>Leigh Baley</h4>
                       <p>San Jose, USA</p>
                     </div>
                   </div>
                   <div className="testimonial-wrap">
-                    <h4>
+                    <h3>
                       Contrary to popular belief, Lorem Ipsum is not simply random text.
                       It has roots in a piece of classical
-                    </h4>
+                    </h3>
                     <p>
                       Lorem Ipsum is simply dummy text of the printing and typesetting
                       industry. Lorem Ipsum has been the industry s standard dummy text
@@ -174,7 +173,7 @@ const Testimonials: FC = (() => {
                       readable English.
                     </p>
                     <div className="testimonial-user">
-                      <h6>Jon Sparks</h6>
+                      <h4>Jon Sparks</h4>
                       <p>Irvine, USA</p>
                     </div>
                   </div>

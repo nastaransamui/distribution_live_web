@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
@@ -16,6 +16,7 @@ import {
   clinic_015
 } from "../../../public/assets/imagepath";
 import { EyeIconOneSvg, EyeIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
+import $ from 'jquery'
 
 const Specialities: FC = (() => {
   const { muiVar } = useScssVar();
@@ -23,10 +24,10 @@ const Specialities: FC = (() => {
     items: 4,
     loop: true,
     margin: 15,
-    dots: true,
+    dots: false,
     nav: true,
     navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
-
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     autoplay: false,
     infinite: "true",
 
@@ -55,6 +56,7 @@ const Specialities: FC = (() => {
     }
   }
 
+
   return (
     <Fragment>
       <section className="special-section" style={muiVar}>
@@ -78,7 +80,7 @@ const Specialities: FC = (() => {
               <div className="item">
                 <div className="special-item">
                   <div className="special-img">
-                    <Link href="/consultation">
+                    <Link href="/doctors/search" aria-label='cunsultation'>
                       <img
                         src={clinic_014}
                         alt=""
@@ -87,19 +89,19 @@ const Specialities: FC = (() => {
                     </Link>
                   </div>
                   <div className="special-icon">
-                    <Link href="/consultation">
+                    <Link href="/doctors/search" aria-label='cunsultation'>
                       <i className="fa-solid fa-circle-chevron-right" />
                     </Link>
                   </div>
-                  <h6>
-                    <Link href="/consultation">Cataract</Link>
-                  </h6>
+                  <h3>
+                    <Link href="/doctors/search" aria-label='cunsultation'>Cataract</Link>
+                  </h3>
                 </div>
               </div>
               <div className="item">
                 <div className="special-item">
                   <div className="special-img">
-                    <Link href="/consultation">
+                    <Link href="/doctors/search" aria-label='cunsultation'>
                       <img
                         // src="assets/img/clinic/clinic-02.webp"
                         src={clinic_012}
@@ -109,19 +111,19 @@ const Specialities: FC = (() => {
                     </Link>
                   </div>
                   <div className="special-icon">
-                    <Link href="/consultation">
+                    <Link href="/doctors/search" aria-label='cunsultation'>
                       <i className="fa-solid fa-circle-chevron-right" />
                     </Link>
                   </div>
-                  <h6>
-                    <Link href="/consultation">Corneal Ulcer </Link>
-                  </h6>
+                  <h3>
+                    <Link href="/doctors/search">Corneal Ulcer </Link>
+                  </h3>
                 </div>
               </div>
               <div className="item">
                 <div className="special-item">
                   <div className="special-img">
-                    <Link href="/consultation">
+                    <Link href="/doctors/search" aria-label='cunsultation'>
                       <img
                         // src="assets/img/clinic/clinic-03.webp"
                         src={clinic_013}
@@ -131,19 +133,19 @@ const Specialities: FC = (() => {
                     </Link>
                   </div>
                   <div className="special-icon">
-                    <Link href="/consultation">
+                    <Link href="/doctors/search" aria-label='cunsultation'>
                       <i className="fa-solid fa-circle-chevron-right" />
                     </Link>
                   </div>
-                  <h6>
-                    <Link href="/consultation">Keratoconus</Link>
-                  </h6>
+                  <h3>
+                    <Link href="/doctors/search" aria-label='cunsultation'>Keratoconus</Link>
+                  </h3>
                 </div>
               </div>
               <div className="item">
                 <div className="special-item">
                   <div className="special-img">
-                    <Link href="/consultation">
+                    <Link href="/doctors/search" aria-label='cunsultation'>
                       <img
                         // src="assets/img/clinic/clinic-01.webp"
                         src={clinic_011}
@@ -153,19 +155,19 @@ const Specialities: FC = (() => {
                     </Link>
                   </div>
                   <div className="special-icon">
-                    <Link href="/consultation">
+                    <Link href="/doctors/search" aria-label='cunsultation'>
                       <i className="fa-solid fa-circle-chevron-right" />
                     </Link>
                   </div>
-                  <h6>
-                    <Link href="/consultation">Glaucoma</Link>
-                  </h6>
+                  <h3>
+                    <Link href="/doctors/search" aria-label='cunsultation'>Glaucoma</Link>
+                  </h3>
                 </div>
               </div>
               <div className="item">
                 <div className="special-item">
                   <div className="special-img">
-                    <Link href="/consultation">
+                    <Link href="/doctors/search" aria-label='cunsultation'>
                       <img
                         // src="assets/img/clinic/clinic-05.webp"
                         src={clinic_015}
@@ -175,13 +177,13 @@ const Specialities: FC = (() => {
                     </Link>
                   </div>
                   <div className="special-icon">
-                    <Link href="/consultation">
+                    <Link href="/doctors/search" aria-label='cunsultation'>
                       <i className="fa-solid fa-circle-chevron-right" />
                     </Link>
                   </div>
-                  <h6>
-                    <Link href="/consultation">Keratoconus</Link>
-                  </h6>
+                  <h3>
+                    <Link href="/doctors/search">Keratoconus</Link>
+                  </h3>
                 </div>
               </div>
             </OwlCarousel>

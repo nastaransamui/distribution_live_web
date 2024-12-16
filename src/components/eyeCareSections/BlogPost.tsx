@@ -5,7 +5,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { useTheme } from '@mui/material';
 import { EyeIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
-import { DoctThumb1, DoctThumb10, DoctThumb2, DoctThumb8, DoctThumb9, EyeBlog01, EyeBlog02, EyeBlog03, EyeBlog04 } from '@/public/assets/imagepath';
+import { DoctThumb1_small, DoctThumb10, DoctThumb2, DoctThumb8, DoctThumb9, EyeBlog01, EyeBlog02, EyeBlog03, EyeBlog04 } from '@/public/assets/imagepath';
 const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
   ssr: false,
 })
@@ -13,15 +13,14 @@ const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
 const BlogPost: FC = (() => {
 
   const { muiVar } = useScssVar();
-  const theme = useTheme();
   const doctersettings = {
     items: 4,
     loop: true,
     margin: 15,
-    dots: true,
+    dots: false,
     nav: true,
     navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
-
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     autoplay: false,
     infinite: "true",
 
@@ -69,7 +68,7 @@ const BlogPost: FC = (() => {
               <div className="item">
                 <div className="our-blogs">
                   <div className="blogs-img">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label='blog post'>
                       <img
                         src={EyeBlog01}
                         alt=""
@@ -79,7 +78,7 @@ const BlogPost: FC = (() => {
                     <div className="blogs-overlay">
                       <div className="blog-name">
                         <img
-                          src={DoctThumb1}
+                          src={DoctThumb1_small}
                           alt=""
                           className="img-fluid"
                         />
@@ -92,17 +91,17 @@ const BlogPost: FC = (() => {
                     </div>
                   </div>
                   <div className="blogs-info">
-                    <h4>
-                      <Link href="/blog/blog-details">
+                    <h3>
+                      <Link href="/blog/blog-details" aria-label='blog post'>
                         Lorem Ipsum is simply dummy text of the printing?
                       </Link>
-                    </h4>
+                    </h3>
                     <p>
                       It is a long established fact that a reader will be distracted by
                       the readable content
                     </p>
-                    <Link href="/blog/blog-details" className="blogs-btn">
-                      Read More
+                    <Link href="/blog/blog-details" aria-label='blog post' className="blogs-btn">
+                      Blog post
                       <i className="fa-solid fa-chevron-right" />
                     </Link>
                   </div>
@@ -111,7 +110,7 @@ const BlogPost: FC = (() => {
               <div className="item">
                 <div className="our-blogs">
                   <div className="blogs-img">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label='blog post'>
                       <img
                         src={EyeBlog02}
                         alt=""
@@ -134,14 +133,14 @@ const BlogPost: FC = (() => {
                     </div>
                   </div>
                   <div className="blogs-info">
-                    <h4>
-                      <Link href="/blog/blog-details">
+                    <h3>
+                      <Link href="/blog/blog-details" aria-label='blog post'>
                         It is a long established fact that a reader will be distracted
                       </Link>
-                    </h4>
+                    </h3>
                     <p>Lorem Ipsum is simply dummy text of the printing</p>
-                    <Link href="/blog/blog-details" className="blogs-btn">
-                      Read More
+                    <Link href="/blog/blog-details" aria-label='blog post' className="blogs-btn">
+                      Blog post
                       <i className="fa-solid fa-chevron-right" />
                     </Link>
                   </div>
@@ -150,7 +149,7 @@ const BlogPost: FC = (() => {
               <div className="item">
                 <div className="our-blogs">
                   <div className="blogs-img">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label='blog post'>
                       <img
                         src={EyeBlog03}
                         alt=""
@@ -173,15 +172,15 @@ const BlogPost: FC = (() => {
                     </div>
                   </div>
                   <div className="blogs-info">
-                    <h4>
-                      <Link href="/blog/blog-details">
+                    <h3>
+                      <Link href="/blog/blog-details" aria-label='blog post'>
                         Contrary to popular belief, Lorem Ipsum is not simply random
                         text
                       </Link>
-                    </h4>
+                    </h3>
                     <p>It has roots in a piece of classical Latin literature</p>
-                    <Link href="/blog/blog-details" className="blogs-btn">
-                      Read More
+                    <Link href="/blog/blog-details" aria-label='blog post' className="blogs-btn">
+                      Blog post
                       <i className="fa-solid fa-chevron-right" />
                     </Link>
                   </div>
@@ -190,7 +189,7 @@ const BlogPost: FC = (() => {
               <div className="item">
                 <div className="our-blogs">
                   <div className="blogs-img">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label='blog post'>
                       <img
                         src={EyeBlog04}
                         alt=""
@@ -213,15 +212,15 @@ const BlogPost: FC = (() => {
                     </div>
                   </div>
                   <div className="blogs-info">
-                    <Link href="/blog/blog-details">
-                      <h4>There are many variations of passages</h4>
+                    <Link href="/blog/blog-details" aria-label='blog post'>
+                      <h3>There are many variations of passages</h3>
                     </Link>
                     <p>
                       If you are going to use a passage of Lorem Ipsum, you need to be
                       sure there isn t anything
                     </p>
-                    <Link href="/blog/blog-details" className="blogs-btn">
-                      Read More
+                    <Link href="/blog/blog-details" aria-label='blog post' className="blogs-btn">
+                      Blog post
                       <i className="fa-solid fa-chevron-right" />
                     </Link>
                   </div>
@@ -230,7 +229,7 @@ const BlogPost: FC = (() => {
               <div className="item">
                 <div className="our-blogs">
                   <div className="blogs-img">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label='blog post'>
                       <img
                         src={EyeBlog03}
                         alt=""
@@ -253,15 +252,15 @@ const BlogPost: FC = (() => {
                     </div>
                   </div>
                   <div className="blogs-info">
-                    <Link href="/blog/blog-details">
-                      <h4>There are many variations of passages</h4>
+                    <Link href="/blog/blog-details" aria-label='blog post'>
+                      <h3>There are many variations of passages</h3>
                     </Link>
                     <p>
                       If you are going to use a passage of Lorem Ipsum, you need to be
                       sure there isnt anything
                     </p>
-                    <Link href="/blog/blog-details" className="blogs-btn">
-                      Read More
+                    <Link href="/blog/blog-details" aria-label='blog post' className="blogs-btn">
+                      Blog post
                       <i className="fa-solid fa-chevron-right" />
                     </Link>
                   </div>

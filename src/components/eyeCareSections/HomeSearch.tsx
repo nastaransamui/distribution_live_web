@@ -32,6 +32,7 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Grid from '@mui/material/Grid'
 import GeoLocationAutocomplete from '@/shared/GeoLocationAutocomplete';
+import Head from "next/head";
 
 const HomeSearch: FC = (() => {
   const { muiVar } = useScssVar();
@@ -44,7 +45,6 @@ const HomeSearch: FC = (() => {
   const [specialitiesValue, setSpecialitiesValue] = useState<string>('')
   const [genderValue, setGenderValue] = useState<string>('')
   const [availablityValue, setAvailablityValue] = useState<string>('')
-
   const {
     register,
     clearErrors,
@@ -78,6 +78,9 @@ const HomeSearch: FC = (() => {
 
   return (
     <Fragment>
+      <Head>
+        <link rel="preload" href={`/assets/images/bg/banner-11-bg_${theme.palette.primary.main.slice(1)}.webp`} as="image" />
+      </Head>
       <section className="doctor-search-section doctor-search-eleven"
         style={{
           ...muiVar,
@@ -517,10 +520,10 @@ const HomeSearch: FC = (() => {
                 </Grid>
               </div>
               <div className="banner-users">
-                <h6>
+                <h1>
                   <StarSvg />
                   4.8 Well Experienced
-                </h6>
+                </h1>
                 <ul>
                   <li>
                     <img src={doctor_13} alt="img" />

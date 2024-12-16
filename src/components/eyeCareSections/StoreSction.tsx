@@ -33,11 +33,10 @@ const StoreSection: FC = (() => {
     items: 4,
     loop: true,
     margin: 15,
-    dots: true,
+    dots: false,
     nav: true,
-    // navContainer: '.slide-nav-2',
     navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
-
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     autoplay: false,
     infinite: "true",
 
@@ -125,7 +124,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store01}
                             alt=""
@@ -136,12 +135,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Nerdlane</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Nerdlane</Link>
+                        </h3>
                         <p>Black Full Frame Wayfarer Eyeglasses</p>
                         <div className="price-tag">
-                          <h5>$490</h5>
+                          <h4>$490</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -161,7 +160,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store02}
                             alt=""
@@ -172,14 +171,14 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>
                             Mirar Aviator Eyeglasses
                           </Link>
-                        </h4>
+                        </h3>
                         <p>Gold Full Frame for Men and Women</p>
                         <div className="price-tag">
-                          <h5>$480</h5>
+                          <h4>$480</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="gold-glass">
@@ -199,7 +198,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store03}
                             alt=""
@@ -210,12 +209,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Izibuko</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Izibuko</Link>
+                        </h3>
                         <p>Glossy Blue Full Frame Cateye Eyeglasses for Women</p>
                         <div className="price-tag">
-                          <h5>$450</h5>
+                          <h4>$450</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -235,7 +234,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store04}
                             alt=""
@@ -246,12 +245,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Vistazo</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Vistazo</Link>
+                        </h3>
                         <p>Gold Full Frame Cateye Eyeglasses for Men and Women</p>
                         <div className="price-tag">
-                          <h5>$490</h5>
+                          <h4>$490</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="sand-glass">
@@ -271,7 +270,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store05}
                             alt=""
@@ -282,12 +281,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Tintin</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Tintin</Link>
+                        </h3>
                         <p>Full Frame tintin Eyeglasses</p>
                         <div className="price-tag">
-                          <h5>$400</h5>
+                          <h4>$400</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -315,7 +314,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store03}
                             alt=""
@@ -326,12 +325,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Danzier</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Danzier</Link>
+                        </h3>
                         <p>Black Frame Eyeglasses</p>
                         <div className="price-tag">
-                          <h5>$390</h5>
+                          <h4>$390</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -351,7 +350,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store06}
                             alt=""
@@ -362,12 +361,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Fasil</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Fasil</Link>
+                        </h3>
                         <p>Black Frame Computer Eyeglasses</p>
                         <div className="price-tag">
-                          <h5>$230</h5>
+                          <h4>$230</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -387,7 +386,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store02}
                             alt=""
@@ -398,12 +397,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Coolers</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Coolers</Link>
+                        </h3>
                         <p>Gold Full Frame for Men and Women</p>
                         <div className="price-tag">
-                          <h5>$370</h5>
+                          <h4>$370</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="grey-glass">
@@ -423,7 +422,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store05}
                             alt=""
@@ -434,12 +433,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Eye Protect</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Eye Protect</Link>
+                        </h3>
                         <p>Frame Cateye Eyeglasses for Women</p>
                         <div className="price-tag">
-                          <h5>$410</h5>
+                          <h4>$410</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -459,7 +458,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store03}
                             alt=""
@@ -470,12 +469,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Viratio</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Viratio</Link>
+                        </h3>
                         <p>Gold Full Frame Cateye Eyeglasses for Men and Women</p>
                         <div className="price-tag">
-                          <h5>$420</h5>
+                          <h4>$420</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="sand-glass">
@@ -503,7 +502,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store03}
                             alt=""
@@ -514,12 +513,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Readers</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Readers</Link>
+                        </h3>
                         <p>Black Full Frame kids Eyeglasses</p>
                         <div className="price-tag">
-                          <h5>$490</h5>
+                          <h4>$490</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -539,7 +538,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store07}
                             alt=""
@@ -550,12 +549,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Sight Care</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Sight Care</Link>
+                        </h3>
                         <p>Black Full Frame Kids Eyeglasses</p>
                         <div className="price-tag">
-                          <h5>$690</h5>
+                          <h4>$690</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -575,7 +574,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store08}
                             alt=""
@@ -586,12 +585,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Aviator</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Aviator</Link>
+                        </h3>
                         <p>Gold Full Frame for Men and Women</p>
                         <div className="price-tag">
-                          <h5>$240</h5>
+                          <h4>$240</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="grey-glass">
@@ -611,7 +610,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store09}
                             alt=""
@@ -622,12 +621,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Zibuko</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Zibuko</Link>
+                        </h3>
                         <p>Glossy Full Frame Cateye Eyeglasses for Women</p>
                         <div className="price-tag">
-                          <h5>$430</h5>
+                          <h4>$430</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -647,7 +646,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store01}
                             alt=""
@@ -658,12 +657,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Seeier</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Seeier</Link>
+                        </h3>
                         <p>Gold Full Frame Cateye Eyeglasses for Men and Women</p>
                         <div className="price-tag">
-                          <h5>$480</h5>
+                          <h4>$480</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="sand-glass">
@@ -691,7 +690,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store14}
                             alt=""
@@ -701,12 +700,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Lenzomania</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Lenzomania</Link>
+                        </h3>
                         <p>Wayfarer Contact Lense</p>
                         <div className="price-tag">
-                          <h5>$120</h5>
+                          <h4>$120</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -726,7 +725,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store15}
                             alt=""
@@ -736,12 +735,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Contacto</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Contacto</Link>
+                        </h3>
                         <p>Contact Lense</p>
                         <div className="price-tag">
-                          <h5>$290</h5>
+                          <h4>$290</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -761,7 +760,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store16}
                             alt=""
@@ -771,12 +770,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Viator Lense</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Viator Lense</Link>
+                        </h3>
                         <p>Contact Lense</p>
                         <div className="price-tag">
-                          <h5>$190</h5>
+                          <h4>$190</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="grey-glass">
@@ -796,7 +795,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store14}
                             alt=""
@@ -806,12 +805,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Eizio Cart</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Eizio Cart</Link>
+                        </h3>
                         <p>Glossy Blue Lenses</p>
                         <div className="price-tag">
-                          <h5>$430</h5>
+                          <h4>$430</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -831,7 +830,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store14}
                             alt=""
@@ -841,12 +840,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">ContactLense Cart</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>ContactLense Cart</Link>
+                        </h3>
                         <p>Gold Full Frame Cateye Eyeglasses for Men and Women</p>
                         <div className="price-tag">
-                          <h5>$280</h5>
+                          <h4>$280</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="sand-glass">
@@ -874,7 +873,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store02}
                             alt=""
@@ -885,12 +884,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Sunglass</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Sunglass</Link>
+                        </h3>
                         <p>Black Sunglasses</p>
                         <div className="price-tag">
-                          <h5>$350</h5>
+                          <h4>$350</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -910,7 +909,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store09J}
                             alt=""
@@ -921,12 +920,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Carezio</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Carezio</Link>
+                        </h3>
                         <p>Black Frame sun Eyeglasses</p>
                         <div className="price-tag">
-                          <h5>$550</h5>
+                          <h4>$550</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -946,7 +945,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store10}
                             alt=""
@@ -957,12 +956,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Aviator Sunglasses</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Aviator Sunglasses</Link>
+                        </h3>
                         <p>Gold Frame for Men and Women</p>
                         <div className="price-tag">
-                          <h5>$390</h5>
+                          <h4>$390</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="grey-glass">
@@ -982,7 +981,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store04}
                             alt=""
@@ -993,12 +992,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Buzanio Glass</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Buzanio Glass</Link>
+                        </h3>
                         <p>Glossy Blue sun Cateye Eyeglasses for Women</p>
                         <div className="price-tag">
-                          <h5>$430</h5>
+                          <h4>$430</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -1018,7 +1017,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store01}
                             alt=""
@@ -1029,12 +1028,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Sunrace Buy</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Sunrace Buy</Link>
+                        </h3>
                         <p>Full Frame Cateye Eyeglasses for Men and Women</p>
                         <div className="price-tag">
-                          <h5>$480</h5>
+                          <h4>$480</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="sand-glass">
@@ -1062,7 +1061,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store02}
                             alt=""
@@ -1073,12 +1072,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Nerdlane</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Nerdlane</Link>
+                        </h3>
                         <p>Black Full Frame Wayfarer Eyeglasses</p>
                         <div className="price-tag">
-                          <h5>$390</h5>
+                          <h4>$390</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -1098,7 +1097,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store03}
                             alt=""
@@ -1109,14 +1108,14 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>
                             Mirar Aviator Eyeglasses
                           </Link>
-                        </h4>
+                        </h3>
                         <p>Gold Full Frame for Men and Women</p>
                         <div className="price-tag">
-                          <h5>$580</h5>
+                          <h4>$580</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="gold-glass">
@@ -1136,7 +1135,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store04}
                             alt=""
@@ -1147,12 +1146,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Izibuko</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Izibuko</Link>
+                        </h3>
                         <p>Blue Full Frame Eyeglasses for Women</p>
                         <div className="price-tag">
-                          <h5>$450</h5>
+                          <h4>$450</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">
@@ -1172,7 +1171,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store07}
                             alt=""
@@ -1183,12 +1182,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Vistazo</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Vistazo</Link>
+                        </h3>
                         <p>Gold Full Frame Eyeglasses</p>
                         <div className="price-tag">
-                          <h5>$370</h5>
+                          <h4>$370</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="sand-glass">
@@ -1208,7 +1207,7 @@ const StoreSection: FC = (() => {
                   <div className="item">
                     <div className="store-item">
                       <div className="store-img">
-                        <Link href="/pharmacy/product-description">
+                        <Link href="/pharmacy" aria-label='pharmacy'>
                           <img
                             src={store07}
                             alt=""
@@ -1219,12 +1218,12 @@ const StoreSection: FC = (() => {
                       </div>
                       <div className="store-content">
                         <span className="store-cat">New</span>
-                        <h4>
-                          <Link href="/pharmacy/product-description">Dlanerz</Link>
-                        </h4>
+                        <h3>
+                          <Link href="/pharmacy" aria-label='pharmacy'>Dlanerz</Link>
+                        </h3>
                         <p>Full Frame Eyeglasses</p>
                         <div className="price-tag">
-                          <h5>$320</h5>
+                          <h4>$320</h4>
                           <ul className="color-selection">
                             <li>
                               <span className="black-glass">

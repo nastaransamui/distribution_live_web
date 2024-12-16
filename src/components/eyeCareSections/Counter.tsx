@@ -42,9 +42,9 @@ const Counter: FC = (() => {
                   /> */}
                 </span>
                 <div className="count-info">
-                  <h3>
+                  <h1>
                     <span className="count-digit"><CountUp start={1} end={180} /></span>+
-                  </h3>
+                  </h1>
                   <p style={{ color: theme.palette.background.paper }}>Expert Doctors</p>
                 </div>
               </div>
@@ -60,9 +60,9 @@ const Counter: FC = (() => {
                   /> */}
                 </span>
                 <div className="count-info">
-                  <h3>
+                  <h1>
                     <span className="count-digit"><CountUp start={1} end={26} /></span>+
-                  </h3>
+                  </h1>
                   <p style={{ color: theme.palette.background.paper }}>Expert Services</p>
                 </div>
               </div>
@@ -78,9 +78,9 @@ const Counter: FC = (() => {
                   /> */}
                 </span>
                 <div className="count-info">
-                  <h3>
+                  <h1>
                     <span className="count-digit"><CountUp start={1} end={10} /></span>K+
-                  </h3>
+                  </h1>
                   <p style={{ color: theme.palette.background.paper }}>Happy Customers</p>
                 </div>
               </div>
@@ -96,9 +96,9 @@ const Counter: FC = (() => {
                   /> */}
                 </span>
                 <div className="count-info">
-                  <h3>
+                  <h1>
                     <span className="count-digit"><CountUp start={1} end={150} /></span>+
-                  </h3>
+                  </h1>
                   <p style={{ color: theme.palette.background.paper }}>Best Awards Winner</p>
                 </div>
               </div>

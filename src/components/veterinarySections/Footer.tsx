@@ -87,7 +87,7 @@ const Footer: FC = (() => {
                         </div>
                         <div className="footer-address mb-0">
                           <p>
-                            <i className="feather-mail" /> doccure@example.com
+                            <i className="feather-mail" /> mjcode2020@gmail.com
                           </p>
                         </div>
                       </div>

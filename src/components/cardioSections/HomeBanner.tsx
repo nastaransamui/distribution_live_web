@@ -408,8 +408,6 @@ const HomeBanner: FC = (() => {
                         setKeyWord('')
                         setGenderValue('')
                         setSpecialitiesValue('')
-                        console.log(value)
-                        console.log(inputValue)
                         setInputValue(() => ({
                           city: '',
                           state: '',

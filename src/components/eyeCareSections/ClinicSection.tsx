@@ -23,7 +23,7 @@ const ClinicSection: FC = (() => {
     nav: true,
     //   navContainer: '.slide-nav-2',
     navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
-
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     autoplay: false,
     infinite: "true",
 
@@ -73,7 +73,7 @@ const ClinicSection: FC = (() => {
               <div className="item">
                 <div className="our-doctors-card eye-doc">
                   <div className="doctors-header">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='doctor search'>
                       <img
                         src={eyeDoctor01}
                         alt=""
@@ -82,11 +82,11 @@ const ClinicSection: FC = (() => {
                     </Link>
                   </div>
                   <div className="doctors-body">
-                    <h4>
-                      <Link href="/doctors/profile">Dr. Andrea</Link>
-                    </h4>
+                    <h3>
+                      <Link href="/doctors/search" aria-label='doctor search'>Dr. Andrea</Link>
+                    </h3>
                     <p>MBBS, DOMS, DNB - Ophthalmology</p>
-                    <h6>8+ Years Experience Overall</h6>
+                    <h4>8+ Years Experience Overall</h4>
                     <div className="rating">
                       <i className="fas fa-star filled" />
                       <i className="fas fa-star filled" />
@@ -101,7 +101,7 @@ const ClinicSection: FC = (() => {
               <div className="item">
                 <div className="our-doctors-card eye-doc">
                   <div className="doctors-header">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='doctor search'>
                       <img
                         src={eyeDoctor02}
                         alt=""
@@ -110,11 +110,11 @@ const ClinicSection: FC = (() => {
                     </Link>
                   </div>
                   <div className="doctors-body">
-                    <h4>
-                      <Link href="/doctors/profile">Dr. Elizabeth Bella</Link>
-                    </h4>
+                    <h3>
+                      <Link href="/doctors/search" aria-label='doctor search'>Dr. Elizabeth Bella</Link>
+                    </h3>
                     <p>MBBS, MS - Ophthalmology</p>
-                    <h6>6+ Years Experience Overall</h6>
+                    <h4>6+ Years Experience Overall</h4>
                     <div className="rating">
                       <i className="fas fa-star filled" />
                       <i className="fas fa-star filled" />
@@ -129,7 +129,7 @@ const ClinicSection: FC = (() => {
               <div className="item">
                 <div className="our-doctors-card eye-doc">
                   <div className="doctors-header">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='doctor search'>
                       <img
                         src={eyeDoctor03}
                         alt=""
@@ -138,11 +138,11 @@ const ClinicSection: FC = (() => {
                     </Link>
                   </div>
                   <div className="doctors-body">
-                    <h4>
-                      <Link href="/doctors/profile">Dr. Christian</Link>
-                    </h4>
+                    <h3>
+                      <Link href="/doctors/search" aria-label='doctor search'>Dr. Christian</Link>
+                    </h3>
                     <p>MBBS, DOMS, DNB - Ophthalmology</p>
-                    <h6>7+ Years Experience Overall</h6>
+                    <h4>7+ Years Experience Overall</h4>
                     <div className="rating">
                       <i className="fas fa-star filled" />
                       <i className="fas fa-star filled" />
@@ -157,7 +157,7 @@ const ClinicSection: FC = (() => {
               <div className="item">
                 <div className="our-doctors-card eye-doc">
                   <div className="doctors-header">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='doctor search'>
                       <img
                         src={eyeDoctor04}
                         alt=""
@@ -166,11 +166,11 @@ const ClinicSection: FC = (() => {
                     </Link>
                   </div>
                   <div className="doctors-body">
-                    <h4>
-                      <Link href="/doctors/profile">Dr. Gabrielle Carolyn</Link>
-                    </h4>
+                    <h3>
+                      <Link href="/doctors/search" aria-label='doctor search'>Dr. Gabrielle Carolyn</Link>
+                    </h3>
                     <p>MBBS, MS - Surgeon</p>
-                    <h6>4+ Years Experience Overall</h6>
+                    <h4>4+ Years Experience Overall</h4>
                     <div className="rating">
                       <i className="fas fa-star filled" />
                       <i className="fas fa-star filled" />
@@ -185,7 +185,7 @@ const ClinicSection: FC = (() => {
               <div className="item">
                 <div className="our-doctors-card eye-doc">
                   <div className="doctors-header">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='doctor search'>
                       <img
                         src={eyeDoctor05}
                         alt=""
@@ -194,11 +194,11 @@ const ClinicSection: FC = (() => {
                     </Link>
                   </div>
                   <div className="doctors-body">
-                    <h4>
-                      <Link href="/doctors/profile">Dr. Gaby Carl</Link>
-                    </h4>
+                    <h3>
+                      <Link href="/doctors/search" aria-label='doctor search'>Dr. Gaby Carl</Link>
+                    </h3>
                     <p>MBBS, DNB - Ophthalmology</p>
-                    <h6>5+ Years Experience Overall</h6>
+                    <h4>5+ Years Experience Overall</h4>
                     <div className="rating">
                       <i className="fas fa-star filled" />
                       <i className="fas fa-star filled" />

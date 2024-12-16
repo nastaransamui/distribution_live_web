@@ -212,6 +212,7 @@ export const clinet05 = "/assets/images/clients/client-05.webp";
 export const client04 = "/assets/images/clients/client-04.webp";
 export const client03 = "/assets/images/clients/client-03.webp";
 export const client06 = "/assets/images/clients/client-06.webp";
+export const client06_small = "/assets/images/clients/client-06_small.webp";
 export const client07 = "/assets/images/clients/client-07.webp";
 export const client08 = "/assets/images/clients/client-08.webp";
 export const client09 = "/assets/images/clients/client-09.webp";
@@ -341,6 +342,8 @@ export const Graph2 = "/assets/images/shapes/graph-02.webp";
 export const Graph3 = "/assets/images/shapes/graph-03.webp";
 export const Graph4 = "/assets/images/shapes/graph-04.webp";
 export const DoctThumb1 = "/assets/images/doctors/doctor-favorit_1.webp";
+export const DoctThumb1_small =
+  "/assets/images/doctors/doctor-favorit_1_small.webp";
 export const DoctThumb2 = "/assets/images/doctors/doctor-thumb-02.webp";
 export const DoctThumb8 = "/assets/images/doctors/doctor-thumb-08.webp";
 export const DoctThumb9 = "/assets/images/doctors/doctor-thumb-09.webp";

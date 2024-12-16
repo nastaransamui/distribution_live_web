@@ -6,7 +6,7 @@ import useScssVar from '@/hooks/useScssVar';
 import { logo, payment } from "../../../public/assets/imagepath";
 
 //Mui
-
+import { useTheme } from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -17,6 +17,7 @@ import Menu from '@mui/material/Menu';
 import Box from '@mui/material/Box'
 const Footer: FC = (() => {
   const { muiVar } = useScssVar();
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClose = (e: any) => { }
@@ -37,8 +38,8 @@ const Footer: FC = (() => {
                       <FiMail className="feather-mail" />
                     </div>
                     <div className="footer-info">
-                      <h6>Email</h6>
-                      <p>doccure@example.com</p>
+                      <h1>Email</h1>
+                      <p>mjcode2020@gmail.com</p>
                     </div>
                   </div>
                 </div>
@@ -48,8 +49,8 @@ const Footer: FC = (() => {
                       <FiPhone className="feather-phone" />
                     </div>
                     <div className="footer-info">
-                      <h6>Phone Number</h6>
-                      <p>1800 - 672-4399</p>
+                      <h1>Phone Number</h1>
+                      <p>+66 870624648</p>
                     </div>
                   </div>
                 </div>
@@ -59,7 +60,7 @@ const Footer: FC = (() => {
                       <FiClock className="feather-clock" />
                     </div>
                     <div className="footer-info">
-                      <h6>Open Timing</h6>
+                      <h1>Open Timing</h1>
                       <p>We are available 24*7</p>
                     </div>
                   </div>
@@ -98,7 +99,7 @@ const Footer: FC = (() => {
               </div>
               <div className="col-md-6">
                 <div className="footer-payment">
-                  <h6>Acceptable Payments </h6>
+                  <h1>Acceptable Payments </h1>
                   <img
                     src={payment}
                     alt="payment"
@@ -129,7 +130,7 @@ const Footer: FC = (() => {
                       </Menu>
                     </Box>
                     <Box sx={{ display: { xl: 'flex', lg: 'flex', md: 'flex', sm: 'none', xs: 'none' } }}>
-                      <InputLabel id="demo-select-small-label">Language</InputLabel>
+                      <InputLabel id="demo-select-small-label" sx={{ color: theme.palette.secondary.contrastText }}>Language</InputLabel>
 
                       <Select
                         value={'en'}
@@ -176,22 +177,22 @@ const Footer: FC = (() => {
                 <div className="social-icon">
                   <ul>
                     <li>
-                      <Link href="#" target="_blank">
+                      <Link href="#" target="_blank" aria-label='social media'>
                         <i className="fab fa-facebook" />{" "}
                       </Link>
                     </li>
                     <li>
-                      <Link href="#" target="_blank">
+                      <Link href="#" target="_blank" aria-label='social media'>
                         <i className="fab fa-instagram" />
                       </Link>
                     </li>
                     <li>
-                      <Link href="#" target="_blank">
+                      <Link href="#" target="_blank" aria-label='social media'>
                         <i className="fab fa-twitter" />{" "}
                       </Link>
                     </li>
                     <li>
-                      <Link href="#" target="_blank">
+                      <Link href="#" target="_blank" aria-label='social media'>
                         <i className="fab fa-linkedin-in" />
                       </Link>
                     </li>
@@ -209,7 +210,7 @@ const Footer: FC = (() => {
                 </div>
                 <div className="col-md-2">
                   <div className="footer-bottom-logo">
-                    <Link href="/index-10">
+                    <Link href="/" aria-label='home'>
                       <img
                         src={logo}
                         height={50}
@@ -225,10 +226,10 @@ const Footer: FC = (() => {
                   <div className="copyright-menu">
                     <ul className="policy-menu">
                       <li>
-                        <Link href="/privacy-policy">Privacy Policy</Link>
+                        <Link href="/privacy-policy" aria-label='privacy'>Privacy Policy</Link>
                       </li>
                       <li>
-                        <Link href="/terms-condition">Terms and Conditions</Link>
+                        <Link href="/terms-condition" aria-label='privacy'>Terms and Conditions</Link>
                       </li>
                     </ul>
                   </div>

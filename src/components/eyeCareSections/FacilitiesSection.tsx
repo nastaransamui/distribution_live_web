@@ -34,7 +34,7 @@ const FacilitiesSection: FC = (() => {
                     className="img-fluid"
                   />
                 </div>
-                <h6>Consultation rooms</h6>
+                <h3>Consultation rooms</h3>
               </div>
             </div>
             <div className="col-md-4">
@@ -48,7 +48,7 @@ const FacilitiesSection: FC = (() => {
                         className="img-fluid"
                       />
                     </div>
-                    <h6>Audio and Video Call Consultation</h6>
+                    <h3>Audio and Video Call Consultation</h3>
                   </div>
                 </div>
                 <div className="col-md-6 col-sm-6">
@@ -60,7 +60,7 @@ const FacilitiesSection: FC = (() => {
                         className="img-fluid"
                       />
                     </div>
-                    <h6>Modern Equipments</h6>
+                    <h3>Modern Equipments</h3>
                   </div>
                 </div>
                 <div className="col-md-6 col-sm-6">
@@ -72,7 +72,7 @@ const FacilitiesSection: FC = (() => {
                         className="img-fluid"
                       />
                     </div>
-                    <h6>Laboratory</h6>
+                    <h3>Laboratory</h3>
                   </div>
                 </div>
               </div>
@@ -88,7 +88,7 @@ const FacilitiesSection: FC = (() => {
                         className="img-fluid"
                       />
                     </div>
-                    <h6>Optical Store</h6>
+                    <h3>Optical Store</h3>
                   </div>
                 </div>
                 <div className="col-md-6 col-sm-6">
@@ -100,7 +100,7 @@ const FacilitiesSection: FC = (() => {
                         className="img-fluid"
                       />
                     </div>
-                    <h6>Operation Theaters</h6>
+                    <h3>Operation Theaters</h3>
                   </div>
                 </div>
                 <div className="col-md-12">
@@ -112,7 +112,7 @@ const FacilitiesSection: FC = (() => {
                         className="img-fluid"
                       />
                     </div>
-                    <h6>Pharmacy Shop</h6>
+                    <h3>Pharmacy Shop</h3>
                   </div>
                 </div>
               </div>
