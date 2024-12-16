@@ -32,7 +32,7 @@ const PricingSection: FC = (() => {
                     <h3>OUR PACKAGES</h3>
                   </div>
                 </div>
-                <h2>Our Pricing Plan</h2>
+                <h4>Our Pricing Plan</h4>
                 <p>Our Special Package</p>
               </div>
             </div>
@@ -50,9 +50,9 @@ const PricingSection: FC = (() => {
                     <h3>Friendly Pack</h3>
                   </div>
                   <div className="price">
-                    <h2>
+                    <h4>
                       <sup>$</sup> 150 / <span>Visit</span>
-                    </h2>
+                    </h4>
                   </div>
                   <div className="pack-details">
                     <ul>
@@ -95,9 +95,9 @@ const PricingSection: FC = (() => {
                     <span>Best Offer</span>
                   </div>
                   <div className="price">
-                    <h2>
+                    <h4>
                       <sup>$</sup> 175 / <span>Visit</span>
-                    </h2>
+                    </h4>
                   </div>
                   <div className="pack-details">
                     <ul>
@@ -147,9 +147,9 @@ const PricingSection: FC = (() => {
                     <h3>Family Pack</h3>
                   </div>
                   <div className="price">
-                    <h2>
+                    <h4>
                       <sup>$</sup> 200 / <span>Visit</span>
-                    </h2>
+                    </h4>
                   </div>
                   <div className="pack-details">
                     <ul>

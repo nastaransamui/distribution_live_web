@@ -26,6 +26,7 @@ const TestimonialSection: FC = (() => {
     nav: true,
     smartSpeed: 2000,
     navText: ['<i class="fa-solid fa-caret-left "></i>', '<i class="fa-solid fa-caret-right"></i>'],
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     responsive: {
       0: {
         items: 1

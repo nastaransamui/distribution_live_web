@@ -36,7 +36,7 @@ const ServiceSection: FC = (() => {
               <div className="section-header-fourteen service-inner-fourteen">
                 <div className="service-inner-fourteen">
                   <div className="service-inner-fourteen-two">
-                    <h3>OUR SERVICES</h3>
+                    <h1>OUR SERVICES</h1>
                   </div>
                 </div>
                 <h2>What can We do</h2>
@@ -50,7 +50,7 @@ const ServiceSection: FC = (() => {
                 <div className="service-icon">
                   <InjectionSvg />
                 </div>
-                <h4>Vaccination</h4>
+                <h2>Vaccination</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed.</p>
               </div>
             </div>
@@ -59,7 +59,7 @@ const ServiceSection: FC = (() => {
                 <div className="service-icon">
                   <BottelSvg />
                 </div>
-                <h4>Pet Medicine</h4>
+                <h2>Pet Medicine</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed.</p>
               </div>
             </div>
@@ -68,7 +68,7 @@ const ServiceSection: FC = (() => {
                 <div className="service-icon">
                   <BathTubSvg />
                 </div>
-                <h4>Pet Grooming</h4>
+                <h2>Pet Grooming</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed.</p>
               </div>
             </div>
@@ -77,7 +77,7 @@ const ServiceSection: FC = (() => {
                 <div className="service-icon">
                   <PetDoctorSvg />
                 </div>
-                <h4>Pet Care</h4>
+                <h2>Pet Care</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed.</p>
               </div>
             </div>

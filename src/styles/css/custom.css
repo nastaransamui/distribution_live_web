@@ -30340,6 +30340,21 @@ span.call-duration.float-end {
   z-index: 99;
 }
 
+.main-wrapper.home-twelve
+  .section-header-fourteen
+  .service-inner-fourteen
+  .service-inner-fourteen-two
+  h1 {
+  color: #000;
+  font-size: 14px;
+  margin: 0 0;
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-weight: 400;
+  background: var(--primaryLight);
+  z-index: 99;
+}
+
 @media (max-width: 1199.98px) {
   .main-wrapper.home-twelve
     .section-header-fourteen
@@ -30488,8 +30503,19 @@ span.call-duration.float-end {
   font-weight: 600;
 }
 
+.main-wrapper.home-twelve .services-section-fourteen .our-services-list h2 {
+  margin: 0;
+  padding: 20px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
 @media (max-width: 991.98px) {
   .main-wrapper.home-twelve .services-section-fourteen .our-services-list h4 {
+    padding: 15px 0;
+    font-size: 22px;
+  }
+  .main-wrapper.home-twelve .services-section-fourteen .our-services-list h2 {
     padding: 15px 0;
     font-size: 22px;
   }
@@ -30497,6 +30523,9 @@ span.call-duration.float-end {
 
 @media (max-width: 575.98px) {
   .main-wrapper.home-twelve .services-section-fourteen .our-services-list h4 {
+    font-size: 20px;
+  }
+  .main-wrapper.home-twelve .services-section-fourteen .our-services-list h2 {
     font-size: 20px;
   }
 }
@@ -31307,7 +31336,6 @@ span.call-duration.float-end {
   .price
   h2 {
   color: #0e82fd;
-  font-style: 48px;
   font-weight: 600;
 }
 
@@ -31317,6 +31345,28 @@ span.call-duration.float-end {
   .price-content
   .price
   h2
+  span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.main-wrapper.home-twelve
+  .home-twelve-pricing
+  .price-card-twelve
+  .price-content
+  .price
+  h4 {
+  color: #0e82fd;
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.main-wrapper.home-twelve
+  .home-twelve-pricing
+  .price-card-twelve
+  .price-content
+  .price
+  h4
   span {
   font-size: 14px;
   color: #6b7280;
@@ -35222,6 +35272,15 @@ span.call-duration.float-end {
   margin: 0 20px;
 }
 
+.section-header-fourteen
+  .service-inner-fourteen
+  .service-inner-fourteen-two
+  h1 {
+  color: var(--secondaryLight);
+  font-size: 30px;
+  margin: 0 20px;
+}
+
 @media (max-width: 1199.98px) {
   .section-header-fourteen
     .service-inner-fourteen
@@ -35229,6 +35288,12 @@ span.call-duration.float-end {
     h3 {
     font-size: 26px;
   }
+  .section-header-fourteen
+  .service-inner-fourteen
+  .service-inner-fourteen-two
+  h1 {
+  font-size: 26px;
+}
 }
 
 @media (max-width: 767.98px) {
@@ -35238,6 +35303,12 @@ span.call-duration.float-end {
     h3 {
     font-size: 22px;
   }
+  .section-header-fourteen
+  .service-inner-fourteen
+  .service-inner-fourteen-two
+  h1 {
+  font-size: 22px;
+}
 }
 
 .section-header-fourteen .service-inner-fourteen .service-inner-fourteen-three {
