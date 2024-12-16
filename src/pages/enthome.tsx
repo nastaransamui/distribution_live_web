@@ -31,6 +31,7 @@ import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import getClinicsStatus from '@/helpers/getClinicsStatus';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
+import { LazyLoadWrapper } from '.';
 
 
 const EntHome: NextPage = () => {
@@ -42,7 +43,7 @@ const EntHome: NextPage = () => {
         <meta httpEquiv='X-UA-Compatible' content='IE=edge' />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
         <meta charSet='utf-8' />
-        <meta name='description' />
+        <meta name="description" content="We eager to bring health and health care service to you by easiest way that possible." />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Distribution Live data</title>
@@ -50,14 +51,16 @@ const EntHome: NextPage = () => {
       <div className="main-wrapper home-fifteen">
         <HomeSearch />
         <ServicesSection />
-        <WhoWeAre />
-        <DoctorSection />
-        <PharmacySection />
-        <Feedback />
-        <Contact />
-        <TestimonialsSection />
-        <FaqSection />
-        <Footer />
+        <LazyLoadWrapper>
+          <WhoWeAre />
+          <DoctorSection />
+          <PharmacySection />
+          <Feedback />
+          <Contact />
+          <TestimonialsSection />
+          <FaqSection />
+          <Footer />
+        </LazyLoadWrapper>
         <ScrollToTop />
         <CookieConsentComponent />
       </div>

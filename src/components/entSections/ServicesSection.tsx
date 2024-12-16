@@ -43,7 +43,7 @@ const ServicesSection: FC = (() => {
               <div className="item">
                 <div className="doctor-profile-widget-fifteen">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='Search doctor'>
                       <div className="doctor-profile-img">
                         <img
                           src={service_service_3}
@@ -55,7 +55,7 @@ const ServicesSection: FC = (() => {
                   </div>
                   <div className="doc-content-bottom">
                     <div className="doc-content-split">
-                      <Link href="/doctors/profile">EAR Treatment</Link>
+                      <Link href="/doctors/search" aria-label='Search doctor'>EAR Treatment</Link>
                       <span>5+ Services</span>
                     </div>
                     <p>
@@ -70,7 +70,7 @@ const ServicesSection: FC = (() => {
               <div className="item">
                 <div className="doctor-profile-widget-fifteen">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='Search doctor'>
                       <div className="doctor-profile-img">
                         <img
                           src={service_service_2}
@@ -82,7 +82,7 @@ const ServicesSection: FC = (() => {
                   </div>
                   <div className="doc-content-bottom">
                     <div className="doc-content-split">
-                      <Link href="/doctors/profile">Nose and Sinus</Link>
+                      <Link href="/doctors/search" aria-label='Search doctor'>Nose and Sinus</Link>
                       <span>10+ Services</span>
                     </div>
                     <p>
@@ -97,7 +97,7 @@ const ServicesSection: FC = (() => {
               <div className="item">
                 <div className="doctor-profile-widget-fifteen">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='Search doctor'>
                       <div className="doctor-profile-img">
                         <img
                           src={service_service_1}
@@ -109,7 +109,7 @@ const ServicesSection: FC = (() => {
                   </div>
                   <div className="doc-content-bottom">
                     <div className="doc-content-split">
-                      <Link href="/doctors/profile">Throat / Larynx Surgery</Link>
+                      <Link href="/doctors/search" aria-label='Search doctor'>Throat / Larynx Surgery</Link>
                       <span>15+ Services</span>
                     </div>
                     <p>

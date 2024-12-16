@@ -40,6 +40,7 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Grid from '@mui/material/Grid'
 import GeoLocationAutocomplete from '@/shared/GeoLocationAutocomplete';
+import Head from 'next/head';
 
 
 const HomeSearch: FC = (() => {
@@ -89,6 +90,9 @@ const HomeSearch: FC = (() => {
 
   return (
     <Fragment>
+      <Head>
+        <link rel="preload" href={`/assets/images/banner-fifteen_${theme.palette.primary.main.slice(1)}.webp`} as="image" />
+      </Head>
       <section className="banner-section-fifteen" style={{ ...muiVar, backgroundImage: `url(/assets/images/banner-fifteen_${theme.palette.primary.main.slice(1)}.webp)` }}>
         <div className="container">
           <div className="row">
@@ -530,14 +534,14 @@ const HomeSearch: FC = (() => {
                   </Link>
                 </Grid>
                 <div className="aboutus-companyimg">
-                  <Link href="#">
+                  <Link href="#" aria-label='link'>
                     <img
                       src={banner_vd}
                       alt="image"
                       className="img-fluid"
                     />
                   </Link>
-                  <Link
+                  <Link aria-label='link'
                     href=""
                     onClick={(e) => e.preventDefault()}
                   >
@@ -550,7 +554,7 @@ const HomeSearch: FC = (() => {
                 </div>
                 <div className="watch-video-fifteen">
                   <FifteenPlaySvg />
-                  <h6>Watch Video About Us</h6>
+                  <h1>Watch Video About Us</h1>
                 </div>
                 <div className="support-consult-main">
                   <div className="support-consult">
@@ -558,7 +562,7 @@ const HomeSearch: FC = (() => {
                       <CustomerServiceTwoSvg />
                     </div>
                     <div className="support-consult-right">
-                      <h6>24/7 Support</h6>
+                      <h2>24/7 Support</h2>
                       <div className="rating rating-fifteen">
                         <i className="fas fa-star filled" />
                         <i className="fas fa-star filled" />
@@ -573,7 +577,7 @@ const HomeSearch: FC = (() => {
                       <CustomerServiceOneSvg />
                     </div>
                     <div className="support-consult-right">
-                      <h6>Online Consultation</h6>
+                      <h3>Online Consultation</h3>
                       <span>Just 60 Secs</span>
                     </div>
                   </div>

@@ -1,0 +1,1 @@
+pm2 stop distribution_live_web && rm -rf .next && yarn install && yarn build && pm2 restart distribution_live_web --time

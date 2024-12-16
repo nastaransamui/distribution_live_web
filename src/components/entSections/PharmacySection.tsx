@@ -26,6 +26,7 @@ const PharmacySection: FC = (() => {
     nav: true,
     smartSpeed: 2000,
     navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     responsive: {
       0: {
         items: 1

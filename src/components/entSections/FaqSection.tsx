@@ -26,6 +26,7 @@ const FaqSection: FC = (() => {
     nav: true,
     smartSpeed: 2000,
     navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     responsive: {
       0: {
         items: 1
@@ -69,7 +70,7 @@ const FaqSection: FC = (() => {
                   to as ENT doctors or physicians. For more information.
                 </p>
                 <Link href="faq" className="line-arrow">
-                  Read More
+                  Get Answer
                   <BsArrowRightCircle className="feather-arrow-right-circle ms-2" />
                 </Link>
               </div>
@@ -82,7 +83,7 @@ const FaqSection: FC = (() => {
                   cause, antibiotics are prescribed. Children who experience.
                 </p>
                 <Link href="#" className="line-arrow">
-                  Read More
+                  Get Answer
                   <BsArrowRightCircle className="feather-arrow-right-circle ms-2" />
                 </Link>
               </div>
@@ -95,7 +96,7 @@ const FaqSection: FC = (() => {
                   times each night, preventing restorative sleep.
                 </p>
                 <Link href="faq" className="line-arrow">
-                  Read More
+                  Get Answer
                   <BsArrowRightCircle className="feather-arrow-right-circle ms-2" />
                 </Link>
               </div>
@@ -108,7 +109,7 @@ const FaqSection: FC = (() => {
                   to as ENT doctors or physicians. For more information
                 </p>
                 <Link href="faq" className="line-arrow">
-                  Read More
+                  Get Answer
                   <BsArrowRightCircle className="feather-arrow-right-circle ms-2" />
                 </Link>
               </div>
@@ -121,7 +122,7 @@ const FaqSection: FC = (() => {
                   to as ENT doctors or physicians. For more information
                 </p>
                 <Link href="faq" className="line-arrow">
-                  Read More
+                  Get Answer
                   <BsArrowRightCircle className="feather-arrow-right-circle ms-2" />
                 </Link>
               </div>
@@ -134,7 +135,7 @@ const FaqSection: FC = (() => {
                   to as ENT doctors or physicians. For more information
                 </p>
                 <Link href="faq" className="line-arrow">
-                  Read More
+                  Get Answer
                   <BsArrowRightCircle className="feather-arrow-right-circle ms-2" />
                 </Link>
               </div>
@@ -147,7 +148,7 @@ const FaqSection: FC = (() => {
                   to as ENT doctors or physicians. For more information
                 </p>
                 <Link href="faq" className="line-arrow">
-                  Read More
+                  Get Answer
                   <BsArrowRightCircle className="feather-arrow-right-circle ms-2" />
                 </Link>
               </div>
@@ -160,7 +161,7 @@ const FaqSection: FC = (() => {
                   to as ENT doctors or physicians. For more information
                 </p>
                 <Link href="faq" className="line-arrow">
-                  Read More
+                  Get Answer
                   <BsArrowRightCircle className="feather-arrow-right-circle ms-2" />
                 </Link>
               </div>

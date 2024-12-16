@@ -9063,6 +9063,9 @@ table .table-hover tbody tr:hover td {
   .submenu
   a {
   color: var(--color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (max-width: 991.98px) {
@@ -35585,6 +35588,27 @@ span.call-duration.float-end {
   margin-bottom: 0;
 }
 
+.banner-section-fifteen .banner-content-fifteen .watch-video-fifteen h1{
+  color: var(--color);
+  margin-bottom: 0;
+  margin-left: 5px;
+  font-size: 14px;
+}
+
+.banner-section-fifteen .banner-content-fifteen .support-consult-right h2{
+  color: var(--color);
+  margin-bottom: 0;
+  margin-left: 5px;
+  font-size: 14px;
+  font-weight: 300;
+}
+.banner-section-fifteen .banner-content-fifteen .support-consult-right h3{
+  color: var(--color);
+  margin-bottom: 0;
+  margin-left: 5px;
+  font-size: 14px;
+}
+
 .banner-section-fifteen .banner-content-fifteen .support-consult-main {
   display: flex;
 }
@@ -35839,9 +35863,9 @@ span.call-duration.float-end {
   background: var(--primaryMain);
   padding: 5px 10px;
   border-radius: 5px;
-  font-family: 600;
+  font-weight: 600;
   font-size: 14px;
-  color: #ffffff;
+  color: #000000;
 }
 
 .services-section-fifteen .doctor-profile-widget-fifteen .doc-content-bottom p {
