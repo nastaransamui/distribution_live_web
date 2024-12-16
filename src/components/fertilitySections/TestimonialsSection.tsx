@@ -26,7 +26,7 @@ const TestimonialsSection: FC = (() => {
     nav: true,
     // navContainer: '.slide-nav-2',
     navText: ['<i class="fa-solid fa-caret-left "></i>', '<i class="fa-solid fa-caret-right"></i>'],
-
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     autoplay: false,
     infinite: "true",
 

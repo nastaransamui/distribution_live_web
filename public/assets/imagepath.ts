@@ -325,8 +325,11 @@ export const serviceImg05 = "/assets/images/service-5.webp";
 export const doctor_13 = "/assets/images/doctors/doctor-13.webp";
 export const doctor_14 = "/assets/images/doctors/doctor-14.webp";
 export const doctor_15 = "/assets/images/doctors/doctor-15.webp";
+export const doctor_15_aspect = "/assets/images/doctors/doctor-15_aspect.webp";
 export const doctor_16 = "/assets/images/doctors/doctor-16.webp";
+export const doctor_16_aspect = "/assets/images/doctors/doctor-16_aspect.webp";
 export const doctor_17 = "/assets/images/doctors/doctor-17.webp";
+export const doctor_17_aspect = "/assets/images/doctors/doctor-17_aspect.webp";
 export const doctor_18 = "/assets/images/doctors/doctor-18.webp";
 export const doctors_profile =
   "/assets/images/doctors/doctors_profile_small.webp";

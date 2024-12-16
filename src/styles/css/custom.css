@@ -33696,7 +33696,7 @@ span.call-duration.float-end {
 }
 
 .banner-section-fourteen .banner-content-fourteen h1 {
-  color: #ffffff;
+  color: #000000 !important;
   letter-spacing: 0.005rem;
   font-weight: 700;
   width: 586px;
@@ -34063,7 +34063,7 @@ span.call-duration.float-end {
   .service-inner-fourt-main
   .service-inner-right-fourt
   .service-inner-right-fourt-care {
-  color: var(--primaryLight);
+  color: var(--secondaryMain);
   font-size: 22px;
   font-weight: 600;
   margin: 0 0 13px 0;
@@ -34106,7 +34106,7 @@ span.call-duration.float-end {
   .service-inner-fourt-main
   .service-inner-right-fourt
   .service-inner-right-fourt-caretwo {
-  color: var(--secondaryLight);
+  color: var(--secondaryMain);
   font-size: 18px;
   font-weight: 600;
 }

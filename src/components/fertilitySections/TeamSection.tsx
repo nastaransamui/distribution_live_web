@@ -6,7 +6,7 @@ import AOS from 'aos'
 import dynamic from 'next/dynamic'
 import { useTheme } from '@mui/material'
 import { ServeImageIconOneSvg, ServeImageIconTwoSvg } from '../../../public/assets/images/icons/IconsSvgs'
-import { doctor_15, doctor_16, doctor_17 } from '@/public/assets/imagepath'
+import { doctor_15_aspect, doctor_16_aspect, doctor_17_aspect } from '@/public/assets/imagepath'
 const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false })
 
 
@@ -30,7 +30,7 @@ const TeamSection: FC = (() => {
     nav: true,
     navContainer: '.slide-nav-14',
     navText: ['<i class="fa-solid fa-caret-left "></i>', '<i class="fa-solid fa-caret-right"></i>'],
-
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     autoplay: false,
     infinite: "true",
 
@@ -84,10 +84,10 @@ const TeamSection: FC = (() => {
               <div className="articles-grid articles-grid-fourteen w-100">
                 <div className="articles-info">
                   <div className="articles-left">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='search'>
                       <div className="articles-img articles-img-fourteen">
                         <img
-                          src={doctor_15}
+                          src={doctor_15_aspect}
                           alt=""
                           className="img-fluid"
                         />
@@ -96,7 +96,7 @@ const TeamSection: FC = (() => {
                   </div>
                   <div className="articles-right">
                     <div className="articles-content articles-content-fourteen">
-                      <Link href="/doctors/profile">Dr. Marie Wells</Link>
+                      <Link href="/doctors/search" aria-label='search'>Dr. Marie Wells</Link>
                       <ul className="articles-list nav">
                         <li className="Qualified-doctors-fourteen">
                           Pregnancy Specialist
@@ -120,7 +120,7 @@ const TeamSection: FC = (() => {
                       <ul className="articles-list nav mb-0">
                         <li className="Qualified-doctors-fourteenthree">$ 200</li>
                         <li className="Qualified-doctors-fourteenfour">
-                          <Link href="/doctors/profile">Consult Now</Link>
+                          <Link href="/doctors/search" aria-label='search'>Consult Now</Link>
                         </li>
                       </ul>
                     </div>
@@ -130,10 +130,10 @@ const TeamSection: FC = (() => {
               <div className="articles-grid articles-grid-fourteen w-100">
                 <div className="articles-info">
                   <div className="articles-left">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='search'>
                       <div className="articles-img articles-img-fourteen">
                         <img
-                          src={doctor_16}
+                          src={doctor_16_aspect}
                           alt=""
                           className="img-fluid"
                         />
@@ -142,7 +142,7 @@ const TeamSection: FC = (() => {
                   </div>
                   <div className="articles-right">
                     <div className="articles-content articles-content-fourteen">
-                      <Link href="/doctors/profile">Dr. Justin Parker</Link>
+                      <Link href="/doctors/search" aria-label='search'>Dr. Justin Parker</Link>
                       <ul className="articles-list nav">
                         <li className="Qualified-doctors-fourteen">Surgeon</li>
                         <li className="Qualified-doctors-fourteentwo">
@@ -164,7 +164,7 @@ const TeamSection: FC = (() => {
                       <ul className="articles-list nav mb-0">
                         <li className="Qualified-doctors-fourteenthree">$ 600</li>
                         <li className="Qualified-doctors-fourteenfour">
-                          <Link href="/doctors/profile">Consult Now</Link>
+                          <Link href="/doctors/search" aria-label='search'>Consult Now</Link>
                         </li>
                       </ul>
                     </div>
@@ -174,10 +174,10 @@ const TeamSection: FC = (() => {
               <div className="articles-grid articles-grid-fourteen w-100">
                 <div className="articles-info">
                   <div className="articles-left">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='search'>
                       <div className="articles-img articles-img-fourteen">
                         <img
-                          src={doctor_17}
+                          src={doctor_17_aspect}
                           alt=""
                           className="img-fluid"
                         />
@@ -186,7 +186,7 @@ const TeamSection: FC = (() => {
                   </div>
                   <div className="articles-right">
                     <div className="articles-content articles-content-fourteen">
-                      <Link href="/doctors/profile">Dr. Marie Wells</Link>
+                      <Link href="/doctors/search" aria-label='search'>Dr. Marie Wells</Link>
                       <ul className="articles-list nav">
                         <li className="Qualified-doctors-fourteen">
                           Pregnancy Specialist
@@ -210,7 +210,7 @@ const TeamSection: FC = (() => {
                       <ul className="articles-list nav mb-0">
                         <li className="Qualified-doctors-fourteenthree">$ 200</li>
                         <li className="Qualified-doctors-fourteenfour">
-                          <Link href="/doctors/profile">Consult Now</Link>
+                          <Link href="/doctors/search" aria-label='search'>Consult Now</Link>
                         </li>
                       </ul>
                     </div>

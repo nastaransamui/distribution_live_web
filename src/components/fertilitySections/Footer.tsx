@@ -145,7 +145,7 @@ const Footer: FC = (() => {
                           <InputLabel id="demo-select-small-label">Language</InputLabel>
 
                           <Select
-                            value={'en' || ''}
+                            value={'en'}
                             label="Language"
                             onChange={handleChange}
                             fullWidth
@@ -161,22 +161,22 @@ const Footer: FC = (() => {
                   <div className="social-icon">
                     <ul>
                       <li>
-                        <Link href="#" target="_blank">
+                        <Link href="#" target="_blank" aria-label='social links'>
                           <i className="fab fa-facebook" />{" "}
                         </Link>
                       </li>
                       <li>
-                        <Link href="#" target="_blank">
+                        <Link href="#" target="_blank" aria-label='social links'>
                           <i className="fab fa-instagram" />
                         </Link>
                       </li>
                       <li>
-                        <Link href="#" target="_blank">
+                        <Link href="#" target="_blank" aria-label='social links'>
                           <i className="fab fa-twitter" />{" "}
                         </Link>
                       </li>
                       <li>
-                        <Link href="#" target="_blank">
+                        <Link href="#" target="_blank" aria-label='social links'>
                           <i className="fab fa-linkedin-in" />
                         </Link>
                       </li>

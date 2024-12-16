@@ -20,7 +20,7 @@ const OurServices: FC = (() => {
                 <div className="service-inner-fourteen">
                   <div className="service-inner-fourteen-one"></div>
                   <div className="service-inner-fourteen-two">
-                    <h3>Our Services</h3>
+                    <h1>Our Services</h1>
                   </div>
                   <div className="service-inner-fourteen-three"></div>
                 </div>
@@ -51,13 +51,13 @@ const OurServices: FC = (() => {
                   <div className="card service-inner-fourt-all">
                     <div className="card-body service-inner-fourt-main">
                       <div className="service-inner-right-fourt">
-                        <Link href="/pages/patient-details">
+                        <Link href="/doctors/search">
                           <div className="service-inner-right-img">
                             <img src={service_six_1} alt="image" />
                           </div>
                         </Link>
                         <Link
-                          href="/pages/patient-details"
+                          href="/doctors/search"
                           className="service-inner-right-fourt-care"
                         >
                           Pregnancy Care
@@ -67,10 +67,10 @@ const OurServices: FC = (() => {
                           sed.
                         </p>
                         <Link
-                          href="/patient-details"
+                          href="/doctors/search"
                           className="service-inner-right-fourt-caretwo"
                         >
-                          Learn More <i className="fa-solid fa-arrow-right ms-2" />
+                          See Doctors <i className="fa-solid fa-arrow-right ms-2" />
                         </Link>
                       </div>
                     </div>
@@ -80,13 +80,13 @@ const OurServices: FC = (() => {
                   <div className="card service-inner-fourt-all">
                     <div className="card-body service-inner-fourt-main">
                       <div className="service-inner-right-fourt">
-                        <Link href="/pages/patient-details">
+                        <Link href="/doctors/search">
                           <div className="service-inner-right-img">
                             <img src={service_six_2} alt="image" />
                           </div>
                         </Link>
                         <Link
-                          href="/patient-details"
+                          href="/doctors/search"
                           className="service-inner-right-fourt-care"
                         >
                           Fertility Medication
@@ -96,10 +96,10 @@ const OurServices: FC = (() => {
                           sed.
                         </p>
                         <Link
-                          href="/patient-details"
+                          href="/doctors/search"
                           className="service-inner-right-fourt-caretwo"
                         >
-                          Learn More <i className="fa-solid fa-arrow-right ms-2" />
+                          See Doctors <i className="fa-solid fa-arrow-right ms-2" />
                         </Link>
                       </div>
                     </div>
@@ -109,13 +109,13 @@ const OurServices: FC = (() => {
                   <div className="card service-inner-fourt-all">
                     <div className="card-body service-inner-fourt-main">
                       <div className="service-inner-right-fourt">
-                        <Link href="/patient-details">
+                        <Link href="/doctors/search">
                           <div className="service-inner-right-img">
                             <img src={service_six_3} alt="image" />
                           </div>
                         </Link>
                         <Link
-                          href="/patient-details"
+                          href="/doctors/search"
                           className="service-inner-right-fourt-care"
                         >
                           Gynecology
@@ -125,10 +125,10 @@ const OurServices: FC = (() => {
                           sed.
                         </p>
                         <Link
-                          href="/patient-details"
+                          href="/doctors/search"
                           className="service-inner-right-fourt-caretwo"
                         >
-                          Learn More <i className="fa-solid fa-arrow-right ms-2" />
+                          See Doctors <i className="fa-solid fa-arrow-right ms-2" />
                         </Link>
                       </div>
                     </div>
@@ -138,13 +138,13 @@ const OurServices: FC = (() => {
                   <div className="card service-inner-fourt-all">
                     <div className="card-body service-inner-fourt-main">
                       <div className="service-inner-right-fourt">
-                        <Link href="/patient-details">
+                        <Link href="/doctors/search">
                           <div className="service-inner-right-img">
                             <img src={service_six_4} alt="image" />
                           </div>
                         </Link>
                         <Link
-                          href="/patient-details"
+                          href="/doctors/search"
                           className="service-inner-right-fourt-care"
                         >
                           Prenatal Ultrasound
@@ -154,10 +154,10 @@ const OurServices: FC = (() => {
                           sed.
                         </p>
                         <Link
-                          href="/patient-details"
+                          href="/doctors/search"
                           className="service-inner-right-fourt-caretwo"
                         >
-                          Learn More <i className="fa-solid fa-arrow-right ms-2" />
+                          See Doctors <i className="fa-solid fa-arrow-right ms-2" />
                         </Link>
                       </div>
                     </div>
