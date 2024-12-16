@@ -76,7 +76,7 @@ const HomeBookDoctor: FC = (() => {
                   <div>
                     <div className="profile-widget">
                       <div className="doc-img">
-                        <Link href="/doctors/profile">
+                        <Link href="/doctors/search">
                           <img className="img-fluid" alt="User" src={Doc01} />
                         </Link>
                         <Link href="#" className="fav-btn">
@@ -85,7 +85,7 @@ const HomeBookDoctor: FC = (() => {
                       </div>
                       <div className="pro-content">
                         <h3 className="title">
-                          <Link href="/doctors/profile">Ruby Perrin</Link>
+                          <Link href="/doctors/search">Ruby Perrin</Link>
                           <i className="fas fa-check-circle verified"></i>
                         </h3>
                         <p className="speciality">MDS - Periodontology and Oral Implantology, BDS</p>
@@ -111,10 +111,10 @@ const HomeBookDoctor: FC = (() => {
                         </ul>
                         <div className="row row-sm">
                           <div className="col-6">
-                            <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                            <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                           </div>
                           <div className="col-6">
-                            <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                            <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                           </div>
                         </div>
                       </div>
@@ -123,7 +123,7 @@ const HomeBookDoctor: FC = (() => {
                   <div>
                     <div className="profile-widget">
                       <div className="doc-img">
-                        <Link href="/doctors/profile">
+                        <Link href="/doctors/search">
                           <img className="img-fluid" alt="User" src={Doc02} />
                         </Link>
                         <Link href="#" className="fav-btn">
@@ -132,7 +132,7 @@ const HomeBookDoctor: FC = (() => {
                       </div>
                       <div className="pro-content">
                         <h3 className="title">
-                          <Link href="/doctors/profile">Darren Elder</Link>
+                          <Link href="/doctors/search">Darren Elder</Link>
                           <i className="fas fa-check-circle verified"></i>
                         </h3>
                         <p className="speciality">BDS, MDS - Oral & Maxillofacial Surgery</p>
@@ -158,10 +158,10 @@ const HomeBookDoctor: FC = (() => {
                         </ul>
                         <div className="row row-sm">
                           <div className="col-6">
-                            <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                            <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                           </div>
                           <div className="col-6">
-                            <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                            <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                           </div>
                         </div>
                       </div>
@@ -170,7 +170,7 @@ const HomeBookDoctor: FC = (() => {
                   <div>
                     <div className="profile-widget">
                       <div className="doc-img">
-                        <Link href="/doctors/profile">
+                        <Link href="/doctors/search">
                           <img className="img-fluid" alt="User" src={Doc03} />
                         </Link>
                         <Link href="#" className="fav-btn">
@@ -179,7 +179,7 @@ const HomeBookDoctor: FC = (() => {
                       </div>
                       <div className="pro-content">
                         <h3 className="title">
-                          <Link href="/doctors/profile">Deborah Angel</Link>
+                          <Link href="/doctors/search">Deborah Angel</Link>
                           <i className="fas fa-check-circle verified"></i>
                         </h3>
                         <p className="speciality">MBBS, MD - General Medicine, DNB - Cardiology</p>
@@ -205,10 +205,10 @@ const HomeBookDoctor: FC = (() => {
                         </ul>
                         <div className="row row-sm">
                           <div className="col-6">
-                            <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                            <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                           </div>
                           <div className="col-6">
-                            <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                            <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                           </div>
                         </div>
                       </div>
@@ -217,7 +217,7 @@ const HomeBookDoctor: FC = (() => {
                   <div>
                     <div className="profile-widget">
                       <div className="doc-img">
-                        <Link href="/doctors/profile">
+                        <Link href="/doctors/search">
                           <img className="img-fluid" alt="User" src={Doc04} />
                         </Link>
                         <Link href="#" className="fav-btn">
@@ -226,7 +226,7 @@ const HomeBookDoctor: FC = (() => {
                       </div>
                       <div className="pro-content">
                         <h3 className="title">
-                          <Link href="/doctors/profile">Sofia Brient</Link>
+                          <Link href="/doctors/search">Sofia Brient</Link>
                           <i className="fas fa-check-circle verified"></i>
                         </h3>
                         <p className="speciality">MBBS, MS - General Surgery, MCh - Urology</p>
@@ -252,10 +252,10 @@ const HomeBookDoctor: FC = (() => {
                         </ul>
                         <div className="row row-sm">
                           <div className="col-6">
-                            <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                            <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                           </div>
                           <div className="col-6">
-                            <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                            <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                           </div>
                         </div>
                       </div>

@@ -43,7 +43,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 <ul className="entry-meta meta-item">
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/profile">
+                      <Link href="/doctors/search">
                         <img src={IMG_th01} alt="Post Author" />
                         <span>Dr. Ruby Perrin</span>
                       </Link>
@@ -77,7 +77,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 <ul className="entry-meta meta-item">
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/profile">
+                      <Link href="/doctors/search">
                         <img src={IMG_th02} alt="Post Author" />
                         <span>Dr. Darren Elder</span>
                       </Link>
@@ -110,7 +110,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 <ul className="entry-meta meta-item">
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/profile">
+                      <Link href="/doctors/search">
                         <img src={IMG_th03} alt="Post Author" />
                         <span>Dr. Deborah Angel</span>
                       </Link>
@@ -143,7 +143,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 <ul className="entry-meta meta-item">
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/profile">
+                      <Link href="/doctors/search">
                         <img src={IMG_th04} alt="Post Author" />
                         <span>Dr. Sofia Brient</span>
                       </Link>
@@ -176,7 +176,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 <ul className="entry-meta meta-item">
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/profile">
+                      <Link href="/doctors/search">
                         <img src={IMG_th05} alt="Post Author" />
                         <span>Dr. Marvin Campbell</span>
                       </Link>
@@ -209,7 +209,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 <ul className="entry-meta meta-item">
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/profile">
+                      <Link href="/doctors/search">
                         <img src={IMG_th06} alt="Post Author" />
                         <span>Dr. Marvin Campbell</span>
                       </Link>
@@ -250,7 +250,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 <ul>
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/profile">
+                      <Link href="/doctors/search">
                         <img src={IMG_th01} alt="Post Author" />
                         <span>Dr. Ruby Perrin</span>
                       </Link>
@@ -299,7 +299,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 <ul>
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/profile">
+                      <Link href="/doctors/search">
                         <img src={IMG_th02} alt="Post Author" />
                         <span>Dr. Darren Elder</span>
                       </Link>
@@ -352,7 +352,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 <ul>
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/profile">
+                      <Link href="/doctors/search">
                         <img src={IMG_th02} alt="Post Author" />
                         <span>Dr. Deborah Angel</span>
                       </Link>
@@ -405,7 +405,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 <ul>
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/profile">
+                      <Link href="/doctors/search">
                         <img src={IMG_th03} alt="Post Author" />
                         <span>Dr. Sofia Brient</span>
                       </Link>

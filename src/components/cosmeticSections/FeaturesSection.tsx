@@ -16,6 +16,22 @@ const FeaturesSection: FC = (() => {
     margin: 15,
     dots: true,
     nav: true,
+    dotData: true,
+    callbacks: true,
+    onInitialized: () => {
+      $('.owl-carousel').each(function () {
+        // Find each set of dots in this carousel
+        $(this).find('.owl-dots').each(function (index) {
+          // Add aria-label to the dots container
+          $(this).attr('aria-label', index + 1);
+
+          // Add aria-label to each dot button
+          $(this).find('.owl-dot').each(function (dotIndex) {
+            $(this).attr('aria-label', `Slide ${dotIndex + 1}`);
+          });
+        });
+      });
+    },
     navContainer: ".slide-nav-1",
     navText: [
       '<i class="fas fa-chevron-left custom-arrow"></i>',
@@ -68,7 +84,7 @@ const FeaturesSection: FC = (() => {
                   <img src={featureservice1} alt="" className="img-fluid" />
                   <div className="feature-content-six">
                     <div className="feature-content-one">
-                      <h5>Mommy Makeover</h5>
+                      <h1>Mommy Makeover</h1>
                       <span>
                         <i className="fa-solid fa-angle-up" />
                       </span>
@@ -95,7 +111,7 @@ const FeaturesSection: FC = (() => {
                   <img src={featureservice3} alt="" className="img-fluid" />
                   <div className="feature-content-six">
                     <div className="feature-content-one">
-                      <h5>Face Makeover</h5>
+                      <h1>Face Makeover</h1>
                       <span>
                         <i className="fa-solid fa-angle-up" />
                       </span>
@@ -122,7 +138,7 @@ const FeaturesSection: FC = (() => {
                   <img src={featureservice2} alt="" className="img-fluid" />
                   <div className="feature-content-six">
                     <div className="feature-content-one">
-                      <h5>BodyTite</h5>
+                      <h1>Body Tite</h1>
                       <span>
                         <i className="fa-solid fa-angle-up" />
                       </span>
@@ -149,7 +165,7 @@ const FeaturesSection: FC = (() => {
                   <img src={featureservice3} alt="" className="img-fluid" />
                   <div className="feature-content-six">
                     <div className="feature-content-one">
-                      <h5>BodyTite</h5>
+                      <h1>Body Tite</h1>
                       <span>
                         <i className="fa-solid fa-angle-up" />
                       </span>
@@ -176,7 +192,7 @@ const FeaturesSection: FC = (() => {
                   <img src={featureservice1} alt="" className="img-fluid" />
                   <div className="feature-content-six">
                     <div className="feature-content-one">
-                      <h5>BodyTite</h5>
+                      <h1>Body Tite</h1>
                       <span>
                         <i className="fa-solid fa-angle-up" />
                       </span>

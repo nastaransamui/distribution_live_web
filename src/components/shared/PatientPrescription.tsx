@@ -284,7 +284,7 @@ const PatientPrescription: FC<PatientSidebarDoctorTypes> = (({ userType, doctorP
   //             <img className="avatar-img rounded-circle" src={row.doctorImage} alt="User Image" />
   //           </span>
   //           <Stack >
-  //             <Link href="/doctors/profile" style={{ marginBottom: -20, zIndex: 1 }}>{row.doctorName}</Link><br />
+  //             <Link href="/doctors/search" style={{ marginBottom: -20, zIndex: 1 }}>{row.doctorName}</Link><br />
   //             <small>  {row.speciality}</small>
   //           </Stack>
   //         </>
@@ -385,7 +385,7 @@ const PatientPrescription: FC<PatientSidebarDoctorTypes> = (({ userType, doctorP
           const online = row?.doctorProfile?.online || false
           return (
             <>
-              <Link className="mx-2" target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`}>
+              <Link className="mx-2" target='_blank' href={`/doctors/search/${btoa(row.doctorId)}`}>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -397,7 +397,7 @@ const PatientPrescription: FC<PatientSidebarDoctorTypes> = (({ userType, doctorP
                   </Avatar>
                 </StyledBadge>
               </Link>
-              <Link target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`}
+              <Link target='_blank' href={`/doctors/search/${btoa(row.doctorId)}`}
                 style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
                 {formattedValue}
               </Link>

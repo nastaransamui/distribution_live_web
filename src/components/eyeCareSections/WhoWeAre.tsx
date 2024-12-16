@@ -75,7 +75,7 @@ const WhoWeAre: FC = (() => {
                       <Doc_2Svg />
                     </span>
                     <h1>Specialty Eyecare treatment for all</h1>
-                    <Link href="/doctors/booking">
+                    <Link href="/doctors/search">
                       Book Now
                       <i className="fa-solid fa-chevron-right" />
                     </Link>
@@ -87,7 +87,7 @@ const WhoWeAre: FC = (() => {
                       <Doc_3Svg />
                     </span>
                     <h1>Online Appointment and Excellent Treatment</h1>
-                    <Link href="/doctors/booking-2">
+                    <Link href="/doctors/search-2">
                       Make an Appointment
                       <i className="fa-solid fa-chevron-right" />
                     </Link>

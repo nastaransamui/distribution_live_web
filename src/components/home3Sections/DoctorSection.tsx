@@ -82,7 +82,7 @@ const DoctorSection: FC = (() => {
                       <i className="fas fa-star filled" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/profile"><h4>Dr. Ruby Perrin</h4></Link>
+                    <Link href="/doctors/search"><h4>Dr. Ruby Perrin</h4></Link>
                     <p>BDS, MDS - Oral &amp; Maxillofacial Surgery</p>
                     <div className="location d-flex">
                       <p><i className="fas fa-map-marker-alt" /> Georgia, USA</p>
@@ -90,10 +90,10 @@ const DoctorSection: FC = (() => {
                     </div>
                     <div className="row row-sm">
                       <div className="col-6">
-                        <Link href="/doctors/profile" className="btn view-btn" tabIndex={0}>View Profile</Link>
+                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0}>View Profile</Link>
                       </div>
                       <div className="col-6">
-                        <Link href="/doctors/booking" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
                       </div>
                     </div>
                   </div>
@@ -116,7 +116,7 @@ const DoctorSection: FC = (() => {
                       <i className="fas fa-star filled" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/profile"><h4>Dr. Deborah Angel</h4></Link>
+                    <Link href="/doctors/search"><h4>Dr. Deborah Angel</h4></Link>
                     <p>MBBS, MD - General Medicine, DNB</p>
                     <div className="location d-flex">
                       <p><i className="fas fa-map-marker-alt" /> Georgia, USA</p>
@@ -124,10 +124,10 @@ const DoctorSection: FC = (() => {
                     </div>
                     <div className="row row-sm">
                       <div className="col-6">
-                        <Link href="/doctors/profile" className="btn view-btn" tabIndex={0}>View Profile</Link>
+                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0}>View Profile</Link>
                       </div>
                       <div className="col-6">
-                        <Link href="/doctors/booking" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
                       </div>
                     </div>
                   </div>
@@ -150,7 +150,7 @@ const DoctorSection: FC = (() => {
                       <i className="fas fa-star filled" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/profile"><h4>Dr. Sofia Brient</h4></Link>
+                    <Link href="/doctors/search"><h4>Dr. Sofia Brient</h4></Link>
                     <p>MBBS, MS - General Surgery, MCh</p>
                     <div className="location d-flex">
                       <p><i className="fas fa-map-marker-alt" /> Georgia, USA</p>
@@ -158,10 +158,10 @@ const DoctorSection: FC = (() => {
                     </div>
                     <div className="row row-sm">
                       <div className="col-6">
-                        <Link href="/doctors/profile" className="btn view-btn" tabIndex={0}>View Profile</Link>
+                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0}>View Profile</Link>
                       </div>
                       <div className="col-6">
-                        <Link href="/doctors/booking" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
                       </div>
                     </div>
                   </div>
@@ -184,7 +184,7 @@ const DoctorSection: FC = (() => {
                       <i className="fas fa-star filled" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/profile"><h4>Dr. Darren Elder</h4></Link>
+                    <Link href="/doctors/search"><h4>Dr. Darren Elder</h4></Link>
                     <p>BDS, MDS - Oral &amp; Maxillofacial Surgery</p>
                     <div className="location d-flex">
                       <p><i className="fas fa-map-marker-alt" /> Georgia, USA</p>
@@ -192,10 +192,10 @@ const DoctorSection: FC = (() => {
                     </div>
                     <div className="row row-sm">
                       <div className="col-6">
-                        <Link href="/doctors/profile" className="btn view-btn" tabIndex={0}>View Profile</Link>
+                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0}>View Profile</Link>
                       </div>
                       <div className="col-6">
-                        <Link href="/doctors/booking" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
                       </div>
                     </div>
                   </div>

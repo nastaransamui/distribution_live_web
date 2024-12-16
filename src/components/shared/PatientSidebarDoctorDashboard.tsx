@@ -103,7 +103,7 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                               <li className="list-group-item">
                                 <div className="media align-items-center d-flex">
                                   <div className="me-3 flex-shrink-0">
-                                    <Link className="avatar mx-2" target='_blank' href={`/doctors/profile/${btoa(appointment?.doctorId)}`}>
+                                    <Link className="avatar mx-2" target='_blank' href={`/doctors/search/${btoa(appointment?.doctorId)}`}>
                                       <StyledBadge
                                         overlap="circular"
                                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -120,7 +120,7 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                                   </div>
                                   <div className="media-body flex-grow-1">
                                     <h5 className="d-block mb-0">
-                                      <Link target='_blank' href={`/doctors/profile/${btoa(appointment?.doctorId)}`}
+                                      <Link target='_blank' href={`/doctors/search/${btoa(appointment?.doctorId)}`}
                                         style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
                                         {drName}
                                       </Link>

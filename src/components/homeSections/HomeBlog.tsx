@@ -36,7 +36,7 @@ const HomeBlog: FC = (() => {
                   <ul className="entry-meta meta-item">
                     <li>
                       <div className="post-author">
-                        <Link href="/doctors/profile"><img src={IMG02} alt="Post Author" />
+                        <Link href="/doctors/search"><img src={IMG02} alt="Post Author" />
                           <span>Dr. Ruby Perrin</span></Link>
                       </div>
                     </li>
@@ -57,7 +57,7 @@ const HomeBlog: FC = (() => {
                   <ul className="entry-meta meta-item">
                     <li>
                       <div className="post-author">
-                        <Link href="/doctors/profile"><img src={IMG03} alt="Post Author" />
+                        <Link href="/doctors/search"><img src={IMG03} alt="Post Author" />
                           <span>Dr. Darren Elder</span></Link>
                       </div>
                     </li>
@@ -80,7 +80,7 @@ const HomeBlog: FC = (() => {
                   <ul className="entry-meta meta-item">
                     <li>
                       <div className="post-author">
-                        <Link href="/doctors/profile"><img src={IMG01} alt="Post Author" />
+                        <Link href="/doctors/search"><img src={IMG01} alt="Post Author" />
                           <span>Dr. Deborah Angel</span></Link>
                       </div>
                     </li>
@@ -103,7 +103,7 @@ const HomeBlog: FC = (() => {
                   <ul className="entry-meta meta-item">
                     <li>
                       <div className="post-author">
-                        <Link href="/doctors/profile"><img src={IMG04} alt="Post Author" />
+                        <Link href="/doctors/search"><img src={IMG04} alt="Post Author" />
                           <span>Dr. Sofia Brient</span></Link>
                       </div>
                     </li>

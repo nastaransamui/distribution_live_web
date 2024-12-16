@@ -26,6 +26,7 @@ import { AppState } from '@/redux/store';
 import { useForm } from 'react-hook-form';
 import GeoLocationAutocomplete from '@/shared/GeoLocationAutocomplete';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 const HomeSearch: FC = (() => {
   const { muiVar } = useScssVar();
@@ -70,6 +71,9 @@ const HomeSearch: FC = (() => {
 
   return (
     <Fragment>
+      <Head>
+        <link rel="preload" href={`/assets/images/banner-sixteen-bg_${theme.palette.primary.main.slice(1)}.webp`} as="image" />
+      </Head>
       <section className="banner-section-sixteen" style={muiVar}>
         <div className="container">
           <div className="row">

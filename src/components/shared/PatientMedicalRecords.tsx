@@ -101,7 +101,7 @@ const PatientMedicalRecords: FC<{ userType: 'patient' | 'doctor' }> = (({ userTy
               <img className="avatar-img rounded-circle" src={row.doctorImage} alt="User Image" />
             </span>
             <Stack >
-              <Link href="/doctors/profile" style={{ marginBottom: -20, zIndex: 1 }}>{row.doctorName}</Link><br />
+              <Link href="/doctors/search" style={{ marginBottom: -20, zIndex: 1 }}>{row.doctorName}</Link><br />
               <small>  {row.speciality}</small>
             </Stack>
           </>

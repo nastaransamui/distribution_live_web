@@ -17,7 +17,7 @@ const Summary: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
         <div className="card">
           <div className="card-body">
             <div className="booking-doc-info">
-              <Link href={`/doctors/profile/${btoa(profile?._id)}`} className="booking-doc-img">
+              <Link href={`/doctors/search/${btoa(profile?._id)}`} className="booking-doc-img">
                 <Avatar sx={{
                   width: 'auto',
                   height: 'auto',
@@ -35,7 +35,7 @@ const Summary: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
               </Link>
               <div className="booking-info">
                 <h4>
-                  <Link href={`/doctors/profile/${btoa(profile?._id)}`}>
+                  <Link href={`/doctors/search/${btoa(profile?._id)}`}>
                     Dr. {profile?.firstName} {" "} {profile?.lastName}
                   </Link>
                 </h4>
@@ -62,12 +62,12 @@ const Summary: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
             <div className="booking-doctor-details">
               <div className="booking-doctor-left">
                 <div className="booking-doctor-img">
-                  <Link href="/doctors/profile">
+                  <Link href="/doctors/search">
                     <img src={doctor_17} alt="" />
                   </Link>
                 </div>
                 <div className="booking-doctor-info">
-                  <h4><Link href="/doctors/profile">Dr. John Doe</Link></h4>
+                  <h4><Link href="/doctors/search">Dr. John Doe</Link></h4>
                   <p>MBBS, Dentist</p>
                 </div>
               </div>

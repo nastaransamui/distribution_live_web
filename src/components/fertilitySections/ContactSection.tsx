@@ -40,7 +40,7 @@ const ContactSection: FC = (() => {
                       <Link href="/doctor/appointments">Fix an Appoint</Link>
                     </li>
                     <li>
-                      <Link href="/doctors/booking">Make a Call</Link>
+                      <Link href="/doctors/search">Make a Call</Link>
                     </li>
                     <li>
                       <Link href="#">Whatsapp</Link>

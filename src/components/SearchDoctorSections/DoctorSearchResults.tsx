@@ -408,7 +408,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
     const doctor = doctorResults[index];
     //@ts-ignore
     let { years, } = dayjs.preciseDiff(doctor?.dob, dayjs(), true)
-    let shareUrl = `${process.env.NEXT_PUBLIC_webUrl}/doctors/profile/${btoa(doctor?._id)}`
+    let shareUrl = `${process.env.NEXT_PUBLIC_webUrl}/doctors/search/${btoa(doctor?._id)}`
     const title = `Dr. ${doctor?.firstName} ${doctor?.lastName}`;
     return (
       <div key={key} style={{ ...style }} >
@@ -461,7 +461,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                         left: '5%'
                       }
                     }}>
-                      <Link href={`/doctors/profile/${btoa(doctor?._id)}`} >
+                      <Link href={`/doctors/search/${btoa(doctor?._id)}`} >
                         <ProfileImageStyledBadge
                           overlap="circular"
                           anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
@@ -519,7 +519,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                       transition: theme.transitions.create('all', { duration: 200, }),
                     }}>
                       <Typography component="div" variant="h5" sx={{ wordBreak: 'break-all' }}>
-                        <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
+                        <Link href={`/doctors/search/${btoa(doctor?._id)}`}>
                           Dr. {doctor?.firstName} {" "} {doctor?.lastName}
                         </Link>
                         &nbsp;
@@ -689,7 +689,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                       <div className="clinic-booking book-appoint">
                         <Button
                           className={doctor?.timeslots.length > 0 ? "btn btn-primary-light" : 'btn-primary-light-disabled'}
-                          href={`/doctors/booking/${btoa(doctor?._id)}`}
+                          href={`/doctors/search/${btoa(doctor?._id)}`}
                           disabled={doctor?.timeslots.length == 0}
                         >
                           Book Appointment
@@ -928,7 +928,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
     let index = rowIndex * columnCount + columnIndex
     const doctor = doctorResults[index];
     const doctorName = `Dr. ${doctor?.firstName} ${doctor?.lastName}`
-    let shareUrl = `${process.env.NEXT_PUBLIC_webUrl}/doctors/profile/${btoa(doctor?._id)}`
+    let shareUrl = `${process.env.NEXT_PUBLIC_webUrl}/doctors/search/${btoa(doctor?._id)}`
     return (
       <div key={key} style={style} >
         {
@@ -973,7 +973,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                           </Avatar>
                         }
                         title={<h6 className="doc-name">
-                          <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
+                          <Link href={`/doctors/search/${btoa(doctor?._id)}`}>
                             {doctorName.slice(0, 18)}{doctorName.length > 18 ? '...' : ''}
                           </Link>
                         </h6>}
@@ -1345,7 +1345,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                                   <div className="clinic-booking book-appoint">
                                     <Button
                                       className={doctor?.timeslots.length > 0 ? "btn btn-primary-light" : 'btn-primary-light-disabled'}
-                                      href={`/doctors/booking/${btoa(doctor?._id)}`}
+                                      href={`/doctors/search/${btoa(doctor?._id)}`}
                                       disabled={doctor?.timeslots.length == 0}
                                     >
                                       Book Appointment

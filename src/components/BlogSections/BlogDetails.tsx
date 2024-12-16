@@ -43,7 +43,7 @@ const BlogDetails: FC = (() => {
                 <ul>
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/profile">
+                      <Link href="/doctors/search">
                         <img src={IMG_th02} alt="Post Author" />
                         <span>Dr. Darren Elder</span>
                       </Link>
@@ -152,7 +152,7 @@ const BlogDetails: FC = (() => {
               <div className="about-author">
                 <div className="about-author-img">
                   <div className="author-img-wrap">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <img
                         className="img-fluid rounded-circle"
                         alt=""
@@ -163,7 +163,7 @@ const BlogDetails: FC = (() => {
                 </div>
                 <div className="author-details">
                   <Link
-                    href="/doctors/profile"
+                    href="/doctors/search"
                     className="blog-author-name"
                   >
                     Dr. Darren Elder

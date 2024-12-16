@@ -86,7 +86,7 @@ const DoctorSection: FC = (() => {
               <div className="item item-fifteen">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="doctor-profile-img">
                         <img
                           src={Doc11}
@@ -105,7 +105,7 @@ const DoctorSection: FC = (() => {
                     </div>
                   </div>
                   <div className="doc-content-fift">
-                    <Link href="/doctors/profile">Dr. Brandon Nicholas</Link>
+                    <Link href="/doctors/search">Dr. Brandon Nicholas</Link>
                     <p>Ear-Nose-Throat (ENT) Specialist</p>
                     <div className="rate-fifteen">
                       <div className="rate-four">
@@ -126,7 +126,7 @@ const DoctorSection: FC = (() => {
               <div className="item item-fifteen">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="doctor-profile-img">
                         <img
                           src={Doc03}
@@ -145,7 +145,7 @@ const DoctorSection: FC = (() => {
                     </div>
                   </div>
                   <div className="doc-content-fift">
-                    <Link href="/doctors/profile">Dr. Katherine Victoria</Link>
+                    <Link href="/doctors/search">Dr. Katherine Victoria</Link>
                     <p>MBBS, MS - ENT</p>
                     <div className="rate-fifteen">
                       <div className="rate-four">
@@ -165,7 +165,7 @@ const DoctorSection: FC = (() => {
               <div className="item item-fifteen">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="doctor-profile-img">
                         <img
                           src={Doc07}
@@ -184,7 +184,7 @@ const DoctorSection: FC = (() => {
                     </div>
                   </div>
                   <div className="doc-content-fift">
-                    <Link href="/doctors/profile">Dr. Lisa Madeleine</Link>
+                    <Link href="/doctors/search">Dr. Lisa Madeleine</Link>
                     <p>MBBS, MS - ENT</p>
                     <div className="rate-fifteen">
                       <div className="rate-four">
@@ -205,7 +205,7 @@ const DoctorSection: FC = (() => {
               <div className="item item-fifteen">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="doctor-profile-img">
                         <img
                           src={Doc09}
@@ -224,7 +224,7 @@ const DoctorSection: FC = (() => {
                     </div>
                   </div>
                   <div className="doc-content-fift">
-                    <Link href="/doctors/profile">Dr. Brandon Nicholas</Link>
+                    <Link href="/doctors/search">Dr. Brandon Nicholas</Link>
                     <p>Ear-Nose-Throat (ENT) Specialist</p>
                     <div className="rate-fifteen">
                       <div className="rate-four">

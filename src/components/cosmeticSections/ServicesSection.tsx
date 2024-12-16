@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import useScssVar from '@/hooks/useScssVar'
 import { servicesixteenicon } from '../../../public/assets/imagepath';
 import { DiscoverFiveSvg, DiscoverFourSvg, DiscoverOneSvg, DiscoverThreeSvg, DiscoverTwoSvg } from '../../../public/assets/images/icons/IconsSvgs';
-
+import $ from 'jquery'
 const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
 
 
@@ -17,6 +17,22 @@ const ServicesSection: FC = (() => {
     loop: true,
     margin: 10,
     dots: true,
+    dotData: true,
+    callbacks: true,
+    onInitialized: () => {
+      $('.owl-carousel').each(function () {
+        // Find each set of dots in this carousel
+        $(this).find('.owl-dots').each(function (index) {
+          // Add aria-label to the dots container
+          $(this).attr('aria-label', index + 1);
+
+          // Add aria-label to each dot button
+          $(this).find('.owl-dot').each(function (dotIndex) {
+            $(this).attr('aria-label', `Slide ${dotIndex + 1}`);
+          });
+        });
+      });
+    },
     nav: false,
     smartSpeed: 2000,
     responsive: {
@@ -61,7 +77,7 @@ const ServicesSection: FC = (() => {
                 <Link href="#">Body</Link>
                 <p>Lorem Ipsum is simply dummy typesetting industry.</p>
                 <Link href="#" className="discov-innner">
-                  Read More
+                  Get your answers
                   <i className="fa-solid fa-chevron-right ms-2" />
                 </Link>
               </div>
@@ -72,7 +88,7 @@ const ServicesSection: FC = (() => {
                 <Link href="#">Face</Link>
                 <p>Lorem Ipsum is simply dummy typesetting industry.</p>
                 <Link href="#" className="discov-innner">
-                  Read More
+                  Get your answers
                   <i className="fa-solid fa-chevron-right ms-2" />
                 </Link>
               </div>
@@ -83,7 +99,7 @@ const ServicesSection: FC = (() => {
                 <Link href="#">Breast</Link>
                 <p>Lorem Ipsum is simply dummy typesetting industry.</p>
                 <Link href="#" className="discov-innner">
-                  Read More
+                  Get your answers
                   <i className="fa-solid fa-chevron-right ms-2" />
                 </Link>
               </div>
@@ -94,7 +110,7 @@ const ServicesSection: FC = (() => {
                 <Link href="#">Nose</Link>
                 <p>Lorem Ipsum is simply dummy typesetting industry.</p>
                 <Link href="#" className="discov-innner">
-                  Read More
+                  Get your answers
                   <i className="fa-solid fa-chevron-right ms-2" />
                 </Link>
               </div>
@@ -105,7 +121,7 @@ const ServicesSection: FC = (() => {
                 <Link href="#">Fillers</Link>
                 <p>Lorem Ipsum is simply dummy typesetting industry.</p>
                 <Link href="#" className="discov-innner">
-                  Read More
+                  Get your answers
                   <i className="fa-solid fa-chevron-right ms-2" />
                 </Link>
               </div>
@@ -116,7 +132,7 @@ const ServicesSection: FC = (() => {
                 <Link href="#">Face</Link>
                 <p>Lorem Ipsum is simply dummy typesetting industry.</p>
                 <Link href="#" className="discov-innner">
-                  Read More
+                  Get your answers
                   <i className="fa-solid fa-chevron-right ms-2" />
                 </Link>
               </div>
@@ -127,7 +143,7 @@ const ServicesSection: FC = (() => {
                 <Link href="#">Body</Link>
                 <p>Lorem Ipsum is simply dummy typesetting industry.</p>
                 <Link href="#" className="discov-innner">
-                  Read More
+                  Get your answers
                   <i className="fa-solid fa-chevron-right ms-2" />
                 </Link>
               </div>
@@ -138,7 +154,7 @@ const ServicesSection: FC = (() => {
                 <Link href="#">Nose</Link>
                 <p>Lorem Ipsum is simply dummy typesetting industry.</p>
                 <Link href="#" className="discov-innner">
-                  Read More
+                  Get your answers
                   <i className="fa-solid fa-chevron-right ms-2" />
                 </Link>
               </div>
@@ -149,7 +165,7 @@ const ServicesSection: FC = (() => {
                 <Link href="#">Fillers</Link>
                 <p>Lorem Ipsum is simply dummy typesetting industry.</p>
                 <Link href="#" className="discov-innner">
-                  Read More
+                  Get your answers
                   <i className="fa-solid fa-chevron-right ms-2" />
                 </Link>
               </div>
@@ -160,7 +176,7 @@ const ServicesSection: FC = (() => {
                 <Link href="#">Breast</Link>
                 <p>Lorem Ipsum is simply dummy typesetting industry.</p>
                 <Link href="#" className="discov-innner">
-                  Read More
+                  Get your answers
                   <i className="fa-solid fa-chevron-right ms-2" />
                 </Link>
               </div>
@@ -171,7 +187,7 @@ const ServicesSection: FC = (() => {
                 <Link href="#">Body</Link>
                 <p>Lorem Ipsum is simply dummy typesetting industry.</p>
                 <Link href="#" className="discov-innner">
-                  Read More
+                  Get your answers
                   <i className="fa-solid fa-chevron-right ms-2" />
                 </Link>
               </div>

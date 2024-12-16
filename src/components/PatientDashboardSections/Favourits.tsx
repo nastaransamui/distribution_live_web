@@ -160,7 +160,7 @@ const Favourits: FC = (() => {
 
                 <div className="profile-widget">
                   <div className="doc-img">
-                    <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
+                    <Link href={`/doctors/search/${btoa(doctor?._id)}`}>
                       <ProfileImageStyledBadge
                         overlap="circular"
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -200,7 +200,7 @@ const Favourits: FC = (() => {
                   </div>
                   <div className="pro-content">
                     <h3 className="title">
-                      <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>{title}</Link>
+                      <Link href={`/doctors/search/${btoa(doctor?._id)}`}>{title}</Link>
                       <i className="fas fa-check-circle verified"></i>
                     </h3>
 
@@ -240,14 +240,14 @@ const Favourits: FC = (() => {
                     <div className="row row-sm">
                       <div className="col-6">
                         <Button
-                          href={`/doctors/profile/${btoa(doctor?._id)}`}
+                          href={`/doctors/search/${btoa(doctor?._id)}`}
                           className="btn view-btn">
                           View Profile
                         </Button>
                       </div>
                       <div className="col-6">
                         <Button
-                          href={`/doctors/booking/${btoa(doctor?._id)}`}
+                          href={`/doctors/search/${btoa(doctor?._id)}`}
                           className="btn book-btn"
                           sx={{
                             "&.MuiButtonBase-root.Mui-disabled ": {

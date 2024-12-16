@@ -79,7 +79,7 @@ const Pricing: FC = (() => {
                       </div>
                       <div className="pricing-title">
                         <p>For individuals</p>
-                        <h4>Basic</h4>
+                        <h1>Basic</h1>
                       </div>
                     </div>
                     <div className="pricing-header-text">
@@ -94,7 +94,7 @@ const Pricing: FC = (() => {
                       <h2>
                         $99 <span>/monthly</span>
                       </h2>
-                      <h6>What’s included</h6>
+                      <h3>What’s included</h3>
                     </div>
                     <div className="pricing-list">
                       <ul>
@@ -163,7 +163,7 @@ const Pricing: FC = (() => {
                       <h2>
                         $199 <span>/monthly</span>
                       </h2>
-                      <h6>What’s included</h6>
+                      <h3>What’s included</h3>
                     </div>
                     <div className="pricing-list">
                       <ul>
@@ -228,7 +228,7 @@ const Pricing: FC = (() => {
                       <h2>
                         $399 <span>/monthly</span>
                       </h2>
-                      <h6>Whats included</h6>
+                      <h3>Whats included</h3>
                     </div>
                     <div className="pricing-list">
                       <ul>

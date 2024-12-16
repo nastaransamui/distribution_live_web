@@ -24,7 +24,7 @@ const BestDoctors: FC = (() => {
             <div className="col-lg-3 col-md-6 d-flex">
               <div className="doctor-profile-widget w-100">
                 <div className="doc-pro-img">
-                  <Link href="/doctors/profile">
+                  <Link href="/doctors/search">
                     <div className="doctor-profile-img">
                       <img
                         src={doctorImg1}
@@ -40,7 +40,7 @@ const BestDoctors: FC = (() => {
                 <div className="doc-content">
                   <div className="doc-pro-info">
                     <div className="doc-pro-name">
-                      <Link href="/doctors/profile">Dr. Ruby Perrin</Link>
+                      <Link href="/doctors/search">Dr. Ruby Perrin</Link>
                       <p>Cardiology</p>
                     </div>
                     <div className="reviews-ratings">
@@ -65,7 +65,7 @@ const BestDoctors: FC = (() => {
             <div className="col-lg-3 col-md-6 d-flex">
               <div className="doctor-profile-widget w-100">
                 <div className="doc-pro-img">
-                  <Link href="/doctors/profile">
+                  <Link href="/doctors/search">
                     <div className="doctor-profile-img">
                       <img
                         src={doctorImg2}
@@ -81,7 +81,7 @@ const BestDoctors: FC = (() => {
                 <div className="doc-content">
                   <div className="doc-pro-info">
                     <div className="doc-pro-name">
-                      <Link href="/doctors/profile">Dr. Darren Elder</Link>
+                      <Link href="/doctors/search">Dr. Darren Elder</Link>
                       <p>Neurology</p>
                     </div>
                     <div className="reviews-ratings">
@@ -106,7 +106,7 @@ const BestDoctors: FC = (() => {
             <div className="col-lg-3 col-md-6 d-flex">
               <div className="doctor-profile-widget w-100">
                 <div className="doc-pro-img">
-                  <Link href="/doctors/profile">
+                  <Link href="/doctors/search">
                     <div className="doctor-profile-img">
                       <img
                         src={doctorImg3}
@@ -122,7 +122,7 @@ const BestDoctors: FC = (() => {
                 <div className="doc-content">
                   <div className="doc-pro-info">
                     <div className="doc-pro-name">
-                      <Link href="/doctors/profile">Dr. Sofia Brient</Link>
+                      <Link href="/doctors/search">Dr. Sofia Brient</Link>
                       <p>Urology</p>
                     </div>
                     <div className="reviews-ratings">
@@ -147,7 +147,7 @@ const BestDoctors: FC = (() => {
             <div className="col-lg-3 col-md-6 d-flex">
               <div className="doctor-profile-widget w-100">
                 <div className="doc-pro-img">
-                  <Link href="/doctors/profile">
+                  <Link href="/doctors/search">
                     <div className="doctor-profile-img">
                       <img
                         src={doctorImg4}
@@ -163,7 +163,7 @@ const BestDoctors: FC = (() => {
                 <div className="doc-content">
                   <div className="doc-pro-info">
                     <div className="doc-pro-name">
-                      <Link href="/doctors/profile">Dr. Paul Richard</Link>
+                      <Link href="/doctors/search">Dr. Paul Richard</Link>
                       <p>Orthopedic</p>
                     </div>
                     <div className="reviews-ratings">

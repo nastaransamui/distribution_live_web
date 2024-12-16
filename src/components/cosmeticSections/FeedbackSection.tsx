@@ -30,7 +30,7 @@ const FeedbackSection: FC = (() => {
                     <Link href="" className="btn btn-primary">
                       Make An Appointment
                     </Link>
-                    <Link href="/doctors/booking" className="btn btn-primarytwo">
+                    <Link href="/doctors/search" className="btn btn-primarytwo">
                       <i className="feather-plus me-2" />
                       Get Free Check-up
                     </Link>

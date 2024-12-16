@@ -72,7 +72,7 @@ const PharmacySection: FC = (() => {
               <div className="item item-fifteen">
                 <div className="doctor-profile-widget doctor-profile-widget-fift">
                   <div className="doc-pro-img doc-pro-img-fifteen">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="doctor-profile-img doctor-profile-img-fifteen">
                         <img
                           src={pharmacy_1}
@@ -119,7 +119,7 @@ const PharmacySection: FC = (() => {
               <div className="item item-fifteen">
                 <div className="doctor-profile-widget doctor-profile-widget-fift">
                   <div className="doc-pro-img doc-pro-img-fifteen">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="doctor-profile-img doctor-profile-img-fifteen">
                         <img
                           src={pharmacy_2}
@@ -166,7 +166,7 @@ const PharmacySection: FC = (() => {
               <div className="item item-fifteen">
                 <div className="doctor-profile-widget doctor-profile-widget-fift">
                   <div className="doc-pro-img doc-pro-img-fifteen">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="doctor-profile-img doctor-profile-img-fifteen">
                         <img
                           src={pharmacy_3}
@@ -213,7 +213,7 @@ const PharmacySection: FC = (() => {
               <div className="item item-fifteen">
                 <div className="doctor-profile-widget doctor-profile-widget-fift">
                   <div className="doc-pro-img doc-pro-img-fifteen">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="doctor-profile-img doctor-profile-img-fifteen">
                         <img
                           src={pharmacy_1}

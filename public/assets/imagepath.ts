@@ -196,6 +196,7 @@ export const feedback_fifteen = "/assets/images/feedback-fifteen.webp";
 export const appointment_ryt_1 = "/assets/images/appointment-ryt-1.webp";
 export const banrightimg1 = "/assets/images/ban-right-img1.webp";
 export const banrightimg2 = "/assets/images/ban-right-img2.webp";
+export const banrightimg2Scale = "/assets/images/ban-right-img2_scale.webp";
 export const bansixteenimg1 = "/assets/images/ban-sixteen-img1.webp";
 export const bansixteenimg2 = "/assets/images/ban-sixteen-img2.webp";
 export const servicesixteenicon = "/assets/images/service-sixteen-icon.webp";

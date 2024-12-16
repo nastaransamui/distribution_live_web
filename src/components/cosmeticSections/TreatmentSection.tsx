@@ -15,6 +15,22 @@ const TreatmentSection: FC = (() => {
     loop: true,
     margin: 15,
     dots: true,
+    dotData: true,
+    callbacks: true,
+    onInitialized: () => {
+      $('.owl-carousel').each(function () {
+        // Find each set of dots in this carousel
+        $(this).find('.owl-dots').each(function (index) {
+          // Add aria-label to the dots container
+          $(this).attr('aria-label', index + 1);
+
+          // Add aria-label to each dot button
+          $(this).find('.owl-dot').each(function (dotIndex) {
+            $(this).attr('aria-label', `Slide ${dotIndex + 1}`);
+          });
+        });
+      });
+    },
     nav: true,
     navContainer: ".slide-nav-1",
     navText: [
@@ -66,7 +82,7 @@ const TreatmentSection: FC = (() => {
               <div className="item item-sixteen">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='search doctor'>
                       <div className="doctor-profile-img">
                         <img src={treatment1} className="img-fluid" alt="" />
                       </div>
@@ -78,7 +94,7 @@ const TreatmentSection: FC = (() => {
                   <div className="doc-content">
                     <div className="doc-pro-info">
                       <div className="doc-pro-name">
-                        <Link href="/doctors/profile">
+                        <Link href="/doctors/search" aria-label='search doctor'>
                           Barbara L. Williams
                         </Link>
                         <p>Aesthetic Surgery</p>
@@ -102,7 +118,7 @@ const TreatmentSection: FC = (() => {
                     className="blog-btn-sec text-center aos aos-init aos-animate"
                     data-aos="fade-up"
                   >
-                    <Link href="/doctors/booking" className="btn btn-view" style={{ minWidth: '100%', }}>
+                    <Link href="/doctors/search" aria-label='search doctor' className="btn btn-view" style={{ minWidth: '100%', }}>
                       Book
                     </Link>
                   </div>
@@ -111,7 +127,7 @@ const TreatmentSection: FC = (() => {
               <div className="item item-sixteen">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='search doctor'>
                       <div className="doctor-profile-img">
                         <img src={treatment2} className="img-fluid" alt="" />
                       </div>
@@ -123,7 +139,7 @@ const TreatmentSection: FC = (() => {
                   <div className="doc-content">
                     <div className="doc-pro-info">
                       <div className="doc-pro-name">
-                        <Link href="/doctors/profile">James L. George</Link>
+                        <Link href="/doctors/search" aria-label='search doctor'>James L. George</Link>
                         <p>Cardiology</p>
                       </div>
                       <div className="reviews-ratings">
@@ -145,7 +161,7 @@ const TreatmentSection: FC = (() => {
                     className="blog-btn-sec text-center aos aos-init aos-animate"
                     data-aos="fade-up"
                   >
-                    <Link href="/doctors/booking" className="btn btn-view" style={{ minWidth: '100%', }}>
+                    <Link href="/doctors/search" aria-label='search doctor' className="btn btn-view" style={{ minWidth: '100%', }}>
                       Book
                     </Link>
                   </div>
@@ -154,7 +170,7 @@ const TreatmentSection: FC = (() => {
               <div className="item item-sixteen">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='search doctor'>
                       <div className="doctor-profile-img">
                         <img src={treatment3} className="img-fluid" alt="" />
                       </div>
@@ -166,7 +182,7 @@ const TreatmentSection: FC = (() => {
                   <div className="doc-content">
                     <div className="doc-pro-info">
                       <div className="doc-pro-name">
-                        <Link href="/doctors/profile">Matthew R. Paul</Link>
+                        <Link href="/doctors/search" aria-label='search doctor'>Matthew R. Paul</Link>
                         <p>Aesthetic Surgery</p>
                       </div>
                       <div className="reviews-ratings">
@@ -188,7 +204,7 @@ const TreatmentSection: FC = (() => {
                     className="blog-btn-sec text-center aos aos-init aos-animate"
                     data-aos="fade-up"
                   >
-                    <Link href="/doctors/booking" className="btn btn-view" style={{ minWidth: '100%', }}>
+                    <Link href="/doctors/search" aria-label='search doctor' className="btn btn-view" style={{ minWidth: '100%', }}>
                       Book
                     </Link>
                   </div>
@@ -197,7 +213,7 @@ const TreatmentSection: FC = (() => {
               <div className="item item-sixteen">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='search doctor'>
                       <div className="doctor-profile-img">
                         <img src={treatment4} className="img-fluid" alt="" />
                       </div>
@@ -209,7 +225,7 @@ const TreatmentSection: FC = (() => {
                   <div className="doc-content">
                     <div className="doc-pro-info">
                       <div className="doc-pro-name">
-                        <Link href="/doctors/profile">Carolina F. Paul</Link>
+                        <Link href="/doctors/search" aria-label='search doctor'>Carolina F. Paul</Link>
                         <p>Aesthetic Surgery</p>
                       </div>
                       <div className="reviews-ratings">
@@ -231,7 +247,7 @@ const TreatmentSection: FC = (() => {
                     className="blog-btn-sec text-center aos aos-init aos-animate"
                     data-aos="fade-up"
                   >
-                    <Link href="/doctors/booking" className="btn btn-view" style={{ minWidth: '100%', }}>
+                    <Link href="/doctors/search" aria-label='search doctor' className="btn btn-view" style={{ minWidth: '100%', }}>
                       Book
                     </Link>
                   </div>
@@ -240,7 +256,7 @@ const TreatmentSection: FC = (() => {
               <div className="item item-sixteen">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search" aria-label='search doctor'>
                       <div className="doctor-profile-img">
                         <img src={treatment3} className="img-fluid" alt="" />
                       </div>
@@ -252,7 +268,7 @@ const TreatmentSection: FC = (() => {
                   <div className="doc-content">
                     <div className="doc-pro-info">
                       <div className="doc-pro-name">
-                        <Link href="/doctors/profile">Matthew R. Paul</Link>
+                        <Link href="/doctors/search" aria-label='search doctor'>Matthew R. Paul</Link>
                         <p>Aesthetic Surgery</p>
                       </div>
                       <div className="reviews-ratings">
@@ -274,7 +290,7 @@ const TreatmentSection: FC = (() => {
                     className="blog-btn-sec text-center aos aos-init aos-animate"
                     data-aos="fade-up"
                   >
-                    <Link href="/doctors/booking" className="btn btn-view" style={{ minWidth: '100%', }}>
+                    <Link href="/doctors/search" aria-label='search doctor' className="btn btn-view" style={{ minWidth: '100%', }}>
                       Book
                     </Link>
                   </div>

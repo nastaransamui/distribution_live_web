@@ -82,7 +82,7 @@ const Browser: FC = (() => {
             }
           </div>
           <div className="view-all-more text-center aos" data-aos="fade-up">
-            <Link href="/doctors/profile" className="btn book-btn">View More</Link>
+            <Link href="/doctors/search" className="btn book-btn">View More</Link>
           </div>
         </div>
       </section>

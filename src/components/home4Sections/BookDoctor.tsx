@@ -24,7 +24,7 @@ const BookDoctor: FC = (() => {
             <div className="col-lg-3 col-md-6 aos" data-aos="fade-up">
               <div className="book-best-doctors">
                 <div className="book-header">
-                  <Link href="/doctors/profile">
+                  <Link href="/doctors/search">
                     <img src={Doc01} alt="" className="img-fluid" />
                   </Link>
                   <div className="img-overlay">
@@ -42,7 +42,7 @@ const BookDoctor: FC = (() => {
                       <i className="fas fa-star" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/profile"><h4>Dr. Ruby Perrin</h4></Link>
+                    <Link href="/doctors/search"><h4>Dr. Ruby Perrin</h4></Link>
                     <p>MBBS, MD - General Medicine, DNB - Cardiology</p>
                   </div>
                   <div className="row row-sm loc-details">
@@ -93,10 +93,10 @@ const BookDoctor: FC = (() => {
                   </div>
                   <div className="row row-sm align-items-center p-3">
                     <div className="col-6">
-                      <Link href="/doctors/profile" className="amt-txt" tabIndex={0}>$50 - $100</Link>
+                      <Link href="/doctors/search" className="amt-txt" tabIndex={0}>$50 - $100</Link>
                     </div>
                     <div className="col-6">
-                      <Link href="/doctors/booking" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                      <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
                     </div>
                   </div>
                 </div>
@@ -105,7 +105,7 @@ const BookDoctor: FC = (() => {
             <div className="col-lg-3 col-md-6 aos" data-aos="fade-up">
               <div className="book-best-doctors">
                 <div className="book-header">
-                  <Link href="/doctors/profile">
+                  <Link href="/doctors/search">
                     <img src={Doc02} alt="" className="img-fluid" />
                   </Link>
                   <div className="img-overlay">
@@ -123,7 +123,7 @@ const BookDoctor: FC = (() => {
                       <i className="fas fa-star" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/profile"><h4>Dr. Darren Elder</h4></Link>
+                    <Link href="/doctors/search"><h4>Dr. Darren Elder</h4></Link>
                     <p>MBBS, MD - General Medicine, DNB - Cardiology</p>
                   </div>
                   <div className="row row-sm loc-details">
@@ -174,10 +174,10 @@ const BookDoctor: FC = (() => {
                   </div>
                   <div className="row row-sm align-items-center p-3">
                     <div className="col-6">
-                      <Link href="/doctors/profile" className="amt-txt" tabIndex={0}>$50 - $100</Link>
+                      <Link href="/doctors/search" className="amt-txt" tabIndex={0}>$50 - $100</Link>
                     </div>
                     <div className="col-6">
-                      <Link href="/doctors/profile" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                      <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
                     </div>
                   </div>
                 </div>
@@ -186,7 +186,7 @@ const BookDoctor: FC = (() => {
             <div className="col-lg-3 col-md-6 aos" data-aos="fade-up">
               <div className="book-best-doctors">
                 <div className="book-header">
-                  <Link href="/doctors/profile">
+                  <Link href="/doctors/search">
                     <img src={Doc03} alt="" className="img-fluid" />
                   </Link>
                   <div className="img-overlay">
@@ -204,7 +204,7 @@ const BookDoctor: FC = (() => {
                       <i className="fas fa-star" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/profile"><h4>Dr. Deborah Angel</h4></Link>
+                    <Link href="/doctors/search"><h4>Dr. Deborah Angel</h4></Link>
                     <p>MBBS, MD - General Medicine, DNB - Cardiology</p>
                   </div>
                   <div className="row row-sm loc-details">
@@ -255,10 +255,10 @@ const BookDoctor: FC = (() => {
                   </div>
                   <div className="row row-sm align-items-center p-3">
                     <div className="col-6">
-                      <Link href="/doctors/profile" className="amt-txt" tabIndex={0}>$50 - $100</Link>
+                      <Link href="/doctors/search" className="amt-txt" tabIndex={0}>$50 - $100</Link>
                     </div>
                     <div className="col-6">
-                      <Link href="/doctors/booking" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                      <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
                     </div>
                   </div>
                 </div>
@@ -267,7 +267,7 @@ const BookDoctor: FC = (() => {
             <div className="col-lg-3 col-md-6 aos" data-aos="fade-up">
               <div className="book-best-doctors">
                 <div className="book-header">
-                  <Link href="/doctors/profile">
+                  <Link href="/doctors/search">
                     <img src={Doc04} alt="" className="img-fluid" />
                   </Link>
                   <div className="img-overlay">
@@ -285,7 +285,7 @@ const BookDoctor: FC = (() => {
                       <i className="fas fa-star" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/profile"><h4>Dr. Sofia Brient</h4></Link>
+                    <Link href="/doctors/search"><h4>Dr. Sofia Brient</h4></Link>
                     <p>MBBS, MD - General Medicine, DNB - Cardiology</p>
                   </div>
                   <div className="row row-sm loc-details">
@@ -336,10 +336,10 @@ const BookDoctor: FC = (() => {
                   </div>
                   <div className="row row-sm align-items-center p-3">
                     <div className="col-6">
-                      <Link href="/doctors/profile" className="amt-txt" tabIndex={0}>$50 - $100</Link>
+                      <Link href="/doctors/search" className="amt-txt" tabIndex={0}>$50 - $100</Link>
                     </div>
                     <div className="col-6">
-                      <Link href="/doctors/booking" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                      <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
                     </div>
                   </div>
                 </div>
@@ -347,7 +347,7 @@ const BookDoctor: FC = (() => {
             </div>
           </div>
           <div className="view-all-more text-center aos" data-aos="fade-up">
-            <Link href="/doctors/profile" className="btn book-btn">View More</Link>
+            <Link href="/doctors/search" className="btn book-btn">View More</Link>
           </div>
         </div>
       </section>

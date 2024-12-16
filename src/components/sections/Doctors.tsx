@@ -78,7 +78,7 @@ const Doctors: FC = (() => {
               <div className="item">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile" aria-label='doctor-profile'>
+                    <Link href="/doctors/search" aria-label='doctor-profile'>
                       <div className="doctor-profile-img">
                         <img
                           src={Doc03}
@@ -94,7 +94,7 @@ const Doctors: FC = (() => {
                   <div className="doc-content">
                     <div className="doc-pro-info">
                       <div className="doc-pro-name">
-                        <Link href="/doctors/profile" aria-label='doctor-profile'>Dr. Ruby Perrin</Link>
+                        <Link href="/doctors/search" aria-label='doctor-profile'>Dr. Ruby Perrin</Link>
                         <p>Cardiology</p>
                       </div>
                       <div className="reviews-ratings">
@@ -119,7 +119,7 @@ const Doctors: FC = (() => {
               <div className="item">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile" aria-label='doctor-profile'>
+                    <Link href="/doctors/search" aria-label='doctor-profile'>
                       <div className="doctor-profile-img">
                         <img
                           src={Doc04}
@@ -135,7 +135,7 @@ const Doctors: FC = (() => {
                   <div className="doc-content">
                     <div className="doc-pro-info">
                       <div className="doc-pro-name">
-                        <Link href="/doctors/profile" aria-label='doctor-profile'>Dr. Darren Elder</Link>
+                        <Link href="/doctors/search" aria-label='doctor-profile'>Dr. Darren Elder</Link>
                         <p>Neurology</p>
                       </div>
                       <div className="reviews-ratings">
@@ -160,7 +160,7 @@ const Doctors: FC = (() => {
               <div className="item">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile" aria-label='doctor-profile'>
+                    <Link href="/doctors/search" aria-label='doctor-profile'>
                       <div className="doctor-profile-img">
                         <img
                           src={Doc05}
@@ -176,7 +176,7 @@ const Doctors: FC = (() => {
                   <div className="doc-content">
                     <div className="doc-pro-info">
                       <div className="doc-pro-name">
-                        <Link href="/doctors/profile" aria-label='doctor-profile'>Dr. Sofia Brient</Link>
+                        <Link href="/doctors/search" aria-label='doctor-profile'>Dr. Sofia Brient</Link>
                         <p>Urology</p>
                       </div>
                       <div className="reviews-ratings">
@@ -201,7 +201,7 @@ const Doctors: FC = (() => {
               <div className="item">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile" aria-label='doctor-profile'>
+                    <Link href="/doctors/search" aria-label='doctor-profile'>
                       <div className="doctor-profile-img">
                         <img
                           style={{ marginTop: -45 }}
@@ -218,7 +218,7 @@ const Doctors: FC = (() => {
                   <div className="doc-content">
                     <div className="doc-pro-info">
                       <div className="doc-pro-name">
-                        <Link href="/doctors/profile" aria-label='doctor-profile'>Dr. Paul Richard</Link>
+                        <Link href="/doctors/search" aria-label='doctor-profile'>Dr. Paul Richard</Link>
                         <p>Orthopedic</p>
                       </div>
                       <div className="reviews-ratings">
@@ -243,7 +243,7 @@ const Doctors: FC = (() => {
               <div className="item">
                 <div className="doctor-profile-widget">
                   <div className="doc-pro-img">
-                    <Link href="/doctors/profile" aria-label='doctor-profile'>
+                    <Link href="/doctors/search" aria-label='doctor-profile'>
                       <div className="doctor-profile-img">
                         <img
                           style={{ marginTop: -45 }}
@@ -260,7 +260,7 @@ const Doctors: FC = (() => {
                   <div className="doc-content">
                     <div className="doc-pro-info">
                       <div className="doc-pro-name">
-                        <Link href="/doctors/profile" aria-label='doctor-profile'>Dr. John Doe</Link>
+                        <Link href="/doctors/search" aria-label='doctor-profile'>Dr. John Doe</Link>
                         <p>Dentist</p>
                       </div>
                       <div className="reviews-ratings">

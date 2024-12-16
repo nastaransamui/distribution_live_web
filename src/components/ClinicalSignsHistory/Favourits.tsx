@@ -24,7 +24,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav1} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -33,7 +33,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. Ruby Perrin</Link>
+                  <Link href="/doctors/search">Dr. Ruby Perrin</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">MDS - Periodontology and Oral Implantology, BDS</p>
@@ -58,10 +58,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
                 </div>
               </div>
@@ -71,7 +71,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav2} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -80,7 +80,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. Darren Elder</Link>
+                  <Link href="/doctors/search">Dr. Darren Elder</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">BDS, MDS - Oral & Maxillofacial Surgery</p>
@@ -105,10 +105,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
                 </div>
               </div>
@@ -118,7 +118,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav3} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -127,7 +127,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. Deborah Angel</Link>
+                  <Link href="/doctors/search">Dr. Deborah Angel</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">MBBS, MD - General Medicine, DNB - Cardiology</p>
@@ -152,10 +152,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
                 </div>
               </div>
@@ -165,7 +165,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav4} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -174,7 +174,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. Sofia Brient</Link>
+                  <Link href="/doctors/search">Dr. Sofia Brient</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">MBBS, MS - General Surgery, MCh - Urology</p>
@@ -199,10 +199,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
 
                 </div>
@@ -213,7 +213,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav5} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -222,7 +222,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. Marvin Campbell</Link>
+                  <Link href="/doctors/search">Dr. Marvin Campbell</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">MBBS, MD - Ophthalmology, DNB - Ophthalmology</p>
@@ -247,10 +247,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
 
                 </div>
@@ -261,7 +261,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav6} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -270,7 +270,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. Katharine Berthold</Link>
+                  <Link href="/doctors/search">Dr. Katharine Berthold</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">MS - Orthopaedics, MBBS, M.Ch - Orthopaedics</p>
@@ -295,10 +295,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
                 </div>
               </div>
@@ -308,7 +308,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav7} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -317,7 +317,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. Linda Tobin</Link>
+                  <Link href="/doctors/search">Dr. Linda Tobin</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">MBBS, MD - General Medicine, DM - Neurology</p>
@@ -342,10 +342,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
                 </div>
               </div>
@@ -355,7 +355,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav8} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -364,7 +364,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. Paul Richard</Link>
+                  <Link href="/doctors/search">Dr. Paul Richard</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">MBBS, MD - Dermatology , Venereology & Lepros</p>
@@ -389,10 +389,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
                 </div>
               </div>
@@ -402,7 +402,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav1} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -411,7 +411,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. John Gibbs</Link>
+                  <Link href="/doctors/search">Dr. John Gibbs</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">MDS - Periodontology and Oral Implantology, BDS</p>
@@ -436,10 +436,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
                 </div>
               </div>
@@ -449,7 +449,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav2} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -458,7 +458,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. Olga Barlow</Link>
+                  <Link href="/doctors/search">Dr. Olga Barlow</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">MDS - Periodontology and Oral Implantology, BDS</p>
@@ -483,10 +483,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
                 </div>
               </div>
@@ -496,7 +496,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav3} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -505,7 +505,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. Julia Washington</Link>
+                  <Link href="/doctors/search">Dr. Julia Washington</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">MBBS, MD - General Medicine, DM - Endocrinology</p>
@@ -530,10 +530,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
                 </div>
               </div>
@@ -543,7 +543,7 @@ const Favourits: FC = (() => {
           <div className="col-md-6 col-lg-4 col-xl-3">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/doctors/profile">
+                <Link href="/doctors/search">
                   <img className="img-fluid" alt="User" src={DoctFav4} />
                 </Link>
                 <Link href="#0" className="fav-btn">
@@ -552,7 +552,7 @@ const Favourits: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title">
-                  <Link href="/doctors/profile">Dr. Shaun Aponte</Link>
+                  <Link href="/doctors/search">Dr. Shaun Aponte</Link>
                   <i className="fas fa-check-circle verified"></i>
                 </h3>
                 <p className="speciality">MBBS, MS - ENT, Diploma in Otorhinolaryngology (DLO)</p>
@@ -577,10 +577,10 @@ const Favourits: FC = (() => {
                 </ul>
                 <div className="row row-sm">
                   <div className="col-6">
-                    <Link href="/doctors/profile" className="btn view-btn">View Profile</Link>
+                    <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
                   </div>
                   <div className="col-6">
-                    <Link href="/doctors/booking" className="btn book-btn">Book Now</Link>
+                    <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
                   </div>
                 </div>
               </div>

@@ -83,7 +83,7 @@ const OurDoctors: FC = (() => {
               <div className="card blog-inner-fourt-all">
                 <div className="card-body blog-inner-fourt-main">
                   <div className="blog-inner-right-fourt">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="blog-inner-right-img">
                         <img
                           src={vetDoctor01}
@@ -99,7 +99,7 @@ const OurDoctors: FC = (() => {
                       </div>
                     </Link>
                     <h4 className="blog-inner-right-fourt-care">
-                      <Link href="/doctors/profile">Dr. Marie Wells</Link>
+                      <Link href="/doctors/search">Dr. Marie Wells</Link>
                     </h4>
                     <ul className="articles-list nav blog-articles-list">
                       <li>
@@ -120,7 +120,7 @@ const OurDoctors: FC = (() => {
                       className="blog-btn-sec text-center aos aos-init aos-animate"
                       data-aos="fade-up"
                     >
-                      <Link href="/doctors/booking" className="btn btn-view">
+                      <Link href="/doctors/search" className="btn btn-view">
                         Consult
                       </Link>
                     </div>
@@ -130,7 +130,7 @@ const OurDoctors: FC = (() => {
               <div className="card blog-inner-fourt-all">
                 <div className="card-body blog-inner-fourt-main">
                   <div className="blog-inner-right-fourt">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="blog-inner-right-img">
                         <img
                           src={vetDoctor02}
@@ -146,7 +146,7 @@ const OurDoctors: FC = (() => {
                       </div>
                     </Link>
                     <h4 className="blog-inner-right-fourt-care">
-                      <Link href="/doctors/profile">Dr. Justin Parker</Link>
+                      <Link href="/doctors/search">Dr. Justin Parker</Link>
                     </h4>
                     <ul className="articles-list nav blog-articles-list">
                       <li>
@@ -167,7 +167,7 @@ const OurDoctors: FC = (() => {
                       className="blog-btn-sec text-center aos aos-init aos-animate"
                       data-aos="fade-up"
                     >
-                      <Link href="/doctors/booking" className="btn btn-view">
+                      <Link href="/doctors/search" className="btn btn-view">
                         Consult
                       </Link>
                     </div>
@@ -177,7 +177,7 @@ const OurDoctors: FC = (() => {
               <div className="card blog-inner-fourt-all">
                 <div className="card-body blog-inner-fourt-main">
                   <div className="blog-inner-right-fourt">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="blog-inner-right-img">
                         <img
                           src={vetDoctor03}
@@ -193,7 +193,7 @@ const OurDoctors: FC = (() => {
                       </div>
                     </Link>
                     <h4 className="blog-inner-right-fourt-care">
-                      <Link href="/doctors/profile">Dr. Pamela Curtis</Link>
+                      <Link href="/doctors/search">Dr. Pamela Curtis</Link>
                     </h4>
                     <ul className="articles-list nav blog-articles-list">
                       <li>
@@ -214,7 +214,7 @@ const OurDoctors: FC = (() => {
                       className="blog-btn-sec text-center aos aos-init aos-animate"
                       data-aos="fade-up"
                     >
-                      <Link href="/doctors/booking" className="btn btn-view">
+                      <Link href="/doctors/search" className="btn btn-view">
                         Consult
                       </Link>
                     </div>
@@ -224,7 +224,7 @@ const OurDoctors: FC = (() => {
               <div className="card blog-inner-fourt-all">
                 <div className="card-body blog-inner-fourt-main">
                   <div className="blog-inner-right-fourt">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="blog-inner-right-img">
                         <img
                           src={vetDoctor04}
@@ -240,7 +240,7 @@ const OurDoctors: FC = (() => {
                       </div>
                     </Link>
                     <h4 className="blog-inner-right-fourt-care">
-                      <Link href="/doctors/profile">Dr.Ronald Jacobs</Link>
+                      <Link href="/doctors/search">Dr.Ronald Jacobs</Link>
                     </h4>
                     <ul className="articles-list nav blog-articles-list">
                       <li>
@@ -261,7 +261,7 @@ const OurDoctors: FC = (() => {
                       className="blog-btn-sec text-center aos aos-init aos-animate"
                       data-aos="fade-up"
                     >
-                      <Link href="/doctors/booking" className="btn btn-view">
+                      <Link href="/doctors/search" className="btn btn-view">
                         Consult
                       </Link>
                     </div>
@@ -271,7 +271,7 @@ const OurDoctors: FC = (() => {
               <div className="card blog-inner-fourt-all">
                 <div className="card-body blog-inner-fourt-main">
                   <div className="blog-inner-right-fourt">
-                    <Link href="/doctors/profile">
+                    <Link href="/doctors/search">
                       <div className="blog-inner-right-img">
                         <img
                           src={vetDoctor02}
@@ -287,7 +287,7 @@ const OurDoctors: FC = (() => {
                       </div>
                     </Link>
                     <h4 className="blog-inner-right-fourt-care">
-                      <Link href="/doctors/profile">Dr. Marie Wells</Link>
+                      <Link href="/doctors/search">Dr. Marie Wells</Link>
                     </h4>
                     <ul className="articles-list nav blog-articles-list">
                       <li>
@@ -307,7 +307,7 @@ const OurDoctors: FC = (() => {
                       className="blog-btn-sec text-center aos aos-init aos-animate"
                       data-aos="fade-up"
                     >
-                      <Link href="/doctors/booking" className="btn btn-view">
+                      <Link href="/doctors/search" className="btn btn-view">
                         Consult
                       </Link>
                     </div>

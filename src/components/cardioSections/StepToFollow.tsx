@@ -79,7 +79,7 @@ const StepToFollow: FC = (() => {
                     not close properly and blood is allowed to leak backwards)....
                   </p>
                   <div className="content-btn-block d-flex">
-                    <Link href="/doctors/booking" className=" need-to-know-content-btn book-btn me-2">Book
+                    <Link href="/doctors/search" className=" need-to-know-content-btn book-btn me-2">Book
                       Appointment</Link>
                     <Link href="/pages/pricing-plan" className=" need-to-know-content-btn">Click Our Plan</Link>
                   </div>

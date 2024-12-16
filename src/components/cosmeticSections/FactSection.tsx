@@ -22,8 +22,8 @@ const FactSection: FC = (() => {
                 ever since the 1500s, when an unknown printer took a galley of
                 type and scrambled it to make a type specimen book.{" "}
               </p>
-              <Link href="/doctors/booking">
-                Read More
+              <Link href="/doctors/search">
+                Search Doctors
                 <i className="fa-solid fa-chevron-right ms-2" />
               </Link>
             </div>
@@ -34,10 +34,10 @@ const FactSection: FC = (() => {
                     <FactFiveIconSvg />
                     <div className="facts-content-sixteen">
                       <div className="facts-content-one">
-                        <h5>
+                        <h3>
                           Consequences
                           <i className="fa-solid fa-angle-right ms-2" />
-                        </h5>
+                        </h3>
                       </div>
                     </div>
                   </div>
@@ -54,10 +54,10 @@ const FactSection: FC = (() => {
                     <FactFourIconSvg />
                     <div className="facts-content-sixteen">
                       <div className="facts-content-one">
-                        <h5>
+                        <h3>
                           Privacy policy
                           <i className="fa-solid fa-angle-right ms-2" />
-                        </h5>
+                        </h3>
                       </div>
                     </div>
                   </div>
@@ -74,10 +74,10 @@ const FactSection: FC = (() => {
                     <FactThreeIconSvg />
                     <div className="facts-content-sixteen">
                       <div className="facts-content-one">
-                        <h5>
+                        <h3>
                           Surgery preparation
                           <i className="fa-solid fa-angle-right ms-2" />
-                        </h5>
+                        </h3>
                       </div>
                     </div>
                   </div>
@@ -94,10 +94,10 @@ const FactSection: FC = (() => {
                     <FactTwoIconSvg />
                     <div className="facts-content-sixteen">
                       <div className="facts-content-one">
-                        <h5>
+                        <h3>
                           Age limit
                           <i className="fa-solid fa-angle-right ms-2" />
-                        </h5>
+                        </h3>
                       </div>
                     </div>
                   </div>
@@ -114,10 +114,10 @@ const FactSection: FC = (() => {
                     <FactOneIconSvg />
                     <div className="facts-content-sixteen">
                       <div className="facts-content-one">
-                        <h5>
+                        <h3>
                           After Surgery
                           <i className="fa-solid fa-angle-right ms-2" />
-                        </h5>
+                        </h3>
                       </div>
                     </div>
                   </div>
@@ -134,10 +134,10 @@ const FactSection: FC = (() => {
                     <FactFiveIconSvg />
                     <div className="facts-content-sixteen">
                       <div className="facts-content-one">
-                        <h5>
+                        <h3>
                           Consequences
                           <i className="fa-solid fa-angle-right ms-2" />
-                        </h5>
+                        </h3>
                       </div>
                     </div>
                   </div>

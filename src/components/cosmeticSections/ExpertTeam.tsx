@@ -49,7 +49,7 @@ const ExpertTeam: FC = (() => {
                     <img src={experts2} alt="" className="img-fluid" />
                   </div>
                   <div className="testimonal-contents">
-                    <h5>Leslie Alexander</h5>
+                    <h3>Leslie Alexander</h3>
                     <span>Aesthetic Surgery</span>
                   </div>
                 </div>
@@ -58,7 +58,7 @@ const ExpertTeam: FC = (() => {
                     <img src={experts3} alt="" className="img-fluid" />
                   </div>
                   <div className="testimonal-contents">
-                    <h5>Leslie Alexander</h5>
+                    <h3>Leslie Alexander</h3>
                     <span>Aesthetic Surgery</span>
                   </div>
                 </div>
@@ -67,7 +67,7 @@ const ExpertTeam: FC = (() => {
                     <img src={experts2} alt="" className="img-fluid" />
                   </div>
                   <div className="testimonal-contents">
-                    <h5>Leslie Alexander</h5>
+                    <h3>Leslie Alexander</h3>
                     <span>Aesthetic Surgery</span>
                   </div>
                 </div>
@@ -76,7 +76,7 @@ const ExpertTeam: FC = (() => {
                     <img src={experts2} alt="" className="img-fluid" />
                   </div>
                   <div className="testimonal-contents">
-                    <h5>Leslie Alexander</h5>
+                    <h3>Leslie Alexander</h3>
                     <span>Aesthetic Surgery</span>
                   </div>
                 </div>

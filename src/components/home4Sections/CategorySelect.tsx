@@ -20,7 +20,7 @@ const CategorySelect: FC = (() => {
                 <div className="body-section">
                   <h3>Visit a Doctor</h3>
                   <p>250 +  Doctors</p>
-                  <Link href="/doctors/booking" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                  <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
                 </div>
               </div>
             </div>
@@ -34,7 +34,7 @@ const CategorySelect: FC = (() => {
                 <div className="body-section">
                   <h3>Find a Pharmacy</h3>
                   <p>2560 +  Pharmacy</p>
-                  <Link href="/doctors/booking" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                  <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
                 </div>
               </div>
             </div>
@@ -48,7 +48,7 @@ const CategorySelect: FC = (() => {
                 <div className="body-section">
                   <h3>Find a Lab</h3>
                   <p>250 +  Testing Labs</p>
-                  <Link href="/doctors/booking" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                  <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
                 </div>
               </div>
             </div>

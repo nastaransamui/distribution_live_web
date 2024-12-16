@@ -2,7 +2,7 @@
 import { FC, Fragment } from 'react';
 import dynamic from 'next/dynamic';
 import useScssVar from '@/hooks/useScssVar';
-import { testimonial2, client04, client03, client06, client07 } from '../../../public/assets/imagepath';
+import { testimonial2, client04, client03, client06_small, client07 } from '@/public/assets/imagepath';
 
 
 const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
@@ -16,6 +16,22 @@ const TestimonialSection: FC = (() => {
     margin: 15,
     dots: true,
     nav: true,
+    dotData: true,
+    callbacks: true,
+    onInitialized: () => {
+      $('.owl-carousel').each(function () {
+        // Find each set of dots in this carousel
+        $(this).find('.owl-dots').each(function (index) {
+          // Add aria-label to the dots container
+          $(this).attr('aria-label', index + 1);
+
+          // Add aria-label to each dot button
+          $(this).find('.owl-dot').each(function (dotIndex) {
+            $(this).attr('aria-label', `Slide ${dotIndex + 1}`);
+          });
+        });
+      });
+    },
     navContainer: ".slide-nav-1",
     navText: [
       '<i class="fas fa-chevron-left custom-arrow"></i>',
@@ -79,7 +95,7 @@ const TestimonialSection: FC = (() => {
                     <img src={client03} alt="" className="img-fluid" />
                   </li>
                   <li>
-                    <img src={client06} alt="" className="img-fluid" />
+                    <img src={client06_small} alt="" className="img-fluid" />
                   </li>
                   <li>
                     <img src={client07} alt="" className="img-fluid" />
@@ -91,10 +107,10 @@ const TestimonialSection: FC = (() => {
               {/* <div className="owl-carousel eye-testislider"> */}
               <OwlCarousel {...testimonialsettings}>
                 <div className="testimonial-wrap">
-                  <h4>
+                  <h3>
                     Contrary to popular belief, Lorem Ipsum is not simply random
                     text. It has roots in a piece of classical
-                  </h4>
+                  </h3>
                   <p>
                     Lorem Ipsum is simply dummy text of the printing and
                     typesetting industry. Lorem Ipsum has been the industry s
@@ -107,15 +123,15 @@ const TestimonialSection: FC = (() => {
                     still in their infancy
                   </p>
                   <div className="testimonial-user">
-                    <h6>Elizabeth Forsyth</h6>
+                    <h4>Elizabeth Forsyth</h4>
                     <p>Las Vegas, USA</p>
                   </div>
                 </div>
                 <div className="testimonial-wrap">
-                  <h4>
+                  <h3>
                     Contrary to popular belief, Lorem Ipsum is not simply random
                     text. It has roots in a piece of classical
-                  </h4>
+                  </h3>
                   <p>
                     It is a long established fact that a reader will be distracted
                     by the readable content of a page when looking at its layout.
@@ -128,15 +144,15 @@ const TestimonialSection: FC = (() => {
                     infancy
                   </p>
                   <div className="testimonial-user">
-                    <h6>Leigh Baley</h6>
+                    <h4>Leigh Baley</h4>
                     <p>San Jose, USA</p>
                   </div>
                 </div>
                 <div className="testimonial-wrap">
-                  <h4>
+                  <h3>
                     Contrary to popular belief, Lorem Ipsum is not simply random
                     text. It has roots in a piece of classical
-                  </h4>
+                  </h3>
                   <p>
                     Lorem Ipsum is simply dummy text of the printing and
                     typesetting industry. Lorem Ipsum has been the industry s
@@ -148,7 +164,7 @@ const TestimonialSection: FC = (() => {
                     here, content here making it look like readable English.
                   </p>
                   <div className="testimonial-user">
-                    <h6>Jon Sparks</h6>
+                    <h4>Jon Sparks</h4>
                     <p>Irvine, USA</p>
                   </div>
                 </div>

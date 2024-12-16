@@ -54,7 +54,7 @@ const HomeSearch: FC = (() => {
                         <li className="list-inline-item">Consulation with the preferred doctor</li>
                       </ul>
                       <div className="d-inline-block">
-                        <Link href="/doctors/booking" className="btn book-btn1" tabIndex={0}>Book Now</Link>
+                        <Link href="/doctors/search" className="btn book-btn1" tabIndex={0}>Book Now</Link>
                       </div>
                     </div>
                   </div>

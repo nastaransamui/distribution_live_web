@@ -234,7 +234,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                       // profile
                       if (userProfile) {
                         if (profile?.timeslots.length > 0) {
-                          router.push(`/doctors/booking/${btoa(profile?._id)}`)
+                          router.push(`/doctors/search/${btoa(profile?._id)}`)
                         }
                       } else {
                         toast.error(`Login to make booking with this doctor.`, {

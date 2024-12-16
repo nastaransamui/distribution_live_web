@@ -81,7 +81,7 @@ const DoctorsSection: FC = (() => {
                   />
                 </div>
                 <div className="our-doctor-content">
-                  <Link href="/doctors/profile">Gloria Smith</Link>
+                  <Link href="/doctors/search">Gloria Smith</Link>
                   <div className="our-doctor-content-inner">
                     <span>Paediatrician</span>
                     <div className="reviews-ratings">
@@ -115,7 +115,7 @@ const DoctorsSection: FC = (() => {
                   />
                 </div>
                 <div className="our-doctor-content">
-                  <Link href="/doctors/profile">Mark E. Wong</Link>
+                  <Link href="/doctors/search">Mark E. Wong</Link>
                   <div className="our-doctor-content-inner">
                     <span>Paediatrician</span>
                     <div className="reviews-ratings">
@@ -149,7 +149,7 @@ const DoctorsSection: FC = (() => {
                   />
                 </div>
                 <div className="our-doctor-content">
-                  <Link href="/doctors/profile">William M. Williams</Link>
+                  <Link href="/doctors/search">William M. Williams</Link>
                   <div className="our-doctor-content-inner">
                     <span>Paediatrician</span>
                     <div className="reviews-ratings">
@@ -183,7 +183,7 @@ const DoctorsSection: FC = (() => {
                   />
                 </div>
                 <div className="our-doctor-content">
-                  <Link href="/doctors/profile">Gloria Smith</Link>
+                  <Link href="/doctors/search">Gloria Smith</Link>
                   <div className="our-doctor-content-inner">
                     <span>Paediatrician</span>
                     <div className="reviews-ratings">
@@ -217,7 +217,7 @@ const DoctorsSection: FC = (() => {
                   />
                 </div>
                 <div className="our-doctor-content">
-                  <Link href="/doctors/profile">Gloria Smith</Link>
+                  <Link href="/doctors/search">Gloria Smith</Link>
                   <div className="our-doctor-content-inner">
                     <span>Paediatrician</span>
                     <div className="reviews-ratings">
@@ -251,7 +251,7 @@ const DoctorsSection: FC = (() => {
                   />
                 </div>
                 <div className="our-doctor-content">
-                  <Link href="/doctors/profile">Mark E. Wong</Link>
+                  <Link href="/doctors/search">Mark E. Wong</Link>
                   <div className="our-doctor-content-inner">
                     <span>Paediatrician</span>
                     <div className="reviews-ratings">
@@ -285,7 +285,7 @@ const DoctorsSection: FC = (() => {
                   />
                 </div>
                 <div className="our-doctor-content">
-                  <Link href="/doctors/profile">William M. Williams</Link>
+                  <Link href="/doctors/search">William M. Williams</Link>
                   <div className="our-doctor-content-inner">
                     <span>Paediatrician</span>
                     <div className="reviews-ratings">
