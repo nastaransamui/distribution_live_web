@@ -30,7 +30,7 @@ const HowItWork: FC = (() => {
                     <span className="chart-icon">
                       <Flow_chart_icon_01 />
                     </span>
-                    <h6>Location</h6>
+                    <h3>Location</h3>
                     <span className="chart-count">01</span>
                   </div>
                 </li>
@@ -40,7 +40,7 @@ const HowItWork: FC = (() => {
                     <span className="chart-icon">
                       <Flow_chart_icon_02 />
                     </span>
-                    <h6>Booking</h6>
+                    <h3>Booking</h3>
                     <span className="chart-count">02</span>
                   </div>
                 </li>
@@ -50,7 +50,7 @@ const HowItWork: FC = (() => {
                     <span className="chart-icon">
                       <Flow_chart_icon_03 />
                     </span>
-                    <h6>Caregiver</h6>
+                    <h3>Caregiver</h3>
                     <span className="chart-count">03</span>
                   </div>
                 </li>
@@ -60,7 +60,7 @@ const HowItWork: FC = (() => {
                     <span className="chart-icon">
                       <Flow_chart_icon_04 />
                     </span>
-                    <h6>Takecare</h6>
+                    <h3>Takecare</h3>
                     <span className="chart-count">04</span>
                   </div>
                 </li>

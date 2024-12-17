@@ -41,7 +41,7 @@ const HomeCareBanner: FC = (() => {
                           <input
                             type="text"
                             className="form-control"
-                            placeholder="Dorothy Joanne"
+                            placeholder="Health Care"
                           />
                         </div>
                       </div>
@@ -58,7 +58,7 @@ const HomeCareBanner: FC = (() => {
                           <input
                             type="text"
                             className="form-control"
-                            placeholder="1 XXXXX YYY95"
+                            placeholder="66 870 62 46 48"
                           />
                         </div>
                       </div>
@@ -75,7 +75,7 @@ const HomeCareBanner: FC = (() => {
                           <input
                             type="email"
                             className="form-control"
-                            placeholder="Sample@example.com"
+                            placeholder="mjcode2020@gmail.com"
                           />
                         </div>
                       </div>
@@ -92,7 +92,7 @@ const HomeCareBanner: FC = (() => {
                           <input
                             type="text"
                             className="form-control"
-                            placeholder="Newyork, United States"
+                            placeholder="Chiang Mai, Thailand"
                           />
                         </div>
                       </div>

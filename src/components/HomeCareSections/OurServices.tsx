@@ -45,9 +45,9 @@ const OurServices: FC = (() => {
                   </Link>
                 </div>
                 <div className="service-content">
-                  <h4>
+                  <h3>
                     <Link href="" onClick={(e) => e.preventDefault()}>Nurse at Home</Link>
-                  </h4>
+                  </h3>
                   <Link href="" onClick={(e) => e.preventDefault()} className="explore-link">
                     Explore
                     <i className="feather-arrow-right-circle" />
@@ -61,9 +61,9 @@ const OurServices: FC = (() => {
                   </Link>
                 </div>
                 <div className="service-content">
-                  <h4>
+                  <h3>
                     <Link href="" onClick={(e) => e.preventDefault()}>Mobility Assistance</Link>
-                  </h4>
+                  </h3>
                   <Link href="" onClick={(e) => e.preventDefault()} className="explore-link">
                     Explore
                     <i className="feather-arrow-right-circle" />
@@ -77,9 +77,9 @@ const OurServices: FC = (() => {
                   </Link>
                 </div>
                 <div className="service-content">
-                  <h4>
+                  <h3>
                     <Link href="" onClick={(e) => e.preventDefault()}>Physiotherapy</Link>
-                  </h4>
+                  </h3>
                   <Link href="" onClick={(e) => e.preventDefault()} className="explore-link">
                     Explore
                     <i className="feather-arrow-right-circle" />
@@ -93,9 +93,9 @@ const OurServices: FC = (() => {
                   </Link>
                 </div>
                 <div className="service-content">
-                  <h4>
+                  <h3>
                     <Link href="" onClick={(e) => e.preventDefault()}>Medical Equipment</Link>
-                  </h4>
+                  </h3>
                   <Link href="" onClick={(e) => e.preventDefault()} className="explore-link">
                     Explore
                     <i className="feather-arrow-right-circle" />
@@ -109,9 +109,9 @@ const OurServices: FC = (() => {
                   </Link>
                 </div>
                 <div className="service-content">
-                  <h4>
+                  <h3>
                     <Link href="" onClick={(e) => e.preventDefault()}>Trained Attendants</Link>
-                  </h4>
+                  </h3>
                   <Link href="" onClick={(e) => e.preventDefault()} className="explore-link">
                     Explore
                     <i className="feather-arrow-right-circle" />
@@ -148,9 +148,9 @@ const OurServices: FC = (() => {
                 data-aos="fade-down"
               >
                 <div className="service-content">
-                  <h4>
+                  <h3>
                     <Link href="" onClick={(e) => e.preventDefault()}>Lab Tests</Link>
-                  </h4>
+                  </h3>
                   <Link href="" onClick={(e) => e.preventDefault()} className="explore-link">
                     Explore
                     <i className="feather-arrow-right-circle" />
@@ -167,9 +167,9 @@ const OurServices: FC = (() => {
                 data-aos="fade-down"
               >
                 <div className="service-content">
-                  <h4>
+                  <h3>
                     <Link href="" onClick={(e) => e.preventDefault()}>Doctor Consultation</Link>
-                  </h4>
+                  </h3>
                   <Link href="" onClick={(e) => e.preventDefault()} className="explore-link">
                     Explore
                     <i className="feather-arrow-right-circle" />
@@ -186,9 +186,9 @@ const OurServices: FC = (() => {
                 data-aos="fade-down"
               >
                 <div className="service-content">
-                  <h4>
+                  <h3>
                     <Link href="" onClick={(e) => e.preventDefault()}>Mother &amp; Baby Care</Link>
-                  </h4>
+                  </h3>
                   <Link href="" onClick={(e) => e.preventDefault()} className="explore-link">
                     Explore
                     <i className="feather-arrow-right-circle" />
@@ -205,9 +205,9 @@ const OurServices: FC = (() => {
                 data-aos="fade-down"
               >
                 <div className="service-content">
-                  <h4>
+                  <h3>
                     <Link href="" onClick={(e) => e.preventDefault()}>Vaccination</Link>
-                  </h4>
+                  </h3>
                   <Link href="" onClick={(e) => e.preventDefault()} className="explore-link">
                     Explore
                     <i className="feather-arrow-right-circle" />
@@ -224,9 +224,9 @@ const OurServices: FC = (() => {
                 data-aos="fade-down"
               >
                 <div className="service-content">
-                  <h4>
+                  <h3>
                     <Link href="" onClick={(e) => e.preventDefault()}>Tele Consultation</Link>
-                  </h4>
+                  </h3>
                   <Link href="" onClick={(e) => e.preventDefault()} className="explore-link">
                     Explore
                     <i className="feather-arrow-right-circle" />

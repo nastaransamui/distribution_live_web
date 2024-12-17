@@ -21,6 +21,7 @@ const OurBlog: FC = (() => {
       `<i class="fas fa-chevron-left" style="color: ${theme.palette.text.color};"></i>`,
       `<i class="fas fa-chevron-right" style="color: ${theme.palette.text.color};"></i>`,
     ],
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     loop: true,
     responsiveClass: true,
     responsive: {
@@ -190,7 +191,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -212,7 +213,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -230,7 +231,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Caregiving</h6>
+                          <h3>Caregiving</h3>
                           <span>06 May 2023</span>
                         </div>
                         <h4>
@@ -251,7 +252,7 @@ const OurBlog: FC = (() => {
                             850 views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -269,7 +270,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Physiotherapy</h6>
+                          <h3>Physiotherapy</h3>
                           <span>10 May 2023</span>
                         </div>
                         <h4>
@@ -290,7 +291,7 @@ const OurBlog: FC = (() => {
                             4.5k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -308,7 +309,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -330,7 +331,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -363,7 +364,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -385,7 +386,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -403,7 +404,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Caregiving</h6>
+                          <h3>Caregiving</h3>
                           <span>06 May 2023</span>
                         </div>
                         <h4>
@@ -424,7 +425,7 @@ const OurBlog: FC = (() => {
                             850 views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -442,7 +443,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Physiotherapy</h6>
+                          <h3>Physiotherapy</h3>
                           <span>10 May 2023</span>
                         </div>
                         <h4>
@@ -463,7 +464,7 @@ const OurBlog: FC = (() => {
                             4.5k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -481,7 +482,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -503,7 +504,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -536,7 +537,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -558,7 +559,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -576,7 +577,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Caregiving</h6>
+                          <h3>Caregiving</h3>
                           <span>06 May 2023</span>
                         </div>
                         <h4>
@@ -597,7 +598,7 @@ const OurBlog: FC = (() => {
                             850 views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -615,7 +616,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Physiotherapy</h6>
+                          <h3>Physiotherapy</h3>
                           <span>10 May 2023</span>
                         </div>
                         <h4>
@@ -636,7 +637,7 @@ const OurBlog: FC = (() => {
                             4.5k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -654,7 +655,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -676,7 +677,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -709,7 +710,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -731,7 +732,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -749,7 +750,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Caregiving</h6>
+                          <h3>Caregiving</h3>
                           <span>06 May 2023</span>
                         </div>
                         <h4>
@@ -770,7 +771,7 @@ const OurBlog: FC = (() => {
                             850 views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -788,7 +789,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Physiotherapy</h6>
+                          <h3>Physiotherapy</h3>
                           <span>10 May 2023</span>
                         </div>
                         <h4>
@@ -809,7 +810,7 @@ const OurBlog: FC = (() => {
                             4.5k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -827,7 +828,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -849,7 +850,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -882,7 +883,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -904,7 +905,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -922,7 +923,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Caregiving</h6>
+                          <h3>Caregiving</h3>
                           <span>06 May 2023</span>
                         </div>
                         <h4>
@@ -943,7 +944,7 @@ const OurBlog: FC = (() => {
                             850 views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -961,7 +962,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Physiotherapy</h6>
+                          <h3>Physiotherapy</h3>
                           <span>10 May 2023</span>
                         </div>
                         <h4>
@@ -982,7 +983,7 @@ const OurBlog: FC = (() => {
                             4.5k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -1000,7 +1001,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -1022,7 +1023,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -1055,7 +1056,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -1077,7 +1078,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -1095,7 +1096,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Caregiving</h6>
+                          <h3>Caregiving</h3>
                           <span>06 May 2023</span>
                         </div>
                         <h4>
@@ -1116,7 +1117,7 @@ const OurBlog: FC = (() => {
                             850 views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -1134,7 +1135,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Physiotherapy</h6>
+                          <h3>Physiotherapy</h3>
                           <span>10 May 2023</span>
                         </div>
                         <h4>
@@ -1155,7 +1156,7 @@ const OurBlog: FC = (() => {
                             4.5k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>
@@ -1173,7 +1174,7 @@ const OurBlog: FC = (() => {
                       </div>
                       <div className="blog-grid-content">
                         <div className="grid-head">
-                          <h6>Health and Safety</h6>
+                          <h3>Health and Safety</h3>
                           <span>01 May 2023</span>
                         </div>
                         <h4>
@@ -1195,7 +1196,7 @@ const OurBlog: FC = (() => {
                             1k views
                           </span>
                           <Link href="/blog">
-                            Read More
+                            Discover tips for this
                             <i className="feather-arrow-right-circle" />
                           </Link>
                         </div>

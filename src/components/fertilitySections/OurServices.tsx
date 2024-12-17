@@ -2,13 +2,11 @@
 import { FC, Fragment } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
-import { useTheme } from '@mui/material';
 import { service_six_1, service_six_2, service_six_3, service_six_4, services_six_1 } from '../../../public/assets/imagepath';
 import { ServeImageIconOneSvg, ServeImageIconThreeSvg, ServeImageIconTwoSvg } from '../../../public/assets/images/icons/IconsSvgs';
 
 const OurServices: FC = (() => {
   const { muiVar } = useScssVar();
-  const theme = useTheme();
 
   return (
     <Fragment>

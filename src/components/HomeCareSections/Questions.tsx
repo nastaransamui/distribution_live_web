@@ -33,7 +33,7 @@ const Questions: FC = (() => {
                   >
                     <span>Q</span>
                     <div className="faq-content">
-                      <h6>Is assisted living for me?</h6>
+                      <h3>Is assisted living for me?</h3>
                       <div
                         id="faqOne"
                         className="card-collapse collapse show"
@@ -65,7 +65,7 @@ const Questions: FC = (() => {
                   >
                     <span>Q</span>
                     <div className="faq-content">
-                      <h6>Is assisted living for me?</h6>
+                      <h3>Is assisted living for me?</h3>
                       <div
                         id="faqtwo"
                         className="card-collapse collapse"
@@ -93,7 +93,7 @@ const Questions: FC = (() => {
                   >
                     <span>Q</span>
                     <div className="faq-content">
-                      <h6>Is there a doctor on the premises?</h6>
+                      <h3>Is there a doctor on the premises?</h3>
                       <div
                         id="faqthree"
                         className="card-collapse collapse"
@@ -121,7 +121,7 @@ const Questions: FC = (() => {
                   >
                     <span>Q</span>
                     <div className="faq-content">
-                      <h6>How can we pay for long-term care?</h6>
+                      <h3>How can we pay for long-term care?</h3>
                       <div
                         id="faqfour"
                         className="card-collapse collapse"
@@ -149,7 +149,7 @@ const Questions: FC = (() => {
                   >
                     <span>Q</span>
                     <div className="faq-content">
-                      <h6>What is Respite Care?</h6>
+                      <h3>What is Respite Care?</h3>
                       <div
                         id="faqfive"
                         className="card-collapse collapse"

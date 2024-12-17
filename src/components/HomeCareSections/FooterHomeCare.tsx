@@ -10,6 +10,7 @@ import {
   logo,
 } from '@/public/assets/imagepath'
 import { useTheme } from "@mui/material";
+import Flickity from 'react-flickity-component'
 
 const FooterHomeCare: FC = (() => {
   const { muiVar } = useScssVar();
@@ -18,34 +19,84 @@ const FooterHomeCare: FC = (() => {
     <footer className="footer footer-sec-fourteen" style={muiVar}>
       <div className="footer-top">
         <div className="row">
-          <div className="col-sm-3 col-6 p-0">
-            <div className="footer-img">
-              <img src={footer_img_01} className="img-fluid w-100" alt="Img" />
+          <Flickity
+            className={'flickity-option carousel slide pointer-event'} // default ''
+            elementType={'div'} // default 'div'
+            options={{
+              freeScroll: true,
+              wrapAround: false,
+              autoPlay: true,
+              adaptiveHeight: true,
+              initialIndex: 1,
+              friction: 1,
+              prevNextButtons: false
+            }}
+          >
+            <div className="col-sm-3 col-6 p-0">
+              <div className="footer-img">
+                <img src={footer_img_01} className="img-fluid w-100" alt="Img" />
+              </div>
             </div>
-          </div>
-          <div className="col-sm-3 col-6 p-0">
-            <div className="footer-img">
-              <img src={footer_img_02} className="img-fluid w-100" alt="Img" />
+            <div className="col-sm-3 col-6 p-0">
+              <div className="footer-img">
+                <img src={footer_img_02} className="img-fluid w-100" alt="Img" />
+              </div>
             </div>
-          </div>
-          <div className="col-sm-3 col-6 p-0">
-            <div className="footer-img">
-              <img
-                src={footer_img_03}
-                className="img-fluid w-100"
-                alt="Img"
-              />
+            <div className="col-sm-3 col-6 p-0">
+              <div className="footer-img">
+                <img
+                  src={footer_img_03}
+                  className="img-fluid w-100"
+                  alt="Img"
+                />
+              </div>
             </div>
-          </div>
-          <div className="col-sm-3 col-6 p-0">
-            <div className="footer-img">
-              <img
-                src={footer_img_04}
-                className="img-fluid w-100"
-                alt="Img"
-              />
+            <div className="col-sm-3 col-6 p-0">
+              <div className="footer-img">
+                <img
+                  src={footer_img_04}
+                  className="img-fluid w-100"
+                  alt="Img"
+                />
+              </div>
             </div>
-          </div>
+            <div className="col-sm-3 col-6 p-0">
+              <div className="footer-img">
+                <img
+                  src={footer_img_01}
+                  className="img-fluid w-100"
+                  alt="Img"
+                />
+              </div>
+            </div>
+            <div className="col-sm-3 col-6 p-0">
+              <div className="footer-img">
+                <img
+                  src={footer_img_02}
+                  className="img-fluid w-100"
+                  alt="Img"
+                />
+              </div>
+            </div>
+            <div className="col-sm-3 col-6 p-0">
+              <div className="footer-img">
+                <img
+                  src={footer_img_03}
+                  className="img-fluid w-100"
+                  alt="Img"
+                />
+              </div>
+            </div>
+            <div className="col-sm-3 col-6 p-0">
+              <div className="footer-img">
+                <img
+                  src={footer_img_04}
+                  className="img-fluid w-100"
+                  alt="Img"
+                />
+              </div>
+            </div>
+          </Flickity>
         </div>
       </div>
       <div className="footer-middle">
@@ -54,22 +105,22 @@ const FooterHomeCare: FC = (() => {
             <p>Would you like to connect with us</p>
             <ul className="social-icons">
               <li>
-                <Link href="" onClick={(e) => e.preventDefault()}>
+                <Link href="" aria-label='social' onClick={(e) => e.preventDefault()}>
                   <i className="fa-brands fa-facebook-f" />
                 </Link>
               </li>
               <li>
-                <Link href="" onClick={(e) => e.preventDefault()}>
+                <Link href="" aria-label='social' onClick={(e) => e.preventDefault()}>
                   <i className="fa-brands fa-twitter" />
                 </Link>
               </li>
               <li>
-                <Link href="" onClick={(e) => e.preventDefault()}>
+                <Link href="" aria-label='social' onClick={(e) => e.preventDefault()}>
                   <i className="fa-brands fa-linkedin-in" />
                 </Link>
               </li>
               <li>
-                <Link href="" onClick={(e) => e.preventDefault()}>
+                <Link href="" aria-label='social' onClick={(e) => e.preventDefault()}>
                   <i className="fa-brands fa-youtube" />
                 </Link>
               </li>
@@ -102,6 +153,8 @@ const FooterHomeCare: FC = (() => {
                       type="text"
                       className="form-control"
                       placeholder="Enter You Email Here"
+                      name='email'
+                      autoComplete='email'
                     />
                     <button className="btn" type="submit" onClick={(e) => e.preventDefault()}>
                       Subscribe
@@ -142,16 +195,16 @@ const FooterHomeCare: FC = (() => {
                 <h4>SERVICES</h4>
                 <ul>
                   <li>
-                    <Link href="" onClick={(e) => e.preventDefault()}>Nurse at Home</Link>
+                    <Link href="" aria-label='nurse' onClick={(e) => e.preventDefault()}>Nurse at Home</Link>
                   </li>
                   <li>
-                    <Link href="" onClick={(e) => e.preventDefault()}>Physiotherapy</Link>
+                    <Link href="" aria-label='nurse' onClick={(e) => e.preventDefault()}>Physiotherapy</Link>
                   </li>
                   <li>
-                    <Link href="" onClick={(e) => e.preventDefault()}>Medical Equipment</Link>
+                    <Link href="" aria-label='nurse' onClick={(e) => e.preventDefault()}>Medical Equipment</Link>
                   </li>
                   <li>
-                    <Link href="" onClick={(e) => e.preventDefault()}>Doctor Consultation</Link>
+                    <Link href="" aria-label='nurse' onClick={(e) => e.preventDefault()}>Doctor Consultation</Link>
                   </li>
                 </ul>
               </div>
@@ -188,13 +241,13 @@ const FooterHomeCare: FC = (() => {
                     <span>
                       <i className="feather-mail" />
                     </span>
-                    max@example.com
+                    mjcode2020@gmail.com
                   </li>
                   <li>
                     <span>
                       <i className="feather-phone" />
                     </span>
-                    +91 XXXXX YYYY65
+                    +66 87062 4648
                   </li>
                   <li>
                     <span>
@@ -214,7 +267,7 @@ const FooterHomeCare: FC = (() => {
               <Link
                 href="https://nastaransamui.github.io/"
                 target="_blank"
-                style={{ color: theme.palette.secondary.main, fontSize: 17 }}
+                style={{ color: theme.palette.primary.contrastText, fontSize: 20, fontStyle: "italic" }}
               >
                 Mj.
               </Link>{" "}

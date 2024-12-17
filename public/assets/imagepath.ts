@@ -465,12 +465,20 @@ export const nurse_slide_badge_02 =
 
 export const video_slider_img_01 =
   "/assets/images/slider/video-slider-img-01.webp";
+export const video_slider_img_01_scale =
+  "/assets/images/slider/video-slider-img-01_scale.webp";
 export const video_slider_img_02 =
   "/assets/images/slider/video-slider-img-02.webp";
+export const video_slider_img_02_scale =
+  "/assets/images/slider/video-slider-img-02_scale.webp";
 export const video_slider_img_03 =
   "/assets/images/slider/video-slider-img-03.webp";
+export const video_slider_img_03_scale =
+  "/assets/images/slider/video-slider-img-03_scale.webp";
 export const video_slider_img_04 =
   "/assets/images/slider/video-slider-img-04.webp";
+export const video_slider_img_04_scale =
+  "/assets/images/slider/video-slider-img-04_scale.webp";
 export const video_slider_thumb_01 =
   "/assets/images/slider/video-slider-thumb-01.webp";
 export const video_slider_thumb_02 =

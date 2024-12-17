@@ -28,6 +28,7 @@ import OurBest from '@/components/HomeCareSections/OurBest';
 import OurBlog from '@/components/HomeCareSections/OurBlog';
 import Questions from '@/components/HomeCareSections/Questions';
 import FooterHomeCare from '@/components/HomeCareSections/FooterHomeCare';
+import { LazyLoadWrapper } from '.';
 
 
 const HomeCare: NextPage = () => {
@@ -39,21 +40,23 @@ const HomeCare: NextPage = () => {
         <meta httpEquiv='X-UA-Compatible' content='IE=edge' />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
         <meta charSet='utf-8' />
-        <meta name='description' />
+        <meta name="description" content="We eager to bring health and health care service to you by easiest way that possible." />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Distribution Live data</title>
       </Head>
       <div className='main-wrapper home-twelve home-thirteen '>
         <HomeCareBanner />
-        <HowItWork />
-        <OurServices />
-        <Nearbynurses />
-        <Topnurse />
-        <OurBest />
-        <OurBlog />
-        <Questions />
-        <FooterHomeCare />
+        <LazyLoadWrapper>
+          <HowItWork />
+          <OurServices />
+          <Nearbynurses />
+          <Topnurse />
+          <OurBest />
+          <OurBlog />
+          <Questions />
+          <FooterHomeCare />
+        </LazyLoadWrapper>
         <CookieConsentComponent />
         <ScrollToTop />
       </div >
