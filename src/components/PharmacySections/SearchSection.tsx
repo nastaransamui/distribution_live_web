@@ -37,7 +37,7 @@ const SearchSection: FC = (() => {
                         }}
                       />
                     </div>
-                    <button type="submit" className="btn btn-primary search-btn" onClick={(e) => e.preventDefault()} style={{ marginLeft: -5 }}><i className="fas fa-search" /> <span>Search</span></button>
+                    <button type="submit" aria-label='search' className="btn btn-primary search-btn" onClick={(e) => e.preventDefault()} style={{ marginLeft: -5 }}><i className="fas fa-search" /> <span>Search</span></button>
                   </form>
                 </div>
                 {/* /Search */}

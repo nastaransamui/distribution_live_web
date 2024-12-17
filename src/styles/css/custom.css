@@ -4564,8 +4564,11 @@ table .table-hover tbody tr:hover td {
 .slick-next:before {
   font-family: "slick";
   font-size: 20px;
-  /* line-height: 1; */
-  opacity: 0.75;
+  line-height: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
   color: var(--primaryMain);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -12709,7 +12712,7 @@ table .table-hover tbody tr:hover td {
 }
 
 .section-header p {
-  color: #757575;
+  color: var(--color);
   font-size: 16px;
   margin: 15px 0 0 0;
 }
@@ -12989,7 +12992,7 @@ table .table-hover tbody tr:hover td {
 
 .section-doctor .about-content a {
   background-color: var(--primaryMain);
-  color: #ffffff;
+  color: #000000 !important;
   display: inline-block;
   font-size: 16px;
   font-weight: 500;

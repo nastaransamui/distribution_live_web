@@ -25,7 +25,7 @@ const HomeSearch: FC = (() => {
                 <div className="col-12 d-flex ">
                   <div className="col-12 col-lg-6">
                     <div className="slide-image">
-                      <span className="text-secondary text-uppercase d-block mb-3">Introducing Prime Doctors</span>
+                      <span className="text-uppercase d-block mb-3">Introducing Prime Doctors</span>
                       <h2 className="mb-3">Hassle-free appoinments <br /> with Prime Doctors</h2>
                       <ul className="list-inline slide-ul">
                         <li className="list-inline-item">Reasonable wait time</li>
