@@ -45,7 +45,7 @@ const Home: NextPage = () => {
         <meta name="description" content="We eager to bring health and health care service to you by easiest way that possible." />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
-        <title>Welcome to Distribution Live data</title>
+        <title>Welcome to Health Care page</title>
       </Head>
       <div className='main-wrapper home-ten'>
         <HomeSearch />

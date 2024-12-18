@@ -31,7 +31,7 @@ const ComingsoonPage: NextPage = () => {
         <meta name='description' />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
-        <title>Welcome to Distribution Live data</title>
+        <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb title='Coming Soon' subtitle='Coming Soon' />
       <ComingSoon />

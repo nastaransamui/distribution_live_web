@@ -75,7 +75,7 @@ const Home: NextPage = () => {
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
         <link rel="preload" href="/assets/images/banner-bg.webp" as="image"></link>
-        <title>Welcome to Distribution Live data</title>
+        <title>Welcome to Health Care page</title>
       </Head>
       <HomeBanner />
       <LazyLoadWrapper>

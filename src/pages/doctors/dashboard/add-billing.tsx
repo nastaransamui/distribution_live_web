@@ -32,7 +32,7 @@ const AddBillingPage: NextPage = (props: any) => {
         <meta name='description' />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
-        <title>Welcome to Distribution Live data</title>
+        <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb subtitle='Add Billing' title='Add Billing' />
       <div className="content">

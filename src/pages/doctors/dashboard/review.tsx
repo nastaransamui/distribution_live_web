@@ -32,7 +32,7 @@ const ReviewPage: NextPage = () => {
         <meta name='description' />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
-        <title>Welcome to Distribution Live data</title>
+        <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb subtitle='Review' title='Review' />
       <div className="content">

@@ -33,7 +33,7 @@ const BlogDetailsPage: NextPage = () => {
         <meta name="description" content="We eager to bring health and health care service to you by easiest way that possible." />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
-        <title>Welcome to Distribution Live data</title>
+        <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb title='Blog Details' subtitle='Blog Details' />
       <div className="content">
