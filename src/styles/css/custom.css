@@ -39370,7 +39370,7 @@ ul.benifits-col li i {
 
 .breadcrumb-bar-two .page-breadcrumb ol li a {
   font-weight: 500;
-  color: var(--secondaryLight);
+  color: var(--color);
 }
 
 .breadcrumb-bar-two .page-breadcrumb ol li.active {

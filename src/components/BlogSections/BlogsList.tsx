@@ -6,6 +6,7 @@ import { BlogIMG02, BlogIMG03, BlogIMG04, BlogIMG05, BlogIMG06, BlogIMG01, IMG_t
 import dayjs from 'dayjs';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import Head from 'next/head';
 
 export interface BlogPropsType {
   blogView: string
@@ -30,12 +31,15 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
   twoMonthAgo.setDate(twoMonthAgo.getDate() - 60)
   return (
     <Fragment>
+      <Head>
+        <link rel="preload" href={BlogIMG01} as="image" />
+      </Head>
       {blogView == 'gridView' ? <div className="col-lg-8 col-md-12" style={muiVar}>
         <div className="row blog-grid-row">
           <div className="col-md-6 col-sm-12">
             <div className="blog grid-blog">
               <div className="blog-image">
-                <Link href="/blog/blog-details">
+                <Link href="/blog/blog-details" aria-label='blog details'>
                   <img className="img-fluid" src={BlogIMG01} alt="Post" />
                 </Link>
               </div>
@@ -54,8 +58,8 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                   </li>
                 </ul>
                 <h3 className="blog-title">
-                  <Link href="/blog/blog-details">
-                    Doccure – Making your clinic painless visit?
+                  <Link href="/blog/blog-details" aria-label='blog details'>
+                    Health Care – Making your clinic painless visit?
                   </Link>
                 </h3>
 
@@ -69,7 +73,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
           <div className="col-md-6 col-sm-12">
             <div className="blog grid-blog">
               <div className="blog-image">
-                <Link href="/blog/blog-details">
+                <Link href="/blog/blog-details" aria-label='blog details'>
                   <img className="img-fluid" src={BlogIMG02} alt="Post" />
                 </Link>
               </div>
@@ -88,7 +92,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                   </li>
                 </ul>
                 <h3 className="blog-title">
-                  <Link href="/blog/blog-details">
+                  <Link href="/blog/blog-details" aria-label='blog details'>
                     What are the benefits of Online Doctor Booking?
                   </Link>
                 </h3>
@@ -102,7 +106,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
           <div className="col-md-6 col-sm-12">
             <div className="blog grid-blog">
               <div className="blog-image">
-                <Link href="/blog/blog-details">
+                <Link href="/blog/blog-details" aria-label='blog details'>
                   <img className="img-fluid" src={BlogIMG03} alt="Post" />
                 </Link>
               </div>
@@ -121,7 +125,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                   </li>
                 </ul>
                 <h3 className="blog-title">
-                  <Link href="/blog/blog-details">
+                  <Link href="/blog/blog-details" aria-label='blog details'>
                     Benefits of consulting with an Online Doctor
                   </Link>
                 </h3>
@@ -135,7 +139,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
           <div className="col-md-6 col-sm-12">
             <div className="blog grid-blog">
               <div className="blog-image">
-                <Link href="/blog/blog-details">
+                <Link href="/blog/blog-details" aria-label='blog details'>
                   <img className="img-fluid" src={BlogIMG04} alt="Post" />
                 </Link>
               </div>
@@ -154,7 +158,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                   </li>
                 </ul>
                 <h3 className="blog-title">
-                  <Link href="/blog/blog-details">
+                  <Link href="/blog/blog-details" aria-label='blog details'>
                     5 Great reasons to use an Online Doctor
                   </Link>
                 </h3>
@@ -168,7 +172,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
           <div className="col-md-6 col-sm-12">
             <div className="blog grid-blog">
               <div className="blog-image">
-                <Link href="/blog/blog-details">
+                <Link href="/blog/blog-details" aria-label='blog details'>
                   <img className="img-fluid" src={BlogIMG05} alt="Post" />
                 </Link>
               </div>
@@ -187,7 +191,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                   </li>
                 </ul>
                 <h3 className="blog-title">
-                  <Link href="/blog/blog-details">
+                  <Link href="/blog/blog-details" aria-label='blog details'>
                     Online Doctor Appointment Scheduling
                   </Link>
                 </h3>
@@ -201,7 +205,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
           <div className="col-md-6 col-sm-12">
             <div className="blog grid-blog">
               <div className="blog-image">
-                <Link href="/blog/blog-details">
+                <Link href="/blog/blog-details" aria-label='blog details'>
                   <img className="img-fluid" src={BlogIMG06} alt="Post" />
                 </Link>
               </div>
@@ -220,7 +224,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                   </li>
                 </ul>
                 <h3 className="blog-title">
-                  <Link href="/blog/blog-details">
+                  <Link href="/blog/blog-details" aria-label='blog details'>
                     Online Doctor Appointment Scheduling
                   </Link>
                 </h3>
@@ -236,13 +240,13 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
         <div className="col-lg-8 col-md-12" style={muiVar}>
           <div className="blog">
             <div className="blog-image">
-              <Link href="/blog/blog-details">
+              <Link href="/blog/blog-details" aria-label='blog details'>
                 <img className="img-fluid" src={BlogIMG01} alt="Post" />
               </Link>
             </div>
             <h3 className="blog-title">
-              <Link href="/blog/blog-details">
-                Doccure – Making your clinic painless visit?
+              <Link href="/blog/blog-details" aria-label='blog details'>
+                Health Care – Making your clinic painless visit?
               </Link>
             </h3>
             <div className="blog-info clearfix">
@@ -279,18 +283,18 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 consequat.
               </p>
               <Link href="/blog/blog-details" className="read-more">
-                Read More
+                Complete Blog
               </Link>
             </div>
           </div>
           <div className="blog">
             <div className="blog-image">
-              <Link href="/blog/blog-details">
+              <Link href="/blog/blog-details" aria-label='blog details'>
                 <img className="img-fluid" src={BlogIMG02} alt="" />
               </Link>
             </div>
             <h3 className="blog-title">
-              <Link href="/blog/blog-details">
+              <Link href="/blog/blog-details" aria-label='blog details'>
                 What are the benefits of Online Doctor Booking?
               </Link>
             </h3>
@@ -328,14 +332,14 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 consequat.
               </p>
               <Link href="/blog/blog-details" className="read-more">
-                Read More
+                Complete Blog
               </Link>
             </div>
           </div>
           <div className="blog">
             <div className="blog-image">
               <div className="video">
-                <iframe
+                <iframe title='youtube'
                   src="https://www.youtube.com/embed/nuVqJ_OriR8?rel=0&amp;controls=0&amp;showinfo=0"
                   width="940"
                   allowFullScreen
@@ -343,7 +347,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
               </div>
             </div>
             <h3 className="blog-title">
-              <Link href="/blog/blog-details">
+              <Link href="/blog/blog-details" aria-label='blog details'>
                 Benefits of consulting with an Online Doctor
               </Link>
             </h3>
@@ -381,7 +385,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 consequat.
               </p>
               <Link href="/blog/blog-details" className="read-more">
-                Read More
+                Complete Blog
               </Link>
             </div>
           </div>
@@ -389,6 +393,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
             <div className="blog-image">
               <div className="video">
                 <iframe
+                  title='player'
                   src="https://player.vimeo.com/video/133170635"
                   width="940"
                   allowFullScreen
@@ -396,7 +401,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
               </div>
             </div>
             <h3 className="blog-title">
-              <Link href="/blog/blog-details">
+              <Link href="/blog/blog-details" aria-label='blog details'>
                 5 Great reasons to use an Online Doctor
               </Link>
             </h3>
@@ -434,7 +439,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
                 consequat.
               </p>
               <Link href="/blog/blog-details" className="read-more">
-                Read More
+                Complete Blog
               </Link>
             </div>
           </div>

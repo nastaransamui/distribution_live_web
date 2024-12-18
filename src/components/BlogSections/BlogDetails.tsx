@@ -31,19 +31,19 @@ const BlogDetails: FC = (() => {
         <div className="blog-view">
           <div className="blog blog-single-post">
             <div className="blog-image">
-              <Link href="#0">
+              <Link href="#" aria-label='blog'>
                 <img alt="" src={BlogIMG02} className="img-fluid" />
               </Link>
             </div>
             <h3 className="blog-title">
-              Doccure – Making your clinic painless visit?
+              Health Care – Making your clinic painless visit?
             </h3>
             <div className="blog-info clearfix">
               <div className="post-left">
                 <ul>
                   <li>
                     <div className="post-author">
-                      <Link href="/doctors/search">
+                      <Link href="/doctors/search" aria-label='doctor'>
                         <img src={IMG_th02} alt="Post Author" />
                         <span>Dr. Darren Elder</span>
                       </Link>
@@ -117,27 +117,27 @@ const BlogDetails: FC = (() => {
             <div className="card-body">
               <ul className="social-share">
                 <li>
-                  <Link href="#0" title="Facebook">
+                  <Link href="#0" title="Facebook" aria-label='social'>
                     <i className="fab fa-facebook"></i>
                   </Link>
                 </li>
                 <li>
-                  <Link href="#0" title="Twitter">
+                  <Link href="#0" title="Twitter" aria-label='social'>
                     <i className="fab fa-twitter"></i>
                   </Link>
                 </li>
                 <li>
-                  <Link href="#0" title="Linkedin">
+                  <Link href="#0" title="Linkedin" aria-label='social'>
                     <i className="fab fa-linkedin"></i>
                   </Link>
                 </li>
                 <li>
-                  <Link href="#0" title="Google Plus">
+                  <Link href="#0" title="Google Plus" aria-label='social'>
                     <i className="fab fa-google-plus"></i>
                   </Link>
                 </li>
                 <li>
-                  <Link href="#0" title="Youtube">
+                  <Link href="#0" title="Youtube" aria-label='social'>
                     <i className="fab fa-youtube"></i>
                   </Link>
                 </li>
@@ -152,7 +152,7 @@ const BlogDetails: FC = (() => {
               <div className="about-author">
                 <div className="about-author-img">
                   <div className="author-img-wrap">
-                    <Link href="/doctors/search">
+                    <Link href="/doctors/search" aria-label='doctor'>
                       <img
                         className="img-fluid rounded-circle"
                         alt=""
@@ -165,6 +165,7 @@ const BlogDetails: FC = (() => {
                   <Link
                     href="/doctors/search"
                     className="blog-author-name"
+                    aria-label='doctors'
                   >
                     Dr. Darren Elder
                   </Link>
@@ -203,7 +204,7 @@ const BlogDetails: FC = (() => {
                         sit amet, consectetur adipiscing elit.
                       </p>
                       <p className="blog-date">{dayjs(twoDaysAgo.toString()).format(`D MMM YYYY`)}</p>
-                      <Link href="#0" className="comment-btn">
+                      <Link href="#" className="comment-btn" aria-label='reply'>
                         <i className="fas fa-reply"></i> Reply
                       </Link>
                     </div>
@@ -227,7 +228,7 @@ const BlogDetails: FC = (() => {
                             gravida pellentesque urna varius vitae.
                           </p>
                           <p className="blog-date">{dayjs(lastWeek.toString()).format(`D MMM YYYY`)}</p>
-                          <Link href="#0" className="comment-btn">
+                          <Link href="#" className="comment-btn" aria-label='reply'>
                             <i className="fas fa-reply"></i> Reply
                           </Link>
                         </div>
@@ -251,7 +252,7 @@ const BlogDetails: FC = (() => {
                             gravida pellentesque urna varius vitae.
                           </p>
                           <p className="blog-date">{dayjs(lastMonth.toString()).format(`D MMM YYYY`)}</p>
-                          <Link href="#0" className="comment-btn">
+                          <Link href="#" className="comment-btn" aria-label='reply'>
                             <i className="fas fa-reply"></i> Reply
                           </Link>
                         </div>
@@ -294,7 +295,7 @@ const BlogDetails: FC = (() => {
                         elit.
                       </p>
                       <p className="blog-date"> {dayjs(twoMonthAgo.toString()).format(`D MMM YYYY`)}</p>
-                      <Link href="#0" className="comment-btn">
+                      <Link href="#" className="comment-btn" aria-label='reply'>
                         <i className="fas fa-reply"></i> Reply
                       </Link>
                     </div>

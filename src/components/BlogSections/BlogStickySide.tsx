@@ -114,65 +114,65 @@ const LastestBlog: FC = (() => {
         <ul className="latest-posts">
           <li>
             <div className="post-thumb">
-              <Link href="/blog/blog-details">
+              <Link href="/blog/blog-details" aria-label='blog details'>
                 <img className="img-fluid" src={BlogIMG01} alt="" />
               </Link>
             </div>
             <div className="post-info">
               <h4>
-                <Link href="/blog/blog-details">Doccure – Making your clinic painless visit?</Link>
+                <Link href="/blog/blog-details" aria-label='blog details'>Health Care – Making your clinic painless visit?</Link>
               </h4>
               <p>{dayjs().format(`D MMM YYYY`)}</p>
             </div>
           </li>
           <li>
             <div className="post-thumb">
-              <Link href="/blog/blog-details">
+              <Link href="/blog/blog-details" aria-label='blog details'>
                 <img className="img-fluid" src={BlogIMG02} alt="" />
               </Link>
             </div>
             <div className="post-info">
               <h4>
-                <Link href="/blog/blog-details">What are the benefits of Online Doctor Booking? </Link>
+                <Link href="/blog/blog-details" aria-label='blog details'>What are the benefits of Online Doctor Booking? </Link>
               </h4>
               <p>{dayjs(twoDaysAgo.toString()).format(`D MMM YYYY`)}</p>
             </div>
           </li>
           <li>
             <div className="post-thumb">
-              <Link href="/blog/blog-details">
+              <Link href="/blog/blog-details" aria-label='blog details'>
                 <img className="img-fluid" src={BlogIMG03} alt="" />
               </Link>
             </div>
             <div className="post-info">
               <h4>
-                <Link href="/blog/blog-details">Benefits of consulting with an Online Doctor  </Link>
+                <Link href="/blog/blog-details" aria-label='blog details'>Benefits of consulting with an Online Doctor  </Link>
               </h4>
               <p>{dayjs(lastWeek.toString()).format(`D MMM YYYY`)}</p>
             </div>
           </li>
           <li>
             <div className="post-thumb">
-              <Link href="/blog/blog-details">
+              <Link href="/blog/blog-details" aria-label='blog details'>
                 <img className="img-fluid" src={BlogIMG04} alt="" />
               </Link>
             </div>
             <div className="post-info">
               <h4>
-                <Link href="/blog/blog-details">5 Great reasons to use an Online Doctor </Link>
+                <Link href="/blog/blog-details" aria-label='blog details'>5 Great reasons to use an Online Doctor </Link>
               </h4>
               <p> {dayjs(lastMonth.toString()).format(`D MMM YYYY`)}</p>
             </div>
           </li>
           <li>
             <div className="post-thumb">
-              <Link href="/blog/blog-details">
+              <Link href="/blog/blog-details" aria-label='blog details'>
                 <img className="img-fluid" src={BlogIMG05} alt="" />
               </Link>
             </div>
             <div className="post-info">
               <h4>
-                <Link href="/blog/blog-details">Online Doctor Appointment Scheduling</Link>
+                <Link href="/blog/blog-details" aria-label='blog details'>Online Doctor Appointment Scheduling</Link>
               </h4>
               <p> {dayjs(twoMonthAgo.toString()).format(`D MMM YYYY`)}</p>
             </div>
@@ -232,7 +232,7 @@ const TagsWidget: FC = (() => {
           <li><Link href="#" className="tag">Neurology</Link></li>
           <li><Link href="#" className="tag">Dentists</Link></li>
           <li><Link href="#" className="tag">Specialist</Link></li>
-          <li><Link href="#" className="tag">Doccure</Link></li>
+          <li><Link href="#" className="tag">Health Care</Link></li>
         </ul>
       </div>
     </div>
