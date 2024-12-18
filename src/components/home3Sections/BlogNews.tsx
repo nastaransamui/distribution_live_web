@@ -21,6 +21,7 @@ const BlogNews: FC = (() => {
     nav: true,
     navContainer: '.slide-nav-4',
     navText: ['<i class="fas fa-chevron-left custom-arrow"></i>', '<i class="fas fa-chevron-right custom-arrow"></i>'],
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     autoplay: false,
     infinite: "true",
     slidestoshow: 4,
@@ -67,7 +68,7 @@ const BlogNews: FC = (() => {
               <div className="item">
                 <div className="our-blogs">
                   <div className="blogs-img">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label="blogs">
                       <img src={BlogWrap01} className="img-fluid" alt="" />
                     </Link>
                     <div className="blogs-overlay d-flex">
@@ -77,19 +78,19 @@ const BlogNews: FC = (() => {
                   </div>
                   <div className="blogs-info">
                     <span>Urology</span>
-                    <Link href="/blog/blog-details"><h4>Doccure – Making your clinic painless visit?</h4></Link>
+                    <Link href="/blog/blog-details" aria-label="blogs"><h3>Doccure – Making your clinic painless visit?</h3></Link>
                     <p>Lorem ipsum dolor sit amet, consectetur em adipiscing elit, sed do eiusmod tempor.</p>
                     <span className="blogs-time"><i className="far fa-clock" /> 3 Dec 2021</span>
                   </div>
                   <div className="blogs-nav">
-                    <Link href="/blog/blog-details" className="blogs-btn">Read More</Link>
+                    <Link href="/blog/blog-details" aria-label="blogs" className="blogs-btn">Full Article</Link>
                   </div>
                 </div>
               </div>
               <div className="item">
                 <div className="our-blogs">
                   <div className="blogs-img">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label="blogs">
                       <img src={BlogWrap02} className="img-fluid" alt="" />
                     </Link>
                     <div className="blogs-overlay d-flex">
@@ -99,19 +100,19 @@ const BlogNews: FC = (() => {
                   </div>
                   <div className="blogs-info">
                     <span>Neurology</span>
-                    <Link href="/blog/blog-details"><h4>What are the benefits of Online Doctor Booking?</h4></Link>
+                    <Link href="/blog/blog-details" aria-label="blogs"><h3>What are the benefits of Online Doctor Booking?</h3></Link>
                     <p>Lorem ipsum dolor sit amet, consectetur em adipiscing elit, sed do eiusmod tempor.</p>
                     <span className="blogs-time"><i className="far fa-clock" /> 3 Dec 2021</span>
                   </div>
                   <div className="blogs-nav">
-                    <Link href="/blog/blog-details" className="blogs-btn">Read More</Link>
+                    <Link href="/blog/blog-details" aria-label="blogs" className="blogs-btn">Full Article</Link>
                   </div>
                 </div>
               </div>
               <div className="item">
                 <div className="our-blogs">
                   <div className="blogs-img">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label="blogs">
                       <img src={BlogWrap03} className="img-fluid" alt="" />
                     </Link>
                     <div className="blogs-overlay d-flex">
@@ -121,19 +122,19 @@ const BlogNews: FC = (() => {
                   </div>
                   <div className="blogs-info">
                     <span>Orthopedic</span>
-                    <Link href="/blog/blog-details"><h4>Benefits of consulting with an Online Doctor</h4></Link>
+                    <Link href="/blog/blog-details" aria-label="blogs"><h3>Benefits of consulting with an Online Doctor</h3></Link>
                     <p>Lorem ipsum dolor sit amet, consectetur em adipiscing elit, sed do eiusmod tempor.</p>
                     <span className="blogs-time"><i className="far fa-clock" /> 3 Dec 2021</span>
                   </div>
                   <div className="blogs-nav">
-                    <Link href="/blog/blog-details" className="blogs-btn">Read More</Link>
+                    <Link href="/blog/blog-details" aria-label="blogs" className="blogs-btn">Full Article</Link>
                   </div>
                 </div>
               </div>
               <div className="item">
                 <div className="our-blogs">
                   <div className="blogs-img">
-                    <Link href="/blog/blog-details">
+                    <Link href="/blog/blog-details" aria-label="blogs">
                       <img src={BlogWrap04} className="img-fluid" alt="" />
                     </Link>
                     <div className="blogs-overlay d-flex">
@@ -143,12 +144,12 @@ const BlogNews: FC = (() => {
                   </div>
                   <div className="blogs-info">
                     <span>Cardiologist</span>
-                    <Link href="/blog/blog-details"><h4>5 Great reasons to use an Online Doctor</h4></Link>
+                    <Link href="/blog/blog-details" aria-label="blogs"><h3>5 Great reasons to use an Online Doctor</h3></Link>
                     <p>Lorem ipsum dolor sit amet, consectetur em adipiscing elit, sed do eiusmod tempor.</p>
                     <span className="blogs-time"><i className="far fa-clock" /> 3 Dec 2021</span>
                   </div>
                   <div className="blogs-nav">
-                    <Link href="/blog/blog-details" className="blogs-btn">Read More</Link>
+                    <Link href="/blog/blog-details" aria-label="blogs" className="blogs-btn">Full Article</Link>
                   </div>
                 </div>
               </div>

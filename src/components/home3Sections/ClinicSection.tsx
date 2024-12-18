@@ -45,7 +45,7 @@ const ClinicSection: FC = (() => {
     nav: true,
     navContainer: '.slide-nav-1',
     navText: ['<i class="fas fa-chevron-left custom-arrow"></i>', '<i class="fas fa-chevron-right custom-arrow"></i>'],
-
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     autoplay: false,
     infinite: "true",
 
@@ -132,7 +132,7 @@ const ClinicSection: FC = (() => {
                         }
                         let bgImage =
                           UrlExists(spec.imageId, spec.specialities) ?
-                            `/assets/images/clinics/${spec.imageId}.webp` :
+                            `/assets/images/clinics/${spec.imageId}_scale.webp` :
                             `/assets/images/clinics/defaultBg.webp`
                         return (
                           <div className="item" key={spec._id}>
@@ -143,7 +143,7 @@ const ClinicSection: FC = (() => {
                                 </div>
                                 <div className="clinics-info">
                                   <img src={src} className="img-fluid " alt='' />
-                                  <Link href="#">
+                                  <Link href="#" aria-label={`${spec.specialities}`}>
                                     {
                                       spec.specialities.length <= 13 ? <span>{spec.specialities}</span> :
                                         <Tooltip title={spec.specialities} arrow>
@@ -154,7 +154,7 @@ const ClinicSection: FC = (() => {
                                 </div>
                               </div>
                               <div className="clinics-icon">
-                                <Link href="#"><i className="fas fa-long-arrow-alt-right" /></Link>
+                                <Link href="#" aria-label='clinics-icons'><i className="fas fa-long-arrow-alt-right" /></Link>
                               </div>
                             </div>
                           </div>

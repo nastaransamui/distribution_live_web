@@ -20,6 +20,7 @@ const ClinicFeature: FC = (() => {
     nav: true,
     navContainer: '.slide-nav-3',
     navText: ['<i class="fas fa-chevron-left custom-arrow"></i>', '<i class="fas fa-chevron-right custom-arrow"></i>'],
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     items: 4,
     autoplay: false,
     infinite: "true",
@@ -69,7 +70,7 @@ const ClinicFeature: FC = (() => {
                   <img src={clinic_06} className="img-fluid" alt="" />
                 </div>
                 <div className="clinic-feature-overlay">
-                  <Link href="#" className="img-overlay">Operation</Link>
+                  <Link href="#" aria-label="link" className="img-overlay">Operation</Link>
                 </div>
               </div>
               <div className="item">
@@ -77,7 +78,7 @@ const ClinicFeature: FC = (() => {
                   <img src={clinic_07} className="img-fluid" alt="" />
                 </div>
                 <div className="clinic-feature-overlay">
-                  <Link href="#" className="img-overlay">Medical</Link>
+                  <Link href="#" aria-label="link" className="img-overlay">Medical</Link>
                 </div>
               </div>
               <div className="item">
@@ -85,7 +86,7 @@ const ClinicFeature: FC = (() => {
                   <img src={clinic_08} className="img-fluid" alt="" />
                 </div>
                 <div className="clinic-feature-overlay">
-                  <Link href="#" className="img-overlay">Patient Ward</Link>
+                  <Link href="#" aria-label="link" className="img-overlay">Patient Ward</Link>
                 </div>
               </div>
               <div className="item">
@@ -93,7 +94,7 @@ const ClinicFeature: FC = (() => {
                   <img src={clinic_09} className="img-fluid" alt="" />
                 </div>
                 <div className="clinic-feature-overlay">
-                  <Link href="#" className="img-overlay">TEST ROOM</Link>
+                  <Link href="#" aria-label="link" className="img-overlay">TEST ROOM</Link>
                 </div>
               </div>
               <div className="item">
@@ -101,7 +102,7 @@ const ClinicFeature: FC = (() => {
                   <img src={clinic_10} className="img-fluid" alt="" />
                 </div>
                 <div className="clinic-feature-overlay">
-                  <Link href="#" className="img-overlay">ICU</Link>
+                  <Link href="#" aria-label="link" className="img-overlay">ICU</Link>
                 </div>
               </div>
             </OwlCarousel>

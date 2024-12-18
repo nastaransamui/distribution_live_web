@@ -16256,6 +16256,15 @@ table .table-hover tbody tr:hover td {
 .our-blog-section .our-blogs .blogs-info h4:hover {
   color: var(--secondaryDark);
 }
+.our-blog-section .our-blogs .blogs-info h3 {
+  color: var(--secondaryLight);
+  line-height: 28px;
+  font-size: 18px;
+}
+
+.our-blog-section .our-blogs .blogs-info h3:hover {
+  color: var(--secondaryDark);
+}
 
 .our-blog-section .our-blogs .blogs-info p {
   font-size: 13px;
@@ -24519,6 +24528,18 @@ span.call-duration.float-end {
   color: var(--secondaryLight);
 }
 
+.specialities-section .specialist-card .specialist-info h3 {
+  font-weight: 600;
+  color: var(--primaryLight);
+  margin-bottom: 0;
+  font-size: 18px;
+}
+
+.specialities-section .specialist-card:hover .specialist-info h3 {
+  color: var(--secondaryLight);
+  font-size: 18px;
+}
+
 .specialities-section .specialist-card .specialist-nav i {
   border-radius: 50%;
   height: 35px;
@@ -24645,7 +24666,16 @@ span.call-duration.float-end {
 .our-doctors-section .our-doctors-card .doctors-body h4:hover {
   color: var(--secondaryLight);
 }
+.our-doctors-section .our-doctors-card .doctors-body h3 {
+  color: var(--primaryLight);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 16px;
+}
 
+.our-doctors-section .our-doctors-card .doctors-body h3:hover {
+  color: var(--secondaryLight);
+}
 .our-doctors-section .our-doctors-card .doctors-body p {
   font-weight: 500;
   margin-bottom: 0;

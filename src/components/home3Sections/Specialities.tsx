@@ -64,18 +64,18 @@ const Specialities: FC = (() => {
                               <img src={src} className="img-fluid" alt='' id={spec.imageId} />
                             </div>
                             <div className="specialist-info">
-                              <Link href="#">
+                              <Link href="#" aria-label={spec.specialities}>
                                 {
-                                  spec.specialities.length <= 13 ? <h4>{spec.specialities}</h4> :
+                                  spec.specialities.length <= 13 ? <h3>{spec.specialities}</h3> :
                                     <Tooltip title={spec.specialities} arrow>
-                                      <h4>{spec.specialities.slice(0, 10) + ' ...'}</h4>
+                                      <h3>{spec.specialities.slice(0, 10) + ' ...'}</h3>
                                     </Tooltip>
                                 }
                               </Link>
                               <p>{spec.users_id.length} Doctors</p>
                             </div>
                             <div className="specialist-nav ms-auto">
-                              <Link href="#"><i className="fas fa-long-arrow-alt-right" /></Link>
+                              <Link href="#" aria-label='specialists'><i className="fas fa-long-arrow-alt-right" /></Link>
                             </div>
                           </div>
                         </div>

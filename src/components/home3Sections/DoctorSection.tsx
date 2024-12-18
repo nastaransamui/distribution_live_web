@@ -21,6 +21,7 @@ const DoctorSection: FC = (() => {
     nav: true,
     navContainer: '.slide-nav-2',
     navText: ['<i class="fas fa-chevron-left custom-arrow"></i>', '<i class="fas fa-chevron-right custom-arrow"></i>'],
+    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
     autoplay: false,
     infinite: "true",
     slidestoshow: 3,
@@ -68,7 +69,7 @@ const DoctorSection: FC = (() => {
               <div className="item">
                 <div className="our-doctors-card">
                   <div className="doctors-header">
-                    <Link href="#"><img src={Doc01} className="img-fluid" alt="" /></Link>
+                    <Link href="#" aria-label="our doctor"><img src={Doc01} className="img-fluid" alt="" /></Link>
                     <div className="img-overlay">
                       <span>$20 - $50</span>
                     </div>
@@ -82,7 +83,7 @@ const DoctorSection: FC = (() => {
                       <i className="fas fa-star filled" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/search"><h4>Dr. Ruby Perrin</h4></Link>
+                    <Link href="/doctors/search" aria-label="our doctor"><h3>Dr. Ruby Perrin</h3></Link>
                     <p>BDS, MDS - Oral &amp; Maxillofacial Surgery</p>
                     <div className="location d-flex">
                       <p><i className="fas fa-map-marker-alt" /> Georgia, USA</p>
@@ -90,10 +91,10 @@ const DoctorSection: FC = (() => {
                     </div>
                     <div className="row row-sm">
                       <div className="col-6">
-                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0}>View Profile</Link>
+                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0} aria-label="our doctor">View Profile</Link>
                       </div>
                       <div className="col-6">
-                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0} aria-label="our doctor">Book Now</Link>
                       </div>
                     </div>
                   </div>
@@ -102,7 +103,7 @@ const DoctorSection: FC = (() => {
               <div className="item">
                 <div className="our-doctors-card">
                   <div className="doctors-header">
-                    <Link href="#"><img src={Doc02} className="img-fluid" alt="" /></Link>
+                    <Link href="#" aria-label="our doctor"><img src={Doc02} className="img-fluid" alt="" /></Link>
                     <div className="img-overlay">
                       <span>$20 - $50</span>
                     </div>
@@ -116,7 +117,7 @@ const DoctorSection: FC = (() => {
                       <i className="fas fa-star filled" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/search"><h4>Dr. Deborah Angel</h4></Link>
+                    <Link href="/doctors/search" aria-label="our doctor"><h3>Dr. Deborah Angel</h3></Link>
                     <p>MBBS, MD - General Medicine, DNB</p>
                     <div className="location d-flex">
                       <p><i className="fas fa-map-marker-alt" /> Georgia, USA</p>
@@ -124,10 +125,10 @@ const DoctorSection: FC = (() => {
                     </div>
                     <div className="row row-sm">
                       <div className="col-6">
-                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0}>View Profile</Link>
+                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0} aria-label="our doctor">View Profile</Link>
                       </div>
                       <div className="col-6">
-                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0} aria-label="our doctor">Book Now</Link>
                       </div>
                     </div>
                   </div>
@@ -136,7 +137,7 @@ const DoctorSection: FC = (() => {
               <div className="item">
                 <div className="our-doctors-card">
                   <div className="doctors-header">
-                    <Link href="#"><img src={Doc03} className="img-fluid" alt="" /></Link>
+                    <Link href="#" aria-label="our doctor"><img src={Doc03} className="img-fluid" alt="" /></Link>
                     <div className="img-overlay">
                       <span>$20 - $50</span>
                     </div>
@@ -150,7 +151,7 @@ const DoctorSection: FC = (() => {
                       <i className="fas fa-star filled" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/search"><h4>Dr. Sofia Brient</h4></Link>
+                    <Link href="/doctors/search" aria-label="our doctor"><h3>Dr. Sofia Brient</h3></Link>
                     <p>MBBS, MS - General Surgery, MCh</p>
                     <div className="location d-flex">
                       <p><i className="fas fa-map-marker-alt" /> Georgia, USA</p>
@@ -158,10 +159,10 @@ const DoctorSection: FC = (() => {
                     </div>
                     <div className="row row-sm">
                       <div className="col-6">
-                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0}>View Profile</Link>
+                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0} aria-label="our doctor">View Profile</Link>
                       </div>
                       <div className="col-6">
-                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0} aria-label="our doctor">Book Now</Link>
                       </div>
                     </div>
                   </div>
@@ -170,7 +171,7 @@ const DoctorSection: FC = (() => {
               <div className="item">
                 <div className="our-doctors-card">
                   <div className="doctors-header">
-                    <Link href="#"><img src={Doc04} className="img-fluid" alt="" /></Link>
+                    <Link href="#" aria-label="our doctor"><img src={Doc04} className="img-fluid" alt="" /></Link>
                     <div className="img-overlay">
                       <span>$20 - $50</span>
                     </div>
@@ -184,7 +185,7 @@ const DoctorSection: FC = (() => {
                       <i className="fas fa-star filled" />
                       <span className="d-inline-block average-ratings">3.5</span>
                     </div>
-                    <Link href="/doctors/search"><h4>Dr. Darren Elder</h4></Link>
+                    <Link href="/doctors/search" aria-label="our doctor"><h3>Dr. Darren Elder</h3></Link>
                     <p>BDS, MDS - Oral &amp; Maxillofacial Surgery</p>
                     <div className="location d-flex">
                       <p><i className="fas fa-map-marker-alt" /> Georgia, USA</p>
@@ -192,10 +193,10 @@ const DoctorSection: FC = (() => {
                     </div>
                     <div className="row row-sm">
                       <div className="col-6">
-                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0}>View Profile</Link>
+                        <Link href="/doctors/search" className="btn view-btn" tabIndex={0} aria-label="our doctor">View Profile</Link>
                       </div>
                       <div className="col-6">
-                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0}>Book Now</Link>
+                        <Link href="/doctors/search" className="btn book-btn" tabIndex={0} aria-label="our doctor">Book Now</Link>
                       </div>
                     </div>
                   </div>

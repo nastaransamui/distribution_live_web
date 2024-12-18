@@ -77,6 +77,7 @@ const Header: FC = () => {
           case "/cosmeticshome":
           case "/fertilityhome":
           case "/home":
+          case "/home3":
             return { background: theme.palette.background.default };
           case "/home4":
             return { background: theme.palette.primary.dark };
@@ -613,12 +614,21 @@ const Header: FC = () => {
             Conditions<i id="conditionChevron" className={`fas ${conditionOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`} /></Link>
           <ul className={`submenu ${conditionOpen ? "d-block submenu-open-on-click" : ''}`}>
             <li ><Link className={router.pathname == '/privacy' ? 'active' : ''} href="/privacy" onClick={(e) => {
+              if (conditionOpen) {
+                setConditionOpen(false)
+              }
               onhandleCloseMenu()
             }}>Privacy Policy</Link></li>
             <li><Link className={router.pathname == '/terms' ? 'active' : ''} href="/terms" onClick={(e) => {
+              if (conditionOpen) {
+                setConditionOpen(false)
+              }
               onhandleCloseMenu()
             }}>Terms & conditions</Link></li>
             <li><Link className={router.pathname == '/faq' ? 'active' : ''} href="/faq" onClick={(e) => {
+              if (conditionOpen) {
+                setConditionOpen(false)
+              }
               onhandleCloseMenu()
             }}>FAQ</Link></li>
           </ul>
@@ -711,7 +721,7 @@ const Header: FC = () => {
                     fontSize='large' />
                 </Link>
               </ClickAwayListener>
-              <Link href="/" className="navbar-brand logo" style={{ marginLeft: minWidth1200 ? 100 : 0 }}>
+              <Link href="/" className="navbar-brand logo" style={{ marginLeft: minWidth1200 ? 0 : 0 }}>
                 <img style={{
                   maxWidth: maxWidth991 ? "70px" : "70px",
                   height: 'auto',
@@ -876,12 +886,21 @@ const Header: FC = () => {
 
                             <ul className={`submenu ${conditionOpen ? "d-block submenu-open-on-click" : ''}`}>
                               <li ><Link className={router.pathname == '/privacy' ? 'active' : ''} href="/privacy" onClick={(e) => {
+                                if (conditionOpen) {
+                                  setConditionOpen(false)
+                                }
                                 onhandleCloseMenu()
                               }}>Privacy Policy</Link></li>
                               <li><Link className={router.pathname == '/terms' ? 'active' : ''} href="/terms" onClick={(e) => {
+                                if (conditionOpen) {
+                                  setConditionOpen(false)
+                                }
                                 onhandleCloseMenu()
                               }}>Terms & conditions</Link></li>
                               <li><Link className={router.pathname == '/faq' ? 'active' : ''} href="/faq" onClick={(e) => {
+                                if (conditionOpen) {
+                                  setConditionOpen(false)
+                                }
                                 onhandleCloseMenu()
                               }}>FAQ</Link></li>
                             </ul> : ""
