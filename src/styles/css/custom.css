@@ -4569,7 +4569,7 @@ table .table-hover tbody tr:hover td {
   justify-content: center;
   align-items: center;
   opacity: 1;
-  color: var(--primaryMain);
+  color: var(--primaryLight);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -12491,7 +12491,7 @@ table .table-hover tbody tr:hover td {
 }
 
 .section-search .banner-wrapper .banner-header p {
-  color: #757575;
+  color: var(--color);
   font-size: 20px;
   margin: 0;
 }
@@ -12693,7 +12693,7 @@ table .table-hover tbody tr:hover td {
 }
 
 .section-header .sub-title {
-  color: #757575;
+  color: var(--color);
   font-size: 16px;
   max-width: 600px;
   margin: 15px auto 0;
