@@ -91,7 +91,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                           profile?.clinicImages.map((img, index) => {
                             return (
                               <li key={index}>
-                                <Link href="" onClick={(e) => {
+                                <Link href="" aria-label='clinic-gallery' onClick={(e) => {
                                   e.preventDefault();
                                   setOpen(true);
                                   setIndex(index)

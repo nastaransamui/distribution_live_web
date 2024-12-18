@@ -22474,6 +22474,26 @@ span.call-duration.float-end {
   position: relative;
 }
 
+.card-header .card-title{
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--primaryLight);
+  position: relative;
+}
+
+.filter-grid h1 a {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--primaryLight);
+  position: relative;
+}
+.filter-grid h2 a {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--primaryLight);
+  position: relative;
+}
+
 .search-filter-grid {
   margin-top: 15px;
 }
@@ -23060,8 +23080,8 @@ span.call-duration.float-end {
 }
 
 .available-today {
-  background: #dcfce5;
-  color: #2ec95a;
+  background: #d1f1d9;
+  color: #137333;
   font-weight: 500;
 }
 

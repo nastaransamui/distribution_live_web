@@ -1047,7 +1047,7 @@ const DoctorsSections: FC = (() => {
                                 Images.map((img, index) => {
                                   return (
                                     <li key={index}>
-                                      <Link href="" onClick={() => {
+                                      <Link href="" aria-label='clinic-gallery' onClick={() => {
                                         setOpen(true);
                                         setIndex(index)
                                       }} >
@@ -1122,7 +1122,7 @@ const DoctorsSections: FC = (() => {
                                 Images.map((img, index) => {
                                   return (
                                     <li key={index}>
-                                      <Link href="" onClick={() => {
+                                      <Link href="" aria-label='clinic-gallery' onClick={() => {
                                         setOpen(true);
                                         setIndex(index)
                                       }} >
@@ -1191,7 +1191,7 @@ const DoctorsSections: FC = (() => {
                                 Images.map((img, index) => {
                                   return (
                                     <li key={index}>
-                                      <Link href="" onClick={() => {
+                                      <Link href="" aria-label='clinic-gallery' onClick={() => {
                                         setOpen(true);
                                         setIndex(index)
                                       }} >
@@ -1260,7 +1260,7 @@ const DoctorsSections: FC = (() => {
                                 Images.map((img, index) => {
                                   return (
                                     <li key={index}>
-                                      <Link href="" onClick={() => {
+                                      <Link href="" aria-label='clinic-gallery' onClick={() => {
                                         setOpen(true);
                                         setIndex(index)
                                       }} >
@@ -1329,7 +1329,7 @@ const DoctorsSections: FC = (() => {
                                 Images.map((img, index) => {
                                   return (
                                     <li key={index}>
-                                      <Link href="" onClick={() => {
+                                      <Link aria-label='clinic-gallery' href="" onClick={() => {
                                         setOpen(true);
                                         setIndex(index)
                                       }} >

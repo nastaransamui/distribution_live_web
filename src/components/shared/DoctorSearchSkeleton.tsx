@@ -55,7 +55,7 @@ export const DoctorListSearchSkleton: FC = (() => {
                   {Array.from(Array(4).keys()).map((img: any, j: number) => {
                     return (
                       <li key={j}>
-                        <Link href="" onClick={(e) => {
+                        <Link href="" aria-label='clinic-gallery' onClick={(e) => {
                           e.preventDefault();
                         }} >
                           <Skeleton

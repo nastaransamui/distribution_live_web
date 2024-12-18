@@ -207,6 +207,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
             url={shareUrl}
             appId={process.env.NEXT_PUBLIC_FACEBOOK_APP_ID as string}
             title={title}
+            aria-label='facebook messenger'
           >
             <FacebookMessengerIcon size={38} round className='icon' />
           </FacebookMessengerShareButton>
@@ -216,6 +217,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
           <FacebookShareButton
             url={shareUrl}
             title={title}
+            aria-label='facebook'
           >
             <FacebookIcon size={38} round className='icon' />
           </FacebookShareButton>
@@ -232,6 +234,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
           <LineShareButton
             url={shareUrl}
             title={title}
+            aria-label='line share'
           >
             <LineIcon size={38} round className='icon' />
           </LineShareButton>
@@ -239,6 +242,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
         <a className="bg_links social linkedin" href="" onClick={(e) => e.preventDefault()}>
           <LinkedinShareButton
             url={shareUrl}
+            aria-label='linkedin share'
           >
             <LinkedinIcon size={38} round className='icon' />
           </LinkedinShareButton>
@@ -247,6 +251,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
           <WhatsappShareButton
             url={shareUrl}
             title={title}
+            aria-label='whatsapp share'
           >
             <WhatsappIcon size={38} round className='icon' />
           </WhatsappShareButton>
@@ -255,6 +260,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
           <TwitterShareButton
             url={shareUrl}
             title={title}
+            aria-label='x share'
           >
             <XIcon size={38} round className='icon' />
           </TwitterShareButton>
@@ -263,6 +269,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
           <TelegramShareButton
             url={shareUrl}
             title={title}
+            aria-label='telegram share'
           >
             <TelegramIcon size={38} round className='icon' />
           </TelegramShareButton>
@@ -411,16 +418,17 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
     let shareUrl = `${process.env.NEXT_PUBLIC_webUrl}/doctors/search/${btoa(doctor?._id)}`
     const title = `Dr. ${doctor?.firstName} ${doctor?.lastName}`;
     return (
-      <div key={key} style={{ ...style }} >
+      <div key={key} style={{ ...style }} role="row">
         {
           !doctor ? index < totalDoctors &&
-            <Grid item lg={12} xs={12} sm={6} md={4} sx={{ mr: 2, }}>
+            <Grid item lg={12} xs={12} sm={6} md={4} sx={{ mr: 2, }} role="columnheader">
               <DoctorGridSearchSkleton />
             </Grid> : <>
-            <Grid item lg={12} xs={12} sm={6} md={4} sx={{ mr: 2 }}>
+            <Grid item lg={12} xs={12} sm={6} md={4} sx={{ mr: 2 }} role="columnheader">
               <Card
                 ref={elRefs[index]}
                 id={`${index}_card`}
+                aria-label='card'
                 // sx={setListStyle(index, expanded)}
                 sx={{
                   transition: theme.transitions.create('all', { duration: 200, }),
@@ -461,7 +469,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                         left: '5%'
                       }
                     }}>
-                      <Link href={`/doctors/search/${btoa(doctor?._id)}`} >
+                      <Link href={`/doctors/search/${btoa(doctor?._id)}`} aria-label='doctor single'>
                         <ProfileImageStyledBadge
                           overlap="circular"
                           anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
@@ -493,7 +501,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                           doctor.clinicImages.map((img: any, j: number) => {
                             return (
                               <li key={j}>
-                                <Link href="" onClick={(e) => {
+                                <Link aria-label='clinic-gallery' href="" onClick={(e) => {
                                   e.preventDefault();
                                   setOpenImage(true);
                                   setImageIndex(j)
@@ -518,7 +526,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                       maxHeight: 190,
                       transition: theme.transitions.create('all', { duration: 200, }),
                     }}>
-                      <Typography component="div" variant="h5" sx={{ wordBreak: 'break-all' }}>
+                      <Typography component="div" variant="h5" sx={{ wordBreak: 'break-all', fontSize: '1.2rem' }}>
                         <Link href={`/doctors/search/${btoa(doctor?._id)}`}>
                           Dr. {doctor?.firstName} {" "} {doctor?.lastName}
                         </Link>
@@ -532,10 +540,10 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                         Age: {`${isNaN(years) ? '--' : years} years `}
                       </Typography>
                       <Typography component='div' variant="body2" color="text.secondary">
-                        <h5 className="doc-department">
+                        <Typography component='h1' className="doc-department">
                           <img src={doctor?.specialities?.[0]?.image} className="img-fluid" alt="" />
                           {doctor?.specialities?.[0]?.specialities}
-                        </h5>
+                        </Typography>
                       </Typography>
                       <Rating name="read-only" value={4} readOnly size='small' />
                       <div className="doctor-widget-one">
@@ -550,7 +558,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                   </Grid>
                   <Grid item xl={3} lg={3} md={2.5} sm={3} xs={12}>
                     <CardContent id={`${index}_context`}>
-                      <h6>About: </h6>
+                      <h2 style={{ fontSize: "14px" }}>About: </h2>
                       <Typography component='div' variant="body2" color="text.secondary" id={`${index}_typoGrapy`}>
 
                         <ReadMoreText
@@ -704,14 +712,14 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                     </CardContent>
                   </Grid>
                 </Grid>
-                <CardActionArea id={`${index}_cardActionArea`}>
+                <CardActionArea aria-label='card action area' id={`${index}_cardActionArea`}>
                   <div id={`collapseservices_${index}`} className="collapse hide ">
                     <Grid container rowGap={1} columnGap={1} sx={{ paddingRight: 1, paddingLeft: 1 }} className="clinic-services"
                       key={doctor?.specialitiesServices?.toString()}>
                       {doctor?.specialitiesServices &&
                         doctor?.specialitiesServices.map((s: string, i: number) => {
                           return (
-                            <Grid key={s + i} item component="span" >{s}</Grid>
+                            <Grid key={s + i} item component="span" aria-label='key specilaities'>{s}</Grid>
                           )
                         })
                       }
@@ -727,6 +735,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                   {_fav_button(doctor, index)}
                   {_share_buttons(shareUrl, title, 'list')}
                   <Link
+                    aria-label='services'
                     style={{ marginLeft: 'auto' }}
                     data-bs-toggle="collapse"
                     className='collapsed serviceCollapse'

@@ -109,7 +109,7 @@ const SearchFilter: FC<{ setSkip: Function }> = (({ setSkip }) => {
     <Fragment>
       <div className="card search-filter" style={muiVar}>
         <div className="card-header">
-          <h4 className="card-title mb-0">Search Filter</h4>
+          <h1 className="card-title mb-0">Search Filter</h1>
         </div>
         <div className="filter-details">
           <div className="filter-widget">
@@ -133,11 +133,11 @@ const SearchFilter: FC<{ setSkip: Function }> = (({ setSkip }) => {
             />
           </div>
           <div className="filter-grid">
-            <h4>
+            <h2>
               <Link data-bs-toggle="collapse" href="/doctors/search#collapseone">
                 Gender
               </Link>
-            </h4>
+            </h2>
             <div id="collapseone" className="collapse show">
               <div className="filter-collapse">
                 <FormControl
@@ -174,12 +174,12 @@ const SearchFilter: FC<{ setSkip: Function }> = (({ setSkip }) => {
             </div>
           </div>
           <div className="filter-grid">
-            <h4>
+            <h2>
               <Link data-bs-toggle="collapse" href="/doctors/search#collapsetwo">
 
                 Availability
               </Link>
-            </h4>
+            </h2>
             <div id="collapsetwo" className="collapse show">
               <div className="filter-collapse">
                 <FormControl
@@ -243,7 +243,7 @@ const SearchFilter: FC<{ setSkip: Function }> = (({ setSkip }) => {
             </div>
           </div> */}
           <div className="filter-grid">
-            <h4><Link data-bs-toggle="collapse" href="/doctors/search#collapsefour">Speciality</Link></h4>
+            <h2><Link data-bs-toggle="collapse" href="/doctors/search#collapsefour">Speciality</Link></h2>
             <div id="collapsefour" className="collapse show">
               <div className="filter-collapse">
                 <FormControl
@@ -287,7 +287,7 @@ const SearchFilter: FC<{ setSkip: Function }> = (({ setSkip }) => {
             </div>
           </div>
           <div className="filter-grid">
-            <h4><Link data-bs-toggle="collapse" href="/doctors/search#collapsefive">Location</Link></h4>
+            <h2><Link data-bs-toggle="collapse" href="/doctors/search#collapsefive">Location</Link></h2>
             <div id="collapsefive" className=" collapse show">
               <form autoComplete='off' noValidate>
                 <div className="filter-collapse" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 20 }}>
