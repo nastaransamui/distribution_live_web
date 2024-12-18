@@ -27,6 +27,7 @@ import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
+import { LazyLoadWrapper } from '.';
 
 
 const Home: NextPage = () => {
@@ -45,11 +46,13 @@ const Home: NextPage = () => {
       </Head>
       <HomeSearch />
       <ClinicSection />
-      <Specialities />
-      <DoctorSection />
-      <ClinicFeature />
-      <BlogNews />
-      <Footer />
+      <LazyLoadWrapper>
+        <Specialities />
+        <DoctorSection />
+        <ClinicFeature />
+        <BlogNews />
+        <Footer />
+      </LazyLoadWrapper>
       <CookieConsentComponent />
       <ScrollToTop />
     </>
