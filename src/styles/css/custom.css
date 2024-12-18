@@ -2971,7 +2971,7 @@ button.bg-danger:hover {
 .btn-primary {
   background-color: var(--secondaryMain);
   border: 1px solid var(--secondaryMain);
-  color: var(--color) !important;
+  color: #000000 !important;
   transition: all 0.3s ease;
   line-height: 16px;
 }
@@ -2980,7 +2980,7 @@ button.bg-danger:hover {
 .btn-primary:hover,
 .btn-primary:active,
 .btn-primary.active {
-  color: var(--color) !important;
+  color: #000000 !important;
   background-color: var(--primaryMain);
   border-color: var(--primaryMain);
   transition: all 0.3s ease;
@@ -39462,6 +39462,14 @@ ul.benifits-col li i {
   margin: 0 auto 0;
   padding: 0;
 }
+.about-section .about-img-info .about-box h1 {
+  font-weight: 600;
+  font-size: 20px;
+  color: #000;
+  max-width: 208px;
+  margin: 0 auto 0;
+  padding: 0;
+}
 
 @media (max-width: 991.98px) {
   .about-section .about-img-info {
@@ -39481,6 +39489,12 @@ ul.benifits-col li i {
 }
 
 .section-inner-header h6 {
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--secondaryLight);
+  margin-bottom: 15px;
+}
+.section-inner-header h1 {
   font-weight: 500;
   font-size: 16px;
   color: var(--secondaryLight);
@@ -39581,6 +39595,12 @@ ul.benifits-col li i {
   font-size: 20px;
   margin-bottom: 0;
 }
+.about-contact-text h3 {
+  color: var(--color);
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 0;
+}
 
 @media (max-width: 767.98px) {
   .about-contact-text h4 {
@@ -39676,6 +39696,11 @@ ul.benifits-col li i {
 }
 
 .why-choose-content h4 {
+  font-weight: 500;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+.why-choose-content h3{
   font-weight: 500;
   font-size: 20px;
   margin-bottom: 12px;

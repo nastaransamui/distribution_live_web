@@ -26,7 +26,7 @@ const WhyChooseUs: FC = (() => {
                     </span>
                   </div>
                   <div className="why-choose-content">
-                    <h4>Qualified Staff of Doctors</h4>
+                    <h3>Qualified Staff of Doctors</h3>
                     <p>
                       Lorem ipsum sit amet consectetur incididunt ut labore et
                       exercitation ullamco laboris nisi dolore magna enim veniam
@@ -45,7 +45,7 @@ const WhyChooseUs: FC = (() => {
                     </span>
                   </div>
                   <div className="why-choose-content">
-                    <h4>Qualified Staff of Doctors</h4>
+                    <h3>Qualified Staff of Doctors</h3>
                     <p>
                       Lorem ipsum sit amet consectetur incididunt ut labore et
                       exercitation ullamco laboris nisi dolore magna enim veniam
@@ -64,7 +64,7 @@ const WhyChooseUs: FC = (() => {
                     </span>
                   </div>
                   <div className="why-choose-content">
-                    <h4>Qualified Staff of Doctors</h4>
+                    <h3>Qualified Staff of Doctors</h3>
                     <p>
                       Lorem ipsum sit amet consectetur incididunt ut labore et
                       exercitation ullamco laboris nisi dolore magna enim veniam
@@ -83,7 +83,7 @@ const WhyChooseUs: FC = (() => {
                     </span>
                   </div>
                   <div className="why-choose-content">
-                    <h4>Qualified Staff of Doctors</h4>
+                    <h3>Qualified Staff of Doctors</h3>
                     <p>
                       Lorem ipsum sit amet consectetur incididunt ut labore et
                       exercitation ullamco laboris nisi dolore magna enim veniam

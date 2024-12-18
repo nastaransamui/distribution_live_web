@@ -36,7 +36,7 @@ const AboutSection: FC = (() => {
                   <div className="col-md-6">
                     <div className="about-inner-img">
                       <div className="about-box">
-                        <h4>Over 25+ Years Experience</h4>
+                        <h1>Over 25+ Years Experience</h1>
                       </div>
                       <div className="about-img">
                         <img
@@ -52,7 +52,7 @@ const AboutSection: FC = (() => {
             </div>
             <div className="col-lg-6 col-md-12">
               <div className="section-inner-header about-inner-header">
-                <h6>About Our Company</h6>
+                <h1>About Our Company</h1>
                 <h2>We Are Always Ensure Best Medical Treatment For Your Health</h2>
               </div>
               <div className="about-content">
@@ -79,7 +79,7 @@ const AboutSection: FC = (() => {
                   </div>
                   <div className="about-contact-text">
                     <p>Need Emergency?</p>
-                    <h4>+1 315 369 5943</h4>
+                    <h3>+66 870 6246 48</h3>
                   </div>
                 </div>
               </div>

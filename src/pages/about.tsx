@@ -23,6 +23,7 @@ import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
+import { LazyLoadWrapper } from '.';
 
 const AboutPage: NextPage = () => {
 
@@ -35,7 +36,6 @@ const AboutPage: NextPage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
         <meta charSet='utf-8' />
         <meta name="description" content="We eager to bring health and health care service to you by easiest way that possible." />
-        <meta name='description' />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
@@ -43,11 +43,13 @@ const AboutPage: NextPage = () => {
       <BreadCrumb title='About Us' subtitle='About Us' />
       <AboutSection />
       <WhyChooseUs />
-      <WaySection />
-      <BestDoctors />
-      <Testimonial />
-      <FaqSection />
-      <Footer />
+      <LazyLoadWrapper>
+        <WaySection />
+        <BestDoctors />
+        <Testimonial />
+        <FaqSection />
+        <Footer />
+      </LazyLoadWrapper>
       <CookieConsentComponent />
     </>
   )

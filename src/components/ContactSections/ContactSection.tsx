@@ -91,7 +91,7 @@ const ContactSection: FC = (() => {
           <div className="row">
             <div className="col-lg-5 col-md-12">
               <div className="section-inner-header contact-inner-header">
-                <h6>Get in touch</h6>
+                <h1>Get in touch</h1>
                 <h2>Have Any Question?</h2>
               </div>
               <div className="card contact-card">
@@ -102,7 +102,7 @@ const ContactSection: FC = (() => {
                     </i>
                   </div>
                   <div className="contact-details">
-                    <h4>Address</h4>
+                    <h3>Address</h3>
                     <p>Thailand</p>
                   </div>
                 </div>
@@ -269,7 +269,7 @@ const ContactSection: FC = (() => {
       <section className="contact-map d-flex">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29090.8440512992!2d100.50107361556357!3d13.733762172510717!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e2999370ced7ad%3A0x5857f80ee7e16ad4!2sChina%20Town!5e0!3m2!1sen!2sth!4v1720003643875!5m2!1sen!2sth"
-
+          title='map'
           allowFullScreen={true}
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
