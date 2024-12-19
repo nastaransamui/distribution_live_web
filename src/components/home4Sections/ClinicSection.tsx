@@ -20,7 +20,7 @@ const ClinicSection: FC = (() => {
               <div className="special-box text-center">
                 <div className="special-body">
                   <img src={spec} alt="" className='img' />
-                  <h4>Orthopedic</h4>
+                  <h3>Orthopedic</h3>
                   <Link href="/doctors/search" className="spc-book">Book now <i className="fas fa-caret-right" /> </Link>
                 </div>
                 <div className="row row-sm special-footer">
@@ -37,7 +37,7 @@ const ClinicSection: FC = (() => {
               <div className="special-box text-center">
                 <div className="special-body">
                   <img src={spec1} alt='' className='img' />
-                  <h4>Laboratry</h4>
+                  <h3>Laboratry</h3>
                   <Link href="/doctors/search" className="spc-book">Book now <i className="fas fa-caret-right" /> </Link>
                 </div>
                 <div className="row row-sm special-footer">
@@ -54,7 +54,7 @@ const ClinicSection: FC = (() => {
               <div className="special-box text-center">
                 <div className="special-body">
                   <img src={spec2} alt='' className='img' />
-                  <h4>Neurology</h4>
+                  <h3>Neurology</h3>
                   <Link href="/doctors/search" className="spc-book">Book now <i className="fas fa-caret-right" /> </Link>
                 </div>
                 <div className="row row-sm special-footer">
@@ -71,7 +71,7 @@ const ClinicSection: FC = (() => {
               <div className="special-box text-center">
                 <div className="special-body">
                   <img src={spec3} alt='' className='img' />
-                  <h4>Cardiology</h4>
+                  <h3>Cardiology</h3>
                   <Link href="/doctors/search" className="spc-book">Book now <i className="fas fa-caret-right" /> </Link>
                 </div>
                 <div className="row row-sm special-footer">
@@ -88,7 +88,7 @@ const ClinicSection: FC = (() => {
               <div className="special-box text-center aos" data-aos="fade-up">
                 <div className="special-body">
                   <img src={spec4} alt='' className='img' />
-                  <h4>MRI Scans</h4>
+                  <h3>MRI Scans</h3>
                   <Link href="/doctors/search" className="spc-book">Book now <i className="fas fa-caret-right" /> </Link>
                 </div>
                 <div className="row row-sm special-footer">
@@ -105,7 +105,7 @@ const ClinicSection: FC = (() => {
               <div className="special-box text-center">
                 <div className="special-body">
                   <img src={spec5} alt='' className='img' />
-                  <h4>Primary Checkup</h4>
+                  <h3>Primary Checkup</h3>
                   <Link href="/doctors/search" className="spc-book">Book now <i className="fas fa-caret-right" /> </Link>
                 </div>
                 <div className="row row-sm special-footer">
@@ -122,7 +122,7 @@ const ClinicSection: FC = (() => {
               <div className="special-box text-center">
                 <div className="special-body">
                   <img src={spec6} alt='' className='img' />
-                  <h4>Testing</h4>
+                  <h3>Testing</h3>
                   <Link href="/doctors/search" className="spc-book">Book now <i className="fas fa-caret-right" /> </Link>
                 </div>
                 <div className="row row-sm special-footer">
@@ -139,7 +139,7 @@ const ClinicSection: FC = (() => {
               <div className="special-box text-center">
                 <div className="special-body">
                   <img src={spec7} alt='' className='img' />
-                  <h4>Dentist</h4>
+                  <h3>Dentist</h3>
                   <Link href="/doctors/search" className="spc-book">Book now <i className="fas fa-caret-right" /> </Link>
                 </div>
                 <div className="row row-sm special-footer">

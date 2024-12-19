@@ -14,7 +14,7 @@ const Blog: FC = (() => {
         <div className="container">
           <div className="section-header-three text-center">
             <h2>Our Latest Blogs</h2>
-            <p className="sub-title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p className="sub-title" style={{ color: muiVar['--color'] as string }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
           </div>
           <div className="row">
             <div className="col-md-6 col-lg-4 aos" data-aos="fade-up">
@@ -31,7 +31,7 @@ const Blog: FC = (() => {
                   <div className="blog-footer">
                     <div className="row row-sm align-items-center">
                       <div className="col-6 text-left">
-                        <Link href="/blog/blog-details" className="read-txt" tabIndex={0}>Read More <i className="fas fa-long-arrow-alt-right" /></Link>
+                        <Link href="/blog/blog-details" className="read-txt" tabIndex={0}>Full Article <i className="fas fa-long-arrow-alt-right" /></Link>
                       </div>
                       <div className="col-6 text-right">
                         <Link href="#" className="cal-txt" tabIndex={0}><i className="far fa-calendar-alt" /> Jan 03, 2020</Link>
@@ -55,7 +55,7 @@ const Blog: FC = (() => {
                   <div className="blog-footer">
                     <div className="row row-sm align-items-center">
                       <div className="col-6 text-left">
-                        <Link href="/blog/blog-details" className="read-txt" tabIndex={0}>Read More <i className="fas fa-long-arrow-alt-right" /></Link>
+                        <Link href="/blog/blog-details" className="read-txt" tabIndex={0}>Full Article <i className="fas fa-long-arrow-alt-right" /></Link>
                       </div>
                       <div className="col-6 text-right">
                         <Link href="#" className="cal-txt" tabIndex={0}><i className="far fa-calendar-alt" /> Jan 03, 2020</Link>
@@ -79,7 +79,7 @@ const Blog: FC = (() => {
                   <div className="blog-footer">
                     <div className="row row-sm align-items-center">
                       <div className="col-6 text-left">
-                        <Link href="/blog/blog-details" className="read-txt" tabIndex={0}>Read More <i className="fas fa-long-arrow-alt-right" /></Link>
+                        <Link href="/blog/blog-details" className="read-txt" tabIndex={0}>Full Article <i className="fas fa-long-arrow-alt-right" /></Link>
                       </div>
                       <div className="col-6 text-right">
                         <Link href="#" className="cal-txt" tabIndex={0}><i className="far fa-calendar-alt" /> Jan 03, 2020</Link>

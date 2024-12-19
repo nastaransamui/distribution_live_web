@@ -6486,7 +6486,7 @@ table .table-hover tbody tr:hover td {
 
 @media (min-width: 992px) {
   .header.custom .white-font > li > a {
-    color: #ffffff;
+    color: #000000;
   }
 }
 
@@ -24829,7 +24829,7 @@ span.call-duration.float-end {
 
 .section-search-3 .banner-info .header-banner p {
   font-size: 17px;
-  color: #ffffff;
+  color: #000;
 }
 
 .section-search-3 .doctor-search {
@@ -24966,7 +24966,7 @@ span.call-duration.float-end {
 }
 
 .doctor-category .pop-box .body-section p {
-  color: #1c5b91;
+  color: var(--secondaryMain);
   font-weight: 500;
 }
 
@@ -25111,8 +25111,17 @@ span.call-duration.float-end {
   font-weight: 500;
 }
 
+.clinic-specialities .special-box .special-body h3 {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 500;
+}
+
 @media (max-width: 479.98px) {
   .clinic-specialities .special-box .special-body h4 {
+    font-size: 15px;
+  }
+  .clinic-specialities .special-box .special-body h3 {
     font-size: 15px;
   }
 }
@@ -25271,6 +25280,11 @@ span.call-duration.float-end {
 }
 
 .browse-section .brower-box > div h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--secondaryLight);
+}
+.browse-section .brower-box > div h3 {
   font-size: 16px;
   font-weight: 600;
   color: var(--secondaryLight);
@@ -25545,14 +25559,28 @@ span.call-duration.float-end {
   font-weight: 600;
 }
 
+.book-section .book-best-doctors .doctors-body h3 {
+  color: var(--secondaryLight);
+  text-transform: uppercase;
+  font-size: 20px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
 @media (max-width: 991.98px) {
   .book-section .book-best-doctors .doctors-body h4 {
+    font-size: 18px;
+  }
+  .book-section .book-best-doctors .doctors-body h3 {
     font-size: 18px;
   }
 }
 
 @media (max-width: 479.98px) {
   .book-section .book-best-doctors .doctors-body h4 {
+    font-size: 16px;
+  }
+  .book-section .book-best-doctors .doctors-body h3 {
     font-size: 16px;
   }
 }

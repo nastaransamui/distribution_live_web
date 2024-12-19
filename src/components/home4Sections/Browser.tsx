@@ -66,9 +66,9 @@ const Browser: FC = (() => {
                               </div>
                               {/* <h4>Neurology</h4> */}
                               {
-                                spec.specialities.length <= 13 ? <h4>{spec.specialities}</h4> :
+                                spec.specialities.length <= 13 ? <h3>{spec.specialities}</h3> :
                                   <Tooltip title={spec.specialities} arrow>
-                                    <h4>{spec.specialities.slice(0, 10) + ' ...'}</h4>
+                                    <h3>{spec.specialities.slice(0, 10) + ' ...'}</h3>
                                   </Tooltip>
                               }
                               <p>{spec.users_id.length} <span>Doctors</span></p>

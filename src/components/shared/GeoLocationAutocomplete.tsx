@@ -106,10 +106,10 @@ const GeoLocationAutocomplete: FC<GeoLocationAutocompleteProps> = ((props: GeoLo
   return (
     <Fragment>
       <Autocomplete
-        id={name}
+        // id={`name`}
         options={options}
         loading={loadingOption}
-        // autoComplete="off"
+
         filterSelectedOptions
         loadingText={`Loading`}
         noOptionsText='No result return'
@@ -315,6 +315,7 @@ const GeoLocationAutocomplete: FC<GeoLocationAutocompleteProps> = ((props: GeoLo
                   ...params.inputProps,
                   autoComplete: 'new-password',
                   required: required == undefined ? true : required,
+                  'aria-autocomplete': "none"
                 }}
                 {...textFieldSX}
                 label={name.charAt(0).toUpperCase() + name.slice(1)}
@@ -330,7 +331,7 @@ const GeoLocationAutocomplete: FC<GeoLocationAutocompleteProps> = ((props: GeoLo
                 }
                 InputProps={{
                   ...params.InputProps,
-                  name: `${name}_noAutoComplete`,
+                  name: `_noAutoComplete`,
                   endAdornment: (
                     <Fragment>
                       {loadingOption ? (

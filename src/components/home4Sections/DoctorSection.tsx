@@ -12,12 +12,12 @@ const DoctorSection: FC = (() => {
           <div className="doc-background aos" data-aos="fade-up">
             <h3>ARE YOU A DOCTOR?</h3>
             <p>The service allows you to get maximum visibility online and to manage appointments and contacts coming from the site, in a simple and fast way.</p>
-            <Link href="/doctors/search" className="doc-bok-btn">Book Now</Link>
+            <Link href="/doctors/search" aria-label='doctors' className="doc-bok-btn">Book Now</Link>
           </div>
           <div className="pat-background">
             <h3>ARE YOU A PATIENT?</h3>
             <p>The service allows you to get maximum visibility online and to manage appointments and contacts coming from the site, in a simple and fast way.</p>
-            <Link href="/doctors/search" className="doc-bok-btn">Book Now</Link>
+            <Link href="/doctors/search" aria-label='doctors' className="doc-bok-btn">Book Now</Link>
           </div>
         </div>
       </section>

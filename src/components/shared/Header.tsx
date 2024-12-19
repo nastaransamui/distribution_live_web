@@ -80,7 +80,9 @@ const Header: FC = () => {
           case "/home3":
             return { background: theme.palette.background.default };
           case "/home4":
-            return { background: theme.palette.primary.dark };
+            return {
+              background: theme.palette.primary.light,
+            };
           default:
             return { background: "" };
         }

@@ -96,7 +96,35 @@ const HomeSearch: FC = (() => {
                             label={keyWord !== '' ? "Key word" : ""}
                             value={keyWord}
                             fullWidth
-                            sx={{ mt: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 }, mb: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 } }}
+                            sx={{
+                              mt: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 },
+                              mb: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 },
+                              '.MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#000000'
+                              },
+                              '.MuiOutlinedInput-root': {
+                                color: '#000000',
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: '#000000',
+                              },
+                              ".MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: '#000000',
+                              },
+                              '.MuiInputLabel-root': {
+                                color: '#000000'
+                              },
+                              '.MuiTextField-root ': {
+                                color: 'red !important',
+                              },
+                              "&.MuiInputLabel-shrink": {
+                                color: "#000000",
+                              },
+                              '& .MuiOutlinedInput-input::placeholder': {
+                                color: '#000000',
+                                opacity: 1,
+                              },
+                            }}
                             size="small"
                             InputLabelProps={{
                               shrink: keyWord !== ''
@@ -105,7 +133,7 @@ const HomeSearch: FC = (() => {
                             InputProps={{
                               startAdornment:
                                 <InputAdornment position="start" >
-                                  <IconButton disableTouchRipple onClick={() => {
+                                  <IconButton aria-label='search' disableTouchRipple onClick={() => {
                                     keyWord !== '' && setKeyWord('')
                                   }}>
                                     {keyWord == '' ? <FeatherIcon
@@ -119,7 +147,7 @@ const HomeSearch: FC = (() => {
                                   </IconButton>
                                 </InputAdornment>,
                               endAdornment: <InputAdornment position='end'>
-                                <IconButton disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
+                                <IconButton aria-label='filter' disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
                                   <FeatherIcon icon="filter" style={{ width: "16px", color: theme.palette.secondary.main }} />
                                 </IconButton>
                               </InputAdornment>,
@@ -129,22 +157,60 @@ const HomeSearch: FC = (() => {
                         <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
                           <FormControl fullWidth >
                             <InputLabel id="availablity" size='small'
-                              sx={{ mt: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 }, mb: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 } }}
+                              sx={{
+                                mt: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 },
+                                mb: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 },
+                                color: '#000000',
+                                zIndex: 3333,
+                                "&.MuiInputLabel-shrink": {
+                                  color: "#000000",
+                                },
+                              }}
                             >
                               Availablitity
-                              <input id="availablity" hidden />
+                              <input id="availablity_hidden" hidden />
                             </InputLabel>
                             <Select
+                              inputProps={{
+                                id: "availablity",
+                                name: "availablity"
+                              }}
                               size='small'
                               labelId="availablity"
-                              id="availablity"
                               label="Availablitity"
                               fullWidth
                               value={availablityValue}
                               onChange={(e: SelectChangeEvent) => {
                                 setAvailablityValue(e.target.value)
                               }}
-                              sx={{ mt: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 }, mb: { xl: 1, lg: 1, md: 1, sm: 2, xs: 1 } }}
+                              sx={{
+                                mt: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 },
+                                mb: { xl: 1, lg: 1, md: 1, sm: 2, xs: 1 },
+                                color: '#000000',
+                                zIndex: 33,
+                                '.MuiOutlinedInput-notchedOutline': {
+                                  borderColor: '#000000'
+                                },
+                                '.MuiSvgIcon-root': {
+                                  color: '#000000',
+                                  zIndex: 333
+                                },
+                                '.MuiFormLabel-root .Mui-focused': {
+                                  color: '#000000 !important',
+                                },
+                                // "&:hover .MuiOutlinedInput-notchedOutline": {
+                                //   bgcolor: theme.palette.primary.light,
+                                // },
+                                ".MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                  borderColor: '#000000',
+                                },
+                                '&:hover .MuiInputLabel-root': {
+                                  color: '#000000'
+                                },
+                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                  borderColor: "#000000",
+                                },
+                              }}
                             >
                               <MenuItem value="" divider
                                 onClick={() => {
@@ -190,16 +256,51 @@ const HomeSearch: FC = (() => {
                           <Grid item xl={4} lg={6} md={6} sm={6} xs={12}>
                             {specialities.length !== 0 &&
                               <FormControl fullWidth size="small">
-                                <InputLabel id="specialities">
+                                <InputLabel sx={{
+                                  color: '#000000',
+                                  zIndex: 3333,
+                                  "&.MuiInputLabel-shrink": {
+                                    color: "#000000",
+                                  },
+                                }} id="specialities">
                                   Speciality
-                                  <input id="specialities" hidden />
+                                  <input id="specialities_hidden" hidden />
                                 </InputLabel>
                                 <Select
+                                  inputProps={{
+                                    id: "specialities",
+                                    name: "specialities"
+                                  }}
                                   labelId="specialities"
-                                  id="specialities"
                                   label="Speciality"
                                   value={specialitiesValue}
                                   size="small"
+                                  sx={{
+                                    '.MuiOutlinedInput-notchedOutline': {
+                                      borderColor: '#000000'
+                                    },
+                                    color: '#000000',
+                                    zIndex: 33,
+                                    '.MuiSvgIcon-root': {
+                                      color: '#000000',
+                                      zIndex: 333
+                                    },
+                                    '.MuiFormLabel-root .Mui-focused': {
+                                      color: '#000000 !important',
+                                    },
+                                    // "&:hover .MuiOutlinedInput-notchedOutline": {
+                                    //   bgcolor: theme.palette.primary.light,
+                                    // },
+                                    ".MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                      borderColor: '#000000',
+                                    },
+                                    '&:hover .MuiInputLabel-root': {
+                                      color: '#000000'
+                                    },
+                                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                      borderColor: "#000000",
+                                    },
+                                  }}
                                 >
                                   <MenuItem value="" divider
                                     onClick={() => {
@@ -216,7 +317,8 @@ const HomeSearch: FC = (() => {
                                           onClick={() => {
                                             setSpecialitiesValue(() => (spec?.specialities))
                                           }}>
-                                          <img src={`${spec.image}?random=${new Date().getTime()}`} alt='' width='25' height='25' style={{ marginRight: 4 }} />
+                                          <img src={`${spec.image}?random=${new Date().getTime()}`} alt='' width='25' height='25'
+                                            style={{ marginRight: 4, }} />
 
                                           {spec.specialities}
                                         </MenuItem>
@@ -229,18 +331,53 @@ const HomeSearch: FC = (() => {
                           </Grid>
                           <Grid item xl={2} lg={6} md={6} sm={6} xs={12}>
                             <FormControl fullWidth size="small">
-                              <InputLabel id="gender" >
+                              <InputLabel sx={{
+                                color: '#000000',
+                                zIndex: 3333,
+                                "&.MuiInputLabel-shrink": {
+                                  color: "#000000",
+                                },
+                              }} id="gender" >
                                 Gender
-                                <input id="gender" hidden />
+                                <input id="gender_hidden" hidden />
                               </InputLabel>
                               <Select
                                 size="small"
+                                inputProps={{
+                                  id: "gender",
+                                  name: "gender"
+                                }}
                                 labelId="gender"
-                                id="gender"
                                 label="Gender"
                                 value={genderValue}
                                 onChange={(e: SelectChangeEvent) => {
                                   setGenderValue(e.target.value)
+                                }}
+                                sx={{
+                                  '.MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#000000'
+                                  },
+                                  color: '#000000',
+                                  zIndex: 33,
+                                  '.MuiSvgIcon-root': {
+                                    color: '#000000',
+                                    zIndex: 333
+                                  },
+                                  '.MuiFormLabel-root .Mui-focused': {
+                                    color: '#000000 !important',
+                                  },
+                                  // "&:hover .MuiOutlinedInput-notchedOutline": {
+                                  //   bgcolor: theme.palette.primary.light,
+                                  // },
+                                  ".MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: '#000000',
+                                  },
+                                  '&:hover .MuiInputLabel-root': {
+                                    color: '#000000'
+                                  },
+                                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#000000",
+                                  },
                                 }}
                                 renderValue={(value) => `${value == 'Mr' ? `👨` : `👩`} ${value}`}
                               >
@@ -258,6 +395,50 @@ const HomeSearch: FC = (() => {
                           </Grid>
                           <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
                             <GeoLocationAutocomplete
+
+                              textFieldSX={{
+                                sx: {
+                                  ".MuiInputLabel-shrink": {
+                                    color: "#000000",
+                                  },
+                                  "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#000000",
+                                  },
+                                  "& .MuiInputBase-input.MuiOutlinedInput-input.Mui-disabled": {
+                                    '-webkit-text-fill-color': '#000000'
+                                  },
+                                  '.MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#000000'
+                                  },
+                                  '.MuiFormLabel-root': {
+                                    color: '#000000 !important',
+                                  },
+                                  color: '#000000',
+                                  zIndex: 33,
+                                  '.MuiSvgIcon-root': {
+                                    color: '#000000',
+                                    zIndex: 333
+                                  },
+                                  '.MuiFormLabel-root .Mui-focused': {
+                                    color: '#000000 !important',
+                                  },
+                                  // "&:hover .MuiOutlinedInput-notchedOutline": {
+                                  //   bgcolor: theme.palette.primary.light,
+                                  // },
+                                  ".MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: '#000000',
+                                  },
+                                  '&:hover .MuiInputLabel-root': {
+                                    color: '#000000'
+                                  },
+                                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#000000",
+                                  },
+                                  '.MuiOutlinedInput-input': {
+                                    color: '#000000'
+                                  }
+                                }
+                              }}
                               errors={errors}
                               register={register}
                               name='country'
@@ -277,6 +458,50 @@ const HomeSearch: FC = (() => {
                           </Grid>
                           <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
                             <GeoLocationAutocomplete
+
+                              textFieldSX={{
+                                sx: {
+                                  ".MuiInputLabel-shrink": {
+                                    color: "#000000",
+                                  },
+                                  "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#000000",
+                                  },
+                                  "& .MuiInputBase-input.MuiOutlinedInput-input.Mui-disabled": {
+                                    '-webkit-text-fill-color': '#000000'
+                                  },
+                                  '.MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#000000'
+                                  },
+                                  '.MuiFormLabel-root': {
+                                    color: '#000000 !important',
+                                  },
+                                  color: '#000000',
+                                  zIndex: 33,
+                                  '.MuiSvgIcon-root': {
+                                    color: '#000000',
+                                    zIndex: 333
+                                  },
+                                  '.MuiFormLabel-root .Mui-focused': {
+                                    color: '#000000 !important',
+                                  },
+                                  // "&:hover .MuiOutlinedInput-notchedOutline": {
+                                  //   bgcolor: theme.palette.primary.light,
+                                  // },
+                                  ".MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: '#000000',
+                                  },
+                                  '&:hover .MuiInputLabel-root': {
+                                    color: '#000000'
+                                  },
+                                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#000000",
+                                  },
+                                  '.MuiOutlinedInput-input': {
+                                    color: '#000000'
+                                  }
+                                }
+                              }}
                               errors={errors}
                               register={register}
                               name='state'
@@ -296,6 +521,44 @@ const HomeSearch: FC = (() => {
                           </Grid>
                           <Grid item xl={6} lg={12} md={12} sm={12} xs={12}>
                             <GeoLocationAutocomplete
+
+                              textFieldSX={{
+                                sx: {
+                                  ".MuiInputLabel-shrink": {
+                                    color: "#000000",
+                                  },
+                                  '.MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#000000'
+                                  },
+                                  '.MuiFormLabel-root': {
+                                    color: '#000000 !important',
+                                  },
+                                  color: '#000000',
+                                  zIndex: 33,
+                                  '.MuiSvgIcon-root': {
+                                    color: '#000000',
+                                    zIndex: 333
+                                  },
+                                  '.MuiFormLabel-root .Mui-focused': {
+                                    color: '#000000 !important',
+                                  },
+                                  // "&:hover .MuiOutlinedInput-notchedOutline": {
+                                  //   bgcolor: theme.palette.primary.light,
+                                  // },
+                                  ".MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: '#000000',
+                                  },
+                                  '&:hover .MuiInputLabel-root': {
+                                    color: '#000000'
+                                  },
+                                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#000000",
+                                  },
+                                  '.MuiOutlinedInput-input': {
+                                    color: '#000000'
+                                  }
+                                }
+                              }}
                               errors={errors}
                               register={register}
                               name='city'
@@ -321,7 +584,7 @@ const HomeSearch: FC = (() => {
                           style={{
                             padding: `20px 20px`,
                             background: theme.palette.secondary.main,
-                            color: theme.palette.text.color,
+                            color: '#000000',
                             borderRight: 'none',
                             borderLeft: 'none'
                           }}
