@@ -6728,8 +6728,8 @@ table .table-hover tbody tr:hover td {
 }
 
 .header.header-trans .header-navbar-rht li a.header-login:hover {
-  background-color: var(--primaryMain);
-  color: #ffffff;
+  background-color: var(--secondaryDark);
+  /* color: #ffffff; */
 }
 
 .header-one {
@@ -20163,7 +20163,7 @@ chat-attachment-list li {
 .login-header h3 {
   font-size: 18px;
   margin-bottom: 3px;
-  /* text-align: center; */
+  color: var(--primaryMain);
 }
 
 @media (max-width: 479.98px) {
@@ -25764,6 +25764,15 @@ span.call-duration.float-end {
   margin: 2px 6px;
   position: absolute;
   top: 3px;
+  width: 30px;
+  height: 30px;
+  background: var(--secondaryMain);
+  border-radius: 50%;
+  left: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--primaryMain);
 }
 
 .latest-blog .blog-wrap .blog-wrap-body .blog-footer .cal-txt {

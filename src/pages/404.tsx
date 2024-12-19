@@ -63,17 +63,17 @@ const Custom404: NextPage = (props: any) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="about">
-        <a className="bg_links social portfolio" href="https://nastaransamui.github.io/" target="_blank">
+        <a className="bg_links social portfolio" href="https://nastaransamui.github.io/" target="_blank" aria-label='social'>
           <span className="icon"
             style={secondaryMain}></span>
         </a>
-        <a className="bg_links social dribbble" href="https://dribbble.com" target="_blank">
+        <a className="bg_links social dribbble" href="https://dribbble.com" target="_blank" aria-label='social'>
           <span className="icon" style={secondaryMain}></span>
         </a>
-        <a className="bg_links social linkedin" href="https://www.linkedin.com" target="_blank">
+        <a className="bg_links social linkedin" href="https://www.linkedin.com" target="_blank" aria-label='social'>
           <span className="icon" style={secondaryMain}></span>
         </a>
-        <a className="bg_links logo404" style={primaryMain}></a>
+        <a className="bg_links logo404" href='#' style={primaryMain} aria-label='social'></a>
       </div>
       <nav>
         <div className="menu">
@@ -91,7 +91,7 @@ const Custom404: NextPage = (props: any) => {
               style={threeOptionMain}>about</a>
             <a href="" className="link"
               style={threeOptionMain}>projects</a> */}
-            <a href="" className="link"
+            <a href="" className="link" aria-label='back'
               onClick={(e) => {
                 e.preventDefault();
                 router.back()

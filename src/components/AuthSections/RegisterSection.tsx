@@ -417,7 +417,8 @@ const RegisterSection: FC = (() => {
             fullWidth
             required
           >
-            <FormLabel id="userType">User Type</FormLabel>
+            <FormLabel htmlFor='google-label'>User Type</FormLabel>
+            <input id='google-label' hidden></input>
             <RadioGroup
               value={userType}
               row
@@ -482,7 +483,8 @@ const RegisterSection: FC = (() => {
                             fullWidth
                             required
                           >
-                            <FormLabel id="userType">User Type</FormLabel>
+                            <FormLabel htmlFor='form-label'>User Type</FormLabel>
+                            <input id='form-label' hidden></input>
                             <RadioGroup
                               aria-labelledby="userType"
                               row
@@ -554,6 +556,7 @@ const RegisterSection: FC = (() => {
                                 error={fieldState.invalid}
                                 label="Mobile"
                                 required
+                                fullWidth
                               />
                             )
                           }}
@@ -582,7 +585,7 @@ const RegisterSection: FC = (() => {
                                 helperText={errors.email && errors['email']['message'] as ReactNode}
                                 fullWidth
                                 ref={ref}
-                                inputProps={{ style: { textTransform: 'lowercase' } }}
+                                inputProps={{ style: { textTransform: 'lowercase' }, autoComplete: 'email' }}
                                 onChange={(e: any) => {
                                   e.target.value = e.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
                                   onChange(e)
@@ -616,6 +619,7 @@ const RegisterSection: FC = (() => {
                                 onClick={handleClickShowPassword}
                                 onMouseDown={handleMouseDownPassword}
                                 edge="end"
+                                aria-label='toggle password'
                               >
                                 {showPassword ? <VisibilityOff /> : <Visibility />}
                               </IconButton>
@@ -649,6 +653,7 @@ const RegisterSection: FC = (() => {
                                 onClick={handleClickShowRepeatPassword}
                                 onMouseDown={handleMouseDownRepeatPassword}
                                 edge="end"
+                                aria-label='toggle repeat password'
                               >
                                 {showRepeatPassword ? <VisibilityOff /> : <Visibility />}
                               </IconButton>

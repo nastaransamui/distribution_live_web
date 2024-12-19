@@ -573,7 +573,7 @@ export const LoginBox: FC = (() => {
                   helperText={errors.email && errors['email']['message'] as ReactNode}
                   fullWidth
                   ref={ref}
-                  inputProps={{ style: { textTransform: 'lowercase' } }}
+                  inputProps={{ style: { textTransform: 'lowercase' }, autocomplete: 'email' }}
                   onChange={(e: any) => {
                     e.target.value = e.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
                     onChange(e)
@@ -607,6 +607,7 @@ export const LoginBox: FC = (() => {
                   onClick={handleClickShowPassword}
                   onMouseDown={handleMouseDownPassword}
                   edge="end"
+                  aria-label='password toggle'
                 >
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>

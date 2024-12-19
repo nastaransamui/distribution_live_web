@@ -140,6 +140,9 @@ const ForgotSection: FC = (() => {
                                   e.target.value = e.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
                                   onChange(e)
                                 }}
+                                inputProps={{
+                                  autoComplete: 'email'
+                                }}
                               />
                             )
                           }} />
