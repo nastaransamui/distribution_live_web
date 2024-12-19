@@ -150,7 +150,7 @@ const Header: FC = () => {
           <HeaderCart />
           <HeaderNotification />
           <li className="nav-item dropdown has-arrow logged-item">
-            <Link href="#" className="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+            <Link href="#" className="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-label='dropdown'>
               <span className="user-img">
                 <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${imageTimestamp}` : ''}`} key={userProfile?.profileImage}>
                   <img src={patient_profile} alt="" className="rounded-circle" />
@@ -190,7 +190,7 @@ const Header: FC = () => {
         }
       }}>
         <li className={`has-submenu ${router.pathname.startsWith('/patient/dashboard') ? 'active' : ' '}`} id='patientList'>
-          <Link href="" id="patientAnchor" className="mobileSubdropDrProficle"
+          <Link href="" id="patientAnchor" className="mobileSubdropDrProficle" aria-label='mobile patinet anchor'
             onMouseEnter={() => toggleSidebar("admin")}
             onClick={(e) => {
               e.preventDefault();
@@ -252,7 +252,7 @@ const Header: FC = () => {
       <ul className="nav header-navbar-rht" >
         <HeaderNotification />
         <li className="nav-item dropdown has-arrow logged-item">
-          <Link href="#" className="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+          <Link href="#" className="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-label='dropdown'>
             <span className="user-img">
               <Avatar alt="" src={`${userProfile?.profileImage}`} key={userProfile?.profileImage}>
                 <img src={doctors_profile} alt="" className="rounded-circle" />

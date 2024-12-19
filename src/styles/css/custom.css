@@ -1064,7 +1064,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: var(--primaryLight);
+  color: var(--primaryMain);
   font-weight: 500;
 }
 
@@ -5084,6 +5084,7 @@ table .table-hover tbody tr:hover td {
 .content {
   min-height: 200px;
   padding: 80px 0 60px;
+  background-color: var(--bgDefault);
 }
 
 @media (max-width: 991.98px) {
@@ -5109,7 +5110,7 @@ table .table-hover tbody tr:hover td {
 .card {
   border: 1px solid var(--secondaryLight);
   margin-bottom: 1.875rem;
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
 }
 
 @media (max-width: 767.98px) {
@@ -5125,7 +5126,7 @@ table .table-hover tbody tr:hover td {
 }
 
 .card .card-header {
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
   border-bottom: 1px solid var(--secondaryLight);
 }
 
@@ -17303,7 +17304,7 @@ table .table-hover tbody tr:hover td {
 }
 
 .widget-profile {
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
   border-bottom: 1px solid var(--secondaryMain);
 }
 
@@ -18189,7 +18190,7 @@ call-btn:focus {
 }
 
 .profile-sidebar .dashboard-menu > ul > li.active > a {
-  color: var(--primaryLight);
+  color: var(--secondaryMain);
 }
 
 @media (max-width: 1199.98px) {
@@ -18339,13 +18340,17 @@ call-btn:focus {
   overflow: hidden;
 }
 
-.profile-det-info h3 {
+.profile-det-info h3,
+.profile-det-info h1,
+.profile-det-info h2 {
   font-size: 17px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  
 }
 
+.profile-det-info .patient-details h5,
 .profile-det-info .patient-details h5 {
   color: var(--color);
   font-size: 13px;
@@ -18524,7 +18529,7 @@ call-btn:focus {
 }
 
 .profile-sidebar {
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
   border: 1px solid var(--secondaryMain);
   margin-bottom: 30px;
   overflow: hidden;

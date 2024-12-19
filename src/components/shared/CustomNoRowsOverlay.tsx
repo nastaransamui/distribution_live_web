@@ -69,7 +69,7 @@ const CustomNoRowsOverlay: FC<{ text: string }> = (({ text }) => {
           </g>
         </g>
       </svg>
-      <Box sx={{ mt: 1 }}>{text || 'No Rows'}</Box>
+      <Box sx={{ mt: 1, color: (theme) => theme.palette.text.color, }}>{text || 'No Rows'}</Box>
     </StyledGridOverlay>
   );
 })

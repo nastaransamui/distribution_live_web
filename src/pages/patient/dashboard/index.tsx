@@ -19,10 +19,11 @@ import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import { doctorPatientInitialLimitsAndSkips } from '@/components/DoctorPatientProfile/DoctorPatientProfile';
+import useScssVar from '@/hooks/useScssVar';
 
 const DashboardPage: NextPage = (props: any) => {
   const { doctorPatientProfile } = props;
-
+  const { muiVar } = useScssVar();
   return (
     <>
       <Head>
@@ -30,13 +31,13 @@ const DashboardPage: NextPage = (props: any) => {
         <meta httpEquiv='X-UA-Compatible' content='IE=edge' />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
         <meta charSet='utf-8' />
-        <meta name='description' />
+        <meta name="description" content="We eager to bring health and health care service to you by easiest way that possible." />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb subtitle='Dashboard' title='Dashboard' />
-      <div className="content">
+      <div className="content" style={muiVar}>
         <div className="container-fluid">
           <div className="row">
             <PatientDashboardSidebar />
