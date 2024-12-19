@@ -58,7 +58,7 @@ const LoginSection: FC = (() => {
             <div className="col-md-8 offset-md-2">
               <div className="account-content">
                 <div className="row align-items-center justify-content-center">
-                  <div className="col-md-7 col-lg-6 login-left">
+                  <div className="col-md-7 col-lg-6 login-left" >
                     <img
                       src={`/assets/images/login-banner_${theme.palette.mode}.webp`}
                       className="img-fluid"
@@ -573,7 +573,7 @@ export const LoginBox: FC = (() => {
                   helperText={errors.email && errors['email']['message'] as ReactNode}
                   fullWidth
                   ref={ref}
-                  inputProps={{ style: { textTransform: 'lowercase' }, autocomplete: 'email' }}
+                  inputProps={{ style: { textTransform: 'lowercase' }, autoComplete: 'email' }}
                   onChange={(e: any) => {
                     e.target.value = e.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
                     onChange(e)
