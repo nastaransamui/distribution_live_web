@@ -55,45 +55,45 @@ const Favourits: FC = (() => {
     let limit = perPage * page;
     let skip = (page - 1) * perPage
     if (isActive && homeSocket.current !== undefined && userProfile !== null) {
-      if (userProfile?.favs_id && userProfile?.favs_id.length !== 0) {
-        homeSocket.current.emit('getUserFavProfile', { userId, favIdArray, limit, skip })
-        homeSocket.current.once('getUserFavProfileReturn', (msg: { status: number, userFavProfile: FavDoctorProfile[], message?: string }) => {
-          const { status, userFavProfile, message } = msg;
-          if (status !== 200) {
-            toast.error(message || `${status}`, {
-              position: "bottom-center",
-              autoClose: 5000,
-              hideProgressBar: false,
-              toastId: 'socketEror',
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              transition: bounce,
-              onClose: () => {
-                setIsLoading(false)
-                toast.dismiss('socketEror')
-              }
-            });
-          } else {
-            if (userFavProfile.length !== 0) {
-              setFavDoctorsProfile(() => {
-                let newState = []
-                newState = [...userFavProfile]
-                return newState
-              })
+      // if (userProfile?.favs_id && userProfile?.favs_id.length !== 0) {
+      homeSocket.current.emit('getUserFavProfile', { userId, favIdArray, limit, skip })
+      homeSocket.current.once('getUserFavProfileReturn', (msg: { status: number, userFavProfile: FavDoctorProfile[], message?: string }) => {
+        const { status, userFavProfile, message } = msg;
+        if (status !== 200) {
+          toast.error(message || `${status}`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            toastId: 'socketEror',
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+              setIsLoading(false)
+              toast.dismiss('socketEror')
             }
-            homeSocket.current.once(`updateGetUserFavProfile`, () => {
-              setReload(!reload)
-            })
-            setIsLoading(false)
-          }
+          });
+        } else {
+          // if (userFavProfile.length !== 0) {
+          setFavDoctorsProfile(() => {
+            let newState = []
+            newState = [...userFavProfile]
+            return newState
+          })
+          // }
+          homeSocket.current.once(`updateGetUserFavProfile`, () => {
+            setReload(!reload)
+          })
+          setIsLoading(false)
+        }
 
-        })
-      } else {
-        isLoading && setIsLoading(false)
+      })
+      // } else {
+      //   isLoading && setIsLoading(false)
 
-      }
+      // }
     }
     return () => {
       isActive = false;
@@ -145,7 +145,7 @@ const Favourits: FC = (() => {
     return (
       <Grid container spacing={1}>
         {
-          favDoctorsProfile.map((doctor: FavDoctorProfile, index: number) => {
+          favDoctorsProfile.filter((prof: FavDoctorProfile) => prof.profile.favs_id.includes(userProfile?._id as string)).map((doctor: FavDoctorProfile, index: number) => {
             const title = `Dr. ${doctor?.profile?.firstName} ${doctor?.profile?.lastName}`;
             const firstDayAvailable =
               doctor?.profile?.timeslots.length > 0 &&
@@ -160,7 +160,7 @@ const Favourits: FC = (() => {
 
                 <div className="profile-widget">
                   <div className="doc-img">
-                    <Link href={`/doctors/search/${btoa(doctor?._id)}`}>
+                    <Link href={`/doctors/search/${btoa(doctor?._id)}`} aria-label='doctor profile'>
                       <ProfileImageStyledBadge
                         overlap="circular"
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

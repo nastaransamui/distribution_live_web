@@ -135,7 +135,7 @@ const Invoice: FC = (() => {
                 {/* /Invoice Item */}
                 {/* Invoice Information */}
                 <div className="other-info">
-                  <h4>Other information</h4>
+                  <h1 style={{ fontSize: 18 }}>Other information</h1>
                   <p className="text-muted mb-0">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
                     sed dictum ligula, cursus blandit risus. Maecenas eget metus non

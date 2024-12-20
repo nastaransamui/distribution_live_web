@@ -59,7 +59,7 @@ const Orders: FC = (() => {
       renderCell: (data: any) => {
         const { row } = data;
         return (
-          <Link href="/doctors/invoice-view" >
+          <Link href="/patient/dashboard/invoice-view" >
             {row.orderId}
           </Link>
         )
@@ -105,7 +105,7 @@ const Orders: FC = (() => {
           <Fragment>
             {row.status == 'shipped' ?
               <Chip label="Shipped" size="small" color='primary' /> :
-              <Chip label="Order Placed" size="small" color='secondary' />}
+              <Chip label="Order Placed" size="small" color='secondary' sx={{ color: '#000000' }} />}
           </Fragment>
         )
       }
@@ -143,6 +143,17 @@ const Orders: FC = (() => {
               <div className="card-body">
                 <div className="table-responsive">
                   <DataGrid
+                    experimentalFeatures={{ ariaV7: true }}
+                    slotProps={{
+                      pagination: {
+                        SelectProps: {
+                          inputProps: {
+                            id: 'pagination-select',
+                            name: 'pagination-select',
+                          },
+                        },
+                      },
+                    }}
                     rows={data}
                     rowCount={data.length}
                     ref={grdiRef}

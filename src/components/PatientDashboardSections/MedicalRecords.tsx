@@ -200,7 +200,7 @@ const MedicalRecords: FC = (() => {
         const { row } = data;
         return (
           <>
-            <IconButton disableFocusRipple disableRipple disableTouchRipple >
+            <IconButton aria-label='download' disableFocusRipple disableRipple disableTouchRipple >
               <GetAppIcon sx={{ color: theme.palette.primary.main }} />
             </IconButton>
           </>
@@ -291,7 +291,7 @@ const MedicalRecords: FC = (() => {
       align: 'center',
       getActions: (params: GridRowParams) => [
         <GridActionsCellItem icon={<i className="fas fa-print" style={{ color: theme.palette.primary.main }}></i>} label="Print" />,
-        <GridActionsCellItem onClick={() => { router.push('/patient/dashboard/see-prescription') }} icon={<i className="far fa-eye" style={{ color: theme.palette.secondary.main }}></i>} label="View" />,
+        <GridActionsCellItem onClick={() => { router.push(`/patient/dashboard/see-prescription/${btoa(params.row?._id)}`) }} icon={<i className="far fa-eye" style={{ color: theme.palette.secondary.main }}></i>} label="View" />,
       ]
     }
   ]
@@ -336,6 +336,17 @@ const MedicalRecords: FC = (() => {
                       <div className="card-body" style={{ height: 375, width: '100%' }}>
                         <div className="table-responsive" style={{ height: 375, width: '100%' }}>
                           <DataGrid
+                            experimentalFeatures={{ ariaV7: true }}
+                            slotProps={{
+                              pagination: {
+                                SelectProps: {
+                                  inputProps: {
+                                    id: 'pagination-select',
+                                    name: 'pagination-select',
+                                  },
+                                },
+                              },
+                            }}
                             rows={data}
                             rowCount={data.length}
                             ref={grdiRef}
@@ -361,6 +372,17 @@ const MedicalRecords: FC = (() => {
                   </TabPanel>
                   <TabPanel value="2">
                     <DataGrid
+                      experimentalFeatures={{ ariaV7: true }}
+                      slotProps={{
+                        pagination: {
+                          SelectProps: {
+                            inputProps: {
+                              id: 'pagination-select',
+                              name: 'pagination-select',
+                            },
+                          },
+                        },
+                      }}
                       rows={prisData}
                       rowCount={prisData.length}
                       ref={presRef}
@@ -418,6 +440,9 @@ const MedicalRecords: FC = (() => {
                     fullWidth
                     required
                     id="name"
+                    inputProps={{
+                      autoComplete: 'name'
+                    }}
                     label={`Name`}
                     onChange={(e) => {
                       setEditValues((prevState) => {
@@ -434,10 +459,13 @@ const MedicalRecords: FC = (() => {
               <div className="col-12 col-sm-6">
                 <div className="form-group">
                   <FormControl fullWidth>
-                    <InputLabel size='small' id="demo-simple-select-label">Patient</InputLabel>
+                    <InputLabel size='small' id="patient-label" htmlFor="patient">Patient</InputLabel>
                     <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
+                      labelId="patient-label"
+                      inputProps={{
+                        id: "patient",
+                        name: 'patient'
+                      }}
                       value={editValues.orderBy}
                       label="Patient"
                       onChange={handleChange}
@@ -457,7 +485,11 @@ const MedicalRecords: FC = (() => {
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="hospital"
+                    name='hospital'
+                    inputProps={{
+                      autoComplete: "off"
+                    }}
                     label={`Hospital name`}
                     value={editValues.hospitalName}
                     onChange={(e) => {
@@ -480,6 +512,9 @@ const MedicalRecords: FC = (() => {
                     required
                     value={imageName}
                     id="imageName"
+                    inputProps={{
+                      autoComplete: "off"
+                    }}
                     disabled
                     label={'Photo'}
                     InputProps={{
@@ -499,7 +534,11 @@ const MedicalRecords: FC = (() => {
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="symptoms"
+                    name='symptoms'
+                    inputProps={{
+                      autoComplete: "off"
+                    }}
                     label={`Symptoms`}
                     value={editValues.symptoms}
                     onChange={(e) => {

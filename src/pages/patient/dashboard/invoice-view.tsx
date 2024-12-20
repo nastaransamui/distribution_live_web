@@ -10,15 +10,16 @@ import { connect } from 'react-redux';
 import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
+import BreadCrumb from '@/components/shared/BreadCrumb';
+import Footer from '@/components/sections/Footer';
+import Invoice from '@/components/DoctorsSections/CheckOut/Invoice';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
-import ChatComponent from '@/components/shared/ChatComponent';
-
-import BreadCrumb from '@/components/shared/BreadCrumb';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 
-const PatientChatPage: NextPage = () => {
+
+const InvoiceViewPage: NextPage = () => {
 
 
   return (
@@ -33,8 +34,9 @@ const PatientChatPage: NextPage = () => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
-      <BreadCrumb subtitle='Chat' title='Chat' />
-      <ChatComponent />
+      <BreadCrumb title='Patient Invoice' subtitle='Patient Invoice' />
+      <Invoice />
+      <Footer />
     </>
   )
 }
@@ -42,7 +44,6 @@ const PatientChatPage: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx) => {
     try {
-      let props = {}
       const result = await fetch('http://ip-api.com/json/', {
         method: 'GET',
         headers: {
@@ -69,50 +70,24 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             }
             if (fullToken !== '') {
               var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(fullToken)
-              if (roleName == 'patient') {
-                store.dispatch(updateHomeAccessToken(fullToken))
-                store.dispatch(updateUserProfile(userProfile))
-              } else {
-                return {
-                  redirect: {
-                    destination: `/${roleName}/dashboard`,
-                    permanent: false,
-                  },
-                }
-              }
+              store.dispatch(updateUserProfile(userProfile))
+              store.dispatch(updateHomeAccessToken(fullToken))
             }
             break;
 
           default:
             var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(getCookie('homeAccessToken', ctx))
-
-            if (roleName == 'patient') {
-              store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
-              store.dispatch(updateUserProfile(userProfile))
-            } else {
-              return {
-                redirect: {
-                  destination: `/${roleName}/dashboard`,
-                  permanent: false,
-                },
-              }
-            }
+            store.dispatch(updateUserProfile(userProfile))
+            store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
             break;
         }
-      } else {
-        return {
-          ...props,
-          redirect: {
-            destination: `/login`,
-            permanent: false,
-          },
-        }
       }
+
+      let props = {}
       return {
         props
       }
     } catch (error) {
-      let props = {}
       console.log(error)
       if (hasCookie('homeThemeType', ctx)) {
         store.dispatch(updateHomeThemeType(getCookie('homeThemeType', ctx)))
@@ -130,49 +105,23 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             }
             if (fullToken !== '') {
               var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(fullToken)
-              if (roleName == 'patient') {
-                store.dispatch(updateHomeAccessToken(fullToken))
-                store.dispatch(updateUserProfile(userProfile))
-              } else {
-                return {
-                  redirect: {
-                    destination: `/${roleName}/dashboard`,
-                    permanent: false,
-                  },
-                }
-              }
+              store.dispatch(updateUserProfile(userProfile))
+              store.dispatch(updateHomeAccessToken(fullToken))
             }
             break;
 
           default:
             var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(getCookie('homeAccessToken', ctx))
-
-            if (roleName == 'patient') {
-              store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
-              store.dispatch(updateUserProfile(userProfile))
-            } else {
-              return {
-                redirect: {
-                  destination: `/${roleName}/dashboard`,
-                  permanent: false,
-                },
-              }
-            }
+            store.dispatch(updateUserProfile(userProfile))
+            store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
             break;
         }
-      } else {
-        return {
-          ...props,
-          redirect: {
-            destination: `/login`,
-            permanent: false,
-          },
-        }
       }
+      let props = {}
       return {
         props
       }
     }
   })
 
-export default connect((state: AppState) => state)(PatientChatPage);
+export default connect((state: AppState) => state)(InvoiceViewPage);

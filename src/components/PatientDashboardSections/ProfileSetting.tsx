@@ -338,7 +338,7 @@ const ProfileSetting: FC = (() => {
                           </div>
                           <div className="upload-img" >
                             <div className="change-photo-btn" style={{ cursor: 'pointer' }}>
-                              <span><i className="fa fa-upload"></i> Upload Photo</span>
+                              <label htmlFor='profile'><i className="fa fa-upload"></i> Upload Photo</label>
                               <input type="file" id='profile' className="upload" accept="image/png, image/jpg, image/jpeg" onChange={uploadFile} />
                             </div>
                             <small className="form-text text-muted">Allowed JPG, GIF or PNG. Max size of 2MB</small>
@@ -430,13 +430,15 @@ const ProfileSetting: FC = (() => {
                             const { defaultValues } = formState;
                             return (
                               <FormControl fullWidth >
-                                <InputLabel id="gender">
+                                <InputLabel id="gender-label" htmlFor="gender">
                                   Gender
-                                  <input id="gender" hidden />
                                 </InputLabel>
                                 <Select
-                                  labelId="gender"
-                                  id="gender"
+                                  labelId="gender-label"
+                                  inputProps={{
+                                    id: 'gender',
+                                    name: 'gender'
+                                  }}
                                   label="Gender"
                                   error={errors.gender == undefined ? false : true}
                                   value={value}
@@ -471,13 +473,15 @@ const ProfileSetting: FC = (() => {
                             const { defaultValues } = formState;
                             return (
                               <FormControl fullWidth >
-                                <InputLabel id="bloodGLable">
+                                <InputLabel id="bloodGLable" htmlFor="blood">
                                   Blood Group
-                                  <input id="bloodGLable" hidden />
                                 </InputLabel>
                                 <Select
                                   labelId="bloodGLable"
-                                  id="bloodG"
+                                  inputProps={{
+                                    id: "blood",
+                                    name: 'blood'
+                                  }}
                                   label="Blood Group"
                                   error={errors.bloodG == undefined ? false : true}
                                   value={value}
@@ -672,20 +676,7 @@ const ProfileSetting: FC = (() => {
                     <button type="submit" className="btn btn-primary submit-btn" >
                       Save Changes
                     </button>
-                    <button className="btn-primary " style={{
-                      marginLeft: '0px',
-                      marginTop: matches ? 10 : 0,
-                      fontWeight: 700,
-                      fontSize: 16,
-                      minWidth: 120,
-                      padding: '12px 40px',
-                      backgroundColor: "crimson",
-                      border: `1px solid ${theme.palette.primary}`,
-                      lineHeight: '16px',
-                      transition: 'all 0.3s ease',
-                      display: 'unset',
-                      borderRadius: '.25rem'
-                    }} onClick={(e) => {
+                    <button className="btn-delete " onClick={(e) => {
                       e.preventDefault();
                       deleteUser();
                     }}>

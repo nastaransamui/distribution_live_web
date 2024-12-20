@@ -5,6 +5,7 @@ import Link from 'next/link';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import { useRouter } from 'next/router';
+import FormLabel from '@mui/material/FormLabel';
 
 export interface BillingType {
   title?: string;
@@ -126,13 +127,20 @@ const AddBilling: FC = (() => {
                             <tr>
                               <td>
                                 <FormControl fullWidth>
+                                  {/* Use FormLabel to associate it correctly */}
+                                  <FormLabel htmlFor={`consult-title-${index}`} sx={{ display: 'none' }}>
+                                    Title
+                                  </FormLabel>
                                   <TextField
                                     required
-                                    id="outlined-required"
-                                    autoComplete='off'
+                                    id={`consult-title-${index}`} // Directly set the id here
+                                    name={`consult-title-${index}`}
+                                    aria-label="Title"
+                                    autoComplete="off"
+                                    label="Title"
                                     value={data?.title || ''}
-                                    onChange={(e) => { inputChange(e, index, 'title') }}
-                                    size='small'
+                                    onChange={(e) => inputChange(e, index, 'title')}
+                                    size="small"
                                     fullWidth
                                     disabled={router.asPath.endsWith('see-billing')}
                                   />
@@ -140,10 +148,14 @@ const AddBilling: FC = (() => {
                               </td>
                               <td>
                                 <FormControl fullWidth>
+                                  <label htmlFor={`consult-amount-${index}`} style={{ display: "none" }}>Amount</label>
                                   <TextField
                                     required
-                                    id="outlined-required"
+                                    id={`consult-amount-${index}`}
+                                    name={`consult-amount-${index}`}
+                                    aria-label="Amount"
                                     autoComplete='off'
+                                    label="Amount"
                                     value={data?.amount || ''}
                                     onChange={(e) => { inputChange(e, index, 'amount') }}
                                     size='small'

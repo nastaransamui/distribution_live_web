@@ -709,7 +709,7 @@ const ChatComponent: FC = (() => {
                   <div className="chat-users-list">
                     <div className="chat-scroll">
                       {
-                        userChatData.length == 0 ? <div style={{ width: '100%', height: "calc(100vh - 324px)", display: "flex", justifyContent: "center", alignItems: "center" }}>Start chat</div> : "chat persons comehiere"
+                        userChatData.length == 0 ? <div style={{ color: theme.palette.text.color, width: '100%', height: "calc(100vh - 324px)", display: "flex", justifyContent: "center", alignItems: "center" }}>Start chat</div> : "chat persons comehiere"
                       }
                       {/* {
                         userChatData
@@ -963,14 +963,15 @@ const ChatComponent: FC = (() => {
                           }}
                           InputProps={{
                             endAdornment: <InputAdornment position="end">
-                              <button disabled={activeChat == null} type="button" className="btn msg-send-btn rounded-pill ms-2" onClick={(e) => {
+                              <button disabled={activeChat == null} aria-label='send' type="button" className="btn msg-send-btn rounded-pill ms-2" onClick={(e) => {
                                 onButtonClick(e)
                               }}><i className="fab fa-telegram-plane"></i></button>
                             </InputAdornment>,
                             startAdornment: <InputAdornment position='start'>
                               <div className="btn-file btn">
                                 <i className="fa fa-paperclip" ></i>
-                                <input disabled={activeChat == null} type="file" />
+                                <label style={{ display: 'none' }} htmlFor='file'>File</label>
+                                <input aria-label="File" disabled={activeChat == null} id='file' type="file" />
                               </div>
                             </InputAdornment>,
                           }}

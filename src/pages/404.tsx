@@ -116,7 +116,7 @@ const Custom404: NextPage = (props: any) => {
             <div className="circle" data-depth="1.2" style={circleMain}></div>
 
             <div className="one" data-depth="0.9" style={circleOne}>
-              <div className="content">
+              <div className="content content-404">
                 <span className="piece" style={pieceOne}></span>
                 <span className="piece" style={pieceTwo}></span>
                 <span className="piece" style={pieceThree}></span>
@@ -124,7 +124,7 @@ const Custom404: NextPage = (props: any) => {
             </div>
 
             <div className="two" data-depth="0.60">
-              <div className="content">
+              <div className="content content-404">
                 <span className="piece" style={threeOptionMain}></span>
                 <span className="piece" style={threeOptionMain}></span>
                 <span className="piece" style={threeOptionMain}></span>
@@ -132,7 +132,7 @@ const Custom404: NextPage = (props: any) => {
             </div>
 
             <div className="three" style={primaryMain} data-depth="0.40">
-              <div className="content">
+              <div className="content content-404">
                 <span className="piece"></span>
                 <span className="piece"></span>
                 <span className="piece"></span>

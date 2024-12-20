@@ -196,6 +196,17 @@ const MedicalDetails: FC = (() => {
                   <div className="card-body">
                     <div className="table-responsive">
                       <DataGrid
+                        experimentalFeatures={{ ariaV7: true }}
+                        slotProps={{
+                          pagination: {
+                            SelectProps: {
+                              inputProps: {
+                                id: 'pagination-select',
+                                name: 'pagination-select',
+                              },
+                            },
+                          },
+                        }}
                         rows={data}
                         rowCount={data.length}
                         ref={grdiRef}
@@ -255,6 +266,9 @@ const MedicalDetails: FC = (() => {
                     required
                     id="name"
                     label={`Name`}
+                    inputProps={{
+                      autoComplete: 'name'
+                    }}
                     onChange={(e) => {
                       setEditValues((prevState) => {
                         return {
@@ -274,7 +288,11 @@ const MedicalDetails: FC = (() => {
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="bmi"
+                    name="bmi"
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     label={`BMI`}
                     onChange={(e) => {
                       setEditValues((prevState) => {
@@ -295,7 +313,11 @@ const MedicalDetails: FC = (() => {
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="heart-rate"
+                    name='heart-rate'
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     label={`Heart rate`}
                     onChange={(e) => {
                       setEditValues((prevState) => {
@@ -317,6 +339,10 @@ const MedicalDetails: FC = (() => {
                     size="small"
                     required
                     id="weight"
+                    name='weight'
+                    inputProps={{
+                      autoComplete: "off"
+                    }}
                     disabled
                     label={'Weight'}
                     onChange={(e) => {
@@ -344,7 +370,11 @@ const MedicalDetails: FC = (() => {
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="fbc"
+                    name='fbc'
+                    inputProps={{
+                      autoComplete: "off"
+                    }}
                     label={`FBC`}
                     value={editValues.fbc}
                     onChange={(e) => {

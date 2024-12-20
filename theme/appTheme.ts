@@ -233,25 +233,25 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
           input: {
             "&:-webkit-autofill": {
               WebkitBoxShadow: `0 0 0 100px ${
-                mode === "dark" ? "#424242" : "#fff"
+                mode === "dark" ? "#212121" : "#fff"
               } inset !important`,
               WebkitTextFillColor: mode === "dark" ? "#fff" : "#000000",
             },
             "&:-webkit-autofill:hover": {
               WebkitBoxShadow: `0 0 0 100px ${
-                mode === "dark" ? "#424242" : "#fff"
+                mode === "dark" ? "#212121" : "#fff"
               } inset !important`,
               WebkitTextFillColor: mode === "dark" ? "#fff" : "#000000",
             },
             "&:-webkit-autofill:focus": {
               WebkitBoxShadow: `0 0 0 100px ${
-                mode === "dark" ? "#424242" : "#fff"
+                mode === "dark" ? "#212121" : "#fff"
               } inset !important`,
               WebkitTextFillColor: mode === "dark" ? "#fff" : "#000000",
             },
             "&:-webkit-autofill:active": {
               WebkitBoxShadow: `0 0 0 100px ${
-                mode === "dark" ? "#424242" : "#fff"
+                mode === "dark" ? "#212121" : "#fff"
               } inset !important`,
               WebkitTextFillColor: mode === "dark" ? "#fff" : "#000000",
             },

@@ -701,6 +701,7 @@ const Header: FC = () => {
     if (router.pathname === "/cardiohome") return "header header-fixed header-ten";
     if (router.pathname === "/homecare") return "header header-custom header-fixed header-ten home-care-header";
     if (router.pathname === "/home" || router.pathname === "/home3") return userProfile == null ? "header-trans header-two" : "header-fixed header-one";
+    if (router.pathname.includes('dashboard')) return "header-fixed-dashboard header-one"
     return "header-fixed header-one";
   };
 

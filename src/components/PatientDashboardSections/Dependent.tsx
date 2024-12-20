@@ -226,10 +226,22 @@ const Dependent: FC = (() => {
             </div>
           </div>
           <DataGrid
+            aria-label="Sample Data Grid"
+            experimentalFeatures={{ ariaV7: true }}
             rows={data}
             rowCount={data.length}
             ref={grdiRef}
             // localeText={muiLocaleText()}
+            slotProps={{
+              pagination: {
+                SelectProps: {
+                  inputProps: {
+                    id: 'pagination-select',
+                    name: 'pagination-select',
+                  },
+                },
+              },
+            }}
             columns={columns}
             disableRowSelectionOnClick
             paginationModel={paginationModel}
@@ -283,6 +295,9 @@ const Dependent: FC = (() => {
                     fullWidth
                     required
                     id="name"
+                    inputProps={{
+                      autoComplete: 'name'
+                    }}
                     label={`Name`}
                     value={editValues.name}
                   />
@@ -330,12 +345,15 @@ const Dependent: FC = (() => {
               </div>
               <div className="col-12 col-sm-6">
                 <FormControl fullWidth>
-                  <InputLabel size='small' id="demo-simple-select-label">Select</InputLabel>
+                  <InputLabel size='small' id="gender-label" htmlFor="gender">Gender</InputLabel>
                   <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId="gender-label"
+                    inputProps={{
+                      id: "gender",
+                      name: "gender"
+                    }}
                     value={editValues.gender}
-                    label="Select"
+                    label="Gender"
                     // onChange={handleChange} 
                     size='small'
                   >
@@ -346,12 +364,15 @@ const Dependent: FC = (() => {
               </div>
               <div className="col-12 col-sm-6">
                 <FormControl fullWidth>
-                  <InputLabel size='small' id="demo-simple-select-label">Select</InputLabel>
+                  <InputLabel size='small' id="blood-label" htmlFor="blood">Blood Type</InputLabel>
                   <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId="blood-label"
+                    inputProps={{
+                      id: "blood",
+                      name: "blood"
+                    }}
                     value={editValues.bloodGroup}
-                    label="Select"
+                    label="Blood Type"
                     // onChange={handleChange} 
                     size='small'
                   >

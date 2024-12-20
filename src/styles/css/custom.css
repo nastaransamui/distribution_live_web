@@ -2975,7 +2975,48 @@ button.bg-danger:hover {
   transition: all 0.3s ease;
   line-height: 16px;
 }
-
+.btn-delete {
+  border: 1px solid var(--secondaryMain);
+  transition: all 0.3s ease;
+  line-height: 16px;
+  margin-left: 0px;
+  font-weight: 700;
+  font-size: 16px;
+  min-width: 120px;
+  padding: 12px 40px;
+  background-color: crimson;
+  border: 1px solid var(--primaryMain);
+  line-height: 16px;
+  display: unset;
+  border-radius: 0.25rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.btn-delete::before{
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(125deg, var(--primaryMain) 0%, var(--secondaryMain) 100%) !important;
+  left: -150px;
+  top: -40px;
+  transform: rotate(45deg);
+  transition: all 0.3s ease-in-out;
+  z-index: -1;
+}
+.btn-delete::after{
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(125deg, var(--primaryMain) 0%, var(--secondaryMain) 100%) !important;
+  right: -150px;
+  top: -40px;
+  transform: rotate(45deg);
+  transition: all 0.3s ease-in-out;
+  z-index: -1;
+}
 .btn-primary:focus,
 .btn-primary:hover,
 .btn-primary:active,
@@ -2985,7 +3026,23 @@ button.bg-danger:hover {
   border-color: var(--primaryMain);
   transition: all 0.3s ease;
 }
-
+.btn-delete:focus,
+.btn-delete:hover,
+.btn-delete:active,
+.btn-delete.active {
+  border-color: var(--primaryMain);
+  transition: all 0.3s ease;
+  box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+  transform: translateY(0.25em);
+  z-index: 2;
+  color: #000000;
+}
+.btn-delete:hover::after{
+  right: 0;
+}
+.btn-delete:hover::before{
+  left: 0;
+}
 .btn-primary:focus .open > .dropdown-toggle.btn-primary,
 .btn-primary:hover .open > .dropdown-toggle.btn-primary,
 .btn-primary:active .open > .dropdown-toggle.btn-primary,
@@ -5085,6 +5142,9 @@ table .table-hover tbody tr:hover td {
   min-height: 200px;
   padding: 80px 0 60px;
   background-color: var(--bgDefault);
+}
+.content-404 {
+  background-color: transparent;
 }
 
 @media (max-width: 991.98px) {
@@ -9208,6 +9268,14 @@ table .table-hover tbody tr:hover td {
   background-color: var(--bgPaper);
   box-shadow: inherit;
 }
+.header.header-fixed-dashboard {
+  position: fixed;
+  display: block;
+  width: 100%;
+  z-index: 10;
+  background-color: var(--bgDefault);
+  box-shadow: inherit;
+}
 
 .header.header-home4 {
   position: fixed;
@@ -13031,7 +13099,7 @@ table .table-hover tbody tr:hover td {
 }
 
 .profile-widget {
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
   border: 1px solid var(--secondaryMain);
   position: relative;
   margin-bottom: 30px;
@@ -18347,7 +18415,6 @@ call-btn:focus {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  
 }
 
 .profile-det-info .patient-details h5,
@@ -18479,8 +18546,8 @@ call-btn:focus {
 }
 
 .add-new-btn {
-  background-color: var(--primaryLight);
-  color: #ffffff;
+  background-color: var(--primaryMain);
+  color: #000000;
   display: inline-block;
   font-weight: 500;
   margin: 0 0 20px;
@@ -22488,7 +22555,7 @@ span.call-duration.float-end {
   position: relative;
 }
 
-.card-header .card-title{
+.card-header .card-title {
   font-weight: 600;
   font-size: 16px;
   color: var(--primaryLight);
@@ -23946,7 +24013,7 @@ span.call-duration.float-end {
 }
 
 .invoice-content {
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
   border: 1px solid var(--secondaryMain);
   margin-bottom: 30px;
   border-radius: 4px;
@@ -38472,7 +38539,7 @@ ul.benifits-col li i {
 }
 
 .doctor-content {
-  background-color: var(--bgPaper);
+  /* background-color: var(--bgPaper); */
   margin: 0;
   padding: 140px 0 60px;
 }
@@ -39401,7 +39468,7 @@ ul.benifits-col li i {
 }
 
 .breadcrumb-bar-two {
-  background: var(--bgDefault);
+  background: var(--bgPaper);
   background-repeat: no-repeat;
   padding-top: 70px;
   min-height: 300px;
@@ -39772,7 +39839,7 @@ ul.benifits-col li i {
   font-size: 20px;
   margin-bottom: 12px;
 }
-.why-choose-content h3{
+.why-choose-content h3 {
   font-weight: 500;
   font-size: 20px;
   margin-bottom: 12px;
@@ -44672,12 +44739,12 @@ svg.feather {
     width: 11.9%;
   }
   .our-best-work-sec .best-work-video .treatment-video .play-achor_0,
-.our-best-work-sec .best-work-video .treatment-video .play-achor_1,
-.our-best-work-sec .best-work-video .treatment-video .play-achor_2,
-.our-best-work-sec .best-work-video .treatment-video .play-achor_3{
- width: 40px;
- height: 40px;
-}
+  .our-best-work-sec .best-work-video .treatment-video .play-achor_1,
+  .our-best-work-sec .best-work-video .treatment-video .play-achor_2,
+  .our-best-work-sec .best-work-video .treatment-video .play-achor_3 {
+    width: 40px;
+    height: 40px;
+  }
 }
 .new-video-player {
   width: 100%;

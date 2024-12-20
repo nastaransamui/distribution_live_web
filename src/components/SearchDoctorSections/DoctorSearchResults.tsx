@@ -950,6 +950,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                 style={setCardStyle(index, expanded)}
                 ref={elRefs[index]}
                 sx={{
+                  bgcolor: theme.palette.background.paper,
                   "&:hover": {
                     ".MuiCardMedia-root": {
                       transform: "scale(1.15)",
@@ -968,7 +969,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                     <span style={{ zIndex: 3 }}>
                       <CardHeader
                         sx={{
-                          bgcolor: theme.palette.background.default,
+                          bgcolor: theme.palette.background.paper,
                         }}
                         avatar={
                           <Avatar alt="" src={doctor?.specialities?.[0]?.image} variant="square" sx={{
@@ -991,25 +992,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                     </span>
                   </Tooltip>
                 </Fragment>
-                {/* <CardMedia
-                  component="img"
-                  sx={{
-                    borderRadius: '5px',
-                    overflow: 'hidden',
-                    transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
-                    minHeight:
-                      minWidth1400 ? 319 :
-                        minWidth767max991 ? 500 :
-                          minWidth991max1200 || minWidth639max766 ? 350 :
-                            minWidth767 ? 270 :
-                              100
-                  }}
-                  height="194"
-                  image={doctor?.profileImage == ''
-                    ? doctors_profile :
-                    `${doctor?.profileImage}?random=${imageTimestamp}`}
-                  alt=""
-                /> */}
+
                 <Avatar sx={{
                   width: 'auto',
                   height: 'auto',
@@ -1030,7 +1013,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                 </Avatar>
                 <CardContent
                   sx={{
-                    bgcolor: theme.palette.background.default,
+                    bgcolor: theme.palette.background.paper,
                     zIndex: 5,
                     minHeight: 120,
                   }}>
@@ -1044,7 +1027,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                   </Typography>
                 </CardContent>
                 <CardActions disableSpacing sx={{
-                  background: theme.palette.background.default,
+                  bgcolor: theme.palette.background.paper,
                   zIndex: 5,
 
                 }}>
@@ -1085,7 +1068,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                     <CardContent
                       sx={{
                         position: 'absolute',
-                        background: theme.palette.background.default,
+                        bgcolor: theme.palette.background.paper,
                         zIndex: 6,
                         borderRadius: `0px 0px 4px 4px`,
                         boxShadow: `${theme.shadows[2]}`,
@@ -1637,10 +1620,13 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
           </Grid>
           <Grid item sx={{ display: 'flex', flexDirection: 'column', gap: { xl: 1, lg: 1, md: 1, sm: 2, xs: 2 }, mt: { xl: 0, lg: 0, md: 0, sm: 3, xs: 3 } }}>
             <FormControl fullWidth>
-              <InputLabel size='small' id="demo-simple-select-label">Sort</InputLabel>
+              <InputLabel size='small' id="sort-label" htmlFor="sort">Sort</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                labelId="sort-label"
+                inputProps={{
+                  id: "sort",
+                  name: 'sort'
+                }}
                 value={sortBy}
                 label="Sort"
                 onChange={handleChange}

@@ -321,7 +321,7 @@ const ProfileSetting: FC = (() => {
       data.deletedImages = [...deletedImages]
     }
     dispatch(updateHomeFormSubmit(true))
-
+    console.log(homeSocket.current)
     homeSocket.current.emit('profileUpdate', data)
     homeSocket.current.once('profileUpdateReturn', (msg: any) => {
       if (msg?.status !== 200) {
