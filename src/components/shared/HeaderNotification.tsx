@@ -2,7 +2,7 @@
 import { FC, Fragment } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
-import { client04, clinet01, clinet02, clinet05 } from '@/public/assets/imagepath';
+import { clinet01_scale, clinet02_scale, clinet05_scale, client04_scale } from '@/public/assets/imagepath';
 import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material';
 
@@ -40,7 +40,7 @@ const HeaderNotification: FC = (() => {
                       <img
                         className="avatar-img"
                         alt=""
-                        src={clinet01}
+                        src={clinet01_scale}
                       />
                     </span>
                     <div className="media-body">
@@ -63,7 +63,7 @@ const HeaderNotification: FC = (() => {
                       <img
                         className="avatar-img"
                         alt=""
-                        src={clinet02}
+                        src={clinet02_scale}
                       />
                     </span>
                     <div className="media-body">
@@ -87,7 +87,7 @@ const HeaderNotification: FC = (() => {
                       <img
                         className="avatar-img"
                         alt=""
-                        src={clinet05}
+                        src={clinet05_scale}
                       />
                     </div>
                     <div className="media-body">
@@ -111,7 +111,7 @@ const HeaderNotification: FC = (() => {
                       <img
                         className="avatar-img"
                         alt=""
-                        src={client04}
+                        src={client04_scale}
                       />
                     </div>
                     <div className="media-body">

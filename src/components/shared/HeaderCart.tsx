@@ -2,7 +2,7 @@
 import { FC, Fragment, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
-import { Product, Product1, Product2 } from '@/public/assets/imagepath';
+import { Product_scale, Product1_scale, Product2_scale } from '@/public/assets/imagepath';
 import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material';
 
@@ -14,8 +14,9 @@ const HeaderCart: FC = (() => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setStyle(() =>
-        router.pathname == "/home4" ? { background: theme.palette.secondary.dark } : { background: "" } &&
-          router.pathname == "/eyecarehome" ? { background: theme.palette.secondary.dark } : { background: "" })
+        router.pathname === "/home4" || router.pathname === "/eyecarehome"
+          ? { background: theme.palette.secondary.dark }
+          : { background: "" })
     }
   }, [theme, router])
   return (
@@ -39,7 +40,7 @@ const HeaderCart: FC = (() => {
                 <Link href="/pharmacy/product-description">
                   <img
                     className="avatar-img rounded"
-                    src={Product}
+                    src={Product_scale}
                     alt="User Image"
                   />
                 </Link>
@@ -56,7 +57,7 @@ const HeaderCart: FC = (() => {
                 <Link href="/pharmacy/product-description">
                   <img
                     className="avatar-img rounded"
-                    src={Product1}
+                    src={Product1_scale}
                     alt="User Image"
                   />
                 </Link>
@@ -73,7 +74,7 @@ const HeaderCart: FC = (() => {
                 <Link href="/pharmacy/product-description">
                   <img
                     className="avatar-img rounded"
-                    src={Product2}
+                    src={Product2_scale}
                     alt="User Image"
                   />
                 </Link>
