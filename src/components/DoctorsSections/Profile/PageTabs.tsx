@@ -36,6 +36,7 @@ import { LoginBox } from '@/components/AuthSections/LoginSection';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { AvailableType, TimeType, afterNoonFinish, afterNoonStart, eveningFinish, eveningStart, morningFinish, morningStart } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { loadStylesheet } from '@/pages/_app';
 
 export interface ReviewTypes {
   userId: string;
@@ -91,7 +92,9 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
       userId: userProfile?._id || ''
     }
   })
-
+  useEffect(() => {
+    loadStylesheet('/css/yet-another-react-lightbox-styles.css')
+  }, [])
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name == 'review') {
@@ -121,7 +124,6 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
   const onSubmitReview = (data: ReviewTypes) => {
     data.rating = parseFloat(data!.rating as any)
     delete data.terms;
-    console.log(data)
   }
 
   return (
@@ -238,7 +240,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                 <div className="col-md-12 col-lg-9">
                   {/* About Details */}
                   <div className="widget about-widget">
-                    <h4 className="widget-title">About Me</h4>
+                    <h1 className="widget-title">About Me</h1>
                     <p style={{ whiteSpace: 'pre-wrap' }}>
                       {profile?.aboutMe}
                     </p>
@@ -246,7 +248,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                   {/* /About Details */}
                   {/* Education Details */}
                   <div className="widget education-widget">
-                    <h4 className="widget-title">Education</h4>
+                    <h1 className="widget-title">Education</h1>
                     <div className="experience-box">
                       <ul className="experience-list">
                         {
@@ -275,7 +277,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                   {/* /Education Details */}
                   {/* Experience Details */}
                   <div className="widget experience-widget">
-                    <h4 className="widget-title">Work &amp; Experience</h4>
+                    <h1 className="widget-title">Work &amp; Experience</h1>
                     <div className="experience-box">
                       <ul className="experience-list">
                         {
@@ -305,7 +307,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                     </div>
                   </div>
                   <div className="widget awards-widget">
-                    <h4 className="widget-title">Awards</h4>
+                    <h1 className="widget-title">Awards</h1>
                     <div className="experience-box">
                       <ul className="experience-list">
                         {
@@ -318,7 +320,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                                 <div className="experience-content">
                                   <div className="timeline-content">
                                     <p className="exp-year">{dayjs(awr.year).format('MMM YYYY')}</p>
-                                    <h4 className="exp-title">{awr.award}</h4>
+                                    <h1 className="exp-title">{awr.award}</h1>
                                     <p>
                                       Lorem ipsum dolor sit amet, consectetur adipiscing
                                       elit. Proin a ipsum tellus. Interdum et malesuada
@@ -335,7 +337,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                   </div>
 
                   <div className="widget awards-widget">
-                    <h4 className="widget-title">Registrations</h4>
+                    <h1 className="widget-title">Registrations</h1>
                     <div className="experience-box">
                       <ul className="experience-list">
                         {
@@ -348,7 +350,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                                 <div className="experience-content">
                                   <div className="timeline-content">
                                     <p className="exp-year">{dayjs(register.year).format('MMM YYYY')}</p>
-                                    <h4 className="exp-title">{register.registration}</h4>
+                                    <h1 className="exp-title">{register.registration}</h1>
                                     <p>
                                       Lorem ipsum dolor sit amet, consectetur adipiscing
                                       elit. Proin a ipsum tellus. Interdum et malesuada
@@ -366,7 +368,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
 
 
                   <div className="widget experience-widget">
-                    <h4 className="widget-title">Memberships</h4>
+                    <h1 className="widget-title">Memberships</h1>
                     <div className="experience-box">
                       <ul className="experience-list">
                         {
@@ -393,7 +395,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                   </div>
 
                   <div className="service-list">
-                    <h4>Services</h4>
+                    <h1 className="widget-title">Services</h1>
                     <ul className="clearfix">
                       {
                         profile.specialitiesServices.map((s: string, i: number) => {
@@ -405,7 +407,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                     </ul>
                   </div>
                   {/* <div className="service-list">
-                    <h4>Specializations</h4>
+                    <h1>Specializations</h1>
                     <ul className="clearfix">
                       <li>Children Care</li>
                       <li>Dental Care</li>
@@ -423,11 +425,11 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                 <div className="row">
                   <div className="col-md-6">
                     <div className="clinic-content">
-                      <h4 className="clinic-name">
+                      <h1 className="clinic-name">
                         <Link href="" onClick={(e) => e.preventDefault()}>
                           {profile.clinicName}
                         </Link>
-                      </h4>
+                      </h1>
                       <p className="doc-speciality">
                         {profile?.specialities?.[0]?.description}
                       </p>
@@ -690,9 +692,9 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                 </div>
               </div>
               <div className="write-review">
-                <h4>
+                <h1>
                   Write a review for <strong>Dr. {profile?.firstName} {' '} {profile?.lastName}</strong>
-                </h4>
+                </h1>
                 <form noValidate onSubmit={handleSubmit(onSubmitReview)}>
                   <div className='form-group'>
                     <Controller

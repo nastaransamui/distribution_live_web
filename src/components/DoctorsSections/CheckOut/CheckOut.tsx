@@ -483,7 +483,7 @@ const Checkout: FC = (() => {
                   </div>
                   <div className="card-body">
                     <div className="booking-doc-info">
-                      <Link target="_blank" rel="noopener noreferrer" href={`/doctors/search/${btoa(profile?._id)}`} className="booking-doc-img">
+                      <Link target="_blank" aria-label='booking-doc' rel="noopener noreferrer" href={`/doctors/search/${btoa(profile?._id)}`} className="booking-doc-img">
                         <Avatar sx={{
                           width: 'auto',
                           height: 'auto',

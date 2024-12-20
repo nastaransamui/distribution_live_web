@@ -17,7 +17,7 @@ export const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-
 
 const ProfilePage: FC = (() => {
   const searchParams = useSearchParams();
-  const { bounce } = useScssVar();
+  const { bounce, muiVar } = useScssVar();
   const encryptID = searchParams.get('_id')
   const router = useRouter()
   const theme = useTheme();
@@ -67,7 +67,7 @@ const ProfilePage: FC = (() => {
   }, [encryptID, homeSocket, router, reload])
   return (
     <Fragment>
-      <div className="content">
+      <div className="content" style={muiVar}>
         <div className="container">
           <Fragment>
             {

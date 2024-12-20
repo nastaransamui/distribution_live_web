@@ -30,6 +30,7 @@ import { base64regex } from '@/components/DoctorsSections/Profile/ProfilePage';
 import _ from 'lodash'
 import { Transition } from '@/components/shared/Dialog';
 import isJsonString from '@/helpers/isJson';
+import { loadStylesheet } from '@/pages/_app';
 export function dayjsRange(start: Dayjs, end: Dayjs, unit: ManipulateType) {
   const range = [];
   let current = start;
@@ -80,6 +81,9 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
   const widthOnlyXs = useMediaQuery(theme.breakpoints.only('xs'));
   const minWidth767max991 = useMediaQuery('@media (min-width:767px) and (max-width: 991px)');
   const [loginDialog, setLoginDialog] = useState<boolean>(false)
+  useEffect(() => {
+    loadStylesheet('/css/react-multi-date-picker-bg-dark.min.css');
+  }, [])
   const availableDates = useMemo(() => {
     let days: any = []
 

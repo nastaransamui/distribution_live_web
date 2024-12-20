@@ -1,31 +1,26 @@
 
 //Styles
 import '@/styles/globals.css'
-import '@/styles/custom-bars.css';
+// import '@/styles/custom-bars.css';
 import '@/styles/component.css'
 import '@/styles/404.scss'
 import '@/styles/login.scss'
-// import '@/styles/scss/home-7.scss'
 import '@/styles/css/bootstrap.min.css'
-// import '@/styles/css/all.css'
 import '@/styles/css/all.min.css';
-// import '@/styles/css/fontawesome.css';
 import '@/styles/css/feather.css'
 import '@/styles/css/custom.css'
-import '@/styles/css/aos.css'
-import 'read-more-less-react/dist/index.css'
-import 'react-toastify/dist/ReactToastify.css';
-import 'animate.css';
-import 'owl.carousel/dist/assets/owl.carousel.css';
-import 'owl.carousel/dist/assets/owl.theme.default.css';
-import "yet-another-react-lightbox/styles.css";
-import 'react-big-calendar/lib/css/react-big-calendar.css'
-import 'react-date-range/dist/styles.css'; // main css file
-import 'react-date-range/dist/theme/default.css'; // theme css file
-import 'react-virtualized/styles.css';
-import "react-multi-date-picker/styles/backgrounds/bg-dark.css"
+// import '@/styles/css/aos.css'
+// import 'read-more-less-react/dist/index.css'
+// import 'react-toastify/dist/ReactToastify.css';
+// import 'animate.css';
+// import 'owl.carousel/dist/assets/owl.carousel.css';
+// import 'owl.carousel/dist/assets/owl.theme.default.css';
+// import "yet-another-react-lightbox/styles.css";
+// import 'react-big-calendar/lib/css/react-big-calendar.css'
+// import 'react-virtualized/styles.css';
+// import "react-multi-date-picker/styles/backgrounds/bg-dark.css"
 
-import "vanilla-cookieconsent/dist/cookieconsent.css";
+// import "vanilla-cookieconsent/dist/cookieconsent.css";
 //next
 import type { AppProps } from 'next/app'
 
@@ -54,10 +49,27 @@ export interface MyAppProps extends AppProps {
 
 const clientSideEmotionCache = createEmotionCache();
 
+export const loadStylesheet = (href: string) => {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = href;
+  link.media = 'print';
+  link.onload = () => (link.media = 'all');
+  document.head.appendChild(link);
+};
+
 const App = ({ Component, ...rest }: MyAppProps) => {
   const { store, props } = wrapper.useWrappedStore(rest);
   const { router, emotionCache = clientSideEmotionCache, pageProps } = props;
   useEffect(() => {
+    loadStylesheet('/css/owl.carousel.min.css');
+    loadStylesheet('/css/owl.theme.default.min.css');
+    loadStylesheet('/css/custom-bars.min.css');
+    loadStylesheet('/css/aos.css');
+    loadStylesheet('/css/read-more-less-react.min.css');
+    loadStylesheet('/css/ReactToastify.min.css')
+    loadStylesheet('/css/animate.min.css');
+    loadStylesheet('/css/cookieconsent.min.css')
     AOS.init({
       easing: "ease-out-cubic",
       once: true,

@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useState } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import Lightbox from "yet-another-react-lightbox";
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
@@ -13,6 +13,7 @@ import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import { ProfileImageStyledBadge } from '@/components/DoctorDashboardSections/MyPtients';
+import { loadStylesheet } from '@/pages/_app';
 
 
 
@@ -22,7 +23,10 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
   const [index, setIndex] = useState(0);
   const router = useRouter();
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  useEffect(() => {
 
+    loadStylesheet('/css/yet-another-react-lightbox-styles.css')
+  }, [])
   return (
     <Fragment>
       <Lightbox
@@ -61,7 +65,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                   </ProfileImageStyledBadge>
                 </div>
                 <div className="doc-info-cont">
-                  <h4 className="doc-name">Dr. {profile?.firstName} {" "} {profile?.lastName}</h4>
+                  <h1 className="doc-name">Dr. {profile?.firstName} {" "} {profile?.lastName}</h1>
                   <p className="doc-speciality">
                     {profile?.specialities?.[0]?.description}
                   </p>
@@ -124,7 +128,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                   </ul>
                 </div>
                 <div className="doctor-action">
-                  <Link href="" className="btn btn-white fav-btn" onClick={(e) => {
+                  <Link href="" aria-label='book-mark' className="btn btn-white fav-btn" onClick={(e) => {
                     e.preventDefault()
                     e.preventDefault();
                     if (userProfile) {
@@ -145,7 +149,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                   }}>
                     <i className="far fa-bookmark" />
                   </Link>
-                  <Link href="/chat-doctor" className="btn btn-white msg-btn" onClick={(e) => {
+                  <Link href="/chat-doctor" aria-label='chat' className="btn btn-white msg-btn" onClick={(e) => {
                     e.preventDefault();
                     if (userProfile) {
                       // console.log(userProfile)
@@ -168,6 +172,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
 
                   <Link
                     href="#"
+                    aria-label='call'
                     className="btn btn-white call-btn"
                     // data-bs-toggle="modal"
                     // data-bs-target="#voice_call"
@@ -197,6 +202,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                   <Link
                     href="#"
                     className="btn btn-white call-btn"
+                    aria-label='video-call'
                     // data-bs-toggle="modal"
                     // data-bs-target="#video_call"
                     onClick={(e) => {
@@ -234,7 +240,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                       // profile
                       if (userProfile) {
                         if (profile?.timeslots.length > 0) {
-                          router.push(`/doctors/search/${btoa(profile?._id)}`)
+                          router.push(`/doctors/booking/${btoa(profile?._id)}`)
                         }
                       } else {
                         toast.error(`Login to make booking with this doctor.`, {
@@ -279,8 +285,11 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                     <div className="call-user">
                       <img
                         alt=""
-                        src={profile?.profileImage == '' ? doctors_profile : profile?.profileImage}
+                        src={profile?.profileImage || doctors_profile}
                         className="call-avatar"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = doctors_profile; // Set fallback image
+                        }}
                       />
                       <h4>Dr. {profile?.firstName} {" "} {profile?.lastName}</h4>
                       <span>Connecting...</span>
@@ -316,9 +325,12 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                   <div className="call-inner">
                     <div className="call-user">
                       <img
-                        className="call-avatar"
-                        src={profile?.profileImage == '' ? doctors_profile : profile?.profileImage}
                         alt=""
+                        src={profile?.profileImage || doctors_profile}
+                        className="call-avatar"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = doctors_profile; // Set fallback image
+                        }}
                       />
                       <h4>Dr. {profile?.firstName} {" "} {profile?.lastName}</h4>
                       <span>Calling ...</span>

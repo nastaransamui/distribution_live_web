@@ -3726,10 +3726,13 @@ button.bg-danger:hover {
 
 .avatar {
   position: relative;
-  display: inline-block;
   width: 3rem;
   height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
 
 .avatar > img {
   width: 100%;
@@ -17662,6 +17665,7 @@ call-btn:focus {
 
 .widget-title {
   margin-bottom: 15px;
+  font-size: 18px;
 }
 
 .experience-box {
@@ -17708,7 +17712,8 @@ call-btn:focus {
   background-color: var(--bgDefault);
   position: relative;
   margin: 0 0 20px 40px;
-  padding: 0;
+  padding: 10px;
+  border-radius: 8px;
 }
 
 .experience-list > li .experience-content .timeline-content {

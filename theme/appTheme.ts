@@ -395,7 +395,6 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
               fontSize: "16px",
               fontWeight: 600,
               textTransform: "uppercase",
-              fontFamily: "Roboto",
               letterSpacing: "0.07em",
               borderRadius: "6px",
               boxShadow: "0px 12px 20px 0px rgba(123, 140, 210, 0.3)",

@@ -20,8 +20,9 @@ import { PatientProfile } from './MyPtients';
 import Link from 'next/link';
 import { StyledBadge } from './ScheduleTiming';
 import Avatar from "@mui/material/Avatar";
-import { doctors_profile } from '@/public/assets/imagepath';
+import { patient_profile } from '@/public/assets/imagepath';
 import Typography from '@mui/material/Typography';
+import { loadStylesheet } from '@/pages/_app';
 
 export interface EditValueType {
   start: Date;
@@ -45,6 +46,10 @@ const AvailableTiming: FC = (() => {
   const onView = useCallback((newView: any) => setView(newView), [setView])
   const [show, setShow] = useState(false);
   const [editValues, setEditValues] = useState<EditValueType>();
+
+  useEffect(() => {
+    loadStylesheet('/css/react-big-calendar.min.css')
+  }, [])
 
   useEffect(() => {
     let isActive = true;
@@ -307,7 +312,7 @@ const AvailableTiming: FC = (() => {
                 online={editValues?.patientProfile?.online as boolean}
               >
                 <Avatar alt="" src={`${editValues?.patientProfile?.profileImage}?random=${new Date().getTime()}`} >
-                  <img src={doctors_profile} alt="" className="avatar" />
+                  <img src={patient_profile} alt="" className="avatar" />
                 </Avatar>
               </StyledBadge>
             </Link>
@@ -321,7 +326,7 @@ const AvailableTiming: FC = (() => {
                   color: theme.palette.secondary.light
                 }
               }} href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
-              {`${editValues?.patientProfile?.gender}. ${editValues?.patientProfile?.firstName} ${editValues?.patientProfile?.lastName}`}
+              {`${editValues?.patientProfile?.gender} ${editValues?.patientProfile?.firstName} ${editValues?.patientProfile?.lastName}`}
             </Typography>
           </BootstrapDialogTitle>
           <DialogContent dividers>

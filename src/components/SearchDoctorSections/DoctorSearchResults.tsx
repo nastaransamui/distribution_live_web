@@ -85,6 +85,7 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
 import { ProfileImageStyledBadge } from '../DoctorDashboardSections/MyPtients';
+import { loadStylesheet } from '@/pages/_app';
 export interface DoctorSearchResultsPropsType {
   doctorResults: DoctorProfileType[];
   totalDoctors: number;
@@ -153,6 +154,10 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   // remove blinking image 
   const [imageTimestamp, setImageTimestamp] = useState(new Date().getTime());
+
+  useEffect(() => {
+    loadStylesheet('/css/react-virtualized-styles.min.css')
+  }, [])
 
   // Update the timestamp only when the profile image URL changes
   useEffect(() => {
@@ -415,7 +420,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
     const doctor = doctorResults[index];
     //@ts-ignore
     let { years, } = dayjs.preciseDiff(doctor?.dob, dayjs(), true)
-    let shareUrl = `${process.env.NEXT_PUBLIC_webUrl}/doctors/search/${btoa(doctor?._id)}`
+    let shareUrl = `${process.env.NEXT_PUBLIC_webUrl}/doctors/profile/${btoa(doctor?._id)}`
     const title = `Dr. ${doctor?.firstName} ${doctor?.lastName}`;
     return (
       <div key={key} style={{ ...style }} role="row">
@@ -469,7 +474,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                         left: '5%'
                       }
                     }}>
-                      <Link href={`/doctors/search/${btoa(doctor?._id)}`} aria-label='doctor single'>
+                      <Link href={`/doctors/profile/${btoa(doctor?._id)}`} aria-label='doctor single'>
                         <ProfileImageStyledBadge
                           overlap="circular"
                           anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
@@ -527,7 +532,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                       transition: theme.transitions.create('all', { duration: 200, }),
                     }}>
                       <Typography component="div" variant="h5" sx={{ wordBreak: 'break-all', fontSize: '1.2rem' }}>
-                        <Link href={`/doctors/search/${btoa(doctor?._id)}`}>
+                        <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
                           Dr. {doctor?.firstName} {" "} {doctor?.lastName}
                         </Link>
                         &nbsp;
@@ -697,7 +702,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                       <div className="clinic-booking book-appoint">
                         <Button
                           className={doctor?.timeslots.length > 0 ? "btn btn-primary-light" : 'btn-primary-light-disabled'}
-                          href={`/doctors/search/${btoa(doctor?._id)}`}
+                          href={`/doctors/profile/${btoa(doctor?._id)}`}
                           disabled={doctor?.timeslots.length == 0}
                         >
                           Book Appointment
@@ -937,7 +942,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
     let index = rowIndex * columnCount + columnIndex
     const doctor = doctorResults[index];
     const doctorName = `Dr. ${doctor?.firstName} ${doctor?.lastName}`
-    let shareUrl = `${process.env.NEXT_PUBLIC_webUrl}/doctors/search/${btoa(doctor?._id)}`
+    let shareUrl = `${process.env.NEXT_PUBLIC_webUrl}/doctors/profile/${btoa(doctor?._id)}`
     return (
       <div key={key} style={style} >
         {
@@ -983,7 +988,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                           </Avatar>
                         }
                         title={<h6 className="doc-name">
-                          <Link href={`/doctors/search/${btoa(doctor?._id)}`}>
+                          <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
                             {doctorName.slice(0, 18)}{doctorName.length > 18 ? '...' : ''}
                           </Link>
                         </h6>}
@@ -992,25 +997,33 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                     </span>
                   </Tooltip>
                 </Fragment>
+                <Link href={`/doctors/profile/${btoa(doctor?._id)}`} aria-label='doctor single'>
+                  <ProfileImageStyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                    variant="dot"
+                    online={doctor.online as boolean}
+                  >
+                    <Avatar sx={{
+                      width: '100%',
+                      height: 'auto',
+                      borderRadius: '5px',
+                      transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
+                      "&:hover": {
+                        boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+                        transform: "scale(1.15)",
+                      },
 
-                <Avatar sx={{
-                  width: 'auto',
-                  height: 'auto',
-                  borderRadius: '5px',
-                  transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
-                  "&:hover": {
-                    boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
-                    transform: "scale(1.15)",
-                  },
-
-                }}
-                  variant="square"
-                  alt=""
-                  src={`${doctor?.profileImage}?random=${imageTimestamp}`}
-                  key={doctor?.profileImage}
-                >
-                  <img className="img-fluid" src={doctors_profile} alt="" />
-                </Avatar>
+                    }}
+                      variant="square"
+                      alt=""
+                      src={`${doctor?.profileImage}?random=${imageTimestamp}`}
+                      key={doctor?.profileImage}
+                    >
+                      <img className="img-fluid" src={doctors_profile} alt="" />
+                    </Avatar>
+                  </ProfileImageStyledBadge>
+                </Link>
                 <CardContent
                   sx={{
                     bgcolor: theme.palette.background.paper,
@@ -1337,7 +1350,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                                   <div className="clinic-booking book-appoint">
                                     <Button
                                       className={doctor?.timeslots.length > 0 ? "btn btn-primary-light" : 'btn-primary-light-disabled'}
-                                      href={`/doctors/search/${btoa(doctor?._id)}`}
+                                      href={`/doctors/profile/${btoa(doctor?._id)}`}
                                       disabled={doctor?.timeslots.length == 0}
                                     >
                                       Book Appointment

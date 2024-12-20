@@ -12,6 +12,7 @@ import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import throttle from 'lodash/throttle';
 import ScrollToTop from '@/components/sections/ScrollToTop';
 import { DoctorsTimeSlotType } from '../DoctorDashboardSections/ScheduleTiming';
+
 export interface ClinicImagesType {
   src: string;
   width: number;
@@ -211,6 +212,8 @@ const SearchDoctorSection: FC = (() => {
 
 
   useEffect(() => {
+
+
     let active = true;
     if (active && homeSocket?.current) {
       fetch(keyWord,

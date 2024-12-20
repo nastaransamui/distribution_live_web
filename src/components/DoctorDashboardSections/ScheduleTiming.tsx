@@ -67,6 +67,7 @@ import CustomNoRowsOverlay from '@/shared/CustomNoRowsOverlay';
 import { useSearchParams } from 'next/navigation';
 import { base64regex } from '../DoctorsSections/Profile/ProfilePage';
 import isJsonString from '@/helpers/isJson';
+import { loadStylesheet } from '@/pages/_app';
 
 export const StyledBadge = styled(Badge, {
   shouldForwardProp: (prop) => prop !== 'online'
@@ -237,7 +238,9 @@ const ScheduleTiming: FC = (() => {
   const widthOnlyXs = useMediaQuery(theme.breakpoints.only('xs'));
   const minWidth767max991 = useMediaQuery('@media (min-width:767px) and (max-width: 991px)');
 
-
+  useEffect(() => {
+    loadStylesheet('/css/react-multi-date-picker-bg-dark.min.css');
+  }, [])
   useEffect(() => {
     if (searchParams.get('filters') !== null) {
       if (base64regex.test(searchParams.get('filters') as string)) {
@@ -756,14 +759,13 @@ const ScheduleTiming: FC = (() => {
 
                                 <div className='form-group'>
                                   <FormControl fullWidth >
-                                    <InputLabel size='small' >Timing Slot Duration</InputLabel>
+                                    <InputLabel size='small' htmlFor={`${timeSlot[calendar[0].format('DDMMYYYY')]} ${calendar[0]} ${calendar[1]}`} >Timing Slot Duration</InputLabel>
 
                                     <Select
                                       inputProps={{
                                         name: `${timeSlot[calendar[0].format('DDMMYYYY')]} ${calendar[0]} ${calendar[1]}`,
                                         id: `${timeSlot[calendar[0].format('DDMMYYYY')]} ${calendar[0]} ${calendar[1]}`,
                                       }}
-                                      id={`${timeSlot[calendar[0].format('DDMMYYYY')]} ${calendar[0]} ${calendar[1]}`}
                                       labelId={`${timeSlot[calendar[0].format('DDMMYYYY')]} ${calendar[0]} ${calendar[1]}`}
                                       variant='outlined'
                                       value={timeSlot[calendar[0].format('DDMMYYYY')] ? `${timeSlot[calendar[0].format('DDMMYYYY')]}` : `60`}
@@ -1541,6 +1543,7 @@ const ScheduleTiming: FC = (() => {
             transition: bounce,
             onClose: () => {
               dispatch(updateHomeFormSubmit(false))
+              console.log('first')
               router.push({ pathname: router.asPath }, undefined, { scroll: false, shallow: true })
               if (newDoctorRecord) {
                 setDoctorAvailableTimeSlot({ ...newDoctorRecord })
@@ -1753,12 +1756,12 @@ const ScheduleTiming: FC = (() => {
         headerAlign: 'center',
         valueFormatter(params: GridValueFormatterParams) {
           const { value } = params
-          return `${value.gender}.${value?.firstName} ${value?.lastName}`
+          return `${value.gender} ${value?.firstName} ${value?.lastName}`
         },
         renderCell: (params: GridRenderCellParams) => {
           const { row, formattedValue } = params;
           const profileImage = row?.patientProfile?.profileImage == '' ? patient_profile : row?.patientProfile?.profileImage
-          const online = row?.patientStatus?.online || false
+          const online = row?.patientStatus?.online || false;
           return (
             <>
               <Link className="avatar mx-2" href="" onClick={(e) => e.preventDefault()}>
@@ -1769,7 +1772,7 @@ const ScheduleTiming: FC = (() => {
                   online={online}
                 >
                   <Avatar alt="" src={`${profileImage}?random=${new Date().getTime()}`} >
-                    <img src={patient_profile} alt="" className="avatar" />
+                    <img src={patient_profile} alt="" className="avatar avatar-in-schedule-table" />
                   </Avatar>
                 </StyledBadge>
               </Link>
