@@ -14,12 +14,12 @@ const ResultLeft: FC = (() => {
         <StickyBox offsetTop={20} offsetBottom={20}>
           <div className="card search-filter">
             <div className="card-header">
-              <h4 className="card-title mb-0">Filter</h4>
+              <h1 className="card-title mb-0">Filter</h1>
             </div>
             <div className="card-body">
 
               <div className="filter-widget">
-                <h4>Categories</h4>
+                <h2>Categories</h2>
                 <div>
                   <label className="custom_check">
                     <input type="checkbox" name="gender_type" defaultChecked />

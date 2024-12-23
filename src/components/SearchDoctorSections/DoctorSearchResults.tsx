@@ -1582,7 +1582,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
             <div className="col-md-12">
               <div className="account-content">
                 <div className="col-md-12 col-lg-12 login-right">
-                  <LoginBox />
+                  <LoginBox closeDialog={setLoginDialog} />
                 </div>
               </div>
             </div>

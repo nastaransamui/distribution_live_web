@@ -17,7 +17,7 @@ const Summary: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
         <div className="card">
           <div className="card-body">
             <div className="booking-doc-info">
-              <Link href={`/doctors/search/${btoa(profile?._id)}`} className="booking-doc-img">
+              <Link href={`/doctors/search/${btoa(profile?._id)}`} className="booking-doc-img" aria-label='search'>
                 <Avatar sx={{
                   width: 'auto',
                   height: 'auto',
@@ -34,11 +34,11 @@ const Summary: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                 </Avatar>
               </Link>
               <div className="booking-info">
-                <h4>
+                <h1 style={{ fontSize: '18px' }}>
                   <Link href={`/doctors/search/${btoa(profile?._id)}`}>
                     Dr. {profile?.firstName} {" "} {profile?.lastName}
                   </Link>
-                </h4>
+                </h1>
                 <p className="doc-speciality">
                   {profile?.specialities?.[0]?.specialities}
                 </p>

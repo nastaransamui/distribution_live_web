@@ -206,6 +206,11 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
             : palette[color].palette.primary.dark
         };
       }
+
+      //calender
+      .rmdp-week .rmdp-day span{
+  background-color: ${mode === "dark" ? "#000000" : "#fff"};
+}
     `,
       },
       MuiInput: {

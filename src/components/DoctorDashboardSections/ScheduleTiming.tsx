@@ -1543,7 +1543,6 @@ const ScheduleTiming: FC = (() => {
             transition: bounce,
             onClose: () => {
               dispatch(updateHomeFormSubmit(false))
-              console.log('first')
               router.push({ pathname: router.asPath }, undefined, { scroll: false, shallow: true })
               if (newDoctorRecord) {
                 setDoctorAvailableTimeSlot({ ...newDoctorRecord })

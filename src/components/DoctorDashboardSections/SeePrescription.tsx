@@ -44,6 +44,7 @@ const SeePrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProfi
           <div className="card-header" style={{ display: 'flex' }}>
             <h4 className="card-title mb-0">Prescription</h4>
             <a href="" className="link"
+              aria-label='back'
               onClick={(e) => {
                 e.preventDefault();
                 router.back()
@@ -91,7 +92,7 @@ const SeePrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProfi
                                 <FormControl fullWidth>
                                   <TextField
                                     required
-                                    id={'medicine'}
+                                    id={`medicine${index}`}
                                     autoComplete='off'
                                     value={data?.medicine}
                                     label="Medicine"
@@ -105,7 +106,7 @@ const SeePrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProfi
                                 <FormControl fullWidth>
                                   <TextField
                                     required
-                                    id="quantity"
+                                    id={`quantity${index}`}
                                     autoComplete='off'
                                     value={data.quantity}
                                     label="Quantity"
@@ -120,7 +121,7 @@ const SeePrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProfi
                                   <TextField
                                     required
                                     multiline
-                                    id="description"
+                                    id={`description-${index}`}
                                     autoComplete='off'
                                     value={data.description}
                                     label="Description"

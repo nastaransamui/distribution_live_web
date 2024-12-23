@@ -49,7 +49,6 @@ const Checkout: FC = (() => {
   const theme = useTheme();
   const [reload, setReload] = useState<boolean>(false)
   const [termsDialog, setTermsDialog] = useState<boolean>(false)
-  const [paypalDeferLoading, setPaypalDeferLoading] = useState<boolean>(true)
   const [profile, setProfile] = useState<DoctorProfileType | null>(null);
   const [paymentInfo, setPaymentInfo] = useState<any>({
     totalPriceStatus: 'FINAL',
@@ -323,6 +322,7 @@ const Checkout: FC = (() => {
                                 return (
                                   <TextField
                                     required
+                                    autoComplete='email'
                                     id='email'
                                     label="Email"
                                     size='small'

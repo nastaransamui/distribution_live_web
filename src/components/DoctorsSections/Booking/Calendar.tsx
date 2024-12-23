@@ -114,7 +114,7 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
       if (dayjs(date.format('')).isSame(dayjs(a).format(''), 'day')) {
         props.style = {
           ...props.style,
-          color: isWeekend ? 'red' : theme.palette.primary.contrastText,
+          color: isWeekend ? 'crimson' : theme.palette.primary.contrastText,
           backgroundColor: theme.palette.primary.light,
           fontWeight: "bold",
           border: `1px solid ${theme.palette.secondary.main}`
@@ -223,7 +223,31 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
     router.push(url, undefined, { shallow: true, scroll: false })
 
   }
+  useEffect(() => {
+    const fixAccessibility = () => {
+      const dialog = document.querySelector('[role="dialog"]');
+      if (dialog && !dialog.getAttribute("aria-label")) {
+        dialog.setAttribute("aria-label", "Calendar");
+      }
+      // prohibited ARIA attributes
+      const invalidElements = document.querySelectorAll(".rmdp-day[aria-label]");
+      invalidElements.forEach((el) => {
+        // Check if the element has invalid attributes
+        if (el.classList.contains("rmdp-day-hidden")) {
+          el.removeAttribute("aria-label");
+        }
+      });
+    };
 
+    // Run the patch after the component renders
+    fixAccessibility();
+
+    // Re-run if the dialog is re-rendered
+    const observer = new MutationObserver(fixAccessibility);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <Fragment>
@@ -246,7 +270,7 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
             <div className="col-md-12">
               <div className="account-content">
                 <div className="col-md-12 col-lg-12 login-right">
-                  <LoginBox />
+                  <LoginBox closeDialog={setLoginDialog} />
                 </div>
               </div>
             </div>
@@ -258,47 +282,8 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
       </Dialog>
       <div className="col-lg-12 col-md-12" style={muiVar}>
         <div className="booking-header">
-          <h4 className="booking-title">Select Available Slots</h4>
+          <h1 className="booking-title">Select Available Slots</h1>
         </div>
-        {/* <div className="row">
-          <div className="col-12 col-sm-4 col-md-6">
-            <h4 className="mb-1">{dayjs(state[0]['startDate']).add(activeDayIndex, 'day').format(`MMMM D, YYYY`)}</h4>
-            <p className="text-muted">{dayjs(state[0]['startDate']).add(activeDayIndex, 'day').format('dddd')}</p>
-          </div>
-          <div className="col-12 col-sm-8 col-md-6 text-sm-end">
-            <TextField
-              type="text"
-              sx={{ width: 332, }}
-              disabled
-              value={`${dayjs(state[0]['startDate']).format(`MMM D, YYYY`)} - ${dayjs(state[0]['endDate']).format(`MMM D, YYYY`)}`}
-              InputProps={{
-                endAdornment: <InputAdornment position="end" onClick={() => {
-                  setShowDayPicker((prevState) => !prevState)
-                }}>
-                  <div className=" btn">
-                    <i className="far fa-calendar-alt me-2"></i>
-                    <i className="fas fa-chevron-down ms-2"></i>
-                  </div>
-                </InputAdornment>
-              }}
-            />
-            <div className={` ${showDayPicker ? 'datepicker-icon-show' : 'datepicker-icon'}`}>
-              <DateRangePicker
-                className="rdrDateRangePickerWrapper"
-                onChange={(item: any) => setState([item.selection])}
-                showDateDisplay={true}
-                editableDateInputs={true}
-                moveRangeOnFirstSelection={false}
-                months={1}
-                ranges={state}
-                direction="horizontal"
-                minDate={new Date()}
-                maxDate={addDays(new Date(), 7)}
-                rangeColors={[theme.palette.primary.main]}
-              />
-            </div>
-          </div>
-        </div> */}
         <div className="card booking-card">
           <div className="card-body time-slot-card-body">
             <div className="schedule-header">
@@ -313,24 +298,17 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                       format='DD MMM YYYY'
                       className={theme.palette.mode == 'dark' ? 'bg-dark yellow' : 'bg-light  yellow'}
                       mapDays={calendarMapDays}
+                      renderButton={(direction: string, handleClick: () => void) => (
+                        <button
+                          type="button"
+                          className={`rmdp-arrow-container rmdp-${direction}`}
+                          aria-label={direction === "left" ? "Previous month" : "Next month"}
+                          onClick={handleClick}
+                        >
+                          <i className="rmdp-arrow"></i>
+                        </button>
+                      )}
                     />
-                    {/* <ul>
-                      {
-                        [...Array(dayjs(state[0]['endDate']).diff(dayjs(state[0]['startDate']), 'day', true))].map((d, index) => {
-                          return (
-                            <li style={{ width: `${100 / [...Array(dayjs(state[0]['endDate']).diff(dayjs(state[0]['startDate']), 'day', true))].length}%` }} className={activeDayIndex == index ? 'active' : ''} key={index}
-                              onClick={() => {
-                                setActiveDayIndex(() => index)
-                              }}>
-                              <span>
-                                {dayjs(state[0]['startDate']).add(index, 'day').format('dddd')}
-                              </span>
-                              <span className="slot-date">{dayjs(state[0]['startDate']).add(index, 'day').format(`D MMM`)}</span>
-                            </li>
-                          )
-                        })
-                      }
-                    </ul> */}
                   </div>
                 </div>
               </div>

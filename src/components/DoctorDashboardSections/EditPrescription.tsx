@@ -125,7 +125,7 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
         <div className="card">
           <div className="card-header" style={{ display: 'flex' }}>
             <h4 className="card-title mb-0">Edit Prescription</h4>
-            <a href="" className="link"
+            <a href="" className="link" aria-label='back'
               onClick={(e) => {
                 e.preventDefault();
                 router.back()
@@ -177,7 +177,7 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
                                 <FormControl fullWidth>
                                   <TextField
                                     required
-                                    id={'medicine'}
+                                    id={`medicine${index}`}
                                     autoComplete='off'
                                     error={errors?.['prescriptionsArray']?.[index]?.['medicine'] == undefined ? false : true}
                                     helperText={errors?.['prescriptionsArray']?.[index]?.['medicine'] && errors?.['prescriptionsArray']?.[index]?.['medicine']?.['message'] as ReactNode}
@@ -197,7 +197,7 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
                                 <FormControl fullWidth>
                                   <TextField
                                     required
-                                    id="quantity"
+                                    id={`quantity${index}`}
                                     onKeyDown={(e) => {
                                       const allowKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Tab', 'Backspace', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight', 'Home', 'End', '-']
                                       if (!allowKeys.includes(e.key)) {
@@ -225,7 +225,7 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
                                   <TextField
                                     required
                                     multiline
-                                    id="description"
+                                    id={`description-${index}`}
                                     autoComplete='off'
                                     error={errors?.['prescriptionsArray']?.[index]?.['description'] == undefined ? false : true}
                                     helperText={errors?.['prescriptionsArray']?.[index]?.['description'] && errors?.['prescriptionsArray']?.[index]?.['description']?.['message'] as ReactNode}

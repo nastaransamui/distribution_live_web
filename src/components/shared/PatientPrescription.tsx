@@ -235,93 +235,8 @@ const PatientPrescription: FC<PatientSidebarDoctorTypes> = (({ userType, doctorP
   )
 
 
-  // const matches = useMediaQuery(theme.breakpoints.down('lg'));
-  const router = useRouter();
 
-  //   {
-  //     field: 'id',
-  //     headerName: "ID",
-  //     width: 50,
-  //     headerAlign: 'center',
-  //     align: 'center',
-  //   },
-  //   {
-  //     field: 'date',
-  //     headerName: "Date",
-  //     width: 200,
-  //     headerAlign: 'center',
-  //     align: 'center',
-  //     renderCell: (data: any) => {
-  //       const { row } = data;
-  //       return (
-  //         <>
-  //           <Stack >
-  //             <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.date).format(`MMM D, YYYY`)}</span>
-  //             <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.date).format(` h:mm A`)}</span>
-  //           </Stack>
-  //         </>
-  //       )
-  //     }
-  //   },
-  //   {
-  //     field: 'name',
-  //     headerName: "Name",
-  //     width: 150,
-  //     headerAlign: 'center',
-  //     align: 'center',
-  //   },
-  //   {
-  //     field: 'doctorName',
-  //     headerName: "Doctor Name",
-  //     width: 200,
-  //     headerAlign: 'left',
-  //     align: 'left',
-  //     renderCell: (data: any) => {
-  //       const { row } = data;
-  //       return (
-  //         <>
-  //           <span className="avatar avatar-sm me-2">
-  //             <img className="avatar-img rounded-circle" src={row.doctorImage} alt="User Image" />
-  //           </span>
-  //           <Stack >
-  //             <Link href="/doctors/search" style={{ marginBottom: -20, zIndex: 1 }}>{row.doctorName}</Link><br />
-  //             <small>  {row.speciality}</small>
-  //           </Stack>
-  //         </>
-  //       )
-  //     },
-  //   },
-  //   {
-  //     field: "actions",
-  //     type: 'actions',
-  //     headerName: "Action",
-  //     headerAlign: 'center',
-  //     flex: matches ? 0 : 1,
-  //     getActions: (params: GridRowParams) => {
-  //       if (userType == 'patient') {
-  //         return [
-  //           <GridActionsCellItem key={params.row.toString()} icon={<i className="fas fa-print" style={{ color: theme.palette.primary.main }}></i>} label="Print" />,
-  //           <GridActionsCellItem onClick={() => {
-  //             router.push('/patient/dashboard/see-prescription')
-  //           }} key={params.row.toString()} icon={<i className="far fa-eye" style={{ color: theme.palette.secondary.main }}></i>} label="View" />,
-  //         ]
-  //       } else {
-  //         return [
-  //           <GridActionsCellItem key={params.row.toString()} icon={<i className="fas fa-print" style={{ color: theme.palette.primary.main }}></i>} label="Print" />,
-  //           <GridActionsCellItem key={params.row.toString()} icon={
-  //             <Edit sx={{ color: theme.palette.primary.main }} />} onClick={() => {
-  //               router.push('/doctors/dashboard/editprescription')
-  //             }} label="Edit" />,
-  //           <GridActionsCellItem key={params.row.toString()} icon={<i className="far fa-eye" style={{ color: theme.palette.secondary.main }}></i>} label="View" />,
-  //         ]
-  //       }
-  //     }
-  //   }
-  // ]
-  // const [prisPaginationModel, setPrisPaginationModel] = useState({
-  //   pageSize: 5,
-  //   page: 0,
-  // });
+  const router = useRouter();
   const columns: GridColDef[] = useMemo(() => {
     return [
       {
@@ -385,7 +300,7 @@ const PatientPrescription: FC<PatientSidebarDoctorTypes> = (({ userType, doctorP
           const online = row?.doctorProfile?.online || false
           return (
             <>
-              <Link className="mx-2" target='_blank' href={`/doctors/search/${btoa(row.doctorId)}`}>
+              <Link className="mx-2" target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`}>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -397,7 +312,7 @@ const PatientPrescription: FC<PatientSidebarDoctorTypes> = (({ userType, doctorP
                   </Avatar>
                 </StyledBadge>
               </Link>
-              <Link target='_blank' href={`/doctors/search/${btoa(row.doctorId)}`}
+              <Link target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`}
                 style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
                 {formattedValue}
               </Link>

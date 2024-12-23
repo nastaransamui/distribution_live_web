@@ -39,13 +39,13 @@ const CartTable: FC = (() => {
                     <div className="custom-increment cart">
                       <div className="input-group1">
                         <span className="input-group-btn">
-                          <button type="button" className="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field>
+                          <button type="button" className="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field aria-label='minus'>
                             <span><i className="fas fa-minus" /></span>
                           </button>
                         </span>
-                        <input type="text" id="quantity1" name="quantity1" className=" input-number" defaultValue={10} />
+                        <input type="text" id="quantity1" name="quantity1" className=" input-number" defaultValue={10} aria-label='amount' />
                         <span className="input-group-btn">
-                          <button type="button" className="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field>
+                          <button type="button" className="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field aria-label='plus'>
                             <span><i className="fas fa-plus" /></span>
                           </button>
                         </span>
@@ -73,13 +73,13 @@ const CartTable: FC = (() => {
                     <div className="custom-increment cart">
                       <div className="input-group1">
                         <span className="input-group-btn">
-                          <button type="button" className="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field>
+                          <button type="button" className="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field aria-label='minus'>
                             <span><i className="fas fa-minus" /></span>
                           </button>
                         </span>
-                        <input type="text" id="quantity2" name="quantity2" className=" input-number" defaultValue={10} />
+                        <input type="text" id="quantity2" name="quantity2" className=" input-number" defaultValue={10} aria-label='amount' />
                         <span className="input-group-btn">
-                          <button type="button" className="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field>
+                          <button type="button" className="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field aria-label='plus'>
                             <span><i className="fas fa-plus" /></span>
                           </button>
                         </span>
@@ -107,13 +107,13 @@ const CartTable: FC = (() => {
                     <div className="custom-increment cart">
                       <div className="input-group1">
                         <span className="input-group-btn">
-                          <button type="button" className="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field>
+                          <button type="button" className="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field aria-label='minus'>
                             <span><i className="fas fa-minus" /></span>
                           </button>
                         </span>
-                        <input type="text" id="quantity3" name="quantity3" className=" input-number" defaultValue={10} />
+                        <input type="text" id="quantity3" name="quantity3" className=" input-number" defaultValue={10} aria-label='amount' />
                         <span className="input-group-btn">
-                          <button type="button" className="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field>
+                          <button type="button" className="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field aria-label='plus'>
                             <span><i className="fas fa-plus" /></span>
                           </button>
                         </span>
@@ -140,13 +140,13 @@ const CartTable: FC = (() => {
                     <div className="custom-increment cart">
                       <div className="input-group1">
                         <span className="input-group-btn">
-                          <button type="button" className="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field>
+                          <button type="button" className="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field aria-label='minus'>
                             <span><i className="fas fa-minus" /></span>
                           </button>
                         </span>
-                        <input type="text" id="quantity4" name="quantity4" className=" input-number" defaultValue={10} />
+                        <input type="text" id="quantity4" name="quantity4" className=" input-number" defaultValue={10} aria-label='amount' />
                         <span className="input-group-btn">
-                          <button type="button" className="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field>
+                          <button type="button" className="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field aria-label='plus'>
                             <span><i className="fas fa-plus" /></span>
                           </button>
                         </span>
@@ -174,13 +174,13 @@ const CartTable: FC = (() => {
                     <div className="custom-increment cart">
                       <div className="input-group1">
                         <span className="input-group-btn">
-                          <button type="button" className="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field>
+                          <button type="button" className="quantity-left-minus btn btn-danger btn-number" data-type="minus" data-field aria-label='minus'>
                             <span><i className="fas fa-minus" /></span>
                           </button>
                         </span>
-                        <input type="text" id="quantity5" name="quantity5" className=" input-number" defaultValue={10} />
+                        <input type="text" id="quantity5" name="quantity5" className=" input-number" defaultValue={10} aria-label='amount' />
                         <span className="input-group-btn">
-                          <button type="button" className="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field>
+                          <button type="button" className="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field aria-label='plus'>
                             <span><i className="fas fa-plus" /></span>
                           </button>
                         </span>

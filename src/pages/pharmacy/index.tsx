@@ -20,7 +20,7 @@ import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import { LazyLoadWrapper } from '..';
-
+import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 
 const PharmacyPage: NextPage = () => {
 
@@ -45,6 +45,7 @@ const PharmacyPage: NextPage = () => {
           <HomeBookDoctor />
           <Footer />
         </LazyLoadWrapper>
+        <CookieConsentComponent />
       </div>
     </>
   )

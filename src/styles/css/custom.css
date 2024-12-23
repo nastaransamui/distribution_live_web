@@ -22241,7 +22241,8 @@ span.call-duration.float-end {
   margin-bottom: 20px;
 }
 
-.filter-widget h4 {
+.filter-widget h4,
+.filter-widget h2 {
   font-size: 1rem;
   margin-bottom: 15px;
 }
@@ -38646,6 +38647,7 @@ ul.benifits-col li i {
   font-weight: 500;
   font-size: 18px;
   margin-bottom: 0;
+  color: var(--secondaryMain);
 }
 
 @media (max-width: 767.98px) {
@@ -42835,6 +42837,10 @@ input:checked + .tog-slider:before {
 
 .booking-date {
   padding-bottom: 30px;
+  display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
 }
 
 .booking-date p {
@@ -43689,7 +43695,12 @@ svg.feather {
   border: 1px solid var(--color);
   margin-bottom: 10px;
   border-radius: 15px;
+  background-color: var(--bgPaper);
 }
+.bg-dark .rmdp-day:not(.rmdp-deactive), .bg-dark .rmdp-header-values, .bg-dark .rmdp-panel-header, .bg-dark .rmdp-time-picker div .rmdp-am{
+  color: var(--color) !important;
+}
+
 .rmdp-day-picker {
   justify-content: space-evenly;
 }

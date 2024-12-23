@@ -78,9 +78,12 @@ const LoginSection: FC = (() => {
   )
 });
 
+type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
+export interface LoginBoxType {
+  closeDialog?: SetState<boolean>;
+}
 
-
-export const LoginBox: FC = (() => {
+export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
   const { muiVar, bounce } = useScssVar();
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [openUserType, setOpenUserType] = useState<boolean>(false)
@@ -123,6 +126,9 @@ export const LoginBox: FC = (() => {
       if (homeSocket?.current) {
         homeSocket.current.emit('loginFormSubmit', data)
         homeSocket.current.once('loginFormReturn', (msg: any) => {
+          if (closeDialog) {
+            closeDialog(false);
+          }
           if (msg?.status !== 200) {
             //Handle logout other users
             if (msg?.status == 410) {
@@ -318,6 +324,9 @@ export const LoginBox: FC = (() => {
         homeSocket.current.emit('googleLoginSubmit', data)
         homeSocket.current.once('googleLoginReturn', (msg: any) => {
           setUserType('')
+          if (closeDialog) {
+            closeDialog(false);
+          }
           if (msg?.status !== 200) {
             //Handle logout other users
             if (msg?.status == 410) {

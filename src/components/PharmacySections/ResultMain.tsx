@@ -29,10 +29,14 @@ const ResultMain: FC = (() => {
               <span className="sortby-fliter">
                 <FormControl fullWidth>
                   <InputLabel
-                    size='small' id="demo-simple-select-label">Sort by</InputLabel>
+                    size='small' id="sort-label" htmlFor="sort">Sort by</InputLabel>
                   <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId="sort-label"
+                    inputProps={{
+                      id: 'sort',
+                      name: 'sort',
+                      autoComplete: 'off'
+                    }}
                     value={sortBy}
                     label="Hospital"
                     fullWidth
@@ -69,7 +73,7 @@ const ResultMain: FC = (() => {
                     <span className="price-strike">$45.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -94,7 +98,7 @@ const ResultMain: FC = (() => {
                     <span className="price">$16.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -119,7 +123,7 @@ const ResultMain: FC = (() => {
                     <span className="price">$22.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -145,7 +149,7 @@ const ResultMain: FC = (() => {
                     <span className="price-strike">$12.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -170,7 +174,7 @@ const ResultMain: FC = (() => {
                     <span className="price">$7.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -195,7 +199,7 @@ const ResultMain: FC = (() => {
                     <span className="price">$15.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -220,7 +224,7 @@ const ResultMain: FC = (() => {
                     <span className="price">$26.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -246,7 +250,7 @@ const ResultMain: FC = (() => {
                     <span className="price-strike">$12.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -271,7 +275,7 @@ const ResultMain: FC = (() => {
                     <span className="price">$12.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -296,7 +300,7 @@ const ResultMain: FC = (() => {
                     <span className="price">$9.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -321,7 +325,7 @@ const ResultMain: FC = (() => {
                     <span className="price">$16.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -346,7 +350,7 @@ const ResultMain: FC = (() => {
                     <span className="price">$7.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -371,7 +375,7 @@ const ResultMain: FC = (() => {
                     <span className="price">$30.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -396,7 +400,7 @@ const ResultMain: FC = (() => {
                     <span className="price">$50.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
@@ -422,7 +426,7 @@ const ResultMain: FC = (() => {
                     <span className="price-strike">$20.00</span>
                   </div>
                   <div className="col-lg-6 text-end">
-                    <Link href="/pharmacy/cart" className="cart-icon"><i className="fas fa-shopping-cart" /></Link>
+                    <Link href="/pharmacy/cart" className="cart-icon" aria-label='cart'><i className="fas fa-shopping-cart" /></Link>
                   </div>
                 </div>
               </div>
