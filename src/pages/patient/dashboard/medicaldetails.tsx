@@ -42,10 +42,10 @@ const MedialDetailPage: NextPage = () => {
           <div className="row">
             <PatientDashboardSidebar />
             <MedicalDetails />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

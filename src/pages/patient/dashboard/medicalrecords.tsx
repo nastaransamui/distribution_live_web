@@ -41,10 +41,10 @@ const MedialRecordPage: NextPage = () => {
           <div className="row">
             <PatientDashboardSidebar />
             <MedicalRecords />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

@@ -41,10 +41,10 @@ const FavouritPage: NextPage = () => {
           <div className="row">
             <PatientDashboardSidebar />
             <Favourits />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

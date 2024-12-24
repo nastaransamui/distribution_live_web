@@ -41,10 +41,10 @@ const SeeBillingPage: NextPage = () => {
           <div className="row">
             <PatientDashboardSidebar />
             <AddBilling />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

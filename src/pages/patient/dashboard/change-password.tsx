@@ -41,10 +41,10 @@ const ChangePasswordPage: NextPage = () => {
           <div className="row">
             <PatientDashboardSidebar />
             <ChangePassword />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

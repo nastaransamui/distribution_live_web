@@ -41,10 +41,10 @@ const OrdersPage: NextPage = () => {
           <div className="row">
             <PatientDashboardSidebar />
             <Orders />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

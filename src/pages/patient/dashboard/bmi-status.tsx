@@ -41,10 +41,10 @@ const BmiStatusPage: NextPage = () => {
           <div className="row">
             <PatientDashboardSidebar />
             <BmiStatus />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

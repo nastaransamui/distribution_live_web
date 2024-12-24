@@ -42,10 +42,10 @@ const DashboardPage: NextPage = (props: any) => {
           <div className="row">
             <PatientDashboardSidebar />
             <DashboardMain doctorPatientProfile={doctorPatientProfile} />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

@@ -42,10 +42,10 @@ const ProfileSettingPage: NextPage = () => {
           <div className="row">
             <PatientDashboardSidebar />
             <ProfileSetting />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

@@ -41,10 +41,10 @@ const DependentPage: NextPage = () => {
           <div className="row">
             <PatientDashboardSidebar />
             <Dependent />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

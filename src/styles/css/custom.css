@@ -5149,7 +5149,7 @@ table .table-hover tbody tr:hover td {
 }
 
 .content {
-  min-height: 200px;
+  min-height: 70vh;
   padding: 80px 0 60px;
   background-color: var(--bgDefault);
 }
@@ -6014,8 +6014,8 @@ table .table-hover tbody tr:hover td {
 
 .header .header-nav .header-navbar-rht li .dropdown-menu::before {
   content: "";
-  border: 7px solid var(--bgDefault);
-  border-color: transparent transparent var(--bgDefault) var(--bgDefault);
+  border: 7px solid var(--bgPaper);
+  border-color: transparent transparent var(--bgPaper) var(--bgPaper);
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
   -ms-transform: rotate(135deg);
@@ -6146,7 +6146,7 @@ table .table-hover tbody tr:hover td {
   -webkit-transition: all 0.2s ease;
   -ms-transition: all 0.2s ease;
   transition: all 0.2s ease;
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
 }
 
 @media (min-width: 992px) {
@@ -6248,7 +6248,7 @@ table .table-hover tbody tr:hover td {
 
 .header .header-nav .header-navbar-rht .has-arrow .user-header {
   padding: 10px 15px;
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
   border-radius: 5px 5px 0 0;
 }
 

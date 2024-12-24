@@ -41,10 +41,10 @@ const SeePrescriptionPage: NextPage = (props: any) => {
         <div className="container-fluid">
           <div className="row">
             <PrescriptionPage pageType='see' userType='patient' doctorPatientProfile={doctorPatientProfile} />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }
