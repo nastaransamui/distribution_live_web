@@ -239,7 +239,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
         const online = row?.patientProfile?.online || false
         return (
           <>
-            <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}>
+            <Link className="avatar mx-2" aria-label='my patient' href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}>
               <StyledBadge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -251,7 +251,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
                 </Avatar>
               </StyledBadge>
             </Link>
-            <Link href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}
+            <Link aria-label='my patient' href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}
               style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
               {formattedValue}
             </Link>

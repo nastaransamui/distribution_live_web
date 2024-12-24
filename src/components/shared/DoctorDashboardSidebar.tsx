@@ -60,23 +60,23 @@ const DoctorDashboardSidebar: FC = (() => {
           <div className="profile-sidebar">
             <div className="widget-profile pro-widget-content">
               <div className="profile-info-widget">
-                <Link href="#" className="booking-doc-img">
+                <Link href="#" className="booking-doc-img" aria-label='book'>
                   <Avatar alt="" src={`${userProfile?.profileImage}`} sx={{ width: "120px", height: '120px' }}>
                     <img src={doctors_profile} alt="" />
                   </Avatar>
                 </Link>
                 <div className="profile-det-info">
-                  <h3>Dr. {userProfile?.firstName} {userProfile?.lastName}</h3>
-                  <h6>{userProfile?.specialities?.[0]?.specialities}</h6>
-                  <h6>{userProfile?.userName}</h6>
-                  <h6>{`${userProfile?.roleName?.charAt(0).toUpperCase()}${userProfile?.roleName.slice(1)}`}</h6>
+                  <h1>Dr. {userProfile?.firstName} {userProfile?.lastName}</h1>
+                  <h2>{userProfile?.specialities?.[0]?.specialities}</h2>
+                  <h3>{userProfile?.userName}</h3>
+                  <h3>{`${userProfile?.roleName?.charAt(0).toUpperCase()}${userProfile?.roleName.slice(1)}`}</h3>
                   <div className="patient-details">
-                    <h5>
+                    <h4>
                       <i className="fas fa-birthday-cake"></i>
                       {userProfile?.dob !== '' ? dayjs(userProfile?.dob).format('DD MMM YYYY') : '---- -- --'}
-                    </h5>
-                    <h6>{`${isNaN(years) ? '--' : years} years ${isNaN(months) ? '--' : months} months ${isNaN(days) ? '--' : days} days`}</h6>
-                    <h5 className="mb-0"><i className="fas fa-map-marker-alt"></i>{userProfile?.city} <br />{userProfile?.state} <br />{userProfile?.country}</h5>
+                    </h4>
+                    <h5>{`${isNaN(years) ? '--' : years} years ${isNaN(months) ? '--' : months} months ${isNaN(days) ? '--' : days} days`}</h5>
+                    <h6 className="mb-0"><i className="fas fa-map-marker-alt"></i>{userProfile?.city} <br />{userProfile?.state} <br />{userProfile?.country}</h6>
                   </div>
                 </div>
               </div>

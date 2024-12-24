@@ -78,7 +78,7 @@ const AddBilling: FC = (() => {
       <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
         <div className="card">
           <div className="card-header">
-            <h4 className="card-title mb-0">Add Billing</h4>
+            <h4 className="card-title mb-0">{router.asPath.endsWith('editbilling') ? `Edit Billing` : `Add Billing`}</h4>
           </div>
           <div className="card-body">
             <div className="row">
@@ -165,7 +165,7 @@ const AddBilling: FC = (() => {
                                 </FormControl>
                               </td>
                               <td>
-                                {!router.asPath.endsWith('see-billing') && <Link href="" onClick={(e) => {
+                                {!router.asPath.endsWith('see-billing') && <Link href="" aria-label='delete' onClick={(e) => {
                                   e.preventDefault();
                                   removeInputFields(index)
                                 }} className="btn bg-danger-light trash">

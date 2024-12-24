@@ -139,6 +139,17 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor' }> = (({ userTy
           <div className="card-body">
             <div className="table-responsive">
               <DataGrid
+                experimentalFeatures={{ ariaV7: true }}
+                slotProps={{
+                  pagination: {
+                    SelectProps: {
+                      inputProps: {
+                        id: 'pagination-select',
+                        name: 'pagination-select',
+                      },
+                    },
+                  },
+                }}
                 getRowId={(params) => params.invoiceNo}
                 autoHeight
                 rows={billingData}

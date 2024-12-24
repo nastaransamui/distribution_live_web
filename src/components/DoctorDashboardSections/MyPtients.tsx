@@ -191,17 +191,17 @@ const MyPtients: FC = (() => {
       <>
         {
           patiensDataProfile.map((patient: MyPatientsProfile, index: number) => {
-            const name = `${patient?.profile?.gender}. ${patient?.profile?.firstName} ${patient?.profile?.lastName}`;
+            const name = `${patient?.profile?.gender} ${patient?.profile?.gender !== '' ? '.' : ''} ${patient?.profile?.firstName} ${patient?.profile?.lastName}`;
 
             //@ts-ignore
             let { years, months, days } = dayjs.preciseDiff(patient?.profile?.dob, dayjs(), true)
             return (
-              <div className="col-md-6 col-lg-4 col-xl-3" key={index}>
+              <div className="col-md-6 col-lg-4 col-xl-3 " key={index}>
                 <div className="card widget-profile pat-widget-profile">
                   <div className="card-body">
                     <div className="pro-widget-content">
                       <div className="profile-info-widget">
-                        <Link
+                        <Link aria-label="patient"
                           href={`/doctors/dashboard/patient-profile/${btoa(patient?._id as string)}`}
                           className="booking-doc-img"
                         >
@@ -214,7 +214,8 @@ const MyPtients: FC = (() => {
                             <Avatar sx={{
                               width: 'auto',
                               height: 'auto',
-                              borderRadius: `5px 0px 15px 0px`,
+                              borderRadius: `5px 5px 5px 5px`,
+                              padding: '5px',
                               transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
                               "&:hover": {
                                 transform: "scale(1.15)",
@@ -232,32 +233,32 @@ const MyPtients: FC = (() => {
                           </ProfileImageStyledBadge>
                         </Link>
                         <div className="profile-det-info">
-                          <h3>
-                            <Link href={`/doctors/dashboard/patient-profile/${btoa(patient?._id as string)}`}>
+                          <h1>
+                            <Link aria-label="patient" href={`/doctors/dashboard/patient-profile/${btoa(patient?._id as string)}`}>
                               {name}
                             </Link>
-                          </h3>
+                          </h1>
 
                           <div className="patient-details">
-                            <h5>
+                            <h2>
                               <b>Patient ID :</b> {patient._id}
-                            </h5>
-                            <h5 className="mb-0">
+                            </h2>
+                            <h2 className="mb-0">
                               <i className="fas fa-map-marker-alt"></i>{" "}
                               {patient.profile.address1}
-                            </h5>
-                            <h5 className="mb-0">
+                            </h2>
+                            <h2 className="mb-0">
                               {patient?.profile?.address2}
-                            </h5>
-                            <h5 className="mb-0">
+                            </h2>
+                            <h2 className="mb-0">
                               {patient?.profile?.city}
-                            </h5>
-                            <h5 className="mb-0">
+                            </h2>
+                            <h2 className="mb-0">
                               {patient?.profile?.state}
-                            </h5>
-                            <h5 className="mb-0">
+                            </h2>
+                            <h2 className="mb-0">
                               {patient?.profile?.country}
-                            </h5>
+                            </h2>
                           </div>
                         </div>
                       </div>
@@ -287,10 +288,9 @@ const MyPtients: FC = (() => {
       </>)
   }
 
-
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9  doctors-appointment-wrapper" style={muiVar}>
         <div style={{ position: 'relative' }}>
           <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', top: '-50px' }}>
 
@@ -305,7 +305,7 @@ const MyPtients: FC = (() => {
                   boundaryCount={1}
                   variant="outlined"
                   color="secondary"
-                  count={userProfile ? Math.ceil(userProfile?.reservations_id.length / perPage) : 0}
+                  count={userProfile ? Math.ceil(userProfile?.patients_id.length / perPage) : 0}
                   page={page}
                   onChange={handlePageChange}
                   sx={{
@@ -313,7 +313,7 @@ const MyPtients: FC = (() => {
                     marginRight: 'auto'
                   }}
                 />
-                <Typography variant='h5' align='center' gutterBottom>Total: {userProfile?.reservations_id.length} Patients</Typography>
+                <Typography variant='h5' align='center' gutterBottom>Total: {userProfile?.patients_id.length} Patients</Typography>
               </Stack>
             }
           </div>

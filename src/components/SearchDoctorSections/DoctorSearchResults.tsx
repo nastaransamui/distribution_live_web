@@ -157,6 +157,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
 
   useEffect(() => {
     loadStylesheet('/css/react-virtualized-styles.min.css')
+    loadStylesheet('/css/yet-another-react-lightbox-styles.css')
   }, [])
 
   // Update the timestamp only when the profile image URL changes

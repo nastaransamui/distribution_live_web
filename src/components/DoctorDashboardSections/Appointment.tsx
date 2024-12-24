@@ -124,7 +124,7 @@ const Appointment: FC = (() => {
             const { patientProfile, selectedDate, timeSlot, patientId } = appointment;
             const { period } = timeSlot
             const { profileImage, address1, address2, mobileNumber, userName, online } = patientProfile
-            const patientName = `${patientProfile?.gender}. ${patientProfile?.firstName} ${patientProfile?.lastName}`;
+            const patientName = `${patientProfile?.gender} ${patientProfile?.gender !== '' ? '.' : ''} ${patientProfile?.firstName} ${patientProfile?.lastName}`;
             return (
               <div className="appointment-list" key={index}>
                 <div className="profile-info-widget" >
@@ -134,7 +134,7 @@ const Appointment: FC = (() => {
                     variant="dot"
                     online={online as boolean}
                   >
-                    <Link
+                    <Link aria-label="patient"
                       href={`/doctors/dashboard/patient-profile/${btoa(patientId)}`}
                       className="booking-doc-img"
                     >
@@ -160,22 +160,22 @@ const Appointment: FC = (() => {
                   </ProfileImageStyledBadge>
                   <div className="profile-det-info">
                     <h3>
-                      <Link href={`/doctors/dashboard/patient-profile/${btoa(patientId)}`}>{patientName}</Link>
+                      <Link aria-label="patient" style={{ color: theme.palette.secondary.main }} href={`/doctors/dashboard/patient-profile/${btoa(patientId)}`}>{patientName}</Link>
                     </h3>
                     <div className="patient-details">
-                      <h5>
+                      <h4>
                         <i className="far fa-clock"></i> {selectedDate} {' '} {period}
-                      </h5>
-                      <h5>
+                      </h4>
+                      <h4>
                         <i className="fas fa-map-marker-alt"></i> {address1} {' '} {address2}
-                      </h5>
-                      <h5>
+                      </h4>
+                      <h4>
                         <i className="fas fa-envelope"></i>{" "}
                         {userName}
-                      </h5>
-                      <h5 className="mb-0">
+                      </h4>
+                      <h4 className="mb-0">
                         <i className="fas fa-phone"></i> {mobileNumber}
-                      </h5>
+                      </h4>
                     </div>
                   </div>
                 </div>
@@ -219,7 +219,7 @@ const Appointment: FC = (() => {
   }
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9 doctors-appointment-wrapper" style={muiVar}>
         <div style={{ position: 'relative' }}>
           <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', top: '-50px' }}>
 

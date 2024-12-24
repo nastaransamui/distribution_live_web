@@ -580,9 +580,7 @@ const ProfileSetting: FC = (() => {
                           </div>
                           <div className="upload-img">
                             <div className="change-photo-btn">
-                              <span>
-                                <i className="fa fa-upload"></i> Upload Photo
-                              </span>
+                              <label htmlFor='profile'><i className="fa fa-upload"></i> Upload Photo</label>
                               <input type="file" id='profile' className="upload" accept="image/png, image/jpg, image/jpeg" onChange={uploadFile} />
                             </div>
                             <small className="form-text text-muted">
@@ -688,13 +686,16 @@ const ProfileSetting: FC = (() => {
                             const { defaultValues } = formState;
                             return (
                               <FormControl fullWidth >
-                                <InputLabel id="gender">
+                                <InputLabel id="gender-label" htmlFor="gender">
                                   Gender
-                                  <input id="gender" hidden />
                                 </InputLabel>
                                 <Select
                                   labelId="gender"
-                                  id="gender"
+                                  inputProps={{
+                                    id: 'gender',
+                                    name: 'gender',
+                                    autoComplete: 'off'
+                                  }}
                                   label="Gender"
                                   error={errors.gender == undefined ? false : true}
                                   value={value}
@@ -767,6 +768,12 @@ const ProfileSetting: FC = (() => {
                     <TextField
                       required
                       id="aboutMe"
+                      inputProps={{
+                        autoComplete: 'off',
+                        "aria-label": "About Me",
+                        id: "aboutMe",
+                        name: "aboutMe",
+                      }}
                       label="About Me"
                       defaultValue={userProfile?.aboutMe}
                       multiline
@@ -844,9 +851,10 @@ const ProfileSetting: FC = (() => {
                           clinicImagesFields.map((img: any, index) => {
                             return (
                               <div className="upload-images" key={index + img.id + img.src}>
-                                <img src={img.src.startsWith('blob') ? img.src : `${img?.src}`} alt="" />
+                                <img src={img.src.startsWith('blob') ? img.src : `${img?.src}`} alt="" height={80} width='auto' />
                                 <Link
                                   href="#"
+                                  aria-label='delete'
                                   onClick={(e) => {
                                     e.preventDefault();
                                     setImages((prevState) => {
@@ -1118,14 +1126,17 @@ const ProfileSetting: FC = (() => {
                             const { defaultValues } = formState;
                             return (
                               <FormControl fullWidth >
-                                <InputLabel id="specialities" size='small'>
+                                <InputLabel id="specialities-label" htmlFor="specialities" size='small'>
                                   Speciality
-                                  <input id="gender" hidden />
                                 </InputLabel>
                                 <Select
                                   size='small'
                                   labelId="specialities"
-                                  id="specialities"
+                                  inputProps={{
+                                    id: "specialities",
+                                    name: "specialities",
+                                    autoComplete: 'off'
+                                  }}
                                   label="Speciality"
                                   error={errors.specialities == undefined ? false : true}
                                   value={value.length == 0 ? '' : value[0]?.specialities}
@@ -1207,20 +1218,7 @@ const ProfileSetting: FC = (() => {
                 }}>
                   Save Changes
                 </button>
-                <button className="btn-primary " style={{
-                  marginLeft: '0px',
-                  marginTop: matches ? 10 : 0,
-                  fontWeight: 700,
-                  fontSize: 16,
-                  minWidth: 120,
-                  padding: '12px 40px',
-                  backgroundColor: "crimson",
-                  border: `1px solid ${theme.palette.primary}`,
-                  lineHeight: '16px',
-                  transition: 'all 0.3s ease',
-                  display: 'unset',
-                  borderRadius: '.25rem'
-                }} onClick={(e) => {
+                <button className="btn-delete " onClick={(e) => {
                   e.preventDefault();
                   deleteUser();
                 }}>

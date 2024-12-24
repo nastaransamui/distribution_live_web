@@ -1396,7 +1396,7 @@ button:focus {
 
 .list-group-item {
   border: 1px solid var(--secondaryLight);
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
 }
 
 @media (max-width: 991.98px) {
@@ -2993,24 +2993,32 @@ button.bg-danger:hover {
   position: relative;
   overflow: hidden;
 }
-.btn-delete::before{
-  content: '';
+.btn-delete::before {
+  content: "";
   position: absolute;
   width: 120px;
   height: 120px;
-  background: linear-gradient(125deg, var(--primaryMain) 0%, var(--secondaryMain) 100%) !important;
+  background: linear-gradient(
+    125deg,
+    var(--primaryMain) 0%,
+    var(--secondaryMain) 100%
+  ) !important;
   left: -150px;
   top: -40px;
   transform: rotate(45deg);
   transition: all 0.3s ease-in-out;
   z-index: -1;
 }
-.btn-delete::after{
-  content: '';
+.btn-delete::after {
+  content: "";
   position: absolute;
   width: 120px;
   height: 120px;
-  background: linear-gradient(125deg, var(--primaryMain) 0%, var(--secondaryMain) 100%) !important;
+  background: linear-gradient(
+    125deg,
+    var(--primaryMain) 0%,
+    var(--secondaryMain) 100%
+  ) !important;
   right: -150px;
   top: -40px;
   transform: rotate(45deg);
@@ -3037,10 +3045,10 @@ button.bg-danger:hover {
   z-index: 2;
   color: #000000;
 }
-.btn-delete:hover::after{
+.btn-delete:hover::after {
   right: 0;
 }
-.btn-delete:hover::before{
+.btn-delete:hover::before {
   left: 0;
 }
 .btn-primary:focus .open > .dropdown-toggle.btn-primary,
@@ -3732,7 +3740,6 @@ button.bg-danger:hover {
   justify-content: center;
   align-items: center;
 }
-
 
 .avatar > img {
   width: 100%;
@@ -18333,24 +18340,28 @@ call-btn:focus {
   }
 }
 
-.dash-card .dash-widget h6 {
+.dash-card .dash-widget h6,
+.dash-card .dash-widget h1 {
   font-size: 16px;
   font-weight: 400;
 }
 
 @media (max-width: 767.98px) {
-  .dash-card .dash-widget h6 {
+  .dash-card .dash-widget h6,
+  .dash-card .dash-widget h1 {
     font-size: 15px;
   }
 }
 
-.dash-card .dash-widget h3 {
+.dash-card .dash-widget h3,
+.dash-card .dash-widget h2 {
   font-size: 24px;
   margin-bottom: 5px;
 }
 
 @media (max-width: 767.98px) {
-  .dash-card .dash-widget h3 {
+  .dash-card .dash-widget h3,
+  .dash-card .dash-widget h2 {
     font-size: 20px;
   }
 }
@@ -18388,7 +18399,7 @@ call-btn:focus {
 }
 
 .appointment-tab .nav-tabs {
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
   border: 1px solid var(--secondaryMain);
   border-radius: 0.25rem 0.25rem 0 0 !important;
   border-bottom: 0;
@@ -18421,9 +18432,18 @@ call-btn:focus {
   white-space: nowrap;
   overflow: hidden;
 }
-
+.doctors-appointment-wrapper {
+  background-color: var(--bgPaper);
+  padding: 10px;
+  border: 1px solid var(--secondaryMain);
+  margin-bottom: 30px;
+  overflow: hidden;
+  border-radius: 4px;
+}
 .profile-det-info .patient-details h5,
-.profile-det-info .patient-details h5 {
+.profile-det-info .patient-details h4,
+.profile-det-info .patient-details h1,
+.profile-det-info .patient-details h2 {
   color: var(--color);
   font-size: 13px;
   font-weight: normal;
@@ -18433,7 +18453,10 @@ call-btn:focus {
   white-space: nowrap;
 }
 
-.profile-det-info .patient-details h5 i {
+.profile-det-info .patient-details h5 i,
+.profile-det-info .patient-details h4 i,
+.profile-det-info .patient-details h1 i,
+.profile-det-info .patient-details h2 i  {
   width: 18px;
 }
 
@@ -20130,7 +20153,7 @@ chat-attachment-list li {
   color: var(--color);
   text-align: center;
   width: 70%;
-  padding: 7px 15px;
+  padding: 5px 15px;
 }
 
 .custom-increment input[type="text"]:focus {
@@ -20142,7 +20165,7 @@ chat-attachment-list li {
 }
 
 .review-listing.doc-review > ul > li {
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
   border: 1px solid var(--primaryMain);
   border-radius: 5px;
   padding: 20px;
@@ -42838,9 +42861,9 @@ input:checked + .tog-slider:before {
 .booking-date {
   padding-bottom: 30px;
   display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .booking-date p {
@@ -43306,10 +43329,14 @@ svg.feather {
 .rbc-off-range-bg {
   background: var(--primaryLight) !important;
 }
+.rbc-off-range button{
+  color: #000000 !important;
+}
 
 .rbc-toolbar button:active,
 .rbc-toolbar button.rbc-active {
   background: var(--primaryMain) !important;
+  color: #000000 !important;
 }
 
 .rbc-toolbar button:hover,
@@ -43590,25 +43617,31 @@ svg.feather {
   box-shadow: 0 0 3px #dfdd61;
 }
 
-.yellow .rmdp-disabled:has(span[aria-controls="start"]) {
+.yellow .rmdp-disabled:has(span[data-start]) {
   background-color: transparent;
 }
 
-.yellow .rmdp-disabled:has(span[aria-controls="end"]) {
+.yellow .rmdp-disabled:has(span[data-end]) {
   background-color: transparent;
 }
 
-.yellow .rmdp-disabled > span[aria-controls="start"] {
+.yellow .rmdp-disabled > span[data-start] {
   background-color: var(--primaryMain);
+  color: var(--primaryContrastText) !important;
   top: 0;
   bottom: 0;
   right: 0;
   left: 0;
   border-radius: 50% 0px 0px 50%;
 }
-
-.yellow .rmdp-disabled > span[aria-controls="end"] {
+.bg-dark.rmdp-wrapper,
+.rmdp-container .bg-dark.ep-arrow::after {
+  background-color: #312f2f;
+  color: var(--color) !important;
+}
+.yellow .rmdp-disabled > span[data-end] {
   background-color: var(--primaryMain);
+  color: var(--primaryContrastText) !important;
   top: 0;
   bottom: 0;
   right: 0;
@@ -43641,6 +43674,7 @@ svg.feather {
 
 .yellow .rmdp-day.rmdp-today span {
   background-color: var(--primaryLight);
+  color: #000000;
 }
 
 .yellow .rmdp-rtl .rmdp-panel {
@@ -43697,7 +43731,10 @@ svg.feather {
   border-radius: 15px;
   background-color: var(--bgPaper);
 }
-.bg-dark .rmdp-day:not(.rmdp-deactive), .bg-dark .rmdp-header-values, .bg-dark .rmdp-panel-header, .bg-dark .rmdp-time-picker div .rmdp-am{
+.bg-dark .rmdp-day:not(.rmdp-deactive),
+.bg-dark .rmdp-header-values,
+.bg-dark .rmdp-panel-header,
+.bg-dark .rmdp-time-picker div .rmdp-am {
   color: var(--color) !important;
 }
 
@@ -45534,3 +45571,5 @@ svg.feather {
 .fab.fa-twitter::before {
   content: "𝕏";
 }
+
+

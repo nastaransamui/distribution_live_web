@@ -42,7 +42,6 @@ const Booking: NextPage = () => {
         <div className="container">
           <div className="row">
             <BookingPage />
-            {/*  */}
           </div>
         </div>
       </div>

@@ -395,6 +395,17 @@ const Accounts: FC = (() => {
                       <div className="card-body" >
                         <div className="table-responsive" style={{ height: 480, width: '100%' }}>
                           <DataGrid
+                            experimentalFeatures={{ ariaV7: true }}
+                            slotProps={{
+                              pagination: {
+                                SelectProps: {
+                                  inputProps: {
+                                    id: 'pagination-select',
+                                    name: 'pagination-select',
+                                  },
+                                },
+                              },
+                            }}
                             rows={data}
                             rowCount={data.length}
                             ref={grdiRef}
@@ -484,7 +495,10 @@ const Accounts: FC = (() => {
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="bankName"
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     label={`Bank Name`}
                     onChange={(e) => {
                       setEditValues((prevState) => {
@@ -505,7 +519,10 @@ const Accounts: FC = (() => {
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="branchName"
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     label={`Branch Name`}
                     onChange={(e) => {
                       setEditValues((prevState) => {
@@ -526,7 +543,10 @@ const Accounts: FC = (() => {
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="accountNumber"
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     label={`Account Number`}
                     onChange={(e) => {
                       setEditValues((prevState) => {
@@ -547,7 +567,10 @@ const Accounts: FC = (() => {
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="accountName"
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     label={`Account Name`}
                     onChange={(e) => {
                       setEditValues((prevState) => {
@@ -580,7 +603,7 @@ const Accounts: FC = (() => {
         onClose={() => {
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
           setTimeout(() => {
-            setEdit(false)
+            setReq(false)
           }, 500);
         }}
         aria-labelledby="edit_invoice_details"
@@ -590,7 +613,7 @@ const Accounts: FC = (() => {
           id="edit_invoice_details" onClose={() => {
             document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
             setTimeout(() => {
-              setEdit(false)
+              setReq(false)
             }, 500);
           }}>
           Payment Request
@@ -605,7 +628,10 @@ const Accounts: FC = (() => {
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="requestAmount"
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     label={`Request Amount`}
                   />
                 </div>
@@ -617,7 +643,10 @@ const Accounts: FC = (() => {
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="description"
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     label={`Description (Optional)`}
                     multiline
                     minRows={3}

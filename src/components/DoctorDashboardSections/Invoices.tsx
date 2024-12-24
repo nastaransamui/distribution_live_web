@@ -236,10 +236,20 @@ const Invoices: FC = (() => {
           <div className="card-body">
             <div className="table-responsive">
               <DataGrid
+                experimentalFeatures={{ ariaV7: true }}
+                slotProps={{
+                  pagination: {
+                    SelectProps: {
+                      inputProps: {
+                        id: 'pagination-select',
+                        name: 'pagination-select',
+                      },
+                    },
+                  },
+                }}
                 rows={data}
                 rowCount={data.length}
                 ref={grdiRef}
-                // localeText={muiLocaleText()}
                 columns={columns}
                 disableRowSelectionOnClick
                 paginationModel={paginationModel}

@@ -109,13 +109,13 @@ const DashboardMain: FC = (() => {
                         className="dash-widget-info"
                         style={{ position: "relative", top: "-18px" }}
                       >
-                        <h6>{isToday ? `Today Patients` : `This week Patients`}</h6>
-                        <h3>{isLoading ? <CircleLoading color={theme.palette.primary.main} size='small'
+                        <h1>{isToday ? `Today Patients` : `This week Patients`}</h1>
+                        <h2>{isLoading ? <CircleLoading color={theme.palette.primary.main} size='small'
                           style={{
                             position: 'relative',
                             maxHeight: 12,
                           }}
-                        /> : total}</h3>
+                        /> : total}</h2>
                         <p className="text-muted">{dayjs().format('DD, MMM YYYY')}</p>
                       </div>
                     </div>
@@ -155,8 +155,8 @@ const DashboardMain: FC = (() => {
                         className="dash-widget-info"
                         style={{ position: "relative", top: "-18px" }}
                       >
-                        <h6>Reservations</h6>
-                        <h3>{userProfile !== null && userProfile?.reservations_id?.length}</h3>
+                        <h1>Reservations</h1>
+                        <h2>{userProfile !== null && userProfile?.reservations_id?.length}</h2>
                         <p className="text-muted">{dayjs().format('DD, MMM YYYY')}</p>
                       </div>
                     </div>
@@ -168,7 +168,7 @@ const DashboardMain: FC = (() => {
         </div>
         <div className="row">
           <div className="col-md-12">
-            <h4 className="mb-4">{isToday ? `Today Patients` : `This week Patients`}</h4>
+            <h1 className="mb-4" style={{ color: theme.palette.secondary.main, fontSize: '18px' }}>{isToday ? `Today Patients` : `This week Patients`}</h1>
             <TabContext value={value}>
               <div className="appointment-tab">
                 <ul className="nav nav-tabs nav-tabs-solid nav-tabs-rounded">

@@ -51,7 +51,7 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                   <div className="card-body">
                     <div className="pro-widget-content">
                       <div className="profile-info-widget">
-                        <Link href="" className="booking-doc-img" onClick={(e) => e.preventDefault()}>
+                        <Link aria-label='patient' href="" className="booking-doc-img" onClick={(e) => e.preventDefault()}>
                           <Avatar alt="" src={`${doctorPatientProfile?.profileImage}${isClient ? `?random=${new Date().getTime()}` : ''}`} sx={{ width: "120px", height: '120px' }} key={doctorPatientProfile?.profileImage}>
                             <img src={patient_profile} alt="" />
                           </Avatar>
@@ -60,15 +60,15 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                           <h3>{doctorPatientProfile?.gender} {doctorPatientProfile?.firstName} {doctorPatientProfile?.lastName}</h3>
 
                           <div className="patient-details">
-                            <h5>
+                            <h4>
                               <b>Patient ID :</b> #{doctorPatientProfile?._id}
-                            </h5>
+                            </h4>
                             <h5>
                               <i className="fas fa-birthday-cake"></i>
                               {doctorPatientProfile?.dob !== '' ? dayjs(doctorPatientProfile?.dob).format('DD MMM YYYY') : '---- -- --'}
                             </h5>
                             <h6>{`${isNaN(years) ? '--' : years} years ${isNaN(months) ? '--' : months} months ${isNaN(days) ? '--' : days} days`}</h6>
-                            <h5 className="mb-0"><i className="fas fa-map-marker-alt"></i>{doctorPatientProfile?.city} <br />{doctorPatientProfile?.state} <br />{doctorPatientProfile?.country}</h5>
+                            <h6 className="mb-0"><i className="fas fa-map-marker-alt"></i>{doctorPatientProfile?.city} <br />{doctorPatientProfile?.state} <br />{doctorPatientProfile?.country}</h6>
                           </div>
                         </div>
                       </div>
@@ -103,7 +103,7 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                               <li className="list-group-item">
                                 <div className="media align-items-center d-flex">
                                   <div className="me-3 flex-shrink-0">
-                                    <Link className="avatar mx-2" target='_blank' href={`/doctors/search/${btoa(appointment?.doctorId)}`}>
+                                    <Link aria-label='search' className="avatar mx-2" target='_blank' href={`/doctors/search/${btoa(appointment?.doctorId)}`}>
                                       <StyledBadge
                                         overlap="circular"
                                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -120,7 +120,7 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                                   </div>
                                   <div className="media-body flex-grow-1">
                                     <h5 className="d-block mb-0">
-                                      <Link target='_blank' href={`/doctors/search/${btoa(appointment?.doctorId)}`}
+                                      <Link aria-label='search' target='_blank' href={`/doctors/search/${btoa(appointment?.doctorId)}`}
                                         style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
                                         {drName}
                                       </Link>

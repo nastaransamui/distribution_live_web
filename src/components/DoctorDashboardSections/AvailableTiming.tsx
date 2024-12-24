@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { cloneElement, FC, Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { Calendar as BigCalendar, dayjsLocalizer, Views } from 'react-big-calendar'
 import dayjs from 'dayjs';
@@ -191,7 +191,36 @@ const AvailableTiming: FC = (() => {
     [theme]
   )
 
+  // Correct role for react-big-calendar
+  useEffect(() => {
+    setTimeout(() => {
+      const monthHeader = document.querySelectorAll('.rbc-month-header');
+      monthHeader.forEach((button) => {
+        button.setAttribute('role', 'rowgroup');
+      });
+      const header = document.querySelectorAll('.rbc-header');
+      header.forEach((button) => {
+        button.setAttribute('role', 'row');
+      });
 
+      const m = document.querySelectorAll('.rbc-row .rbc-month-header');
+      m.forEach((button) => {
+        button.setAttribute('role', 'rowgroup');
+      });
+      const row = document.querySelectorAll('.rbc-row-content >.rbc-row');
+      row.forEach((button) => {
+        button.setAttribute('role', 'columnheader');
+      });
+      const date = document.querySelectorAll('.rbc-row >.rbc-date-cell');
+      date.forEach((button) => {
+        button.setAttribute('role', '');
+      });
+      const buttons = document.querySelectorAll('.rbc-date-cell button');
+      buttons.forEach((button) => {
+        button.setAttribute('role', '');
+      });
+    }, 500);
+  }, [myAppointmentData]);
   const mainCalendar = () => {
     return (
       <BigCalendar

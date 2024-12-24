@@ -245,6 +245,9 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                     fullWidth
                     required
                     id="name"
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     label={`Name`}
                     onChange={(e) => {
                       setEditValues((prevState) => {
@@ -266,7 +269,10 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="doctorName"
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     label={`Doctor name`}
                     value={editValues.doctorName}
                     onChange={(e) => {
@@ -290,6 +296,10 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                     required
                     value={imageName}
                     id="imageName"
+
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     disabled
                     label={'Photo'}
                     InputProps={{
@@ -309,7 +319,11 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                     size="small"
                     fullWidth
                     required
-                    id="name"
+                    id="symptoms"
+
+                    inputProps={{
+                      autoComplete: 'off'
+                    }}
                     label={`Symptoms`}
                     value={editValues.symptoms}
                     onChange={(e) => {
@@ -340,7 +354,8 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                           size: 'small',
                           fullWidth: true,
                           required: true,
-                          label: 'Date'
+                          label: 'Date',
+                          error: false
                         },
 
                       }}

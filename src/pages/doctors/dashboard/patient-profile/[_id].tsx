@@ -22,10 +22,10 @@ import DoctorPatientProfile, { doctorPatientInitialLimitsAndSkips } from '@/comp
 export interface Params extends ParsedUrlQuery {
   _id: string;
 }
-
+import useScssVar from '@/hooks/useScssVar';
 const PatientProfilePage: NextPage = (props: any) => {
   const { doctorPatientProfile } = props;
-
+  const { muiVar } = useScssVar();
   return (
     <>
       <Head>
@@ -33,21 +33,20 @@ const PatientProfilePage: NextPage = (props: any) => {
         <meta httpEquiv='X-UA-Compatible' content='IE=edge' />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
         <meta charSet='utf-8' />
-        <meta name='description' />
+        <meta name="description" content="We eager to bring health and health care service to you by easiest way that possible." />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb subtitle='Patient Profile' title='Patient Profile' />
-      <div className="content">
+      <div className="content" style={muiVar}>
         <div className="container-fluid">
           <div className="row">
             <DoctorPatientProfile doctorPatientProfile={doctorPatientProfile} />
-            {/* */}
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

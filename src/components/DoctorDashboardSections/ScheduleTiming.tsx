@@ -68,6 +68,7 @@ import { useSearchParams } from 'next/navigation';
 import { base64regex } from '../DoctorsSections/Profile/ProfilePage';
 import isJsonString from '@/helpers/isJson';
 import { loadStylesheet } from '@/pages/_app';
+import TextField from '@mui/material/TextField';
 
 export const StyledBadge = styled(Badge, {
   shouldForwardProp: (prop) => prop !== 'online'
@@ -241,6 +242,31 @@ const ScheduleTiming: FC = (() => {
   useEffect(() => {
     loadStylesheet('/css/react-multi-date-picker-bg-dark.min.css');
   }, [])
+  useEffect(() => {
+    const fixAccessibility = () => {
+      const dialog = document.querySelector('[role="dialog"]');
+      if (dialog && !dialog.getAttribute("aria-label")) {
+        dialog.setAttribute("aria-label", "Calendar");
+      }
+      // prohibited ARIA attributes
+      const invalidElements = document.querySelectorAll(".rmdp-day[aria-label]");
+      invalidElements.forEach((el) => {
+        // Check if the element has invalid attributes
+        if (el.classList.contains("rmdp-day-hidden")) {
+          el.removeAttribute("aria-label");
+        }
+      });
+    };
+
+    // Run the patch after the component renders
+    fixAccessibility();
+
+    // Re-run if the dialog is re-rendered
+    const observer = new MutationObserver(fixAccessibility);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
   useEffect(() => {
     if (searchParams.get('filters') !== null) {
       if (base64regex.test(searchParams.get('filters') as string)) {
@@ -753,7 +779,7 @@ const ScheduleTiming: FC = (() => {
                         {
                           calendar[0] && calendar[1] &&
                           <Fragment>
-                            <Grid container spacing={{ xl: 2, lg: 2, md: 2, sm: 0 }} className='disabled' sx={{ opacity: isHide ? 0.2 : 1, pointerEvents: isHide ? 'none' : 'auto' }}>
+                            <Grid container spacing={{ xl: 2, lg: 2, md: 2, sm: 0 }} className='disabled' sx={{ pointerEvents: isHide ? 'none' : 'auto' }}>
                               {/* time selec */}
                               <Grid item lg={3} md={4} sm={12} xs={12}>
 
@@ -771,6 +797,7 @@ const ScheduleTiming: FC = (() => {
                                       value={timeSlot[calendar[0].format('DDMMYYYY')] ? `${timeSlot[calendar[0].format('DDMMYYYY')]}` : `60`}
                                       label="Timing SlotDur"
                                       size='small'
+                                      disabled={isHide}
                                       onChange={(e: SelectChangeEvent) => {
                                         timeSlotChange(e, stateKey)
                                       }}
@@ -791,6 +818,7 @@ const ScheduleTiming: FC = (() => {
                                     id={`${morningCheck[stateKey]} ${calendar[0]} ${calendar[1]}`}
                                     control={
                                       <Checkbox
+                                        disabled={isHide}
                                         name={`${morningCheck[stateKey]} ${calendar[0]} ${calendar[1]}`}
                                         checked={morningCheck[stateKey]}
                                         onChange={(e: any) => {
@@ -816,6 +844,7 @@ const ScheduleTiming: FC = (() => {
                                     name={`${afterNoonCheck[stateKey]} ${calendar[0]} ${calendar[1]}`}
                                     control={
                                       <Checkbox
+                                        disabled={isHide}
                                         name={`${afterNoonCheck[stateKey]} ${calendar[0]} ${calendar[1]}`}
                                         checked={afterNoonCheck[stateKey]}
                                         onChange={(e: any) => {
@@ -839,6 +868,7 @@ const ScheduleTiming: FC = (() => {
                                     name={`${eveningCheck[stateKey]} ${calendar[0]} ${calendar[1]}`}
                                     control={
                                       <Checkbox
+                                        disabled={isHide}
                                         id={`${eveningCheck[stateKey]} ${calendar[0]} ${calendar[1]}`}
                                         checked={eveningCheck[stateKey]}
                                         onChange={(e: any) => {
@@ -960,11 +990,11 @@ const ScheduleTiming: FC = (() => {
         if (elem && elem.length == 2 && elem[0] && elem[1]) {
           if (dayjs(date).isBetween(dayjs(elem[0].toString()).format(''), dayjs(elem[1].toString()).format(''), 'day', "[]")) {
             if (isSameDate(date, elem[0])) {
-              props['aria-controls'] = 'start'
+              props['data-start'] = true;
             }
             if (isSameDate(date, elem[1])) {
 
-              props['aria-controls'] = 'end'
+              props['data-end'] = true;
             }
             props.onClick = () => {
               toast.error('Selected day can\'t select again please remove period. ', {
@@ -995,15 +1025,26 @@ const ScheduleTiming: FC = (() => {
       <div className="schedule-header" >
         <div className="schedule-nav">
           <Calendar
-            multiple
-            range
+            highlightToday={true}
             numberOfMonths={widthOnlyXl ? 4 : widthOnlyLg ? 3 : minWidth767max991 ? 1 : widthOnlySm ? 2 : widthOnlyXs ? 1 : 2}
             value={calendarValue}
             onChange={calendarOnChange}
             format='DD MMM YYYY'
-            rangeHover
             className={theme.palette.mode == 'dark' ? 'bg-dark yellow' : 'bg-light  yellow'}
             mapDays={calendarMapDays}
+            renderButton={(direction: string, handleClick: () => void) => (
+              <button
+                type="button"
+                className={`rmdp-arrow-container rmdp-${direction}`}
+                aria-label={direction === "left" ? "Previous month" : "Next month"}
+                onClick={handleClick}
+              >
+                <i className="rmdp-arrow"></i>
+              </button>
+            )}
+            multiple
+            range
+            rangeHover
             plugins={[
               // eslint-disable-next-line react/jsx-key
               <PeriodPlugin position="bottom" />,
@@ -1293,6 +1334,7 @@ const ScheduleTiming: FC = (() => {
                                                       }}>
                                                       {time.period}
                                                       <Link href=""
+                                                        aria-label='delete Single Slot'
                                                         onClick={(e) => {
                                                           e.preventDefault();
                                                           deleteSingleSlot(time, entrie, slotIndex, timeIndex)
@@ -1318,7 +1360,7 @@ const ScheduleTiming: FC = (() => {
                     )
                   }) :
               <>
-                <Typography component='a' >You need to add at least one schedule timing to appear in search result.</Typography>
+                <Typography component='a' href='#'>You need to add at least one schedule timing to appear in search result.</Typography>
               </>
           }
         </SwipeableViews>
@@ -1349,7 +1391,7 @@ const ScheduleTiming: FC = (() => {
           <Fragment>
             <Divider>{capitalPeriod} </Divider>
             <FormControlLabel control={<Checkbox checked={periodArray.every(a => a.active)}
-              onChange={() => selectAllClick(period)} />}
+              onChange={() => selectAllClick(period)} name={`${period}_${capitalPeriod}`} />}
               label={periodArray.every(a => a.active) ? `Deselect all ${capitalPeriod}` : `Select all ${capitalPeriod}`}
               sx={{
                 color: (theme) => theme.palette.text.color,
@@ -1369,7 +1411,7 @@ const ScheduleTiming: FC = (() => {
                     return (
                       <Grid item xl={4} lg={4} md={4} sm={4} xs={6} key={i} >
                         <FormControlLabel
-                          control={<Checkbox checked={e.active} onChange={(e: any) => {
+                          control={<Checkbox name={`${e.period}`} checked={e.active} onChange={(e: any) => {
                             selectFunction(e, i)
                           }} />}
                           label={e.period}
@@ -1387,6 +1429,7 @@ const ScheduleTiming: FC = (() => {
                     )
                   })
                 }
+
               </div>
             </Grid>
           </Fragment>
@@ -1543,7 +1586,7 @@ const ScheduleTiming: FC = (() => {
             transition: bounce,
             onClose: () => {
               dispatch(updateHomeFormSubmit(false))
-              router.push({ pathname: router.asPath }, undefined, { scroll: false, shallow: true })
+              router.reload();
               if (newDoctorRecord) {
                 setDoctorAvailableTimeSlot({ ...newDoctorRecord })
               }
@@ -1588,10 +1631,7 @@ const ScheduleTiming: FC = (() => {
             transition: bounce,
             onClose: () => {
               dispatch(updateHomeFormSubmit(false))
-              router.push({ pathname: router.asPath }, undefined, { scroll: false, shallow: true })
-              // if (updateDoctor) {
-              //   setDoctorAvailableTimeSlot({ ...updateDoctor })
-              // }
+              router.reload();
             }
           });
 
@@ -1645,7 +1685,8 @@ const ScheduleTiming: FC = (() => {
               setMorningCheck({})
               setAfterNoonCheck({})
               setEveningCheck({})
-              router.push({ pathname: router.asPath }, undefined, { scroll: false, shallow: true })
+              // router.push({ pathname: router.asPath }, undefined, { scroll: false, shallow: true })
+              router.reload();
             }
           });
 
@@ -1763,7 +1804,7 @@ const ScheduleTiming: FC = (() => {
           const online = row?.patientStatus?.online || false;
           return (
             <>
-              <Link className="avatar mx-2" href="" onClick={(e) => e.preventDefault()}>
+              <Link aria-label='link' className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`} target='_blank'>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -1775,8 +1816,8 @@ const ScheduleTiming: FC = (() => {
                   </Avatar>
                 </StyledBadge>
               </Link>
-              <Link href={`/dashboard/doctor/${btoa(row._id)}`}
-                onClick={(e) => e.preventDefault()}
+              <Link aria-label='link' href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}
+                target='_blank'
                 style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
                 {formattedValue}
               </Link>

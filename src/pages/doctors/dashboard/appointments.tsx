@@ -18,9 +18,9 @@ import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
-
+import useScssVar from '@/hooks/useScssVar';
 const AppointmentsPage: NextPage = () => {
-
+  const { muiVar } = useScssVar();
 
   return (
     <>
@@ -29,21 +29,21 @@ const AppointmentsPage: NextPage = () => {
         <meta httpEquiv='X-UA-Compatible' content='IE=edge' />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
         <meta charSet='utf-8' />
-        <meta name='description' />
+        <meta name="description" content="We eager to bring health and health care service to you by easiest way that possible." />
         <meta name="theme-color" />
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb subtitle='Appointments' title='Appointments' />
-      <div className="content">
+      <div className="content" style={muiVar}>
         <div className="container-fluid">
           <div className="row">
             <DoctorDashboardSidebar />
             <Appointment />
-            <Footer />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

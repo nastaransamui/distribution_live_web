@@ -314,82 +314,88 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
               </div>
             </div>
             <div className="row" style={{ marginTop: 40 }}>
-              <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'center', marginBottom: 30, color: theme.palette.secondary.main }}>
-                {calendarValue && dayjs(calendarValue).format(`MMMM D, YYYY`)}
-              </div>
+              {
+                !calendarValue ? <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'center', marginBottom: 30, color: theme.palette.secondary.main }}>
+                  Select available date to continue
+                </div> :
+                  <>
+                    <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'center', marginBottom: 30, color: theme.palette.secondary.main }}>
+                      {calendarValue && dayjs(calendarValue).format(`MMMM D, YYYY`)}
+                    </div>
 
-              {calendarValue &&
-                profile.timeslots?.[0]?.availableSlots.map((slot: AvailableType, slotIndex: number) => {
-                  if (dayjs(calendarValue.format('')).isBetween(dayjs(slot.startDate).format(''), dayjs(slot.finishDate).format(''), 'day', "[]")) {
-                    return (
-                      <Grid key={slotIndex} container direction="column">
-                        {
-                          Object.entries(slot).map((entrie, j) => {
-                            let smallText = entrie[0] == 'morning' ?
-                              `${dayjs(morningStart).minute(0).format('HH:mm')} to ${dayjs(morningFinish).minute(0).format('HH:mm')}` :
-                              entrie[0] == 'afternoon' ?
-                                `${dayjs(afterNoonStart).minute(0).format('HH:mm')} to ${dayjs(afterNoonFinish).minute(0).format('HH:mm')}` :
-                                `${dayjs(eveningStart).minute(0).format('HH:mm')} to ${dayjs(eveningFinish).minute(0).format('HH:mm')}`
-                            let slotTimeKey: 'morning' | 'afternoon' | 'evening' | undefined
-                            if (Array.isArray(entrie[1])) {
-                              slotTimeKey = entrie[0] as 'morning' | 'afternoon' | 'evening'
-                            }
-                            if (Array.isArray(entrie[1]) && entrie[1].length > 0) {
-                              return (
-                                <div key={slotIndex.toString() + j.toString()} className="time-slot time-slot-blk">
-                                  <Fragment >
-                                    {
-                                      <Divider variant="middle" sx={{ m: 2 }}>
-                                        <Typography variant="body1">
-                                          {entrie[0].charAt(0).toUpperCase()}{entrie[0].slice(1)}<br />
-                                          <small style={{ marginTop: -10 }}>{smallText}</small>
-                                        </Typography>
-                                      </Divider>
-                                    }
-                                    <div className="time-slot-list">
-                                      <ul style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                        {
-                                          entrie[1].map((s: TimeType, i: number) => {
-                                            if (s.active) {
-                                              let isSelect = _.isEqual(s, occupyTime?.timeSlot) && occupyTime?.selectedDate == calendarValue.format('')
-                                              let isDisabled: boolean = false;
-                                              if (s.reservations.length > 0) {
-                                                s.reservations.forEach((elem) => {
-                                                  if (elem.selectedDate == calendarValue.format('')) {
-                                                    if (elem.timeSlot.period == s.period) {
-                                                      isDisabled = true
+                    {calendarValue &&
+                      profile.timeslots?.[0]?.availableSlots.map((slot: AvailableType, slotIndex: number) => {
+                        if (dayjs(calendarValue.format('')).isBetween(dayjs(slot.startDate).format(''), dayjs(slot.finishDate).format(''), 'day', "[]")) {
+                          return (
+                            <Grid key={slotIndex} container direction="column">
+                              {
+                                Object.entries(slot).map((entrie, j) => {
+                                  let smallText = entrie[0] == 'morning' ?
+                                    `${dayjs(morningStart).minute(0).format('HH:mm')} to ${dayjs(morningFinish).minute(0).format('HH:mm')}` :
+                                    entrie[0] == 'afternoon' ?
+                                      `${dayjs(afterNoonStart).minute(0).format('HH:mm')} to ${dayjs(afterNoonFinish).minute(0).format('HH:mm')}` :
+                                      `${dayjs(eveningStart).minute(0).format('HH:mm')} to ${dayjs(eveningFinish).minute(0).format('HH:mm')}`
+                                  let slotTimeKey: 'morning' | 'afternoon' | 'evening' | undefined
+                                  if (Array.isArray(entrie[1])) {
+                                    slotTimeKey = entrie[0] as 'morning' | 'afternoon' | 'evening'
+                                  }
+                                  if (Array.isArray(entrie[1]) && entrie[1].length > 0) {
+                                    return (
+                                      <div key={slotIndex.toString() + j.toString()} className="time-slot time-slot-blk">
+                                        <Fragment >
+                                          {
+                                            <Divider variant="middle" sx={{ m: 2 }}>
+                                              <Typography variant="body1">
+                                                {entrie[0].charAt(0).toUpperCase()}{entrie[0].slice(1)}<br />
+                                                <small style={{ marginTop: -10 }}>{smallText}</small>
+                                              </Typography>
+                                            </Divider>
+                                          }
+                                          <div className="time-slot-list">
+                                            <ul style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                              {
+                                                entrie[1].map((s: TimeType, i: number) => {
+                                                  if (s.active) {
+                                                    let isSelect = _.isEqual(s, occupyTime?.timeSlot) && occupyTime?.selectedDate == calendarValue.format('')
+                                                    let isDisabled: boolean = false;
+                                                    if (s.reservations.length > 0) {
+                                                      s.reservations.forEach((elem) => {
+                                                        if (elem.selectedDate == calendarValue.format('')) {
+                                                          if (elem.timeSlot.period == s.period) {
+                                                            isDisabled = true
+                                                          }
+                                                        }
+
+                                                      })
                                                     }
+                                                    return (
+                                                      <li style={{ width: 'inherit' }} key={slotIndex.toString() + " " + j.toString() + i.toString()}>
+                                                        <Button
+                                                          disabled={isDisabled}
+                                                          className={`timing ${isSelect ? 'active' : ' '}`}
+                                                          sx={{ bgcolor: isDisabled ? `${theme.palette.primary.main} !Important` : '' }}
+                                                          onClick={(e) => { periodButtonClick(e, s, isSelect, slot, entrie[0]) }}>
+                                                          <span><i className={isDisabled ? "feather-x-circle" : "feather-clock"} />{s.period}</span>
+                                                        </Button>
+                                                      </li>
+                                                    )
                                                   }
-
                                                 })
                                               }
-                                              return (
-                                                <li style={{ width: 'inherit' }} key={slotIndex.toString() + " " + j.toString() + i.toString()}>
-                                                  <Button
-                                                    disabled={isDisabled}
-                                                    className={`timing ${isSelect ? 'active' : ' '}`}
-                                                    sx={{ bgcolor: isDisabled ? `${theme.palette.primary.main} !Important` : '' }}
-                                                    onClick={(e) => { periodButtonClick(e, s, isSelect, slot, entrie[0]) }}>
-                                                    <span><i className={isDisabled ? "feather-x-circle" : "feather-clock"} />{s.period}</span>
-                                                  </Button>
-                                                </li>
-                                              )
-                                            }
-                                          })
-                                        }
-                                      </ul>
-                                    </div>
-                                  </Fragment>
-                                </div>
-                              )
+                                            </ul>
+                                          </div>
+                                        </Fragment>
+                                      </div>
+                                    )
 
-                            }
-                          })
+                                  }
+                                })
+                              }
+                            </Grid>
+                          )
                         }
-                      </Grid>
-                    )
-                  }
-                })
+                      })
+                    }</>
               }
             </div>
           </div>

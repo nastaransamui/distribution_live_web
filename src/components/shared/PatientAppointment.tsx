@@ -69,7 +69,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
           const online = row?.doctorProfile?.online || false
           return (
             <>
-              <Link className=" mx-2" target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`} >
+              <Link aria-label='profile' className=" mx-2" target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`} >
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -81,7 +81,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
                   </Avatar>
                 </StyledBadge>
               </Link>
-              <Link target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`}
+              <Link aria-label='profile' target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`}
                 style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
                 {formattedValue}
               </Link>

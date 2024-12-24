@@ -7,7 +7,6 @@ Disallow: /admin/         # Disallow admin routes
 Disallow: /auth/          # Disallow authentication routes
 Disallow: /_next/         # Disallow Next.js internal files
 Disallow: /static/        # Disallow static assets if needed
-Disallow: /*?*            # Disallow query parameters (optional)
 Allow: /                  # Allow all other routes
 
 # Specific location-based content blocking
