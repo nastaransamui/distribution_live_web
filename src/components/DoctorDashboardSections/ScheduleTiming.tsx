@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { FC, Fragment, useEffect, useState } from 'react'
+import { FC, Fragment, ReactNode, useEffect, useState } from 'react'
 
 //next
 import Link from 'next/link';
@@ -31,7 +31,7 @@ import { DataGrid, GridColDef, GridRenderCellParams, GridValueFormatterParams, G
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
 import Pagination from '@mui/material/Pagination';
-
+import { NumericFormat } from 'react-number-format'
 
 //utilites
 import dayjs from 'dayjs';
@@ -69,6 +69,7 @@ import { base64regex } from '../DoctorsSections/Profile/ProfilePage';
 import isJsonString from '@/helpers/isJson';
 import { loadStylesheet } from '@/pages/_app';
 import TextField from '@mui/material/TextField';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
 export const StyledBadge = styled(Badge, {
   shouldForwardProp: (prop) => prop !== 'online'
@@ -114,6 +115,8 @@ export interface TimeType {
   period: string;
   active: boolean;
   isReserved: boolean;
+  price: string;
+  currencySymbol: string;
   reservations: AppointmentReservationType[];
 }
 
@@ -218,6 +221,27 @@ const ScheduleTiming: FC = (() => {
   const [dataGridFilters, setDataGridFilters] = useState({
     limit: 5,
     skip: 0
+  });
+
+  const {
+    handleSubmit,
+    clearErrors,
+    formState: { errors },
+    control,
+    setValue: setFormValue,
+  } = useForm({})
+
+  const { fields: morningFields, append: appendmorning, remove: removemorning, replace: replacemorning, update: updatemorning } = useFieldArray<any>({
+    control,
+    name: "morning"
+  });
+  const { fields: afternoonFields, append: appendafternoon, remove: removeafternoon, replace: replaceafternoon, update: updateafternoon } = useFieldArray<any>({
+    control,
+    name: "afternoon"
+  });
+  const { fields: eveningFields, append: appendevening, remove: removeevening, replace: replaceevening, update: updateevening } = useFieldArray<any>({
+    control,
+    name: "evening"
   });
 
   const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
@@ -490,7 +514,6 @@ const ScheduleTiming: FC = (() => {
 
   const removePeriod = (index: number) => {
     //Check if both time is defined if not remove
-    // console.log({ remove: calendarValue[index] })
     if (calendarValue[index].every((a: any) => typeof a !== 'undefined')) {
       //Format start date and finish date of callendar
       let startDate = dayjs(calendarValue[index][0]).format("DD MMM YYYY")
@@ -523,7 +546,6 @@ const ScheduleTiming: FC = (() => {
               // })
 
             } else {
-              console.log(`has record`)
             }
           }
         } else {
@@ -533,8 +555,6 @@ const ScheduleTiming: FC = (() => {
         fixMultipleState(index, keyState)
       }
     } else {
-      console.log({ 340: index })
-      // fixMultipleState(index, keyState)
     }
   }
 
@@ -562,6 +582,16 @@ const ScheduleTiming: FC = (() => {
                 period: `${dayjs().hour(9).minute(0).add(timeSlot[statesKey] * i, 'minute').format('HH:mm')} - ${dayjs().hour(9).minute(0).add(timeSlot[statesKey] * (i + 1), 'minute').format('HH:mm')}`,
                 active: false,
                 isReserved: false,
+                price: '',
+                currencySymbol: '',
+                reservations: []
+              })
+              appendmorning({
+                period: `${dayjs().hour(9).minute(0).add(timeSlot[statesKey] * i, 'minute').format('HH:mm')} - ${dayjs().hour(9).minute(0).add(timeSlot[statesKey] * (i + 1), 'minute').format('HH:mm')}`,
+                active: false,
+                isReserved: false,
+                price: '',
+                currencySymbol: '',
                 reservations: []
               })
             })
@@ -572,6 +602,16 @@ const ScheduleTiming: FC = (() => {
                 period: `${dayjs().hour(13).minute(0).add(timeSlot[statesKey] * i, 'minute').format('HH:mm')} - ${dayjs().hour(13).minute(0).add(timeSlot[statesKey] * (i + 1), 'minute').format('HH:mm')}`,
                 active: false,
                 isReserved: false,
+                price: '',
+                currencySymbol: '',
+                reservations: []
+              })
+              appendafternoon({
+                period: `${dayjs().hour(13).minute(0).add(timeSlot[statesKey] * i, 'minute').format('HH:mm')} - ${dayjs().hour(13).minute(0).add(timeSlot[statesKey] * (i + 1), 'minute').format('HH:mm')}`,
+                active: false,
+                isReserved: false,
+                price: '',
+                currencySymbol: '',
                 reservations: []
               })
             })
@@ -582,13 +622,23 @@ const ScheduleTiming: FC = (() => {
                 period: `${dayjs().hour(17).minute(0).add(timeSlot[statesKey] * i, 'minute').format('HH:mm')} - ${dayjs().hour(17).minute(0).add(timeSlot[statesKey] * (i + 1), 'minute').format('HH:mm')}`,
                 active: false,
                 isReserved: false,
+                price: '',
+                currencySymbol: '',
+                reservations: []
+              })
+              appendevening({
+                period: `${dayjs().hour(17).minute(0).add(timeSlot[statesKey] * i, 'minute').format('HH:mm')} - ${dayjs().hour(17).minute(0).add(timeSlot[statesKey] * (i + 1), 'minute').format('HH:mm')}`,
+                active: false,
+                isReserved: false,
+                price: '',
+                currencySymbol: '',
                 reservations: []
               })
             })
           }
           newState = initialState
         } else {
-          console.log('{ prevState }')
+
         }
         return newState
       })
@@ -607,31 +657,6 @@ const ScheduleTiming: FC = (() => {
     }
   }
 
-
-  const selectMoringSlot = (e: any, i: number) => {
-    if (editDaySlot !== null) {
-      let newDaySlot = { ...editDaySlot }
-      newDaySlot.morning[i]['active'] = e.target.checked
-      setEditDaySlot({ ...newDaySlot })
-    }
-  }
-
-  const selectAfternoonSlot = (e: any, i: number) => {
-    if (editDaySlot !== null) {
-      let newDaySlot = { ...editDaySlot }
-      newDaySlot.afternoon[i]['active'] = e.target.checked
-      setEditDaySlot({ ...newDaySlot })
-    }
-  }
-
-  const selectEveningSlot = (e: any, i: number) => {
-    if (editDaySlot !== null) {
-      let newDaySlot = { ...editDaySlot }
-      newDaySlot.evening[i]['active'] = e.target.checked
-      setEditDaySlot({ ...newDaySlot })
-    }
-  }
-
   const editSlotClick = (startDate: string, finishDate: string) => {
 
     if (doctorAvailableTimeSlot !== null) {
@@ -639,8 +664,16 @@ const ScheduleTiming: FC = (() => {
       let indexOfFinishDate = doctorAvailableTimeSlot.availableSlots.findIndex((s: AvailableType) => dayjs(s.finishDate).isSame(finishDate))
       if (indexOfStartDate !== -1 && indexOfFinishDate !== -1) {
         setShowDialog(true)
-        // let editDay: AvailableType = doctorAvailableTimeSlot.availableSlots[indexOfStartDate]
         let editDay: AvailableType = _.cloneDeep(doctorAvailableTimeSlot.availableSlots[indexOfStartDate])
+        if (editDay?.morning.length !== 0) {
+          appendmorning([...editDay.morning])
+        }
+        if (editDay?.afternoon.length !== 0) {
+          appendafternoon([...editDay.afternoon])
+        }
+        if (editDay?.evening.length !== 0) {
+          appendevening([...editDay.evening])
+        }
         setEditDaySlot(editDay)
       }
     }
@@ -908,8 +941,6 @@ const ScheduleTiming: FC = (() => {
     } else {
       if (doctorAvailableTimeSlot.availableSlots.length == 0) {
         setCalendarValue(undefined)
-      } else {
-        // console.log({ doctorAvailableTimeSlot })
       }
 
     }
@@ -1129,6 +1160,9 @@ const ScheduleTiming: FC = (() => {
                               id={`full-width-tab-${index}`}
                               aria-controls={`full-width-tabpanel-${index}`}
                               iconPosition='end'
+                              sx={{
+                                color: '#000'
+                              }}
                               icon={<CloseIcon sx={{ color: 'secondary.main' }} fontSize="small"
                                 onClick={() => {
                                   if (index === tabIndex) {
@@ -1308,6 +1342,15 @@ const ScheduleTiming: FC = (() => {
                                       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                                         {
                                           entrie[1].map((time: TimeType, timeIndex: number) => {
+                                            function formatNumberWithCommas(number: string) {
+                                              // Check if the input is a valid number (or can be converted to one)
+                                              const num = Number(number);
+                                              if (isNaN(num)) {
+                                                return number; // Return the original input if it's not a number
+                                              }
+
+                                              return num.toLocaleString();
+                                            }
                                             return (
                                               <Fragment key={timeIndex.toString() + entriesIndex.toString() + slotIndex.toString()}>
                                                 {time.active &&
@@ -1332,7 +1375,10 @@ const ScheduleTiming: FC = (() => {
                                                         if (time.reservations?.length > 0) {
                                                         }
                                                       }}>
-                                                      {time.period}
+                                                      <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                                                        <p style={{ marginBottom: '-2px', color: '#000' }}>Time: {time.period}</p>
+                                                        <p style={{ marginBottom: '-2px', color: '#000' }}>Price: {formatNumberWithCommas(time.price)} {time.currencySymbol || '$'}</p>
+                                                      </span>
                                                       <Link href=""
                                                         aria-label='delete Single Slot'
                                                         onClick={(e) => {
@@ -1369,62 +1415,187 @@ const ScheduleTiming: FC = (() => {
   }
 
   const selectAllClick = (period: string) => {
-    let newSlot: AvailableType = { ...editDaySlot! }
-    let periodArray = newSlot[period as keyof typeof newSlot]! as TimeType[]
+    let periodArray = period == 'morning' ? morningFields : period == 'afternoon' ? afternoonFields : eveningFields as any[];
+    let replaceFunction = period == 'morning' ? replacemorning : period == 'afternoon' ? replaceafternoon : replaceevening
     if (periodArray.every((a: TimeType) => a.active)) {
       periodArray.map((a: TimeType) => a.active = false)
     } else {
       periodArray.map((a: TimeType) => a.active = true)
     }
-    setEditDaySlot({ ...newSlot })
+    replaceFunction([...periodArray])
   }
 
-
   const SelectCheckBox = ({ period }: { period: 'morning' | 'afternoon' | 'evening' }) => {
-    let periodArray = editDaySlot![period as keyof typeof editDaySlot]! as TimeType[]
+    let periodArray = period == 'morning' ? morningFields : period == 'afternoon' ? afternoonFields : eveningFields as any[];
     let capitalPeriod: string = `${period.charAt(0).toUpperCase()}${period.slice(1)}`
-    let selectFunction = period == 'morning' ? selectMoringSlot : period == 'afternoon' ? selectAfternoonSlot : selectEveningSlot;
+    let updateFunction = period == 'morning' ? updatemorning : period == 'afternoon' ? updateafternoon : updateevening
+
     return (
       <>
         {
           periodArray.length > 0 &&
           <Fragment>
             <Divider>{capitalPeriod} </Divider>
-            <FormControlLabel control={<Checkbox checked={periodArray.every(a => a.active)}
-              onChange={() => selectAllClick(period)} name={`${period}_${capitalPeriod}`} />}
-              label={periodArray.every(a => a.active) ? `Deselect all ${capitalPeriod}` : `Select all ${capitalPeriod}`}
-              sx={{
-                color: (theme) => theme.palette.text.color,
-                "& .MuiFormControlLabel-label": {
-                  fontSize: { xl: '18px !important', lg: '16px !important', md: `16px !important`, sm: `17px !important`, xs: `14px !important` }
-                },
-                "& .MuiButtonBase-root": {
-                  pl: { xl: "9px", lg: '9px', md: `9px`, xs: '0px' },
-                  pr: { xl: "9px", lg: '9px', md: `9px`, xs: '0px' }
-                }
-              }}
-            />
+            <Grid container >
+              <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+
+                <FormControlLabel
+                  control={<Checkbox checked={periodArray.every(a => a.active)}
+                    onChange={() => selectAllClick(period)} name={`${period}_${capitalPeriod}`} />}
+                  label={periodArray.every(a => a.active) ? `Deselect all ${capitalPeriod}` : `Select all ${capitalPeriod}`}
+                  sx={{
+                    color: (theme) => theme.palette.text.color,
+                    "& .MuiFormControlLabel-label": {
+                      fontSize: { xl: '18px !important', lg: '16px !important', md: `16px !important`, sm: `17px !important`, xs: `14px !important` }
+                    },
+                    "& .MuiButtonBase-root": {
+                      pl: { xl: "9px", lg: '9px', md: `9px`, xs: '0px' },
+                      pr: { xl: "9px", lg: '9px', md: `9px`, xs: '0px' }
+                    }
+                  }}
+                />
+              </Grid>
+              <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+
+                <Controller
+
+                  name={period}
+                  control={control}
+                  render={(props: any) => {
+                    const { field, fieldState, formState } = props;
+                    const { ref, onChange, value: fieldValue } = field;
+                    return (
+                      <NumericFormat
+                        key={`${period}`}
+                        prefix={`$ `}
+                        // value={fieldValue}
+                        thousandSeparator
+                        customInput={TextField}
+                        onClick={() => {
+                          let myInput = document.getElementById(`${period}`)!;
+                          myInput.focus();
+                          myInput.autofocus = true;
+                        }}
+                        onChange={(e) => {
+                          e.target.focus();
+                          e.target.autofocus = true;
+                        }}
+                        onValueChange={(values) => {
+                          const { value, floatValue } = values;
+                          if (!floatValue) {
+                            periodArray.forEach((p, i) => {
+                              setFormValue(`${period}.${i}.price`, '')
+                            })
+
+                          } else {
+                            periodArray.forEach((p, i) => {
+
+                              setFormValue(`${period}.${i}.price`, value)
+                            })
+                          }
+                        }}
+                        {...{
+                          // autoFocus: true,
+                          // ref: ref,
+                          required: true,
+                          id: `${period}`,
+                          label: 'Price',
+                          fullWidth: true,
+                          size: 'small',
+                          inputProps: {
+                            autoComplete: 'off'
+                          },
+                        }}
+                      />
+                    )
+                  }}
+                />
+              </Grid>
+            </Grid>
+
             <Grid container >
               <div className="row form-row">
                 {
-                  periodArray.map((e, i) => {
+                  periodArray.map((timeObjec: TimeType, i: number) => {
                     return (
                       <Grid item xl={4} lg={4} md={4} sm={4} xs={6} key={i} >
                         <FormControlLabel
-                          control={<Checkbox name={`${e.period}`} checked={e.active} onChange={(e: any) => {
-                            selectFunction(e, i)
-                          }} />}
-                          label={e.period}
+                          checked={timeObjec.active}
+                          {
+                          ...control.register(`${period}.${i}.active`,
+                          )
+                          }
+                          required
+                          control={<Checkbox
+                            onChange={() => {
+                              updateFunction(i, { ...timeObjec, active: !timeObjec.active });
+                              clearErrors(`${period}.${i}.active`)
+                            }}
+                          />}
+                          label={timeObjec.period}
                           sx={{
                             color: (theme) => theme.palette.text.color,
                             "& .MuiFormControlLabel-label": {
-                              fontSize: { xl: '18px !important', lg: '16px !important', md: `16px !important`, sm: `17px !important`, xs: `14px !important` }
+                              fontSize: { xl: '18px !important', lg: '16px !important', md: `16px !important`, sm: `17px !important`, xs: `14px !important` },
+                              minWidth: '115px'
                             },
                             "& .MuiButtonBase-root": {
                               pl: { xl: "9px", lg: '9px', md: `9px`, xs: '0px' },
                               pr: { xl: "9px", lg: '9px', md: `9px`, xs: '0px' }
                             }
                           }} />
+                        {
+                          timeObjec.active &&
+                          <Controller
+                            rules={{
+                              required: "This field is required"
+                            }}
+                            name={`${period}.${i}.price`}
+                            control={control}
+                            render={(props: any) => {
+                              const { field, fieldState, formState } = props;
+                              const { ref, onChange, value: fieldValue } = field;
+                              return (
+                                <NumericFormat
+                                  key={`${i} ${JSON.stringify(timeObjec)}`}
+                                  prefix={`$ `}
+                                  value={fieldValue}
+                                  thousandSeparator
+                                  customInput={TextField}
+                                  onClick={() => {
+                                    let myInput = document.getElementById(`${i} ${JSON.stringify(timeObjec)}`)!;
+                                    myInput.focus();
+                                    myInput.autofocus = true;
+                                  }}
+                                  onChange={(e) => {
+                                    e.target.focus();
+                                    e.target.autofocus = true;
+                                  }}
+                                  onValueChange={(values) => {
+                                    const { value, floatValue } = values;
+                                    if (!floatValue) {
+                                      setFormValue(`${period}.${i}.price`, '')
+                                    } else {
+                                      setFormValue(`${period}.${i}.price`, value)
+                                    }
+                                  }}
+                                  {...{
+                                    required: true,
+                                    id: `${i} ${JSON.stringify(timeObjec)}`,
+                                    label: 'Price',
+                                    fullWidth: true,
+                                    error: errors?.[`${period}`]?.[i as keyof typeof editDaySlot]?.['price'] == undefined ? false : true,
+                                    helperText: errors?.[`${period}`]?.[i as keyof typeof editDaySlot]?.['price'] && errors[`${period}`]?.[i as keyof typeof editDaySlot]['price']['message'] as ReactNode,
+                                    size: 'small',
+                                    inputProps: {
+                                      autoComplete: 'off'
+                                    },
+                                  }}
+                                />
+                              )
+                            }}
+                          />
+                        }
                       </Grid>
                     )
                   })
@@ -1440,53 +1611,7 @@ const ScheduleTiming: FC = (() => {
 
   const DialogButton = () => {
     return (
-      <button type="submit" className="submitButton w-100" onClick={(e) => {
-        e.preventDefault();
-        document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-        setTimeout(() => {
-          setShowDialog(false)
-          setDoctorAvailableTimeSlot((prevState: DoctorsTimeSlotType | null) => {
-            if (prevState == null) {
-              prevState = {
-                _id: '',
-                doctorId: userProfile?._id as string,
-                createDate: new Date(),
-                updateDate: new Date(),
-                availableSlots: []
-              }
-            }
-            let indexOfStartDate = prevState.availableSlots.findIndex((s: AvailableType) => dayjs(s.startDate).isSame(editDaySlot!.startDate))
-            let indexOfFinishDate = prevState.availableSlots.findIndex((s: AvailableType) => dayjs(s.finishDate).isSame(editDaySlot!.finishDate))
-            if (indexOfStartDate !== -1 && indexOfFinishDate !== -1) {
-              prevState.availableSlots[indexOfStartDate]['morning'] = [...editDaySlot!.morning]
-              prevState.availableSlots[indexOfStartDate]['afternoon'] = [...editDaySlot!.afternoon]
-              prevState.availableSlots[indexOfStartDate]['evening'] = [...editDaySlot!.evening]
-              // prevState.availableSlots[indexOfStartDate] = { ...editDaySlot! }
-            } else {
-              prevState?.availableSlots.push({ ...editDaySlot! })
-            }
-            return { ...prevState }
-          })
-          setIsPeriodExist((prevState: { [key: string]: boolean }) => {
-            let haveMorning = editDaySlot!.morning.length == 0 ? false : editDaySlot!.morning.some((a) => a.active)
-            let haveAfternoon = editDaySlot!.afternoon.length == 0 ? false : editDaySlot!.afternoon.some((a) => a.active)
-            let haveEvening = editDaySlot!.evening.length == 0 ? false : editDaySlot!.evening.some((a) => a.active)
-            let stateKey = dayjs(editDaySlot?.startDate).format('DDMMYYYY')
-            if (haveMorning || haveAfternoon || haveEvening) {
-              return {
-                ...prevState,
-                [stateKey as string]: true
-              }
-            } else {
-              return {
-                ...prevState,
-                [stateKey as string]: false
-              }
-            }
-          })
-          setEditDaySlot(null)
-        }, 500);
-      }}>
+      <button type="submit" className="submitButton w-100" >
         {
           doctorAvailableTimeSlot !== null ?
             doctorAvailableTimeSlot.availableSlots.findIndex((s: AvailableType) => dayjs(s.startDate).isSame(dayjs(editDaySlot!.startDate))) == -1
@@ -1495,6 +1620,62 @@ const ScheduleTiming: FC = (() => {
             : `Save Changes`}
       </button>
     )
+  }
+
+  const onEditDialogSubmit = (data: any) => {
+    document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+    setTimeout(() => {
+      setShowDialog(false)
+      setDoctorAvailableTimeSlot((prevState: DoctorsTimeSlotType | null) => {
+        if (prevState == null) {
+          prevState = {
+            _id: '',
+            doctorId: userProfile?._id as string,
+            createDate: new Date(),
+            updateDate: new Date(),
+            availableSlots: []
+          }
+        }
+        let indexOfStartDate = prevState.availableSlots.findIndex((s: AvailableType) => dayjs(s.startDate).isSame(editDaySlot!.startDate))
+        let indexOfFinishDate = prevState.availableSlots.findIndex((s: AvailableType) => dayjs(s.finishDate).isSame(editDaySlot!.finishDate))
+        if (indexOfStartDate !== -1 && indexOfFinishDate !== -1) {
+          prevState.availableSlots[indexOfStartDate]['morning'] = [...data!.morning]
+          prevState.availableSlots[indexOfStartDate]['afternoon'] = [...data!.afternoon]
+          prevState.availableSlots[indexOfStartDate]['evening'] = [...data!.evening]
+          // prevState.availableSlots[indexOfStartDate] = { ...editDaySlot! }
+        } else {
+          prevState?.availableSlots.push({
+            ...data!,
+            startDate: editDaySlot?.startDate,
+            finishDate: editDaySlot?.finishDate,
+            timeSlot: editDaySlot?.timeSlot,
+            index: editDaySlot?.index
+          })
+        }
+        return { ...prevState }
+      })
+      setIsPeriodExist((prevState: { [key: string]: boolean }) => {
+        let haveMorning = data!.morning.length == 0 ? false : data!.morning.some((a: TimeType) => a.active)
+        let haveAfternoon = data!.afternoon.length == 0 ? false : data!.afternoon.some((a: TimeType) => a.active)
+        let haveEvening = data!.evening.length == 0 ? false : data!.evening.some((a: TimeType) => a.active)
+        let stateKey = dayjs(editDaySlot?.startDate).format('DDMMYYYY')
+        if (haveMorning || haveAfternoon || haveEvening) {
+          return {
+            ...prevState,
+            [stateKey as string]: true
+          }
+        } else {
+          return {
+            ...prevState,
+            [stateKey as string]: false
+          }
+        }
+      })
+      setEditDaySlot(null)
+      removemorning();
+      removeafternoon();
+      removeevening();
+    }, 500);
   }
 
   const dialogCompoenent = () => {
@@ -1519,6 +1700,9 @@ const ScheduleTiming: FC = (() => {
               setTimeout(() => {
                 setShowDialog(false)
                 setEditDaySlot(null)
+                removemorning();
+                removeafternoon();
+                removeevening();
               }, 500);
             }}>
             <Typography sx={{ fontSize: { xl: '18px', lg: '17px', md: '17px', xs: '14px' }, }}>
@@ -1530,7 +1714,7 @@ const ScheduleTiming: FC = (() => {
             </Typography>
           </BootstrapDialogTitle>
           <DialogContent dividers >
-            <form>
+            <form noValidate onSubmit={handleSubmit(onEditDialogSubmit)}>
               {/* appy to all */}
               <div className="hours-info" style={muiVar}>
                 <div className="">

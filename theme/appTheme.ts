@@ -222,6 +222,13 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
           },
         },
       },
+      MuiAutocomplete: {
+        styleOverrides: {
+          root: {
+            popup: { zIndex: 1300 },
+          },
+        },
+      },
       // MuiSelect: {
       //   styleOverrides: {
       //     select: {

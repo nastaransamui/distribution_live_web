@@ -90,6 +90,7 @@
     "react-lightbox-component": "^1.2.1",
     "react-loadingg": "^1.7.2",
     "react-multi-date-picker": "^4.4.1",
+    "react-number-format": "^5.4.2",
     "react-owl-carousel": "^2.3.3",
     "react-redux": "^8.1.1",
     "react-scroll-into-view": "^2.0.2",

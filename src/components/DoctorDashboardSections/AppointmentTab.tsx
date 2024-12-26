@@ -231,7 +231,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
       headerAlign: 'center',
       valueFormatter(params: GridValueFormatterParams) {
         const { value } = params
-        return `${value.gender}.${value?.firstName} ${value?.lastName}`
+        return `${value.gender} ${value.gender !== '' ? '.' : ''} ${value?.firstName} ${value?.lastName}`
       },
       renderCell: (params: GridRenderCellParams) => {
         const { row, formattedValue } = params;

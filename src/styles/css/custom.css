@@ -16623,12 +16623,14 @@ table .table-hover tbody tr:hover td {
   margin: 10px 10px 0 0;
   padding: 6px 15px;
   border-radius: 4px;
+  display: flex;
 }
 
 .doc-slot-list a {
   color: var(--secondaryMain);
   display: inline-block;
-  /* margin-left: 5px; */
+  display: flex;
+  align-items: center;
 }
 
 .doc-slot-list a:hover {
