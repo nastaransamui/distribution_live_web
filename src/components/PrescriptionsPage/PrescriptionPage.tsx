@@ -40,7 +40,7 @@ export const doctorPatientInitialLimitsAndSkips: DoctorPatientInitialLimitsAndSk
 }
 export interface AppointmentReservationExtendType extends AppointmentReservationType {
   doctorProfile: DoctorProfileType;
-  createdDate: Date;
+  createdDate: string;
 }
 export interface PatientProfileExtendType extends PatientProfile {
   appointments: AppointmentReservationExtendType[];
