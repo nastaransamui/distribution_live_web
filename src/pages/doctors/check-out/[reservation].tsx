@@ -18,6 +18,7 @@ import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import useScssVar from '@/hooks/useScssVar';
+import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 
 
 const CheckoutPage: NextPage = () => {
@@ -50,6 +51,7 @@ const CheckoutPage: NextPage = () => {
         </div>
       </div>
       <Footer />
+      <CookieConsentComponent />
     </>
   )
 }

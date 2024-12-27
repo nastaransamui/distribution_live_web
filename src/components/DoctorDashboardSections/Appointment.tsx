@@ -25,13 +25,13 @@ import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import { toast } from 'react-toastify';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 import dayjs from 'dayjs';
-import { StyledBadge } from './ScheduleTiming';
+import { formatNumberWithCommas, StyledBadge } from './ScheduleTiming';
 
 
 
 export interface AppointmentReservationExtendType extends AppointmentReservationType {
   patientProfile: PatientProfile;
-  createdDate: Date;
+  createdDate: string;
 }
 const perPage = 10
 const Appointment: FC = (() => {
@@ -320,7 +320,7 @@ const Appointment: FC = (() => {
                   color: theme.palette.secondary.light
                 }
               }} href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
-              {`${editValues?.patientProfile?.gender}. ${editValues?.patientProfile?.firstName} ${editValues?.patientProfile?.lastName}`}
+              {`${editValues?.patientProfile?.gender} ${editValues?.patientProfile?.gender !== '' ? '.' : ''} ${editValues?.patientProfile?.firstName} ${editValues?.patientProfile?.lastName}`}
             </Typography>
           </BootstrapDialogTitle>
           <DialogContent dividers>
@@ -356,7 +356,7 @@ const Appointment: FC = (() => {
               </li>
               <li>
                 <span className="title">Paid Amount</span>
-                <span className="text">160$</span>
+                <span className="text">{formatNumberWithCommas(editValues?.timeSlot?.price!)} {" "} {editValues?.timeSlot?.currencySymbol || "THB"}</span>
               </li>
             </ul>
           </DialogContent>

@@ -16,6 +16,7 @@ import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
+import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 
 const PaymentSuccessPage: NextPage = () => {
 
@@ -34,6 +35,7 @@ const PaymentSuccessPage: NextPage = () => {
       <div className="main-wrapper">
         <PaymentSuccess />
         <Footer />
+        <CookieConsentComponent />
       </div>
     </>
   )

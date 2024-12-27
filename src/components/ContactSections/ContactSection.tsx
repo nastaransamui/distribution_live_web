@@ -9,6 +9,7 @@ import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
 import { emailRegex } from '../PatientDashboardSections/ChangePassword';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import { toast } from 'react-toastify';
+import { useTheme } from "@mui/material";
 export interface FormType {
   firstName: string;
   lastName: string;
@@ -22,6 +23,7 @@ const ContactSection: FC = (() => {
   const userData = useSelector((state: AppState) => state.userData.value)
   const dispatch = useDispatch()
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  const theme = useTheme();
   const {
     register,
     handleSubmit,
@@ -86,7 +88,7 @@ const ContactSection: FC = (() => {
   }
   return (
     <Fragment>
-      <section className="contact-section" style={muiVar}>
+      <section className="contact-section" style={{ ...muiVar, backgroundColor: theme.palette.background.default }}>
         <div className="container">
           <div className="row">
             <div className="col-lg-5 col-md-12">

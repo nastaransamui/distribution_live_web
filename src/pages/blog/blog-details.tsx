@@ -20,6 +20,7 @@ import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
+import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 
 const BlogDetailsPage: NextPage = () => {
 
@@ -42,6 +43,7 @@ const BlogDetailsPage: NextPage = () => {
             <BlogDetails />
             <BlogStickySide />
             <Footer />
+            <CookieConsentComponent />
           </div>
         </div>
       </div>

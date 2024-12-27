@@ -8,7 +8,7 @@ import { addDays } from 'date-fns';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
 import { Calendar as CalendarComponent, DateObject } from "react-multi-date-picker"
-import { AvailableType, TimeType, afterNoonFinish, afterNoonStart, eveningFinish, eveningStart, morningFinish, morningStart } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { AvailableType, TimeType, afterNoonFinish, afterNoonStart, eveningFinish, eveningStart, formatNumberWithCommas, morningFinish, morningStart } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import type { Dayjs, ManipulateType } from 'dayjs';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
@@ -291,6 +291,7 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                 <div className="col-md-12">
                   <div className="day-slot">
                     <CalendarComponent
+                      minDate={dayjs().toDate()}
                       highlightToday={true}
                       numberOfMonths={widthOnlyXl ? 4 : widthOnlyLg ? 3 : minWidth767max991 ? 2 : widthOnlySm ? 2 : widthOnlyXs ? 1 : 2}
                       value={calendarValue}
@@ -373,9 +374,10 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                                                         <Button
                                                           disabled={isDisabled}
                                                           className={`timing ${isSelect ? 'active' : ' '}`}
-                                                          sx={{ bgcolor: isDisabled ? `${theme.palette.primary.main} !Important` : '' }}
+                                                          sx={{ bgcolor: isDisabled ? `${theme.palette.primary.main} !Important` : '', display: 'flex', flexDirection: 'column' }}
                                                           onClick={(e) => { periodButtonClick(e, s, isSelect, slot, entrie[0]) }}>
                                                           <span><i className={isDisabled ? "feather-x-circle" : "feather-clock"} />{s.period}</span>
+                                                          <span>{formatNumberWithCommas(s.price)} {" "} {s.currencySymbol || 'THB'}</span>
                                                         </Button>
                                                       </li>
                                                     )

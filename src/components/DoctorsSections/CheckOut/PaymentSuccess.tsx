@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
-import { TimeType } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { formatNumberWithCommas, TimeType } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { toast } from 'react-toastify';
 
 
@@ -14,6 +14,7 @@ import { useTheme } from '@mui/material/styles';
 import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import { base64regex } from '../Profile/ProfilePage';
 import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
+import { PatientProfile } from '@/components/DoctorDashboardSections/MyPtients';
 
 export interface AppointmentReservationType {
   _id?: string;
@@ -27,10 +28,12 @@ export interface AppointmentReservationType {
   patientId: string;
   paymentToken: string;
   paymentType: string;
+  createdDate: string;
 }
 
 export interface AppointmentReservationExtendType extends AppointmentReservationType {
   doctorProfile: DoctorProfileType;
+  patientProfile: PatientProfile;
 }
 
 const PaymentSuccess: FC = (() => {
@@ -106,8 +109,12 @@ const PaymentSuccess: FC = (() => {
                         <p>Appointment booked with
                           <strong>Dr. {reservation?.doctorProfile?.firstName} {reservation?.doctorProfile?.lastName}</strong>
                           <br /> on&nbsp;
-                          <strong>{reservation?.selectedDate}&nbsp; {reservation?.timeSlot?.period}</strong></p>
-                        <Link href="/doctors/invoice-view" className="btn btn-primary view-inv-btn">View Invoice</Link>
+                          <strong>{reservation?.selectedDate}&nbsp; {reservation?.timeSlot?.period}</strong>
+                          <br />with&nbsp;
+                          <strong>{formatNumberWithCommas(reservation?.timeSlot?.price)}&nbsp; {reservation?.timeSlot?.currencySymbol || 'THB'}</strong>
+
+                        </p>
+                        <Link href={`/doctors/invoice-view/${btoa(reservation?._id!)}`} className="btn btn-primary view-inv-btn">View Invoice</Link>
                       </div>
                   }
                 </div>

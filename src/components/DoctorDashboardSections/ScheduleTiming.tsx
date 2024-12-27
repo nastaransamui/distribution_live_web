@@ -71,6 +71,16 @@ import { loadStylesheet } from '@/pages/_app';
 import TextField from '@mui/material/TextField';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
+export const formatNumberWithCommas = (number: string) => {
+  // Check if the input is a valid number (or can be converted to one)
+  const num = Number(number);
+  if (isNaN(num)) {
+    return number; // Return the original input if it's not a number
+  }
+
+  return num.toLocaleString();
+}
+
 export const StyledBadge = styled(Badge, {
   shouldForwardProp: (prop) => prop !== 'online'
 })
@@ -1056,6 +1066,7 @@ const ScheduleTiming: FC = (() => {
       <div className="schedule-header" >
         <div className="schedule-nav">
           <Calendar
+            minDate={dayjs().toDate()}
             highlightToday={true}
             numberOfMonths={widthOnlyXl ? 4 : widthOnlyLg ? 3 : minWidth767max991 ? 1 : widthOnlySm ? 2 : widthOnlyXs ? 1 : 2}
             value={calendarValue}
@@ -1342,15 +1353,7 @@ const ScheduleTiming: FC = (() => {
                                       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                                         {
                                           entrie[1].map((time: TimeType, timeIndex: number) => {
-                                            function formatNumberWithCommas(number: string) {
-                                              // Check if the input is a valid number (or can be converted to one)
-                                              const num = Number(number);
-                                              if (isNaN(num)) {
-                                                return number; // Return the original input if it's not a number
-                                              }
 
-                                              return num.toLocaleString();
-                                            }
                                             return (
                                               <Fragment key={timeIndex.toString() + entriesIndex.toString() + slotIndex.toString()}>
                                                 {time.active &&
@@ -1377,7 +1380,7 @@ const ScheduleTiming: FC = (() => {
                                                       }}>
                                                       <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                                                         <p style={{ marginBottom: '-2px', color: '#000' }}>Time: {time.period}</p>
-                                                        <p style={{ marginBottom: '-2px', color: '#000' }}>Price: {formatNumberWithCommas(time.price)} {time.currencySymbol || '$'}</p>
+                                                        <p style={{ marginBottom: '-2px', color: '#000' }}>Price: {formatNumberWithCommas(time.price)} {time.currencySymbol || 'THB'}</p>
                                                       </span>
                                                       <Link href=""
                                                         aria-label='delete Single Slot'
@@ -1953,6 +1956,23 @@ const ScheduleTiming: FC = (() => {
         valueGetter(params: GridRenderCellParams) {
           const { value } = params
           return value.charAt(0).toUpperCase() + value.slice(1)
+        }
+      },
+      {
+        field: 'price',
+        headerName: 'Price',
+        width: 90,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: (params) => {
+          return (
+            <Stack >
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(params?.row?.timeSlot?.price)}</span>
+              <span className="d-block">
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.timeSlot?.currencySymbol || 'THB'}</span>
+              </span>
+            </Stack>
+          )
         }
       },
       {

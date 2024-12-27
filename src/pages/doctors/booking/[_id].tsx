@@ -12,14 +12,13 @@ import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import Footer from '@/components/sections/Footer';
-import Calendar from '@/components/DoctorsSections/Booking/Calendar';
-import Summary from '@/components/DoctorsSections/Booking/Summary';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import BookingPage from '@/components/DoctorsSections/Booking/BookingPage';
 import useScssVar from '@/hooks/useScssVar';
+import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 
 
 const Booking: NextPage = () => {
@@ -45,6 +44,7 @@ const Booking: NextPage = () => {
           </div>
         </div>
       </div>
+      <CookieConsentComponent />
       <Footer />
     </>
   )

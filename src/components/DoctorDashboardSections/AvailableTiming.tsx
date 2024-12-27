@@ -18,7 +18,7 @@ import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 import { BootstrapDialog, BootstrapDialogTitle, Transition } from '../shared/Dialog';
 import { PatientProfile } from './MyPtients';
 import Link from 'next/link';
-import { StyledBadge } from './ScheduleTiming';
+import { formatNumberWithCommas, StyledBadge } from './ScheduleTiming';
 import Avatar from "@mui/material/Avatar";
 import { patient_profile } from '@/public/assets/imagepath';
 import Typography from '@mui/material/Typography';
@@ -32,6 +32,8 @@ export interface EditValueType {
   _id: string;
   createdDate: Date;
   patientId: string;
+  currencySymbol: string;
+  price: string;
 }
 const AvailableTiming: FC = (() => {
   const { muiVar, bounce } = useScssVar();
@@ -46,7 +48,6 @@ const AvailableTiming: FC = (() => {
   const onView = useCallback((newView: any) => setView(newView), [setView])
   const [show, setShow] = useState(false);
   const [editValues, setEditValues] = useState<EditValueType>();
-
   useEffect(() => {
     loadStylesheet('/css/react-big-calendar.min.css')
   }, [])
@@ -86,7 +87,6 @@ const AvailableTiming: FC = (() => {
                 return newState
               })
               if (show) {
-                console.log(editValues?._id)
                 let appointmentIndex = myAppointment.findIndex((a) => a?._id == editValues?._id)
                 if (appointmentIndex !== -1) {
                   setEditValues((prevState: any) => {
@@ -142,7 +142,8 @@ const AvailableTiming: FC = (() => {
         const endTime = a?.timeSlot?.period.split(' - ')[1]
         // create a date object with a specific date
         const date = dayjs(a.selectedDate);
-
+        const price = a.timeSlot.price;
+        const currencySymbol = a.timeSlot.currencySymbol
         // create a time object with a specific time
         const timeStarted = dayjs(startTime, 'HH:mm');
 
@@ -163,14 +164,15 @@ const AvailableTiming: FC = (() => {
           patientProfile: a?.patientProfile,
           _id: a?._id,
           createdDate: a?.createdDate,
-          patientId: a?.patientId
+          patientId: a?.patientId,
+          price: price,
+          currencySymbol: currencySymbol,
         })
       })
     }
 
     return [...eventArray]
   }, [myAppointmentData])
-
 
   const eventPropGetter = useCallback(
     (event: any, start: Date, end: Date, isSelected: boolean) => {
@@ -392,6 +394,10 @@ const AvailableTiming: FC = (() => {
               <li>
                 <span className="title">Confirm Date:</span>
                 <span className="text">{dayjs(editValues?.createdDate).format('DD MMM YYYY - HH:mm')}</span>
+              </li>
+              <li>
+                <span className="title">Price:</span>
+                <span className="text">{formatNumberWithCommas(editValues?.price!)} {" "} {editValues?.currencySymbol || "THB"}</span>
               </li>
             </ul>
           </DialogContent>

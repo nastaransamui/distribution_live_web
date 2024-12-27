@@ -37,7 +37,9 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { AvailableType, TimeType, afterNoonFinish, afterNoonStart, eveningFinish, eveningStart, morningFinish, morningStart } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { loadStylesheet } from '@/pages/_app';
-
+import { Transition } from '@/components/shared/Dialog';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 export interface ReviewTypes {
   userId: string;
   doctorId: string;
@@ -173,13 +175,35 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
       </Dialog>
 
       <Dialog
+        TransitionComponent={Transition}
         open={loginDialog}
-        onClose={() => setLoginDialog(false)}
+        onClose={() => {
+          document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+          setTimeout(() => {
+            setLoginDialog(false)
+          }, 500);
+        }}
         scroll='body'
         aria-labelledby="login"
         aria-describedby="login"
+        maxWidth="xs"
       >
-        <DialogTitle id="login">Login</DialogTitle>
+        <DialogTitle id="login">
+          Login
+          <IconButton
+            color="inherit"
+            onClick={() => {
+              document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+              setTimeout(() => {
+                setLoginDialog(false)
+              }, 500);
+            }}
+            aria-label="close"
+            sx={{ float: 'right', "&:hover": { color: 'primary.main' } }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
         <DialogContent dividers>
           <div style={muiVar}>
             <div className="col-md-12">
@@ -489,7 +513,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                                     '& .MuiFormControlLabel-label': {
                                       color: `${theme.palette.text.color} !important`
                                     }
-                                  }} control={<Checkbox defaultChecked />} disabled label="Morning" />
+                                  }} control={<Checkbox defaultChecked name={dayjs(morningStart).minute(0).format('HH:mm')} />} disabled label="Morning" />
                                   <small >
                                     {dayjs(morningStart).minute(0).format('HH:mm')}{" "}
                                     to
@@ -507,7 +531,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                                     '& .MuiFormControlLabel-label': {
                                       color: `${theme.palette.text.color} !important`
                                     }
-                                  }} control={<Checkbox defaultChecked />} disabled label="Afternoon" />
+                                  }} control={<Checkbox defaultChecked />} name={dayjs(afterNoonStart).minute(0).format('HH:mm')} disabled label="Afternoon" />
                                   <small >
                                     {dayjs(afterNoonStart).minute(0).format('HH:mm')}{" "}
                                     to
@@ -525,7 +549,7 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                                     '& .MuiFormControlLabel-label': {
                                       color: `${theme.palette.text.color} !important`
                                     }
-                                  }} control={<Checkbox defaultChecked />} disabled label="Evening" />
+                                  }} control={<Checkbox defaultChecked />} disabled name={dayjs(eveningStart).minute(0).format('HH:mm')} label="Evening" />
                                   <small>
                                     {dayjs(eveningStart).minute(0).format('HH:mm')}{" "}
                                     to
@@ -712,9 +736,10 @@ const PageTabs: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                             fullWidth
                             required
                           >
-                            <FormLabel id="rating">Review</FormLabel>
+                            <span id="rating" style={{ color: theme.palette.text.color }}>Review</span>
                             <Rating
                               ref={ref}
+                              aria-labelledby='rating'
                               name="rating"
                               precision={0.5}
                               disabled={!userProfile || profile?._id === userProfile?._id}

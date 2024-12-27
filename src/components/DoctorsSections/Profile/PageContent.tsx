@@ -14,8 +14,17 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import { ProfileImageStyledBadge } from '@/components/DoctorDashboardSections/MyPtients';
 import { loadStylesheet } from '@/pages/_app';
-
-
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import SyncIcon from '@mui/icons-material/Sync';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import { LoginBox } from '@/components/AuthSections/LoginSection';
+import CloseIcon from '@mui/icons-material/Close';
+import { Transition } from '@/components/shared/Dialog';
 
 const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
   const { muiVar, bounce } = useScssVar();
@@ -23,10 +32,113 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
   const [index, setIndex] = useState(0);
   const router = useRouter();
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const [loginDialog, setLoginDialog] = useState<boolean>(false)
+  const [favIconLoading, setFavIconLoading] = useState<boolean>(false);
+  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   useEffect(() => {
 
     loadStylesheet('/css/yet-another-react-lightbox-styles.css')
   }, [])
+  console.log(profile)
+  const _fav_button = () => {
+    let isFav = !!userProfile ? profile?.favs_id?.includes(userProfile?._id as string) : false
+
+    return (
+      <Tooltip arrow title={!userProfile ? 'Login in to add to favorit.' : `${isFav ? 'Remove' : 'Add'} doctor to favorite.`}>
+        <IconButton
+          disableFocusRipple
+          disableRipple
+          aria-label="add to favorites"
+          sx={{
+            padding: 0
+          }}
+          onClick={() => {
+            if (!userProfile) {
+              setLoginDialog(true)
+            } else {
+              setFavIconLoading(true);
+              if (!isFav) {
+                if (homeSocket?.current && typeof favIconLoading == 'undefined' ||
+                  !favIconLoading) {
+                  homeSocket.current.emit('addDocToFav', { doctorId: profile?._id, patientId: userProfile?._id })
+                  homeSocket.current.once('addDocToFavReturn', (msg: { status: number, message: string }) => {
+                    const { status, message } = msg;
+                    if (status !== 200) {
+                      toast.error(message, {
+                        position: "bottom-center",
+                        toastId: 'error',
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        transition: bounce,
+                        onClose: () => {
+                          toast.dismiss('error')
+                        }
+                      });
+                    } else {
+                      profile?.favs_id.push(userProfile._id)
+                      setFavIconLoading(false);
+                    }
+                  })
+                }
+              } else {
+                if (homeSocket?.current && typeof favIconLoading == 'undefined' ||
+                  !favIconLoading) {
+                  homeSocket.current.emit('removeDocFromFav', { doctorId: profile?._id, patientId: userProfile?._id })
+                  homeSocket.current.once('removeDocFromFavReturn', (msg: { status: number, message: string }) => {
+                    const { status, message } = msg;
+                    if (status !== 200) {
+                      toast.error(message, {
+                        position: "bottom-center",
+                        toastId: 'error',
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        transition: bounce,
+                        onClose: () => {
+                          toast.dismiss('error')
+                        }
+                      });
+                    } else {
+                      setFavIconLoading(false);
+                      const codeIndex = profile?.favs_id.indexOf(userProfile._id);
+                      if (codeIndex > -1) {
+                        profile?.favs_id.splice(codeIndex, 1);
+                      }
+                    }
+                  })
+                }
+              }
+            }
+          }}
+        >
+          {typeof favIconLoading == 'undefined' ||
+            !favIconLoading ?
+            <FavoriteIcon sx={{
+              animation: isFav ? `heartbeat 1s infinite` : 'unset',
+              color: isFav ? 'deeppink' : 'unset',
+              "&:hover": {
+                animation: `heartbeat 1s infinite`,
+                color: 'deeppink'
+              },
+              fontSize: '1.1rem'
+            }} />
+            :
+            <SyncIcon sx={{
+              color: 'primary.main',
+              animation: `rotate 3s infinite`,
+            }} />
+          }
+        </IconButton>
+      </Tooltip>
+    )
+  }
   return (
     <Fragment>
       <Lightbox
@@ -35,6 +147,51 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
         slides={profile?.clinicImages}
         index={index}
       />
+      <Dialog
+        TransitionComponent={Transition}
+        open={loginDialog}
+        onClose={() => {
+          document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+          setTimeout(() => {
+            setLoginDialog(false)
+          }, 500);
+        }}
+        scroll='body'
+        aria-labelledby="login"
+        aria-describedby="login"
+        maxWidth="xs"
+      >
+        <DialogTitle id="login">
+          Login
+          <IconButton
+            color="inherit"
+            onClick={() => {
+              document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+              setTimeout(() => {
+                setLoginDialog(false)
+              }, 500);
+            }}
+            aria-label="close"
+            sx={{ "&:hover": { color: 'primary.main' }, float: 'right' }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          <div style={muiVar}>
+            <div className="col-md-12">
+              <div className="account-content">
+                <div className="col-md-12 col-lg-12 login-right">
+                  <LoginBox closeDialog={setLoginDialog} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+
+        </DialogActions>
+      </Dialog>
       <div>
         <div className="card" style={muiVar}>
           <div className="card-body">
@@ -128,43 +285,15 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                   </ul>
                 </div>
                 <div className="doctor-action">
-                  <Link href="" aria-label='book-mark' className="btn btn-white fav-btn" onClick={(e) => {
-                    e.preventDefault()
-                    e.preventDefault();
-                    if (userProfile) {
-                      // console.log(userProfile)
-                    } else {
-                      toast.error(`Login to add this doctor to favorite.`, {
-                        position: "bottom-center",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        transition: bounce,
-                        onClose: () => { }
-                      });
-                    }
-                  }}>
-                    <i className="far fa-bookmark" />
+                  <Link href={''} onClick={(e) => e.preventDefault()} className="btn btn-white msg-btn">
+                    {_fav_button()}
                   </Link>
                   <Link href="/chat-doctor" aria-label='chat' className="btn btn-white msg-btn" onClick={(e) => {
                     e.preventDefault();
                     if (userProfile) {
                       // console.log(userProfile)
                     } else {
-                      toast.error(`Login to chat with this doctor.`, {
-                        position: "bottom-center",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        transition: bounce,
-                        onClose: () => { }
-                      });
+                      setLoginDialog(true)
                     }
                   }}>
                     <i className="far fa-comment-alt" />
@@ -183,17 +312,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                         // console.log(userProfile)
                         window.$('#voice_call').modal('toggle')
                       } else {
-                        toast.error(`Login to call this doctor.`, {
-                          position: "bottom-center",
-                          autoClose: 5000,
-                          hideProgressBar: false,
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          draggable: true,
-                          progress: undefined,
-                          transition: bounce,
-                          onClose: () => { }
-                        });
+                        setLoginDialog(true)
                       }
                     }}
                   >
@@ -212,17 +331,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                         // console.log(userProfile)
                         window.$('#video_call').modal('toggle')
                       } else {
-                        toast.error(`Login to video call with this doctor.`, {
-                          position: "bottom-center",
-                          autoClose: 5000,
-                          hideProgressBar: false,
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          draggable: true,
-                          progress: undefined,
-                          transition: bounce,
-                          onClose: () => { }
-                        });
+                        setLoginDialog(true)
                       }
                     }}
                   >
@@ -243,17 +352,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                           router.push(`/doctors/booking/${btoa(profile?._id)}`)
                         }
                       } else {
-                        toast.error(`Login to make booking with this doctor.`, {
-                          position: "bottom-center",
-                          autoClose: 5000,
-                          hideProgressBar: false,
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          draggable: true,
-                          progress: undefined,
-                          transition: bounce,
-                          onClose: () => { }
-                        });
+                        setLoginDialog(true)
                       }
                     }}>
                     Book Appointment

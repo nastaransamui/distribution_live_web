@@ -17,6 +17,7 @@ import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
+import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 
 
 
@@ -37,6 +38,7 @@ const ProfileHomePage: NextPage = () => {
       </Head>
       <BreadCrumb title='Doctor Profile' subtitle='Doctor Profile' />
       <ProfilePage />
+      <CookieConsentComponent />
       <Footer />
     </>
   )

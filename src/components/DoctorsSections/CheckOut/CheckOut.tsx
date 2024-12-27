@@ -35,6 +35,7 @@ import Rating from '@mui/material/Rating';
 import { OccupyTimeType } from '../Booking/Calendar';
 import GooglePayButton from '@google-pay/button-react'
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
+import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
 
 export interface GoogleInfoType {
   totalPriceStatus: string;
@@ -51,11 +52,11 @@ const Checkout: FC = (() => {
   const [termsDialog, setTermsDialog] = useState<boolean>(false)
   const [profile, setProfile] = useState<DoctorProfileType | null>(null);
   const [paymentInfo, setPaymentInfo] = useState<any>({
-    totalPriceStatus: 'FINAL',
-    totalPriceLabel: 'Total',
-    totalPrice: '160.00',
-    currencyCode: 'USD',
-    countryCode: 'US',
+    totalPriceStatus: '',
+    totalPriceLabel: '',
+    totalPrice: '',
+    currencyCode: '',
+    countryCode: '',
   })
   const [occupyTime, setOccupyTime] = useState<OccupyTimeType>()
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
@@ -101,6 +102,13 @@ const Checkout: FC = (() => {
             })
           }
           setOccupyTime({ ...resData, patientId: userProfile?._id })
+          setPaymentInfo({
+            totalPriceStatus: 'FINAL',
+            totalPriceLabel: 'Total',
+            totalPrice: resData?.timeSlot?.price,
+            currencyCode: resData?.timeSlot?.currencySymbol || 'THB',
+            countryCode: 'TH',
+          })
         }
       } else {
         router.back()
@@ -112,7 +120,6 @@ const Checkout: FC = (() => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encryptReservation, homeSocket, reload, router])
-
   const {
     register,
     clearErrors,
@@ -526,20 +533,20 @@ const Checkout: FC = (() => {
                         </ul>
                         <ul className="booking-fee booking-total">
                           <li>
-                            Consulting Fee <span>$100</span>
+                            Consulting Fee <span>{occupyTime?.timeSlot?.currencySymbol || 'THB'} {" "} {formatNumberWithCommas(occupyTime?.timeSlot?.price!)}</span>
                           </li>
-                          <li>
-                            Booking Fee <span>$10</span>
+                          {/* <li>
+                            Booking Fee <span>{occupyTime?.timeSlot?.currencySymbol || 'THB'}10</span>
                           </li>
                           <li>
                             Video Call <span>$50</span>
-                          </li>
+                          </li> */}
                         </ul>
                         <div className="booking-total">
                           <ul className="booking-total-list">
                             <li>
                               <span>Total</span>
-                              <span className="total-cost">$160</span>
+                              <span className="total-cost">{occupyTime?.timeSlot?.currencySymbol || 'THB'} {" "} {formatNumberWithCommas(occupyTime?.timeSlot?.price!)}</span>
                             </li>
                           </ul>
                         </div>

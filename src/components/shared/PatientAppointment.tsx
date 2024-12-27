@@ -11,21 +11,27 @@ import Link from 'next/link';
 import { Edit } from '@mui/icons-material';
 import Chip from '@mui/material/Chip';
 import { PatientSidebarDoctorTypes } from '../DoctorDashboardSections/PatientProfileTabs';
-
-
+import { BootstrapDialog, BootstrapDialogTitle, Transition } from '../shared/Dialog';
+import { patient_profile } from '@/public/assets/imagepath';
+import Typography from '@mui/material/Typography';
+import { DialogContent } from '@mui/material';
 //liberies
 import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import CustomNoRowsOverlay from './CustomNoRowsOverlay';
-import { StyledBadge, getSelectedBackgroundColor, getSelectedHoverBackgroundColor } from '../DoctorDashboardSections/ScheduleTiming';
+import { StyledBadge, formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor } from '../DoctorDashboardSections/ScheduleTiming';
 import Pagination from '@mui/material/Pagination';
 import { DoctorPatientInitialLimitsAndSkipsTypes } from '../DoctorPatientProfile/DoctorPatientProfile';
 import Avatar from '@mui/material/Avatar';
+import { useRouter } from 'next/router';
+import { EditValueType } from '../DoctorDashboardSections/AvailableTiming';
 
 const perPage = 5
 const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPatientProfile, setDataGridFilters, dataGridFilters, isMobile }) => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
-
+  const router = useRouter();
+  const [show, setShow] = useState(false);
+  const [editValues, setEditValues] = useState<EditValueType>();
   const LoadingCompoenent = () => (
     <CircleToBlockLoading color={theme.palette.primary.main} size="small"
       style={{
@@ -91,7 +97,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
       },
       {
         field: 'selectedDate',
-        headerName: `Apointment Time`,
+        headerName: `Appointment Time`,
         align: 'center',
         width: 150,
         headerAlign: 'center',
@@ -100,6 +106,23 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
             <Stack >
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.selectedDate}</span>
               <span className="d-block" >{params?.row?.timeSlot?.period}</span>
+            </Stack>
+          )
+        }
+      },
+      {
+        field: 'selectedPrice',
+        headerName: `Price`,
+        align: 'center',
+        width: 150,
+        headerAlign: 'center',
+        renderCell: (params) => {
+          return (
+            <Stack >
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(params?.row?.timeSlot?.price)}</span>
+              <span className="d-block">
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.timeSlot?.currencySymbol || 'THB'}</span>
+              </span>
             </Stack>
           )
         }
@@ -138,55 +161,59 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
           )
         }
       },
-      // {
-      //   field: 'amount',
-      //   headerName: "Amount",
-      //   width: 80,
-      //   headerAlign: 'center',
-      //   align: 'center',
-      //   renderCell: (data: any) => {
-      //     const { row } = data;
-      //     return (
-      //       <>
-      //         {"$ " + row.amount}
-      //       </>
-      //     )
-      //   }
-      // },
-      // {
-      //   field: 'followUp',
-      //   headerName: "Follow Up",
-      //   width: 150,
-      //   headerAlign: 'center',
-      //   align: 'center',
-      //   renderCell: (data: any) => {
-      //     const { row } = data;
-      //     return (
-      //       <>
-      //         <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.followUp).format(`MMM D, YYYY`)}</span>
-      //       </>
-      //     )
-      //   }
-      // },
       {
         field: "actions",
         type: 'actions',
         headerName: "Action",
         headerAlign: 'center',
         align: 'center',
-        flex: isMobile ? 0 : 1,
+        width: 150,
+        // flex: isMobile ? 0 : 1,
         getActions: (params: GridRowParams) => {
           if (userType == 'patient') {
             return [
               <GridActionsCellItem key={params.row.toString()} icon={
-                <i className="far fa-eye" style={{ color: theme.palette.primary.main }}></i>} onClick={() => { }} label='View' />,
+                <i className="far fa-eye" style={{ color: theme.palette.primary.main }}></i>} onClick={() => {
+                  const startTime = params.row?.timeSlot?.period.split(' - ')[0]
+                  const endTime = params.row?.timeSlot?.period.split(' - ')[1]
+                  // create a date object with a specific date
+                  const date = dayjs(params.row.selectedDate);
+                  const price = params.row.timeSlot.price;
+                  const currencySymbol = params.row.timeSlot.currencySymbol
+                  // create a time object with a specific time
+                  const timeStarted = dayjs(startTime, 'HH:mm');
+
+                  const timeFinished = dayjs(endTime, 'HH:mm');
+
+                  // combine the date and time objects
+                  const startDateTime = date.set('hour', timeStarted.hour()).set('minute', timeStarted.minute()).set('second', timeStarted.second());
+                  const s = dayjs(startDateTime).toDate()
+
+                  // combine the date and time objects
+                  const finishDateTime = date.set('hour', timeFinished.hour()).set('minute', timeFinished.minute()).set('second', timeFinished.second());
+                  const e = dayjs(finishDateTime).toDate()
+                  const title = `${params.row?.doctorProfile?.firstName} ${params.row?.doctorProfile?.lastName}`
+
+                  setEditValues({
+                    start: s,
+                    end: e,
+                    title: title,
+                    patientProfile: params.row?.doctorProfile,
+                    _id: params.row?._id,
+                    createdDate: params.row?.createdDate,
+                    patientId: params.row?.patientId,
+                    price: price,
+                    currencySymbol: currencySymbol,
+                  })
+                  setShow(true)
+                }} label='View' />,
               <GridActionsCellItem
                 key={params.row.toString()}
                 disableFocusRipple
                 disableRipple
                 disableTouchRipple
                 onClick={() => {
-
+                  router.push(`/doctors/invoice-view/${btoa(params.id as string)}`)
                 }}
                 icon={<i className="fas fa-print"
                   style={{ color: theme.palette.secondary.main }}></i>} label="Print" />,
@@ -194,14 +221,46 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
           } else {
             return [
               <GridActionsCellItem key={params.row.toString()} icon={
-                <Edit sx={{ color: theme.palette.primary.main }} />} onClick={() => { }} label="Edit" />,
+                <i className="far fa-eye" style={{ color: theme.palette.primary.main }}></i>} onClick={() => {
+                  const startTime = params.row?.timeSlot?.period.split(' - ')[0]
+                  const endTime = params.row?.timeSlot?.period.split(' - ')[1]
+                  // create a date object with a specific date
+                  const date = dayjs(params.row.selectedDate);
+                  const price = params.row.timeSlot.price;
+                  const currencySymbol = params.row.timeSlot.currencySymbol
+                  // create a time object with a specific time
+                  const timeStarted = dayjs(startTime, 'HH:mm');
+
+                  const timeFinished = dayjs(endTime, 'HH:mm');
+
+                  // combine the date and time objects
+                  const startDateTime = date.set('hour', timeStarted.hour()).set('minute', timeStarted.minute()).set('second', timeStarted.second());
+                  const s = dayjs(startDateTime).toDate()
+
+                  // combine the date and time objects
+                  const finishDateTime = date.set('hour', timeFinished.hour()).set('minute', timeFinished.minute()).set('second', timeFinished.second());
+                  const e = dayjs(finishDateTime).toDate()
+                  const title = `${params.row?.doctorProfile?.firstName} ${params.row?.doctorProfile?.lastName}`
+                  setShow(true)
+                  setEditValues({
+                    start: s,
+                    end: e,
+                    title: title,
+                    patientProfile: params.row?.doctorProfile,
+                    _id: params.row?._id,
+                    createdDate: params.row?.createdDate,
+                    patientId: params.row?.patientId,
+                    price: price,
+                    currencySymbol: currencySymbol,
+                  })
+                }} label="Edit" />,
               <GridActionsCellItem
                 key={params.row.toString()}
                 disableFocusRipple
                 disableRipple
                 disableTouchRipple
                 onClick={() => {
-
+                  router.push(`/doctors/invoice-view/${btoa(params.id as string)}`)
                 }}
                 icon={<i className="fas fa-print"
                   style={{ color: theme.palette.secondary.main }}></i>} label="Print" />,
@@ -210,7 +269,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
         }
       }
     ]
-  }, [isMobile, theme.palette.primary.contrastText, theme.palette.primary.main, theme.palette.secondary.main, userType])
+  }, [router, theme.palette.primary.contrastText, theme.palette.primary.main, theme.palette.secondary.main, userType])
 
 
 
@@ -274,6 +333,96 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
   }
   return (
     <Fragment>
+      {
+        show && <BootstrapDialog
+          TransitionComponent={Transition}
+          onClose={() => {
+            document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+            setTimeout(() => {
+              setShow(false)
+            }, 500);
+          }}
+          aria-labelledby="edit_invoice_details"
+          open={show}
+        >
+          <BootstrapDialogTitle
+            id="edit_invoice_details" onClose={() => {
+              document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+              setTimeout(() => {
+                setShow(false)
+              }, 500);
+            }}>
+            <Link
+              target='_blank'
+              className="avatar mx-2"
+              href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
+              <StyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                variant="dot"
+                online={editValues?.patientProfile?.online as boolean}
+              >
+                <Avatar alt="" src={`${editValues?.patientProfile?.profileImage}?random=${new Date().getTime()}`} >
+                  <img src={patient_profile} alt="" className="avatar" />
+                </Avatar>
+              </StyledBadge>
+            </Link>
+            <Typography
+              component="a"
+              target='_blank'
+              sx={{
+                color: theme.palette.primary.main,
+                fontSize: '1rem',
+                "&:hover": {
+                  color: theme.palette.secondary.light
+                }
+              }} href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
+              {`${editValues?.patientProfile?.gender} ${editValues?.patientProfile?.firstName} ${editValues?.patientProfile?.lastName}`}
+            </Typography>
+          </BootstrapDialogTitle>
+          <DialogContent dividers>
+            <ul className="info-details" style={muiVar}>
+              <li>
+                <div className="details-header">
+                  <div className="row">
+                    <div className="col-md-6">
+                      <span className="title">#{editValues?._id}</span>
+                      <span className="text">{dayjs(editValues?.start).format('DD MMM YYYY')}</span>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="text-end">
+                        <button
+                          type="button"
+                          className="btnLogin"
+                          id="topup_status"
+                        >
+                          Confirmed
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <span className="title">Start:</span>
+                <span className="text">{dayjs(editValues?.start).format('HH:mm')}</span>
+              </li>
+              <li>
+                <span className="title">Finish</span>
+                <span className="text">{dayjs(editValues?.end).format('HH:mm')}</span>
+              </li>
+              <li>
+                <span className="title">Confirm Date:</span>
+                <span className="text">{dayjs(editValues?.createdDate).format('DD MMM YYYY - HH:mm')}</span>
+              </li>
+              <li>
+                <span className="title">Price:</span>
+                <span className="text">{formatNumberWithCommas(editValues?.price!)} {" "} {editValues?.currencySymbol || "THB"}</span>
+              </li>
+            </ul>
+          </DialogContent>
+        </BootstrapDialog>
+      }
       <div className="tab-content pt-0" style={muiVar}>
         {
           doctorPatientProfile == undefined ?

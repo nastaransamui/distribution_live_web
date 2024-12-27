@@ -15508,7 +15508,7 @@ table .table-hover tbody tr:hover td {
 
 .blog {
   border: 1px solid var(--primaryMain);
-  background-color: var(--bgDefault);
+  background-color: var(--bgPaper);
   position: relative;
   border-radius: 4px;
   margin: 0 0 30px;
@@ -42370,7 +42370,7 @@ input:checked + .tog-slider:before {
 }
 
 .contact-form-card {
-  background: var(--bgDefault);
+  background: var(--bgPaper);
   border-radius: 10px;
   border: 0;
 }

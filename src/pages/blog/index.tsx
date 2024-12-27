@@ -22,13 +22,14 @@ import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
-
+import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
+import useScssVar from '@/hooks/useScssVar';
 const Blog: NextPage = () => {
 
   const [blogView, setBlogView] = useState('listView')
 
   const matches = useMediaQuery('(max-width:991px)');
-
+  const { muiVar } = useScssVar();
   return (
     <>
       <Head>
@@ -42,7 +43,7 @@ const Blog: NextPage = () => {
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb title='Blog List' subtitle='Blog' />
-      <div className="content">
+      <div className="content" style={muiVar}>
         <div className="container">
           <div className="row">
             {
@@ -57,6 +58,7 @@ const Blog: NextPage = () => {
                 </>
             }
             <Footer />
+            <CookieConsentComponent />
           </div>
         </div>
       </div>

@@ -710,7 +710,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                         </Button>
                         <Button
                           className={doctor?.timeslots.length > 0 ? "btn btn-primary-light" : 'btn-primary-light-disabled'}
-                          href="/doctors/consult-booking"
+                          href={`/doctors/profile/${btoa(doctor?._id)}`}
                           disabled={doctor?.timeslots.length == 0}>
                           Online Consultation
                         </Button>

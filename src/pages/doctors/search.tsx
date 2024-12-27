@@ -16,6 +16,7 @@ import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
+import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 
 
 
@@ -37,6 +38,7 @@ const SearchPage: NextPage = () => {
       <div className="main-wrapper" id="scrollableDiv">
         <BreadCrumb title='Search Doctors' subtitle='Search Doctors' />
         <SearchDoctorSection />
+        <CookieConsentComponent />
       </div>
     </>
   )

@@ -14,7 +14,7 @@ import Button from '@mui/material/Button';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 import Tooltip from '@mui/material/Tooltip';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
+import FavoriteIcon from '@mui/icons-material/Favorite';
 //redux
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
@@ -160,7 +160,7 @@ const Favourits: FC = (() => {
 
                 <div className="profile-widget">
                   <div className="doc-img">
-                    <Link href={`/doctors/search/${btoa(doctor?._id)}`} aria-label='doctor profile'>
+                    <Link href={`/doctors/profile/${btoa(doctor?._id)}`} aria-label='doctor profile'>
                       <ProfileImageStyledBadge
                         overlap="circular"
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -189,18 +189,27 @@ const Favourits: FC = (() => {
 
                       </ProfileImageStyledBadge>
                     </Link>
-                    <Tooltip arrow title={`Remove doctor to favorite.`}>
+                    <Tooltip arrow title={`Remove doctor from favorite.`}>
                       <Link href="" onClick={(e) => {
                         e.preventDefault();
                         removeFavDoctor(doctor)
                       }} className="fav-btn">
-                        <i className="far fa-bookmark"></i>
+                        {/* <i className="far fa-bookmark"></i> */}
+                        <FavoriteIcon sx={{
+                          animation: `heartbeat 1s infinite`,
+                          color: 'deeppink',
+                          "&:hover": {
+                            animation: `heartbeat 1s infinite`,
+                            color: 'deeppink'
+                          },
+                          fontSize: '1.1rem'
+                        }} />
                       </Link>
                     </Tooltip>
                   </div>
                   <div className="pro-content">
                     <h3 className="title">
-                      <Link href={`/doctors/search/${btoa(doctor?._id)}`}>{title}</Link>
+                      <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>{title}</Link>
                       <i className="fas fa-check-circle verified"></i>
                     </h3>
 
@@ -240,14 +249,14 @@ const Favourits: FC = (() => {
                     <div className="row row-sm">
                       <div className="col-6">
                         <Button
-                          href={`/doctors/search/${btoa(doctor?._id)}`}
+                          href={`/doctors/profile/${btoa(doctor?._id)}`}
                           className="btn view-btn">
                           View Profile
                         </Button>
                       </div>
                       <div className="col-6">
                         <Button
-                          href={`/doctors/search/${btoa(doctor?._id)}`}
+                          href={`/doctors/profile/${btoa(doctor?._id)}`}
                           className="btn book-btn"
                           sx={{
                             "&.MuiButtonBase-root.Mui-disabled ": {
