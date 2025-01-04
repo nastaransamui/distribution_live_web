@@ -105,9 +105,9 @@ const Checkout: FC = (() => {
           setPaymentInfo({
             totalPriceStatus: 'FINAL',
             totalPriceLabel: 'Total',
-            totalPrice: resData?.timeSlot?.price,
+            totalPrice: resData?.timeSlot.total,
             currencyCode: resData?.timeSlot?.currencySymbol || 'THB',
-            countryCode: 'TH',
+            countryCode: userData?.countryCode || 'TH',
           })
         }
       } else {
@@ -535,18 +535,20 @@ const Checkout: FC = (() => {
                           <li>
                             Consulting Fee <span>{occupyTime?.timeSlot?.currencySymbol || 'THB'} {" "} {formatNumberWithCommas(occupyTime?.timeSlot?.price!)}</span>
                           </li>
-                          {/* <li>
-                            Booking Fee <span>{occupyTime?.timeSlot?.currencySymbol || 'THB'}10</span>
-                          </li>
                           <li>
-                            Video Call <span>$50</span>
-                          </li> */}
+                            Booking Fee <span>{occupyTime?.timeSlot?.currencySymbol || 'THB'} {" "}{formatNumberWithCommas(
+                              occupyTime?.timeSlot?.bookingsFeePrice!
+                            )}</span>
+                          </li>
                         </ul>
                         <div className="booking-total">
                           <ul className="booking-total-list">
                             <li>
                               <span>Total</span>
-                              <span className="total-cost">{occupyTime?.timeSlot?.currencySymbol || 'THB'} {" "} {formatNumberWithCommas(occupyTime?.timeSlot?.price!)}</span>
+                              <span className="total-cost">
+                                {occupyTime?.timeSlot?.currencySymbol || 'THB'}
+                                {" "}
+                                {formatNumberWithCommas(occupyTime?.timeSlot?.total!)}</span>
                             </li>
                           </ul>
                         </div>

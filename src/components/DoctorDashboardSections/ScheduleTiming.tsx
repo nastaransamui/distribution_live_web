@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { FC, Fragment, ReactNode, useEffect, useState } from 'react'
+import { FC, Fragment, ReactNode, useEffect, useRef, useState } from 'react'
 
 //next
 import Link from 'next/link';
@@ -37,7 +37,7 @@ import { NumericFormat } from 'react-number-format'
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 
-import _, { times } from 'lodash'
+import _ from 'lodash'
 
 
 //redux
@@ -70,6 +70,7 @@ import isJsonString from '@/helpers/isJson';
 import { loadStylesheet } from '@/pages/_app';
 import TextField from '@mui/material/TextField';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import CustomPagination from '../shared/CustomPagination';
 
 export const formatNumberWithCommas = (number: string) => {
   // Check if the input is a valid number (or can be converted to one)
@@ -126,6 +127,9 @@ export interface TimeType {
   active: boolean;
   isReserved: boolean;
   price: string;
+  bookingsFee: string;
+  bookingsFeePrice: string;
+  total: string;
   currencySymbol: string;
   reservations: AppointmentReservationType[];
 }
@@ -150,6 +154,7 @@ export interface DoctorsTimeSlotType {
   updateDate: Date;
   availableSlots: AvailableType[];
   reservations?: AppointmentReservationType[];
+  totalReservation?: number;
 }
 
 
@@ -224,12 +229,15 @@ const ScheduleTiming: FC = (() => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false)
   const [rows, setRows] = useState<AppointmentReservationType[] | []>([])
+  const [rowCount, setRowCount] = useState<number>(0)
   const [editDaySlot, setEditDaySlot] = useState<AvailableType | null>(null)
   const [tabIndex, setTabIndex] = useState(0);
   const dispatch = useDispatch()
   const router = useRouter()
+  const perPage = 5;
+  const grdiRef = useRef<any>(null)
   const [dataGridFilters, setDataGridFilters] = useState({
-    limit: 5,
+    limit: perPage,
     skip: 0
   });
 
@@ -253,19 +261,10 @@ const ScheduleTiming: FC = (() => {
     control,
     name: "evening"
   });
-
-  const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
-    setDataGridFilters({
-      limit: perPage * value,
-      skip: (value - 1) * perPage
-    })
-
-    router.push({
-      pathname: router.pathname, //undefined, {shallow: true, scroll: false,}
-      query: { filters: btoa(JSON.stringify({ limit: perPage * value, skip: (value - 1) * perPage })) },
-
-    }, undefined, { shallow: true, scroll: false })
-  };
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: 5,
+    page: 0,
+  });
 
   const widthOnlyXl = useMediaQuery(theme.breakpoints.only('xl'));
   const widthOnlyLg = useMediaQuery(theme.breakpoints.only('lg'));
@@ -301,16 +300,16 @@ const ScheduleTiming: FC = (() => {
 
     return () => observer.disconnect();
   }, []);
-  useEffect(() => {
-    if (searchParams.get('filters') !== null) {
-      if (base64regex.test(searchParams.get('filters') as string)) {
-        let filters = atob(searchParams.get('filters') as string)
-        if (isJsonString(filters)) {
-          setDataGridFilters(JSON.parse(filters))
-        }
-      }
-    }
-  }, [searchParams])
+  // useEffect(() => {
+  //   if (searchParams.get('filters') !== null) {
+  //     if (base64regex.test(searchParams.get('filters') as string)) {
+  //       let filters = atob(searchParams.get('filters') as string)
+  //       if (isJsonString(filters)) {
+  //         setDataGridFilters(JSON.parse(filters))
+  //       }
+  //     }
+  //   }
+  // }, [searchParams])
 
   useEffect(() => {
     let isActive = true;
@@ -319,6 +318,7 @@ const ScheduleTiming: FC = (() => {
       if (userProfile?.timeSlotId && userProfile?.timeSlotId.length !== 0) {
         homeSocket.current.emit('getDoctorTimeSlots', { userId: userId, ...dataGridFilters })
         homeSocket.current.once('getDoctorTimeSlotsReturn', (msg: { status: number, timeSlots: DoctorsTimeSlotType[], message?: string }) => {
+
           const { status, timeSlots, message } = msg;
           if (status !== 200) {
             toast.error(message || `${status} Error for Slots`, {
@@ -341,7 +341,7 @@ const ScheduleTiming: FC = (() => {
               let newDoctorAvailableTimeSlot = timeSlots[0]
               let newAvailableSlotFromDb = newDoctorAvailableTimeSlot.availableSlots
               setDoctorAvailableTimeSlot({ ...newDoctorAvailableTimeSlot })
-
+              setRowCount(timeSlots[0].totalReservation!);
               setRows(() => {
                 let newState: AppointmentReservationType[] = []
                 if (timeSlots[0]?.reservations && timeSlots[0]?.reservations.length > 0) {
@@ -593,7 +593,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                currencySymbol: '',
+                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFeePrice: '',
+                total: '',
+                currencySymbol: userProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
               appendmorning({
@@ -601,7 +604,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                currencySymbol: '',
+                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFeePrice: '',
+                total: '',
+                currencySymbol: userProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
             })
@@ -613,7 +619,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                currencySymbol: '',
+                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFeePrice: '',
+                total: '',
+                currencySymbol: userProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
               appendafternoon({
@@ -621,7 +630,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                currencySymbol: '',
+                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFeePrice: '',
+                total: '',
+                currencySymbol: userProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
             })
@@ -633,7 +645,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                currencySymbol: '',
+                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFeePrice: '',
+                total: '',
+                currencySymbol: userProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
               appendevening({
@@ -641,7 +656,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                currencySymbol: '',
+                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFeePrice: '',
+                total: '',
+                currencySymbol: userProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
             })
@@ -1311,7 +1329,7 @@ const ScheduleTiming: FC = (() => {
                             className="card-title d-flex justify-content-between">
                             <span>
                               <span style={{ display: 'flex' }}>Time Slots: </span><br />
-                              <span style={{ display: 'flex' }}>From: {dayjs(slot.startDate).format('DD MMM YYYY')}
+                              <span style={{ display: 'flex' }}>From: {dayjs(slot.startDate).format('DD MMM YYYY')} &nbsp;
                                 To: {dayjs(slot.finishDate).format('DD MMM YYYY')}
                               </span>
                             </span>
@@ -1380,7 +1398,9 @@ const ScheduleTiming: FC = (() => {
                                                       }}>
                                                       <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                                                         <p style={{ marginBottom: '-2px', color: '#000' }}>Time: {time.period}</p>
-                                                        <p style={{ marginBottom: '-2px', color: '#000' }}>Price: {formatNumberWithCommas(time.price)} {time.currencySymbol || 'THB'}</p>
+                                                        <p style={{ marginBottom: '-2px', color: '#000' }}>Price:  {time.currencySymbol || 'THB'} {" "} {formatNumberWithCommas(time.price)}</p>
+                                                        <p style={{ marginBottom: '-2px', color: '#000' }}>Booking Fee:  {time.currencySymbol || 'THB'} {" "} {formatNumberWithCommas(time.bookingsFeePrice)}</p>
+                                                        <p style={{ marginBottom: '-2px', color: '#000' }}>Total Price:  {time.currencySymbol || 'THB'} {" "} {formatNumberWithCommas(time.total)}</p>
                                                       </span>
                                                       <Link href=""
                                                         aria-label='delete Single Slot'
@@ -1458,20 +1478,22 @@ const ScheduleTiming: FC = (() => {
                   }}
                 />
               </Grid>
-              <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+              {periodArray.every(a => a.active) && periodArray.every(item => item.price === periodArray[0].price) && <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
 
                 <Controller
 
                   name={period}
                   control={control}
                   render={(props: any) => {
-                    const { field, fieldState, formState } = props;
-                    const { ref, onChange, value: fieldValue } = field;
+                    const allPricesEqual = periodArray.every(item => item.price === periodArray[0].price);
+                    const { field } = props;
+                    const { value: fieldValue } = field;
                     return (
                       <NumericFormat
+                        dir="ltr"
                         key={`${period}`}
-                        prefix={`$ `}
-                        // value={fieldValue}
+                        prefix={` ${userProfile?.currency[0]?.currency} `}
+                        value={allPricesEqual ? fieldValue[0].price : ''}
                         thousandSeparator
                         customInput={TextField}
                         onClick={() => {
@@ -1498,13 +1520,12 @@ const ScheduleTiming: FC = (() => {
                           }
                         }}
                         {...{
-                          // autoFocus: true,
-                          // ref: ref,
                           required: true,
                           id: `${period}`,
                           label: 'Price',
                           fullWidth: true,
                           size: 'small',
+                          className: 'force-perfix-ltr',
                           inputProps: {
                             autoComplete: 'off'
                           },
@@ -1513,7 +1534,7 @@ const ScheduleTiming: FC = (() => {
                     )
                   }}
                 />
-              </Grid>
+              </Grid>}
             </Grid>
 
             <Grid container >
@@ -1561,7 +1582,7 @@ const ScheduleTiming: FC = (() => {
                               return (
                                 <NumericFormat
                                   key={`${i} ${JSON.stringify(timeObjec)}`}
-                                  prefix={`$ `}
+                                  prefix={` ${userProfile?.currency[0]?.currency} `}
                                   value={fieldValue}
                                   thousandSeparator
                                   customInput={TextField}
@@ -1641,12 +1662,33 @@ const ScheduleTiming: FC = (() => {
         }
         let indexOfStartDate = prevState.availableSlots.findIndex((s: AvailableType) => dayjs(s.startDate).isSame(editDaySlot!.startDate))
         let indexOfFinishDate = prevState.availableSlots.findIndex((s: AvailableType) => dayjs(s.finishDate).isSame(editDaySlot!.finishDate))
+
+        const calculateTotalPrice = (array: TimeType[]) => {
+          array.map((a: TimeType) => {
+            if (a.price !== '') {
+              a.total = (Number(a.price) * (1 + Number(a.bookingsFee) / 100)).toString();
+              a.bookingsFeePrice = (Number(a.price!) * (Number(a.bookingsFee) / 100)).toString()
+            }
+          })
+          return array;
+        }
         if (indexOfStartDate !== -1 && indexOfFinishDate !== -1) {
-          prevState.availableSlots[indexOfStartDate]['morning'] = [...data!.morning]
-          prevState.availableSlots[indexOfStartDate]['afternoon'] = [...data!.afternoon]
-          prevState.availableSlots[indexOfStartDate]['evening'] = [...data!.evening]
-          // prevState.availableSlots[indexOfStartDate] = { ...editDaySlot! }
+          prevState.availableSlots[indexOfStartDate]['morning'] = [...calculateTotalPrice(data!.morning)]
+          prevState.availableSlots[indexOfStartDate]['afternoon'] = [...calculateTotalPrice(data!.afternoon)]
+          prevState.availableSlots[indexOfStartDate]['evening'] = [...calculateTotalPrice(data!.evening)]
         } else {
+          let haveMorning = data!.morning.length == 0 ? false : data!.morning.some((a: TimeType) => a.active)
+          let haveAfternoon = data!.afternoon.length == 0 ? false : data!.afternoon.some((a: TimeType) => a.active)
+          let haveEvening = data!.evening.length == 0 ? false : data!.evening.some((a: TimeType) => a.active)
+          if (haveMorning) {
+            data.morning = calculateTotalPrice(data.morning)
+          }
+          if (haveAfternoon) {
+            data.afternoon = calculateTotalPrice(data.afternoon)
+          }
+          if (haveEvening) {
+            data.evening = calculateTotalPrice(data.evening)
+          }
           prevState?.availableSlots.push({
             ...data!,
             startDate: editDaySlot?.startDate,
@@ -1932,7 +1974,46 @@ const ScheduleTiming: FC = (() => {
     });
 
   }
-
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setPaginationModel((prevState) => {
+      var maximuPage: number = prevState.page;
+      if (rowCount !== 0) {
+        if ((maximuPage + 1) >= (Math.floor(rowCount / parseInt(event.target.value, 10)))) {
+          maximuPage = (Math.floor(rowCount / parseInt(event.target.value, 10))) - 1
+        }
+      }
+      return {
+        pageSize: parseInt(event.target.value, 10),
+        page: maximuPage <= 0 ? 0 : maximuPage,
+      }
+    })
+    setDataGridFilters((prevState) => {
+      var maximuPage: number = prevState.skip;
+      if (rowCount !== 0) {
+        if ((maximuPage + 1) >= (Math.floor(rowCount / parseInt(event.target.value, 10)))) {
+          maximuPage = (Math.floor(rowCount / parseInt(event.target.value, 10))) - 1
+        }
+      }
+      return {
+        limit: parseInt(event.target.value, 10),
+        skip: maximuPage <= 0 ? 0 : maximuPage,
+      }
+    })
+  }
+  const handleChangePage = (_event: React.ChangeEvent<unknown>, value: number) => {
+    setDataGridFilters({
+      limit: perPage !== paginationModel.pageSize ? paginationModel.pageSize : perPage,
+      skip: (value - 1) * perPage
+    })
+    setPaginationModel((prevState) => {
+      return {
+        ...prevState,
+        page: value - 1
+      }
+    })
+  }
   const reservationsComponent = () => {
     const columns: GridColDef[] = [
       {
@@ -1976,6 +2057,44 @@ const ScheduleTiming: FC = (() => {
         }
       },
       {
+        field: 'bookingsFee',
+        headerName: 'Bookings Fee',
+        width: 120,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: (params) => {
+          return (
+            <Stack >
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
+                params?.row?.timeSlot?.bookingsFeePrice
+              )}</span>
+              <span className="d-block">
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.timeSlot?.currencySymbol || 'THB'}</span>
+              </span>
+            </Stack>
+          )
+        }
+      },
+      {
+        field: 'total',
+        headerName: 'Total',
+        width: 90,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: (params) => {
+          return (
+            <Stack >
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
+                params?.row?.timeSlot?.total
+              )}</span>
+              <span className="d-block">
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.timeSlot?.currencySymbol || 'THB'}</span>
+              </span>
+            </Stack>
+          )
+        }
+      },
+      {
         field: 'selectedDate',
         headerName: `Apointment Time`,
         align: 'center',
@@ -1994,7 +2113,7 @@ const ScheduleTiming: FC = (() => {
       {
         field: 'patientProfile',
         headerName: `Patient Name`,
-        width: 210,
+        width: 150,
         flex: 1,
         align: 'center',
         headerAlign: 'center',
@@ -2068,30 +2187,40 @@ const ScheduleTiming: FC = (() => {
 
                   transition: 'all 1s linear',
                 }}>
-                <Typography variant='h5' align='center' gutterBottom>Total: {userProfile?.reservations_id.length} reservations</Typography>
+                <Typography variant='h5' align='center' gutterBottom>Total: {rowCount} reservations</Typography>
 
                 <DataGrid
-                  autoHeight
-                  hideFooter
-                  getRowId={(params) => params._id}
-                  rowHeight={screen.height / 15.2}
-                  rows={rows}
-                  columns={columns}
-                  initialState={{
-                    pagination: {
-                      paginationModel: {
-                        pageSize: 5,
+                  paginationMode='server'
+                  experimentalFeatures={{ ariaV7: true }}
+                  slots={{
+                    noResultsOverlay: CustomNoRowsOverlay,
+                    noRowsOverlay: CustomNoRowsOverlay,
+                    pagination: CustomPagination,
+                  }}
+                  slotProps={{
+                    pagination: { //@ts-ignore
+                      handleChangePage: handleChangePage,
+                      handleChangeRowsPerPage: handleChangeRowsPerPage,
+                      count: rowCount,
+                      SelectProps: {
+                        inputProps: {
+                          id: 'pagination-select',
+                          name: 'pagination-select',
+                        },
                       },
                     },
                   }}
-                  pageSizeOptions={[5]}
+                  getRowId={(params) => params._id}
+                  rowHeight={screen.height / 15.2}
+                  rows={rows}
+                  rowCount={rowCount}
+                  ref={grdiRef}
+                  columns={columns}
+                  paginationModel={paginationModel}
+
+                  pageSizeOptions={[5, 10]}
                   showCellVerticalBorder
                   showColumnVerticalBorder
-                  slots={{
-                    // toolbar: CustomToolbar,
-                    noResultsOverlay: CustomNoRowsOverlay,
-                    noRowsOverlay: CustomNoRowsOverlay
-                  }}
                   sx={{
                     ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
                       "marginTop": "1em",
@@ -2109,10 +2238,16 @@ const ScheduleTiming: FC = (() => {
                           theme.palette.mode,
                         ),
                       }
+                    },
+                    "& .MuiDataGrid-footerContainer": {
+                      [theme.breakpoints.only("xs")]: {
+                        justifyContent: 'center',
+                        mb: 2
+                      }
                     }
                   }}
                 />
-                <Pagination
+                {/* <Pagination
                   showFirstButton
                   showLastButton
                   hideNextButton
@@ -2120,15 +2255,15 @@ const ScheduleTiming: FC = (() => {
                   boundaryCount={1}
                   variant="outlined"
                   color="secondary"
-                  count={userProfile ? Math.ceil(userProfile?.reservations_id.length / perPage) : 0}
-                  page={dataGridFilters.limit / perPage}
+                  count={userProfile ? Math.ceil(rowCount / perPage) : 0}
+                  page={dataGridFilters.skip / perPage}
                   sx={{
                     justifyContent: 'center',
                     display: 'flex',
                     minHeight: 70
                   }}
                   onChange={handlePageChange}
-                />
+                /> */}
               </Box>
             </div> :
             <div className="tab-content schedule-cont">
@@ -2147,49 +2282,64 @@ const ScheduleTiming: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
-        <div className="row">
-          <div className="col-md-12">
-            <div className="card schedule-widget mb-3">
-
-
-              {isLoading ? <LoadingCompoenent /> : calendarComponent()}
-
-              {
-                isLoading ? <LoadingCompoenent /> : <TabsButtonsCompoenent />
-              }
-              {slotSwipeable()}
+      {
+        userProfile?.currency.length == 0 ?
+          <>
+            <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="card schedule-widget mb-3" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <p style={{ color: theme.palette.text.color }}>First choose currency in profile.</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="card schedule-widget mb-3">
-              {reservationsComponent()}
+          </>
+          :
+          <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+            <div className="row">
+              <div className="col-md-12">
+                <div className="card schedule-widget mb-3">
+
+
+                  {isLoading ? <LoadingCompoenent /> : calendarComponent()}
+
+                  {
+                    isLoading ? <LoadingCompoenent /> : <TabsButtonsCompoenent />
+                  }
+                  {slotSwipeable()}
+                </div>
+                <div className="card schedule-widget mb-3">
+                  {reservationsComponent()}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        {doctorAvailableTimeSlot !== null &&
-          <Grid container className="submit-section" spacing={1}>
-            <Grid item lg={doctorAvailableTimeSlot._id == '' ? 12 : 6}>
-              <Button fullWidth className="btn btn-primary submit-btn" sx={{ mb: 2 }} onClick={() => {
-                if (doctorAvailableTimeSlot._id == '') {
-                  saveTodb()
-                } else {
-                  updateDb()
+            {doctorAvailableTimeSlot !== null &&
+              <Grid container className="submit-section" spacing={1}>
+                <Grid item lg={doctorAvailableTimeSlot._id == '' ? 12 : 6}>
+                  <Button fullWidth className="btn btn-primary submit-btn" sx={{ mb: 2 }} onClick={() => {
+                    if (doctorAvailableTimeSlot._id == '') {
+                      saveTodb()
+                    } else {
+                      updateDb()
+                    }
+                  }}>
+                    {doctorAvailableTimeSlot._id == '' ? `Save` : 'Update'}
+                  </Button>
+
+                </Grid>
+                {
+                  doctorAvailableTimeSlot._id !== '' &&
+                  <Grid item lg={doctorAvailableTimeSlot._id == '' ? 12 : 6}>
+                    <Button fullWidth className="btnDelete btn-primary submit-btn" sx={{ mb: 2 }} onClick={getConfirmDb}>
+                      Delete Whole Slots
+                    </Button>
+                  </Grid>
                 }
-              }}>
-                {doctorAvailableTimeSlot._id == '' ? `Save` : 'Update'}
-              </Button>
-
-            </Grid>
-            {
-              doctorAvailableTimeSlot._id !== '' &&
-              <Grid item lg={doctorAvailableTimeSlot._id == '' ? 12 : 6}>
-                <Button fullWidth className="btnDelete btn-primary submit-btn" sx={{ mb: 2 }} onClick={getConfirmDb}>
-                  Delete Whole Slots
-                </Button>
               </Grid>
             }
-          </Grid>
-        }
-      </div >
+          </div >
+      }
       {dialogCompoenent()}
 
     </Fragment >

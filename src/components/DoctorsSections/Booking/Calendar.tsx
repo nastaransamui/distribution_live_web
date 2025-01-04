@@ -156,7 +156,7 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
           let avaliab = profile.timeslots[0]?.availableSlots.filter((a: AvailableType) =>
             dayjs(a.startDate).isSame(dayjs(startDate), 'day') &&
             dayjs(a.finishDate).isSame(dayjs(finishDate), 'day'))[0]
-          let arrayOfslotOfDay = avaliab[`${dayPeriod}` as keyof typeof avaliab] as TimeType[]
+          let arrayOfslotOfDay = avaliab?.[`${dayPeriod}` as keyof typeof avaliab] as TimeType[]
           let occupied: TimeType | undefined
           if (arrayOfslotOfDay) {
             occupied = arrayOfslotOfDay.filter((b: TimeType) => b.period == period)[0]
@@ -377,7 +377,7 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                                                           sx={{ bgcolor: isDisabled ? `${theme.palette.primary.main} !Important` : '', display: 'flex', flexDirection: 'column' }}
                                                           onClick={(e) => { periodButtonClick(e, s, isSelect, slot, entrie[0]) }}>
                                                           <span><i className={isDisabled ? "feather-x-circle" : "feather-clock"} />{s.period}</span>
-                                                          <span>{formatNumberWithCommas(s.price)} {" "} {s.currencySymbol || 'THB'}</span>
+                                                          <span>{formatNumberWithCommas(s.total)} {" "} {s.currencySymbol || 'THB'}</span>
                                                         </Button>
                                                       </li>
                                                     )

@@ -1,7 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { AnyAction, PayloadAction } from '@reduxjs/toolkit';
-import { HYDRATE } from 'next-redux-wrapper';
-import { SpecialitiesType } from './specialities';
+import { createSlice } from "@reduxjs/toolkit";
+import type { AnyAction, PayloadAction } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
+import { SpecialitiesType } from "./specialities";
+import { CurrenciesType } from "@/components/shared/CurrencyAutocomplete";
 export interface UserProfileType {
   value: {
     _id: string;
@@ -18,16 +19,17 @@ export interface UserProfileType {
     clinicAddress: string;
     clinicImages: string[];
     profileImage: string;
-    services: 'google' | 'password';
+    services: "google" | "password";
     address1: string;
     address2: string;
     city: string;
     state: string;
     zipCode: string;
     country: string;
-    pricing: string[];
     specialitiesServices: string[];
     specialities: SpecialitiesType[];
+    currency: CurrenciesType[];
+    bookingsFee: string;
     educations: string[];
     experinces: string[];
     awards: string[];
@@ -38,7 +40,7 @@ export interface UserProfileType {
     doctors_id: string[];
     patients_id: string[];
     favorite_doctors_id: string[];
-    roleName: 'doctors' | 'patient' | 'pharmacist';
+    roleName: "doctors" | "patient" | "pharmacist";
     accessToken: string;
     timeSlotId: string[];
     favs_id: string[];
@@ -57,7 +59,7 @@ const initialState: UserProfileType = {
 };
 
 export const userProfileSlice = createSlice({
-  name: 'userProfile',
+  name: "userProfile",
   initialState,
   reducers: {
     updateUserProfile: (state, action: PayloadAction<any>) => {

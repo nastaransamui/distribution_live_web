@@ -72,6 +72,7 @@ const Awards: FC<AwardsProps> = ((props: AwardsProps) => {
                             })
                             }
                             fullWidth
+                            size='small'
                           />
                         </div>
                       </div>
@@ -106,6 +107,7 @@ const Awards: FC<AwardsProps> = ((props: AwardsProps) => {
                                         },
                                         error: errors?.['awards']?.[index]?.['year'] == undefined ? false : true,
                                         helperText: errors?.['awards']?.[index]?.['year'] && errors['awards'][index]['year']['message'] as ReactNode,
+                                        size: "small"
                                       },
                                     }}
 

@@ -39,6 +39,7 @@ import Avatar from '@mui/material/Avatar'
 import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
+import InputAdornment from '@mui/material/InputAdornment';
 
 //Component
 import GeoLocationAutocomplete from '@/shared/GeoLocationAutocomplete';
@@ -56,6 +57,7 @@ import isJsonString from '@/helpers/isJson';
 import { toast } from 'react-toastify';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
+import CurrencyAutocomplete from '@/shared/CurrencyAutocomplete';
 
 export interface SpecialitiesType {
   _id: string;
@@ -247,6 +249,11 @@ const ProfileSetting: FC = (() => {
   const specialities = useSelector((state: AppState) => state.specialities.value)
   const dispatch = useDispatch();
   const router = useRouter();
+  const [currencyValue, setcurrencyValue] = useState<string | null>(
+    userProfile?.currency.length === 0 ? null : `${userProfile?.currency[0].currency_name} ${userProfile?.currency[0].emoji}`)
+  const [currencyInputValue, setcurrencyInputValue] = useState<string>(
+    userProfile?.currency.length === 0 ? '' : `${userProfile?.currency[0].currency_name} ${userProfile?.currency[0].emoji}`)
+  const [currencyDisable, setcurrencyDisable] = useState<boolean>(userProfile?.reservations_id.length !== 0 ? true : false)
 
   const {
     register,
@@ -295,6 +302,10 @@ const ProfileSetting: FC = (() => {
   const { fields: specialitiesFields, append: appendSpecialities, remove: removeSpecialities } = useFieldArray<any>({
     control,
     name: "specialities"
+  });
+  const { fields: currencyFields, append: appendCurrency, remove: removeCurrency } = useFieldArray<any>({
+    control,
+    name: "currency"
   });
 
 
@@ -477,7 +488,15 @@ const ProfileSetting: FC = (() => {
     if (userProfile !== null && isClient) {
       let profileObj: any = Object.entries(userProfile)
       profileObj.map((a: any) => {
-        setFormValue(a[0], a[1])
+        if (a[0] == 'currency') {
+          setFormValue(a[0], a[1])
+          if (a[1].length != 0) {
+            setcurrencyInputValue(`${a[1][0]?.currency_name} ${a[1][0]?.emoji}`)
+            setcurrencyValue(`${a[1][0]?.currency_name} ${a[1][0]?.emoji}`)
+          }
+        } else {
+          setFormValue(a[0], a[1])
+        }
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -605,6 +624,7 @@ const ProfileSetting: FC = (() => {
                           })
                           }
                           fullWidth
+                          size='small'
                         />
                       </div>
                     </div>
@@ -622,6 +642,7 @@ const ProfileSetting: FC = (() => {
                           })
                           }
                           fullWidth
+                          size='small'
                         />
                       </div>
                     </div>
@@ -639,6 +660,7 @@ const ProfileSetting: FC = (() => {
                           })
                           }
                           fullWidth
+                          size='small'
                         />
                       </div>
                     </div>
@@ -667,6 +689,7 @@ const ProfileSetting: FC = (() => {
                                 label="Mobile"
                                 required
                                 fullWidth
+                                size='small'
                               />
                             )
                           }}
@@ -685,7 +708,7 @@ const ProfileSetting: FC = (() => {
                             const { defaultValues } = formState;
                             return (
                               <FormControl fullWidth >
-                                <InputLabel id="gender-label" htmlFor="gender">
+                                <InputLabel id="gender-label" htmlFor="gender" size='small'>
                                   Gender
                                 </InputLabel>
                                 <Select
@@ -702,6 +725,7 @@ const ProfileSetting: FC = (() => {
                                     onChange(e)
                                   }}
                                   renderValue={(value) => `${value == 'Mr' ? `👨` : `👩`} ${value}`}
+                                  size='small'
                                 >
                                   <MenuItem value="Mr">👨 Mr</MenuItem>
                                   <MenuItem value="Mrs">👩 Mrs</MenuItem>
@@ -744,6 +768,7 @@ const ProfileSetting: FC = (() => {
                                       label: 'Date of Birth',
                                       error: errors.dob == undefined ? false : true,
                                       helperText: errors.dob && errors['dob']['message'] as ReactNode,
+                                      size: 'small'
                                     },
                                   }}
 
@@ -785,6 +810,7 @@ const ProfileSetting: FC = (() => {
                         required: "This field is required",
                       })
                       }
+                      size='small'
                     />
                   </div>
                 </div>
@@ -811,6 +837,7 @@ const ProfileSetting: FC = (() => {
                             // required: "This field is required",
                           })
                           }
+                          size='small'
                         />
                       </div>
                     </div>
@@ -830,6 +857,7 @@ const ProfileSetting: FC = (() => {
                             // required: "This field is required",
                           })
                           }
+                          size='small'
                         />
                       </div>
                     </div>
@@ -897,6 +925,7 @@ const ProfileSetting: FC = (() => {
                           })
                           }
                           fullWidth
+                          size='small'
                         />
                       </div>
                     </div>
@@ -909,47 +938,7 @@ const ProfileSetting: FC = (() => {
                           ...register('address2')
                           }
                           fullWidth
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <GeoLocationAutocomplete
-                          required={false}
-                          errors={errors}
-                          register={register}
-                          name='city'
-                          setFormValue={setFormValue}
-                          optionFieldName="name"
-                          getValues={getValues}
-                          clearErrors={clearErrors}
-                          value={value}
-                          setValue={setValue}
-                          inputValue={inputValue}
-                          setInputValue={setInputValue}
-                          disable={disable}
-                          setDisable={setDisable}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <GeoLocationAutocomplete
-                          required={false}
-                          errors={errors}
-                          register={register}
-                          name='state'
-                          setFormValue={setFormValue}
-                          optionFieldName="name"
-                          getValues={getValues}
-                          clearErrors={clearErrors}
-                          value={value}
-                          setValue={setValue}
-                          inputValue={inputValue}
-                          setInputValue={setInputValue}
-                          disable={disable}
-                          setDisable={setDisable}
+                          size='small'
                         />
                       </div>
                     </div>
@@ -970,9 +959,53 @@ const ProfileSetting: FC = (() => {
                           setInputValue={setInputValue}
                           disable={disable}
                           setDisable={setDisable}
+                          size='small'
                         />
                       </div>
                     </div>
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <GeoLocationAutocomplete
+                          required={false}
+                          errors={errors}
+                          register={register}
+                          name='state'
+                          setFormValue={setFormValue}
+                          optionFieldName="name"
+                          getValues={getValues}
+                          clearErrors={clearErrors}
+                          value={value}
+                          setValue={setValue}
+                          inputValue={inputValue}
+                          setInputValue={setInputValue}
+                          disable={disable}
+                          setDisable={setDisable}
+                          size='small'
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <GeoLocationAutocomplete
+                          required={false}
+                          errors={errors}
+                          register={register}
+                          name='city'
+                          setFormValue={setFormValue}
+                          optionFieldName="name"
+                          getValues={getValues}
+                          clearErrors={clearErrors}
+                          value={value}
+                          setValue={setValue}
+                          inputValue={inputValue}
+                          setInputValue={setInputValue}
+                          disable={disable}
+                          setDisable={setDisable}
+                          size='small'
+                        />
+                      </div>
+                    </div>
+
                     <div className="col-md-6">
                       <div className="form-group">
                         <Controller
@@ -1007,6 +1040,7 @@ const ProfileSetting: FC = (() => {
                                   }
                                 }}
                                 fullWidth
+                                size='small'
                               />
                             )
                           }}
@@ -1020,46 +1054,51 @@ const ProfileSetting: FC = (() => {
 
               <div className="card">
                 <div className="card-body">
-                  <h4 className="card-title">Pricing</h4>
-
-                  <div className="form-group mb-0">
-                    <div id="pricing_select">
-                      <div className="payment-list">
-                        <label className="payment-radio paypal-option" htmlFor="price_free">
-                          <input type="radio" name="rating_option" id="price_free" defaultValue="price_free"
-                            defaultChecked />
-                          <span className="checkmark" />
-                          Free
-                        </label>
-                      </div>
-
-                      <div className="payment-list">
-                        <label className="payment-radio paypal-option" htmlFor="price_custom">
-                          <input type="radio" name="rating_option" id="price_custom" defaultValue="price_custom" />
-                          <span className="checkmark" />
-                          Custom Price (per hour)
-                        </label>
+                  <h4 className="card-title">Financial</h4>
+                  <div className="row form-row">
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <CurrencyAutocomplete
+                          inputId={`currency`}
+                          errors={errors}
+                          register={register}
+                          name='currency'
+                          setFormValue={setFormValue}
+                          optionFieldName='searchString'
+                          getValues={getValues}
+                          setError={setError}
+                          clearErrors={clearErrors}
+                          value={currencyValue}
+                          setValue={setcurrencyValue}
+                          formSymbolName='currency'
+                          inputValue={currencyInputValue}
+                          setInputValue={setcurrencyInputValue}
+                          disable={currencyDisable}
+                          setDisable={setcurrencyDisable}
+                          size='small'
+                          required={true}
+                        />
                       </div>
                     </div>
-                  </div>
-
-                  <div
-                    className="row custom_price_cont"
-                    id="custom_price_cont"
-                    style={{ display: "none" }}
-                  >
-                    <div className="col-md-4">
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="custom_rating_input"
-                        name="custom_rating_count"
-                        defaultValue=""
-                        placeholder="20"
-                      />
-                      <small className="form-text text-muted">
-                        Custom price you can add
-                      </small>
+                    <div className="col-md-6">
+                      <div className="form-group">
+                        <TextField
+                          InputProps={{
+                            startAdornment: <InputAdornment position="start">
+                              %
+                            </InputAdornment>
+                          }}
+                          id="bookingsFee"
+                          label="Bookings Fee"
+                          {
+                          ...register('bookingsFee')
+                          }
+                          fullWidth
+                          size='small'
+                          required
+                          disabled
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

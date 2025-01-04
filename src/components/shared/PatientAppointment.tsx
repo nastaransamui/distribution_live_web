@@ -119,7 +119,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
         renderCell: (params) => {
           return (
             <Stack >
-              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(params?.row?.timeSlot?.price)}</span>
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(params?.row?.timeSlot?.total)}</span>
               <span className="d-block">
                 <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.timeSlot?.currencySymbol || 'THB'}</span>
               </span>
@@ -173,12 +173,13 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
           if (userType == 'patient') {
             return [
               <GridActionsCellItem key={params.row.toString()} icon={
-                <i className="far fa-eye" style={{ color: theme.palette.primary.main }}></i>} onClick={() => {
+                <i className="far fa-eye" style={{ color: theme.palette.primary.main }}></i>}
+                onClick={() => {
                   const startTime = params.row?.timeSlot?.period.split(' - ')[0]
                   const endTime = params.row?.timeSlot?.period.split(' - ')[1]
                   // create a date object with a specific date
                   const date = dayjs(params.row.selectedDate);
-                  const price = params.row.timeSlot.price;
+                  const total = params.row.timeSlot.total;
                   const currencySymbol = params.row.timeSlot.currencySymbol
                   // create a time object with a specific time
                   const timeStarted = dayjs(startTime, 'HH:mm');
@@ -202,7 +203,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
                     _id: params.row?._id,
                     createdDate: params.row?.createdDate,
                     patientId: params.row?.patientId,
-                    price: price,
+                    price: total,
                     currencySymbol: currencySymbol,
                   })
                   setShow(true)
@@ -226,7 +227,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
                   const endTime = params.row?.timeSlot?.period.split(' - ')[1]
                   // create a date object with a specific date
                   const date = dayjs(params.row.selectedDate);
-                  const price = params.row.timeSlot.price;
+                  const total = params.row.timeSlot.total;
                   const currencySymbol = params.row.timeSlot.currencySymbol
                   // create a time object with a specific time
                   const timeStarted = dayjs(startTime, 'HH:mm');
@@ -250,7 +251,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
                     _id: params.row?._id,
                     createdDate: params.row?.createdDate,
                     patientId: params.row?.patientId,
-                    price: price,
+                    price: total,
                     currencySymbol: currencySymbol,
                   })
                 }} label="Edit" />,

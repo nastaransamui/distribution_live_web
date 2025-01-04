@@ -65,7 +65,7 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
                   <div className="row form-row experience-cont">
                     <div className="col-12 col-md-10 col-lg-11">
                       <div className="row form-row">
-                        <div className="col-12 col-md-6 col-lg-4">
+                        <div className="col-12 col-md-6 col-lg-3">
                           <div className="form-group">
                             <TextField
                               required
@@ -79,10 +79,11 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
                               })
                               }
                               fullWidth
+                              size='small'
                             />
                           </div>
                         </div>
-                        <div className="col-12 col-md-6 col-lg-3">
+                        <div className="col-12 col-md-6 col-lg-2">
                           <div className="form-group">
                             <Controller
                               rules={{ required: 'This field is required' }}
@@ -112,6 +113,7 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
                                           label: 'From',
                                           error: errors?.['experinces']?.[index]?.['from'] == undefined ? false : true,
                                           helperText: errors?.['experinces']?.[index]?.['from'] && errors['experinces'][index]['from']['message'] as ReactNode,
+                                          size: 'small'
                                         },
                                       }}
 
@@ -123,7 +125,7 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
                             />
                           </div>
                         </div>
-                        <div className="col-12 col-md-6 col-lg-4">
+                        <div className="col-12 col-md-6 col-lg-2">
                           <div className="form-group">
                             <Controller
                               rules={{ required: 'This field is required' }}
@@ -154,6 +156,7 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
                                           label: 'To',
                                           error: errors?.['experinces']?.[index]?.['to'] == undefined ? false : true,
                                           helperText: errors?.['experinces']?.[index]?.['to'] && errors['experinces'][index]['to']['message'] as ReactNode,
+                                          size: 'small'
                                         },
                                       }}
 
@@ -166,15 +169,6 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
                           </div>
                         </div>
 
-                        <div className="col-12 col-md-6 col-lg-1">
-                          <div className="delete-icon">
-                            <Link href="#0" className="btn btn-danger trash" onClick={(e) => {
-                              e.preventDefault
-                              removeInputFields(index)
-                            }} >
-                              <i className="far fa-trash-alt"></i></Link>
-                          </div>
-                        </div>
 
                         <div className="col-12 col-md-6 col-lg-4">
                           <div className="form-group">
@@ -190,7 +184,17 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
                               })
                               }
                               fullWidth
+                              size='small'
                             />
+                          </div>
+                        </div>
+                        <div className="col-12 col-md-6 col-lg-1">
+                          <div className="delete-icon">
+                            <Link href="#0" className="btn btn-danger trash" onClick={(e) => {
+                              e.preventDefault
+                              removeInputFields(index)
+                            }} >
+                              <i className="far fa-trash-alt"></i></Link>
                           </div>
                         </div>
 

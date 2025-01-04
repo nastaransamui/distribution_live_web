@@ -21,6 +21,28 @@ import throttle from 'lodash/throttle';
 import { useSelector, } from 'react-redux';
 import { AppState } from '@/redux/store';
 
+export interface CurrenciesType {
+  _id?: string;
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  _doc?: any;
+  save?: any;
+  name: string;
+  isActive: boolean;
+  iso3: string;
+  iso2: string;
+  numeric_code: string;
+  currency: string;
+  currency_name: string;
+  currency_symbol: string;
+  emoji: string;
+  searchString?: string;
+  subtitle?: string;
+  patients_id: string[];
+  doctors_id: string[];
+}
+
 interface PartType {
   text: string;
   highlight: boolean;
@@ -138,22 +160,26 @@ const CurrencyAutocomplete: FC<CurrencyAutocompleteProps> = ({
               return option[optionFieldName] === value[optionFieldName]
           }
         }}
-        onChange={(event: any, newValue: string | null, details?: string) => {
+        onChange={(event: any, newValue: CurrenciesType | null, details?: string) => {
           switch (details) {
             case 'selectOption':
               if (newValue !== null) {
-                setValue(() => newValue['iso3' as keyof typeof newValue])
-                setInputValue(() => newValue['iso3' as keyof typeof newValue])
+                setValue(() => `${newValue['currency_name' as keyof typeof newValue]} ${newValue['emoji' as keyof typeof newValue]}`)
+                setInputValue(() => `${newValue['currency_name' as keyof typeof newValue]} ${newValue['emoji' as keyof typeof newValue]}`)
                 setDisable(() => false)
-                setFormValue(name, newValue['iso3' as keyof typeof newValue])
-                setFormValue(formSymbolName, newValue['currency_symbol' as keyof typeof newValue])
+                setFormValue(name, newValue['currency_name' as keyof typeof newValue])
+                setFormValue(formSymbolName, (() => {
+                  delete newValue.searchString;
+                  delete newValue.subtitle;
+                  return [newValue];
+                })());
                 clearErrors(name)
               }
               setOptions([])
               break;
 
             default:
-              console.log(`default onChanbe ${details}`)
+              console.log(`default onChange ${details}`)
               break;
           }
 

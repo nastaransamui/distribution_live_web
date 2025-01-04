@@ -16624,6 +16624,7 @@ table .table-hover tbody tr:hover td {
   padding: 6px 15px;
   border-radius: 4px;
   display: flex;
+  flex-direction: column-reverse;
 }
 
 .doc-slot-list a {
@@ -16631,15 +16632,17 @@ table .table-hover tbody tr:hover td {
   display: inline-block;
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 0px 0px 10px 0px;
 }
 
 .doc-slot-list a:hover {
   color: var(--color);
 }
 
-.doc-slot-list a i {
+/* .doc-slot-list a i {
   padding-left: 16px !important;
-}
+} */
 
 .schedule-nav .nav-tabs {
   border: 0 !important;
@@ -18128,9 +18131,8 @@ call-btn:focus {
 }
 
 .btn.btn-danger.trash {
-  height: 46px;
-  width: 46px;
-  margin-top: 4px;
+  height: 42px;
+  width: 42px;
 }
 
 @media (max-width: 767.98px) {
@@ -24078,7 +24080,7 @@ span.call-duration.float-end {
 }
 
 .invoice-item .invoice-details {
-  text-align: right;
+  text-align: left;
   color: var(--color);
   font-weight: 500;
 }
@@ -45575,3 +45577,7 @@ svg.feather {
 }
 
 
+.force-perfix-ltr{
+  direction: ltr !important; /* Forces the input to render in LTR */
+  text-align: start; /* Ensures alignment is correct */
+}

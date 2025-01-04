@@ -213,6 +213,21 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
 }
     `,
       },
+      MuiTablePagination: {
+        styleOverrides: {
+          root: {
+            overflow: "hidden",
+          },
+        },
+      },
+      MuiPagination: {
+        styleOverrides: {
+          root: {
+            minWidth: "67%",
+          },
+        },
+      },
+
       MuiInput: {
         styleOverrides: {
           root: {

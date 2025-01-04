@@ -90,6 +90,12 @@ const DoctorDashboardSidebar: FC = (() => {
                       <span>Dashboard</span>
                     </Link>
                   </li>
+                  <li className={router.pathname == "/doctors/dashboard/favourites" ? "active" : ""}>
+                    <Link href="/doctors/dashboard/favourites">
+                      <i className="fas fa-bookmark"></i>
+                      <span>Favourites</span>
+                    </Link>
+                  </li>
                   <li className={router.pathname == "/doctors/dashboard/appointments" ? "active" : ""}>
                     <Link href="/doctors/dashboard/appointments">
                       <i className="fas fa-calendar-check" />

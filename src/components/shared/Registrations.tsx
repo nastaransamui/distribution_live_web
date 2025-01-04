@@ -73,6 +73,7 @@ const Registrations: FC<RegistrationsProps> = ((props: RegistrationsProps) => {
                             })
                             }
                             fullWidth
+                            size='small'
                           />
                         </div>
                       </div>
@@ -107,6 +108,7 @@ const Registrations: FC<RegistrationsProps> = ((props: RegistrationsProps) => {
                                         },
                                         error: errors?.['registrations']?.[index]?.['year'] == undefined ? false : true,
                                         helperText: errors?.['registrations']?.[index]?.['year'] && errors['registrations'][index]['year']['message'] as ReactNode,
+                                        size: 'small'
                                       },
                                     }}
 

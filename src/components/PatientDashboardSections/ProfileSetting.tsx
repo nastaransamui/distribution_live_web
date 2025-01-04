@@ -72,6 +72,9 @@ const ProfileSetting: FC = (() => {
     }
   })
   const onProfileSubmit = (data: any) => {
+    !data.city ? data.city = inputValue.city : data.city;
+    !data.state ? data.state = inputValue.state : data.state;
+    !data.country ? data.country = inputValue.country : data.country;
     var fileToRead: any = document.getElementById("profile");
     data.profileImageFiles = [];
     data.clinicImagesFiles = [];
@@ -360,6 +363,7 @@ const ProfileSetting: FC = (() => {
                           })
                           }
                           fullWidth
+                          size='small'
                         />
                       </div>
                     </div>
@@ -377,6 +381,7 @@ const ProfileSetting: FC = (() => {
                           })
                           }
                           fullWidth
+                          size='small'
                         />
                       </div>
                     </div>
@@ -407,6 +412,7 @@ const ProfileSetting: FC = (() => {
                                       label: 'Date of Birth',
                                       error: errors.dob == undefined ? false : true,
                                       helperText: errors.dob && errors['dob']['message'] as ReactNode,
+                                      size: 'small'
                                     },
                                   }}
 
@@ -430,7 +436,7 @@ const ProfileSetting: FC = (() => {
                             const { defaultValues } = formState;
                             return (
                               <FormControl fullWidth >
-                                <InputLabel id="gender-label" htmlFor="gender">
+                                <InputLabel size='small' id="gender-label" htmlFor="gender">
                                   Gender
                                 </InputLabel>
                                 <Select
@@ -446,6 +452,7 @@ const ProfileSetting: FC = (() => {
                                     onChange(e)
                                   }}
                                   renderValue={(value) => `${value == 'Mr' ? `👨` : `👩`} ${value}`}
+                                  size='small'
                                 >
                                   <MenuItem value="Mr">👨 Mr</MenuItem>
                                   <MenuItem value="Mrs">👩 Mrs</MenuItem>
@@ -473,7 +480,7 @@ const ProfileSetting: FC = (() => {
                             const { defaultValues } = formState;
                             return (
                               <FormControl fullWidth >
-                                <InputLabel id="bloodGLable" htmlFor="blood">
+                                <InputLabel size='small' id="bloodGLable" htmlFor="blood">
                                   Blood Group
                                 </InputLabel>
                                 <Select
@@ -489,6 +496,7 @@ const ProfileSetting: FC = (() => {
                                     onChange(e)
                                   }}
                                   renderValue={(value) => `🩸  - ${value}`}
+                                  size='small'
                                 >
                                   <MenuItem value="A+">🅰️ A+</MenuItem>
                                   <MenuItem value="A-">🅰️ A-</MenuItem>
@@ -525,6 +533,7 @@ const ProfileSetting: FC = (() => {
                           })
                           }
                           fullWidth
+                          size='small'
                         />
                       </div>
                     </div>
@@ -553,6 +562,7 @@ const ProfileSetting: FC = (() => {
                                 label="Mobile"
                                 required
                                 fullWidth
+                                size='small'
                               />
                             )
                           }}
@@ -573,6 +583,7 @@ const ProfileSetting: FC = (() => {
                           })
                           }
                           fullWidth
+                          size='small'
                         />
                       </div>
                     </div>
@@ -585,46 +596,7 @@ const ProfileSetting: FC = (() => {
                           ...register('address2')
                           }
                           fullWidth
-                        />
-                      </div>
-                    </div>
-                    <div className="col-12 col-md-6">
-                      <div className="form-group">
-                        <GeoLocationAutocomplete
-                          required={false}
-                          errors={errors}
-                          register={register}
-                          name='city'
-                          setFormValue={setFormValue}
-                          optionFieldName="name"
-                          getValues={getValues}
-                          clearErrors={clearErrors}
-                          value={value}
-                          setValue={setValue}
-                          inputValue={inputValue}
-                          setInputValue={setInputValue}
-                          disable={disable}
-                          setDisable={setDisable}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-12 col-md-6">
-                      <div className="form-group">
-                        <GeoLocationAutocomplete
-                          required={false}
-                          errors={errors}
-                          register={register}
-                          name='state'
-                          setFormValue={setFormValue}
-                          optionFieldName="name"
-                          getValues={getValues}
-                          clearErrors={clearErrors}
-                          value={value}
-                          setValue={setValue}
-                          inputValue={inputValue}
-                          setInputValue={setInputValue}
-                          disable={disable}
-                          setDisable={setDisable}
+                          size='small'
                         />
                       </div>
                     </div>
@@ -645,6 +617,49 @@ const ProfileSetting: FC = (() => {
                           setInputValue={setInputValue}
                           disable={disable}
                           setDisable={setDisable}
+                          size='small'
+                        />
+                      </div>
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <div className="form-group">
+                        <GeoLocationAutocomplete
+                          required={false}
+                          errors={errors}
+                          register={register}
+                          name='state'
+                          setFormValue={setFormValue}
+                          optionFieldName="name"
+                          getValues={getValues}
+                          clearErrors={clearErrors}
+                          value={value}
+                          setValue={setValue}
+                          inputValue={inputValue}
+                          setInputValue={setInputValue}
+                          disable={disable}
+                          setDisable={setDisable}
+                          size='small'
+                        />
+                      </div>
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <div className="form-group">
+                        <GeoLocationAutocomplete
+                          required={false}
+                          errors={errors}
+                          register={register}
+                          name='city'
+                          setFormValue={setFormValue}
+                          optionFieldName="name"
+                          getValues={getValues}
+                          clearErrors={clearErrors}
+                          value={value}
+                          setValue={setValue}
+                          inputValue={inputValue}
+                          setInputValue={setInputValue}
+                          disable={disable}
+                          setDisable={setDisable}
+                          size='small'
                         />
                       </div>
                     </div>
@@ -668,6 +683,7 @@ const ProfileSetting: FC = (() => {
                           })
                           }
                           fullWidth
+                          size='small'
                         />
                       </div>
                     </div>

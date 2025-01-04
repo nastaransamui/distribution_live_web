@@ -67,6 +67,7 @@ const Education: FC<EducationProps> = ((props: EducationProps) => {
                               })
                               }
                               fullWidth
+                              size='small'
                             />
                           </div>
                         </div>
@@ -84,6 +85,7 @@ const Education: FC<EducationProps> = ((props: EducationProps) => {
                               })
                               }
                               fullWidth
+                              size='small'
                             />
                           </div>
                         </div>
@@ -114,6 +116,7 @@ const Education: FC<EducationProps> = ((props: EducationProps) => {
                                           label: 'Year of Completion',
                                           error: errors?.['educations']?.[index]?.['yearOfCompletion'] == undefined ? false : true,
                                           helperText: errors?.['educations']?.[index]?.['yearOfCompletion'] && errors['educations'][index]['yearOfCompletion']['message'] as ReactNode,
+                                          size: 'small'
                                         },
                                       }}
 

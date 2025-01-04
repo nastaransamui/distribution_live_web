@@ -106,12 +106,12 @@ const PaymentSuccess: FC = (() => {
                       <div className="success-cont">
                         <i className="fas fa-check" />
                         <h3>Appointment booked Successfully!</h3>
-                        <p>Appointment booked with
+                        <p>Appointment booked with &nbsp;
                           <strong>Dr. {reservation?.doctorProfile?.firstName} {reservation?.doctorProfile?.lastName}</strong>
                           <br /> on&nbsp;
                           <strong>{reservation?.selectedDate}&nbsp; {reservation?.timeSlot?.period}</strong>
                           <br />with&nbsp;
-                          <strong>{formatNumberWithCommas(reservation?.timeSlot?.price)}&nbsp; {reservation?.timeSlot?.currencySymbol || 'THB'}</strong>
+                          <strong>{formatNumberWithCommas(reservation?.timeSlot?.total)}&nbsp; {reservation?.timeSlot?.currencySymbol || 'THB'}</strong>
 
                         </p>
                         <Link href={`/doctors/invoice-view/${btoa(reservation?._id!)}`} className="btn btn-primary view-inv-btn">View Invoice</Link>

@@ -12,6 +12,7 @@ import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import throttle from 'lodash/throttle';
 import ScrollToTop from '@/components/sections/ScrollToTop';
 import { DoctorsTimeSlotType } from '../DoctorDashboardSections/ScheduleTiming';
+import { CurrenciesType } from '../shared/CurrencyAutocomplete';
 
 export interface ClinicImagesType {
   src: string;
@@ -84,9 +85,10 @@ export interface DoctorProfileType {
   state: string;
   zipCode: string;
   country: string;
-  pricing: string[];
   specialitiesServices: string[];
   specialities: SpecialitiesType[];
+  currency: CurrenciesType[];
+  bookingsFee: string;
   educations: EducationType[];
   experinces: ExperienceType[];
   awards: AwardType[];

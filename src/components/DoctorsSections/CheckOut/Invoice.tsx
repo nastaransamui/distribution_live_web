@@ -120,14 +120,6 @@ const Invoice: FC = (() => {
     const headerHeight = invoiceHeaderRef.current?.offsetHeight;
     const bodyHeight = invoiceBodyRef.current?.clientHeight
     const footerHeight = invoiceFooterRef.current?.clientHeight
-    console.log({
-      imgHeight,
-      A4_HEIGHT_PX,
-      heieght: canvas.height,
-      headerHeight,
-      bodyHeight,
-      footerHeight,
-    })
     let positionY = 0;
 
     // Loop to handle multiple pages
@@ -171,12 +163,13 @@ const Invoice: FC = (() => {
                     <span ref={invoiceHeaderRef}>
                       <div className="invoice-item">
                         <div className="row">
-                          <div className="col-md-6">
+                          <div className="col-md-4">
                             <div className="invoice-logo">
                               <img src={logo} alt="logo" className='imgColorPrimary' />
                             </div>
                           </div>
-                          <div className="col-md-6">
+                          <div className="col-md-4"></div>
+                          <div className="col-md-4">
                             <p className="invoice-details">
                               <strong>Order:</strong> {reservation._id} <br />
                               <strong>Issued:</strong> {dayjs(reservation?.createdDate).format(`D MMM YYYY`)}
@@ -229,7 +222,7 @@ const Invoice: FC = (() => {
                                 <tr>
                                   <th>Description</th>
                                   <th className="text-center">Quantity</th>
-                                  <th className="text-center">VAT</th>
+                                  <th className="text-center">Price</th>
                                   <th className="text-end">Total</th>
                                 </tr>
                               </thead>
@@ -237,8 +230,18 @@ const Invoice: FC = (() => {
                                 <tr>
                                   <td style={{ padding: '10px 0px' }}>{reservation.selectedDate} - {reservation.timeSlot?.period}</td>
                                   <td className="text-center">1</td>
-                                  <td className="text-center">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; 0</td>
+                                  <td className="text-center">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price)}</td>
                                   <td className="text-end">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price)}</td>
+                                </tr>
+                                <tr>
+                                  <td style={{ padding: '10px 0px' }}>Booking Fee</td>
+                                  <td className="text-center">1</td>
+                                  <td className="text-center">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                    reservation?.timeSlot?.bookingsFeePrice
+                                  )}</td>
+                                  <td className="text-end">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                    reservation?.timeSlot?.bookingsFeePrice
+                                  )}</td>
                                 </tr>
 
                               </tbody>
@@ -252,19 +255,23 @@ const Invoice: FC = (() => {
                                 <tr>
                                   <th>Subtotal:</th>
                                   <td style={{ padding: '10px 0px' }}>
-                                    <span>{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price)}</span>
+                                    <span>{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                      reservation?.timeSlot?.total
+                                    )}</span>
                                   </td>
                                 </tr>
-                                {/* <tr>
+                                <tr>
                                   <th>Discount:</th>
                                   <td>
-                                    <span>-10%</span>
+                                    <span>---</span>
                                   </td>
-                                </tr> */}
+                                </tr>
                                 <tr>
                                   <th>Total Amount:</th>
                                   <td style={{ padding: '10px 0px' }}>
-                                    <span>{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price)}</span>
+                                    <span>{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                      reservation?.timeSlot?.total
+                                    )}</span>
                                   </td>
                                 </tr>
                               </tbody>

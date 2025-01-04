@@ -60,6 +60,7 @@ const Membership: FC<MembershipProps> = ((props: MembershipProps) => {
                         })
                         }
                         fullWidth
+                        size='small'
                       />
                     </div>
                   </div>
