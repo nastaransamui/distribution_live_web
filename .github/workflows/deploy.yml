@@ -20,23 +20,22 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${{ secrets.HOST }}" >> ~/.ssh/known_hosts
 
-      
       - name: Ensure Remote Directory Exists
         env:
           SERVER_USER: ${{ secrets.USERNAME }}
           SERVER_IP: ${{ secrets.HOST }}
           SERVER_PATH: ${{ secrets.PATH }}
         run: |
-          ssh -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_IP "
-          if [ ! -d "$SERVER_PATH" ]; then
-          # Directory does not exist, so create it
-          echo 'Create $SERVER_PATH folder'
-          mkdir -p $SERVER_PATH
-          cd $SERVER_PATH
-          git clone https://github.com/nastaransamui/distribution_live_web.git .
-          else
-            echo 'Directory $SERVER_PATH already exist. pull request ' 
-            cd $SERVER_PATH
-            git reset --hard HEAD  # Discard local changes
-            git pull  # Pull the latest updates
-          fi"
+          ssh -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_IP bash << EOF
+            if [ ! -d "$SERVER_PATH" ]; then
+              echo "Directory $SERVER_PATH does not exist. Creating..."
+              mkdir -p "$SERVER_PATH"
+              cd "$SERVER_PATH"
+              git clone https://github.com/nastaransamui/distribution_live_web.git .
+            else
+              echo "Directory $SERVER_PATH exists. Pulling updates..."
+              cd "$SERVER_PATH"
+              git reset --hard HEAD  # Discard local changes
+              git pull               # Pull the latest updates
+            fi
+          EOF
