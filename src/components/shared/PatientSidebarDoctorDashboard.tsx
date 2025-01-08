@@ -132,6 +132,9 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                                     <span className="d-block text-sm text-muted">
                                       {appointment?.selectedDate} {' '} {appointment?.timeSlot?.period}
                                     </span>
+                                    <span className="d-block text-sm text-muted">
+                                      {appointment?.invoiceId}
+                                    </span>
                                   </div>
                                 </div>
                               </li>

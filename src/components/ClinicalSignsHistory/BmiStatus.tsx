@@ -109,7 +109,11 @@ const BmiStatus: FC = (() => {
       age: dayjs().diff(userProfile?.dob, 'years') || '',
       height: parseFloat(values?.height) || '',
       weight: parseFloat(values?.weight) || '',
-      gender: userProfile?.gender == 'Mr' ? 'male' : 'female' || '',
+      gender: userProfile?.gender
+        ? userProfile.gender === 'Mr'
+          ? 'male'
+          : 'female'
+        : '',
     }
   })
 

@@ -106,6 +106,13 @@ const Invoices: FC = (() => {
   const router = useRouter();
   const columns: GridColDef[] = [
     {
+      field: "id",
+      headerName: "ID",
+      width: 20,
+      align: 'center',
+      headerAlign: 'center'
+    },
+    {
       field: 'dayPeriod',
       headerName: 'Day time',
       width: 90,
@@ -118,7 +125,7 @@ const Invoices: FC = (() => {
       }
     },
     {
-      field: 'invoiceNo',
+      field: 'invoiceId',
       headerName: "Invoice No",
       width: 200,
       headerAlign: 'center',
@@ -128,7 +135,7 @@ const Invoices: FC = (() => {
         const { row } = data;
         return (
           <>
-            <Link href={`/doctors/invoice-view/${btoa(row?._id!)}`}>{row._id}</Link>
+            <Link href={`/doctors/invoice-view/${btoa(row?._id!)}`}>{row.invoiceId}</Link>
           </>
         )
       },

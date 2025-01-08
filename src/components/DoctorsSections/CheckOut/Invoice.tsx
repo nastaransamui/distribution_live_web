@@ -16,6 +16,12 @@ import dayjs from 'dayjs'
 import { useTheme } from '@mui/material/styles';
 import { AppointmentReservationExtendType } from './PaymentSuccess';
 import { base64regex } from '../Profile/ProfilePage';
+import Tooltip from '@mui/material/Tooltip';
+
+export function truncateString(str: string, maxLength: number) {
+  if (!str || str.length <= maxLength) return str;
+  return `${str.substring(0, maxLength)}...`;
+}
 
 const Invoice: FC = (() => {
   const exportRef = useRef<HTMLDivElement>(null);
@@ -43,7 +49,7 @@ const Invoice: FC = (() => {
           homeSocket.current.once(`findReservationByIdReturn`, (msg: { status: number, reservation: AppointmentReservationExtendType, reason?: string }) => {
             const { status, reservation, reason } = msg;
             if (status !== 200) {
-              toast.error(reason || `Error ${status} find Doctor`, {
+              toast.error(reason || `Error ${status} find Reservation`, {
                 position: "bottom-center",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -143,7 +149,6 @@ const Invoice: FC = (() => {
     pdf.save("invoice.pdf");
   };
 
-
   return (
     <Fragment>
       <div className="content" style={muiVar}>
@@ -171,7 +176,7 @@ const Invoice: FC = (() => {
                           <div className="col-md-4"></div>
                           <div className="col-md-4">
                             <p className="invoice-details">
-                              <strong>Order:</strong> {reservation._id} <br />
+                              <strong>Order:</strong> {reservation.invoiceId} <br />
                               <strong>Issued:</strong> {dayjs(reservation?.createdDate).format(`D MMM YYYY`)}
                             </p>
                           </div>
@@ -203,11 +208,13 @@ const Invoice: FC = (() => {
                           <div className="col-md-4">
                             <div className="invoice-info">
                               <strong className="customer-text">Payment Method</strong>
-                              <p className="invoice-details invoice-details-two">
-                                {reservation?.paymentType} <br />
-                                {reservation?.paymentToken} <br />
-                                <br />
-                              </p>
+                              <Tooltip title={reservation?.paymentToken} arrow placement='top'>
+                                <p className="invoice-details invoice-details-two">
+                                  {reservation?.paymentType} <br />
+                                  {truncateString(reservation?.paymentToken, 20)} <br />
+                                  <br />
+                                </p>
+                              </Tooltip>
                             </div>
                           </div>
                         </div>

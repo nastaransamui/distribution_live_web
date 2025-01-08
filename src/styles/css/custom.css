@@ -24189,19 +24189,19 @@ span.call-duration.float-end {
   border-radius: 10px;
   font-size: 16px;
   text-align: center;
-  margin: 0 0 30px;
-  padding: 10px;
+  margin: 0 0 5px;
+  padding: 5px 0px;
 }
 
 .account-card span {
-  font-size: 24px;
+  font-size: 18px;
   display: block;
   margin-bottom: 5px;
   font-weight: 500;
 }
 
 .info-list {
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 .info-list .title {

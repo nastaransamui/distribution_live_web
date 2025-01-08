@@ -26,6 +26,7 @@ import { toast } from 'react-toastify';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 import dayjs from 'dayjs';
 import { formatNumberWithCommas, StyledBadge } from './ScheduleTiming';
+import Chip from '@mui/material/Chip';
 
 
 
@@ -105,7 +106,6 @@ const Appointment: FC = (() => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeSocket, page, reload])
-
   const LoadingCompoenent = () => (
     <CircleToBlockLoading color={theme.palette.primary.main} size="small"
       style={{
@@ -175,6 +175,10 @@ const Appointment: FC = (() => {
                       </h4>
                       <h4 className="mb-0">
                         <i className="fas fa-phone"></i> {mobileNumber}
+                      </h4>
+                      <br />
+                      <h4 className="mb-0">
+                        {appointment.invoiceId}
                       </h4>
                     </div>
                   </div>
@@ -273,7 +277,13 @@ const Appointment: FC = (() => {
               count={userProfile ? Math.ceil(userProfile?.reservations_id.length / perPage) : 0}
               page={page}
               onChange={handlePageChange}
-              sx={{ mb: 3 }}
+              sx={{
+                mb: 3,
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                justifyContent: "center",
+                display: 'flex'
+              }}
             />}
         </div>
 
@@ -348,7 +358,16 @@ const Appointment: FC = (() => {
               </li>
               <li>
                 <span className="title">Status:</span>
-                <span className="text">Confirmed</span>
+                <span className="text">
+                  <Chip
+                    color={
+                      editValues?.doctorPaymentStatus == 'Paid' ? 'success' :
+                        editValues?.doctorPaymentStatus == 'Awaiting Request' ? 'error' :
+                          'primary'}
+                    label={`${editValues?.doctorPaymentStatus}`}
+                    size="small"
+                    sx={{ color: theme.palette.primary.contrastText }} />
+                </span>
               </li>
               <li>
                 <span className="title">Confirm Date:</span>
@@ -356,7 +375,7 @@ const Appointment: FC = (() => {
               </li>
               <li>
                 <span className="title">Paid Amount</span>
-                <span className="text">{formatNumberWithCommas(editValues?.timeSlot?.price!)} {" "} {editValues?.timeSlot?.currencySymbol || "THB"}</span>
+                <span className="text">{formatNumberWithCommas(editValues?.timeSlot?.total!)} {" "} {editValues?.timeSlot?.currencySymbol || "THB"}</span>
               </li>
             </ul>
           </DialogContent>

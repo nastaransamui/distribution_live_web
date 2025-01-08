@@ -74,7 +74,7 @@ const Checkout: FC = (() => {
         let reservation = atob(encryptReservation as string)
         if (isJsonString(reservation)) {
           let resData = JSON.parse(reservation)
-          const { dayPeriod, doctorId, finishDate, selectedDate, slot_id, startDate, timeSlot } = resData;
+          const { dayPeriod, doctorId, finishDate, selectedDate, slotId, startDate, timeSlot } = resData;
           if (homeSocket?.current) {
             homeSocket.current.emit(`findUserById`, { _id: doctorId })
             homeSocket.current.once(`findUserByIdReturn`, (msg: { status: number, user: DoctorProfileType, reason?: string }) => {
@@ -105,7 +105,7 @@ const Checkout: FC = (() => {
           setPaymentInfo({
             totalPriceStatus: 'FINAL',
             totalPriceLabel: 'Total',
-            totalPrice: resData?.timeSlot.total,
+            totalPrice: Number(resData?.timeSlot.total).toFixed(2),
             currencyCode: resData?.timeSlot?.currencySymbol || 'THB',
             countryCode: userData?.countryCode || 'TH',
           })
@@ -215,7 +215,7 @@ const Checkout: FC = (() => {
       }
     }
   }
-
+  console.log(paymentInfo)
   return (
     <Fragment>
       <Dialog

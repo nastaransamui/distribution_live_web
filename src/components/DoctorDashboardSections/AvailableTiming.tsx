@@ -23,7 +23,7 @@ import Avatar from "@mui/material/Avatar";
 import { patient_profile } from '@/public/assets/imagepath';
 import Typography from '@mui/material/Typography';
 import { loadStylesheet } from '@/pages/_app';
-
+import Chip from '@mui/material/Chip';
 export interface EditValueType {
   start: Date;
   end: Date;
@@ -33,7 +33,9 @@ export interface EditValueType {
   createdDate: Date;
   patientId: string;
   currencySymbol: string;
-  price: string;
+  total: string;
+  invoiceId: string;
+  doctorPaymentStatus: string;
 }
 const AvailableTiming: FC = (() => {
   const { muiVar, bounce } = useScssVar();
@@ -142,7 +144,7 @@ const AvailableTiming: FC = (() => {
         const endTime = a?.timeSlot?.period.split(' - ')[1]
         // create a date object with a specific date
         const date = dayjs(a.selectedDate);
-        const price = a.timeSlot.price;
+        const total = a.timeSlot.total;
         const currencySymbol = a.timeSlot.currencySymbol
         // create a time object with a specific time
         const timeStarted = dayjs(startTime, 'HH:mm');
@@ -165,8 +167,10 @@ const AvailableTiming: FC = (() => {
           _id: a?._id,
           createdDate: a?.createdDate,
           patientId: a?.patientId,
-          price: price,
+          total: total,
           currencySymbol: currencySymbol,
+          invoiceId: a.invoiceId,
+          doctorPaymentStatus: a.doctorPaymentStatus
         })
       })
     }
@@ -396,8 +400,25 @@ const AvailableTiming: FC = (() => {
                 <span className="text">{dayjs(editValues?.createdDate).format('DD MMM YYYY - HH:mm')}</span>
               </li>
               <li>
+                <span className="title">Status:</span>
+                <span className="text">
+                  <Chip
+                    color={
+                      editValues?.doctorPaymentStatus == 'Paid' ? 'success' :
+                        editValues?.doctorPaymentStatus == 'Awaiting Request' ? 'error' :
+                          'primary'}
+                    label={`${editValues?.doctorPaymentStatus}`}
+                    size="small"
+                    sx={{ color: theme.palette.primary.contrastText }} />
+                </span>
+              </li>
+              <li>
+                <span className="title">Invoice:</span>
+                <span className="text">{editValues?.invoiceId}</span>
+              </li>
+              <li>
                 <span className="title">Price:</span>
-                <span className="text">{formatNumberWithCommas(editValues?.price!)} {" "} {editValues?.currencySymbol || "THB"}</span>
+                <span className="text">{formatNumberWithCommas(editValues?.total!)} {" "} {editValues?.currencySymbol || "THB"}</span>
               </li>
             </ul>
           </DialogContent>

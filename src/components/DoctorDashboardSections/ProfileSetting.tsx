@@ -518,7 +518,6 @@ const ProfileSetting: FC = (() => {
     if (homeSocket?.current) {
       homeSocket.current.emit('deleteUser', data)
       homeSocket.current.once('deleteUserReturn', (msg: any) => {
-        console.log(msg)
         if (msg?.status !== 200) {
           toast.error(msg?.message || 'null', {
             position: "bottom-center",

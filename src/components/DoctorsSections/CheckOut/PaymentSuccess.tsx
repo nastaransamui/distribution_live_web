@@ -24,10 +24,13 @@ export interface AppointmentReservationType {
   doctorId: string;
   startDate: string;
   finishDate: string;
-  slot_id: string;
+  slotId: string;
   patientId: string;
   paymentToken: string;
   paymentType: string;
+  invoiceId: string;
+  doctorPaymentStatus: "Pending" | "Paid" | "Awaiting Request";
+  paymentDate: Date | string;
   createdDate: string;
 }
 
@@ -86,7 +89,6 @@ const PaymentSuccess: FC = (() => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encryptID, homeSocket, reload, router])
-
   return (
     <Fragment>
       <div className="content success-page-cont" style={muiVar}>

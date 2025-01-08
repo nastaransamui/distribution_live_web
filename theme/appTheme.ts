@@ -223,6 +223,10 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
       MuiPagination: {
         styleOverrides: {
           root: {
+            "& .MuiInputBase-root .MuiSelect-nativeInput": {
+              id: "pagination-input",
+              name: "pagination",
+            },
             minWidth: "67%",
           },
         },
@@ -365,9 +369,16 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
       MuiDataGrid: {
         styleOverrides: {
           footerContainer: {
-            // display: 'none',
-            // display: 'flex',
-            // alignItems: 'center',
+            borderTop: "none",
+          },
+          virtualScrollerContent: {
+            "&:last-child": {
+              borderBottom: `1px solid ${
+                mode === "dark"
+                  ? "rgba(81, 81, 81, 1)"
+                  : "rgba(224, 224, 224, 1)"
+              }`,
+            },
           },
         },
       },

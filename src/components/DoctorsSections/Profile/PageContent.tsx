@@ -39,7 +39,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
 
     loadStylesheet('/css/yet-another-react-lightbox-styles.css')
   }, [])
-  console.log(profile)
+
   const _fav_button = () => {
     let isFav = !!userProfile ? profile?.favs_id?.includes(userProfile?._id as string) : false
 

@@ -47,6 +47,13 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
   const columns: GridColDef[] = useMemo(() => {
     return [
       {
+        field: "id",
+        headerName: "ID",
+        width: 20,
+        align: 'center',
+        headerAlign: 'center'
+      },
+      {
         field: 'dayPeriod',
         headerName: 'Day time',
         width: 90,
@@ -63,7 +70,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
         headerName: `Doctor Name`,
         width: 250,
         minWidth: 250,
-        align: 'center',
+        align: 'left',
         headerAlign: 'center',
         valueFormatter(params: GridValueFormatterParams) {
           const { value } = params
@@ -87,10 +94,12 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
                   </Avatar>
                 </StyledBadge>
               </Link>
-              <Link aria-label='profile' target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`}
-                style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
-                {formattedValue}
-              </Link>
+              <Stack>
+                <Link aria-label='profile' target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`}
+                  style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
+                  {formattedValue}
+                </Link>
+                <Link href={`/doctors/invoice-view/${btoa(params.id as string)}`}>{row.invoiceId}</Link></Stack>
             </>
           )
         }
@@ -145,7 +154,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
       {
         field: 'paymentType',
         headerName: `Payment status`,
-        width: 120,
+        width: 200,
         align: 'center',
         headerAlign: 'center',
         renderCell: (data: any) => {
@@ -153,8 +162,11 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
           return (
             <>
               <Chip
-                color={row.paymentType == '' ? 'success' : 'secondary'}
-                label={'paid'}
+                color={
+                  row.doctorPaymentStatus == 'Paid' ? 'success' :
+                    row.doctorPaymentStatus == 'Awaiting Request' ? 'error' :
+                      'primary'}
+                label={`${row.doctorPaymentStatus}`}
                 size="small"
                 sx={{ color: theme.palette.primary.contrastText }} />
             </>
@@ -203,8 +215,10 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
                     _id: params.row?._id,
                     createdDate: params.row?.createdDate,
                     patientId: params.row?.patientId,
-                    price: total,
+                    total: total,
                     currencySymbol: currencySymbol,
+                    invoiceId: params.row?.invoiceId,
+                    doctorPaymentStatus: params.row?.doctorPaymentStatus
                   })
                   setShow(true)
                 }} label='View' />,
@@ -251,8 +265,10 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
                     _id: params.row?._id,
                     createdDate: params.row?.createdDate,
                     patientId: params.row?.patientId,
-                    price: total,
+                    total: total,
                     currencySymbol: currencySymbol,
+                    invoiceId: params.row?.invoiceId,
+                    doctorPaymentStatus: params.row?.doctorPaymentStatus
                   })
                 }} label="Edit" />,
               <GridActionsCellItem
@@ -294,7 +310,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
         getRowId={(params) => params._id}
         // rowHeight={typeof window == 'undefined' ? 12 : screen.height / 15.2}
         rows={doctorPatientProfile?.appointments}
-        columns={columns}
+        columns={columns.filter((column) => router.asPath.startsWith('/patient') ? column.field !== 'paymentType' : column)}
         initialState={{
           pagination: {
             paginationModel: {
@@ -417,8 +433,25 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
                 <span className="text">{dayjs(editValues?.createdDate).format('DD MMM YYYY - HH:mm')}</span>
               </li>
               <li>
+                <span className="title">Status:</span>
+                <span className="text">
+                  <Chip
+                    color={
+                      editValues?.doctorPaymentStatus == 'Paid' ? 'success' :
+                        editValues?.doctorPaymentStatus == 'Awaiting Request' ? 'error' :
+                          'primary'}
+                    label={`${editValues?.doctorPaymentStatus}`}
+                    size="small"
+                    sx={{ color: theme.palette.primary.contrastText }} />
+                </span>
+              </li>
+              <li>
+                <span className="title">Invoice:</span>
+                <span className="text">{editValues?.invoiceId}</span>
+              </li>
+              <li>
                 <span className="title">Price:</span>
-                <span className="text">{formatNumberWithCommas(editValues?.price!)} {" "} {editValues?.currencySymbol || "THB"}</span>
+                <span className="text">{formatNumberWithCommas(editValues?.total!)} {" "} {editValues?.currencySymbol || "THB"}</span>
               </li>
             </ul>
           </DialogContent>

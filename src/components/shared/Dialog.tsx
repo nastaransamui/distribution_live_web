@@ -43,7 +43,6 @@ export function BootstrapDialogTitle(props: DialogTitleProps) {
           sx={{
             position: 'absolute',
             right: 8,
-            top: 22,
             color: (theme) => theme.palette.primary.main,
           }}
         >

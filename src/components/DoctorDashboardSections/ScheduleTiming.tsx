@@ -2017,10 +2017,16 @@ const ScheduleTiming: FC = (() => {
   const reservationsComponent = () => {
     const columns: GridColDef[] = [
       {
+        field: "id",
+        headerName: "ID",
+        width: 20,
+        align: 'center',
+        headerAlign: 'center'
+      },
+      {
         field: 'startDate',
         headerName: 'From - To Period',
         width: 250,
-        flex: 1,
         align: 'center',
         headerAlign: 'center',
         valueFormatter(params: GridValueFormatterParams) {
@@ -2113,13 +2119,12 @@ const ScheduleTiming: FC = (() => {
       {
         field: 'patientProfile',
         headerName: `Patient Name`,
-        width: 150,
-        flex: 1,
-        align: 'center',
+        width: 200,
+        align: 'left',
         headerAlign: 'center',
         valueFormatter(params: GridValueFormatterParams) {
           const { value } = params
-          return `${value.gender} ${value?.firstName} ${value?.lastName}`
+          return `${value.gender} ${value.gender !== '' ? '.' : ''} ${value?.firstName} ${value?.lastName}`
         },
         renderCell: (params: GridRenderCellParams) => {
           const { row, formattedValue } = params;
@@ -2139,11 +2144,14 @@ const ScheduleTiming: FC = (() => {
                   </Avatar>
                 </StyledBadge>
               </Link>
-              <Link aria-label='link' href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}
-                target='_blank'
-                style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
-                {formattedValue}
-              </Link>
+              <Stack>
+                <Link aria-label='link' href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}
+                  target='_blank'
+                  style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
+                  {formattedValue}
+                </Link>
+                <Link href={`/doctors/invoice-view/${btoa(row?._id!)}`} target='_blank'>{row.invoiceId}</Link>
+              </Stack>
             </>
           )
         }
@@ -2152,7 +2160,6 @@ const ScheduleTiming: FC = (() => {
         field: 'paymentType',
         headerName: `Payment status`,
         width: 120,
-        // flex: 1,
         align: 'center',
         headerAlign: 'center',
         renderCell: (data: any) => {
@@ -2160,8 +2167,11 @@ const ScheduleTiming: FC = (() => {
           return (
             <>
               <Chip
-                color={row.paymentType == '' ? 'success' : 'secondary'}
-                label={'paid'}
+                color={
+                  row.doctorPaymentStatus == 'Paid' ? 'success' :
+                    row.doctorPaymentStatus == 'Awaiting Request' ? 'error' :
+                      'primary'}
+                label={`${row.doctorPaymentStatus}`}
                 size="small"
                 sx={{ color: theme.palette.primary.contrastText }} />
             </>

@@ -185,6 +185,13 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
 
   const columns: GridColDef[] = [
     {
+      field: "id",
+      headerName: "ID",
+      width: 20,
+      align: 'center',
+      headerAlign: 'center'
+    },
+    {
       field: 'startDate',
       headerName: 'From - To Period',
       width: 250,
@@ -227,7 +234,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
       headerName: `Patient Name`,
       width: 210,
       flex: 1,
-      align: 'center',
+      align: 'left',
       headerAlign: 'center',
       valueFormatter(params: GridValueFormatterParams) {
         const { value } = params
@@ -251,10 +258,13 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
                 </Avatar>
               </StyledBadge>
             </Link>
-            <Link aria-label='my patient' href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}
-              style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
-              {formattedValue}
-            </Link>
+            <Stack>
+              <Link aria-label='my patient' href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}
+                style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
+                {formattedValue}
+              </Link>
+              <span>{row.invoiceId}</span>
+            </Stack>
           </>
         )
       }
@@ -263,7 +273,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
       field: 'paymentType',
       headerName: `Payment status`,
       width: 120,
-      // flex: 1,
+      flex: 1,
       align: 'center',
       headerAlign: 'center',
       renderCell: (data: any) => {
@@ -271,8 +281,11 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
         return (
           <>
             <Chip
-              color={row.paymentType == '' ? 'success' : 'secondary'}
-              label={'paid'}
+              color={
+                row.doctorPaymentStatus == 'Paid' ? 'success' :
+                  row.doctorPaymentStatus == 'Awaiting Request' ? 'error' :
+                    'primary'}
+              label={`${row.doctorPaymentStatus}`}
               size="small"
               sx={{ color: theme.palette.primary.contrastText }} />
           </>

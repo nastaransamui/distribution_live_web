@@ -196,9 +196,9 @@ const MyPtients: FC = (() => {
             //@ts-ignore
             let { years, months, days } = dayjs.preciseDiff(patient?.profile?.dob, dayjs(), true)
             return (
-              <div className="col-md-6 col-lg-4 col-xl-3 " key={index}>
+              <div className="col-md-6 col-lg-4 col-xl-3 " key={index} style={{ minHeight: '100vh' }}>
                 <div className="card widget-profile pat-widget-profile">
-                  <div className="card-body">
+                  <div className="card-body" style={{ minHeight: '500px' }}>
                     <div className="pro-widget-content">
                       <div className="profile-info-widget">
                         <Link aria-label="patient"
@@ -342,7 +342,13 @@ const MyPtients: FC = (() => {
               count={userProfile ? Math.ceil(userProfile?.patients_id.length / perPage) : 0}
               page={page}
               onChange={handlePageChange}
-              sx={{ mb: 3 }}
+              sx={{
+                mb: 3,
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                display: 'flex',
+                justifyContent: 'center'
+              }}
             />}
         </div>
       </div>

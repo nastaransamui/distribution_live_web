@@ -52,6 +52,12 @@ const CustomPagination: FC<PaginationPropsType> = (props) => {
         rowsPerPageOptions={[5, 10]}
         showFirstButton
         showLastButton
+        SelectProps={{
+          inputProps: {
+            id: 'rows-per-page-select', // Unique ID
+            name: 'rows-per-page', // Name attribute
+          },
+        }}
         ActionsComponent={() => {
           return (
             <MuiPagination

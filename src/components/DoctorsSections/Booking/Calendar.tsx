@@ -31,6 +31,7 @@ import _ from 'lodash'
 import { Transition } from '@/components/shared/Dialog';
 import isJsonString from '@/helpers/isJson';
 import { loadStylesheet } from '@/pages/_app';
+import { disablePastTime } from '@/components/DoctorDashboardSections/Accounts';
 export function dayjsRange(start: Dayjs, end: Dayjs, unit: ManipulateType) {
   const range = [];
   let current = start;
@@ -49,7 +50,7 @@ export interface OccupyTimeType {
   doctorId: string;
   startDate: Date;
   finishDate: Date,
-  slot_id: String,
+  slotId: String,
 }
 export interface AppointmentReservationType {
   _id?: string;
@@ -59,7 +60,7 @@ export interface AppointmentReservationType {
   doctorId: string;
   startDate: Date;
   finishDate: Date;
-  slot_id: string;
+  slotId: string;
   patientId: string;
   paymentToken: string;
   paymentType: string;
@@ -152,7 +153,7 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
         let reservation = atob(encryptReservation as string)
         if (isJsonString(reservation)) {
           let resData = JSON.parse(reservation)
-          let { startDate, dayPeriod, period, selectedDate, finishDate, doctorId, slot_id } = resData;
+          let { startDate, dayPeriod, period, selectedDate, finishDate, doctorId, slotId } = resData;
           let avaliab = profile.timeslots[0]?.availableSlots.filter((a: AvailableType) =>
             dayjs(a.startDate).isSame(dayjs(startDate), 'day') &&
             dayjs(a.finishDate).isSame(dayjs(finishDate), 'day'))[0]
@@ -169,7 +170,7 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
               doctorId: doctorId,
               startDate: startDate,
               finishDate: finishDate,
-              slot_id: slot_id,
+              slotId: slotId,
             })
           }
         }
@@ -210,7 +211,7 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
           reservation: window.btoa(JSON.stringify({
             ...s,
             doctorId: profile?.timeslots[0]?.doctorId,
-            slot_id: profile?.timeSlotId,
+            slotId: profile?.timeSlotId,
             index: slot?.index,
             startDate: slot?.startDate,
             finishDate: slot?.finishDate,
@@ -358,12 +359,15 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                                                 entrie[1].map((s: TimeType, i: number) => {
                                                   if (s.active) {
                                                     let isSelect = _.isEqual(s, occupyTime?.timeSlot) && occupyTime?.selectedDate == calendarValue.format('')
-                                                    let isDisabled: boolean = false;
+                                                    const selectedDate = dayjs(calendarValue).format(`D MMM YYYY`);
+                                                    const timeSlot = s.period;
+                                                    let isDisabled: boolean = !disablePastTime(selectedDate, timeSlot);
+                                                    let isBooked: boolean = false;
                                                     if (s.reservations.length > 0) {
                                                       s.reservations.forEach((elem) => {
                                                         if (elem.selectedDate == calendarValue.format('')) {
                                                           if (elem.timeSlot.period == s.period) {
-                                                            isDisabled = true
+                                                            isBooked = true
                                                           }
                                                         }
 
@@ -372,9 +376,12 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                                                     return (
                                                       <li style={{ width: 'inherit' }} key={slotIndex.toString() + " " + j.toString() + i.toString()}>
                                                         <Button
-                                                          disabled={isDisabled}
+                                                          disabled={isDisabled || isBooked}
                                                           className={`timing ${isSelect ? 'active' : ' '}`}
-                                                          sx={{ bgcolor: isDisabled ? `${theme.palette.primary.main} !Important` : '', display: 'flex', flexDirection: 'column' }}
+                                                          sx={{
+                                                            bgcolor: isBooked ? `${theme.palette.primary.main} !Important` : '',
+                                                            display: 'flex', flexDirection: 'column'
+                                                          }}
                                                           onClick={(e) => { periodButtonClick(e, s, isSelect, slot, entrie[0]) }}>
                                                           <span><i className={isDisabled ? "feather-x-circle" : "feather-clock"} />{s.period}</span>
                                                           <span>{formatNumberWithCommas(s.total)} {" "} {s.currencySymbol || 'THB'}</span>
