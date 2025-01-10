@@ -62,8 +62,8 @@ const AvailableTiming: FC = (() => {
     let skip = 0
     if (isActive && homeSocket.current !== undefined && userProfile !== null) {
       if (userProfile?.reservations_id && userProfile?.reservations_id.length !== 0) {
-        homeSocket.current.emit('getMyAppointments', { userId, reservationsIdArray, limit, skip })
-        homeSocket.current.once('getMyAppointmentsReturn', (msg: { status: number, myAppointment: AppointmentReservationExtendType[], message?: string }) => {
+        homeSocket.current.emit('getDoctorAppointments', { userId, reservationsIdArray, limit, skip })
+        homeSocket.current.once('getDoctorAppointmentsReturn', (msg: { status: number, myAppointment: AppointmentReservationExtendType[], message?: string }) => {
           const { status, myAppointment, message } = msg;
           if (status !== 200) {
             toast.error(message || `${status}`, {
@@ -100,7 +100,7 @@ const AvailableTiming: FC = (() => {
                 }
               }
             }
-            homeSocket.current.once(`updateGetMyAppointments`, () => {
+            homeSocket.current.once(`updategetDoctorAppointments`, () => {
               setReload(!reload)
             })
             setIsLoading(false)

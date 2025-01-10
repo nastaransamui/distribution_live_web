@@ -16,22 +16,24 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 
-import { patient_profile } from '@/public/assets/imagepath';
+import { doctors_profile } from '@/public/assets/imagepath';
 import { AppointmentReservationType } from '../DoctorsSections/CheckOut/PaymentSuccess';
-import { PatientProfile, ProfileImageStyledBadge } from './MyPtients';
+import { PatientProfile, ProfileImageStyledBadge } from '@/components/DoctorDashboardSections/MyPtients';
 
 //liberies
 import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import { toast } from 'react-toastify';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 import dayjs from 'dayjs';
-import { formatNumberWithCommas, StyledBadge } from './ScheduleTiming';
+import { formatNumberWithCommas, StyledBadge } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import Chip from '@mui/material/Chip';
+import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection';
+import Grid from '@mui/material/Grid';
 
 
 
 export interface AppointmentReservationExtendType extends AppointmentReservationType {
-  patientProfile: PatientProfile;
+  doctorProfile: DoctorProfileType;
   createdDate: string;
 }
 const perPage = 10
@@ -61,8 +63,8 @@ const Appointment: FC = (() => {
     let skip = (page - 1) * perPage
     if (isActive && homeSocket.current !== undefined && userProfile !== null) {
       if (userProfile?.reservations_id && userProfile?.reservations_id.length !== 0) {
-        homeSocket.current.emit('getDoctorAppointments', { userId, reservationsIdArray, limit, skip })
-        homeSocket.current.once('getDoctorAppointmentsReturn', (msg: { status: number, myAppointment: AppointmentReservationExtendType[], message?: string }) => {
+        homeSocket.current.emit('getPatientAppointments', { userId, reservationsIdArray, limit, skip })
+        homeSocket.current.once('getPatientAppointmentsReturn', (msg: { status: number, myAppointment: AppointmentReservationExtendType[], message?: string }) => {
           const { status, myAppointment, message } = msg;
           if (status !== 200) {
             toast.error(message || `${status}`, {
@@ -88,7 +90,7 @@ const Appointment: FC = (() => {
                 return newState
               })
             }
-            homeSocket.current.once(`updateGetDoctorAppointments`, () => {
+            homeSocket.current.once(`updateGetPatientAppointments`, () => {
               setReload(!reload)
             })
             setIsLoading(false)
@@ -121,10 +123,10 @@ const Appointment: FC = (() => {
       <>
         {
           myAppointmentData.map((appointment: AppointmentReservationExtendType, index: number) => {
-            const { patientProfile, selectedDate, timeSlot, patientId } = appointment;
+            const { doctorProfile, selectedDate, timeSlot, doctorId } = appointment;
             const { period } = timeSlot
-            const { profileImage, address1, address2, mobileNumber, userName, online } = patientProfile
-            const patientName = `${patientProfile?.gender} ${patientProfile?.gender !== '' ? '.' : ''} ${patientProfile?.firstName} ${patientProfile?.lastName}`;
+            const { profileImage, address1, address2, online } = doctorProfile
+            const doctorName = `Dr. ${doctorProfile?.firstName} ${doctorProfile?.lastName}`;
             return (
               <div className="appointment-list" key={index}>
                 <div className="profile-info-widget" >
@@ -135,8 +137,9 @@ const Appointment: FC = (() => {
                     online={online as boolean}
                   >
                     <Link aria-label="patient"
-                      href={`/doctors/dashboard/patient-profile/${btoa(patientId)}`}
+                      href={`/doctors/profile/${btoa(doctorId)}`}
                       className="booking-doc-img"
+                      target='_blank'
                     >
                       <Avatar sx={{
                         width: 'auto',
@@ -154,13 +157,13 @@ const Appointment: FC = (() => {
                         src={`${profileImage}?random=${new Date().getTime()}`}
                         key={profileImage}
                       >
-                        <img className="img-fluid" src={patient_profile} alt="" />
+                        <img className="img-fluid" src={doctors_profile} alt="" />
                       </Avatar>
                     </Link>
                   </ProfileImageStyledBadge>
                   <div className="profile-det-info">
                     <h3>
-                      <Link aria-label="patient" style={{ color: theme.palette.secondary.main }} href={`/doctors/dashboard/patient-profile/${btoa(patientId)}`}>{patientName}</Link>
+                      <Link aria-label="patient" style={{ color: theme.palette.secondary.main }} href={`/doctors/profile/${btoa(doctorId)}`} target='_blank'>{doctorName}</Link>
                     </h3>
                     <div className="patient-details">
                       <h4>
@@ -170,11 +173,21 @@ const Appointment: FC = (() => {
                         <i className="fas fa-map-marker-alt"></i> {address1} {' '} {address2}
                       </h4>
                       <h4>
-                        <i className="fas fa-envelope"></i>{" "}
-                        {userName}
+                        <img src={doctorProfile?.specialities[0]?.image} width="20" height="20" alt={doctorProfile?.specialities[0]?.specialities} />
+                        {' '}
+                        {doctorProfile?.specialities[0]?.specialities}
                       </h4>
                       <h4 className="mb-0">
-                        <i className="fas fa-phone"></i> {mobileNumber}
+                        <Grid container rowGap={1} columnGap={1} sx={{ paddingRight: 1, paddingLeft: 1 }} className="clinic-services"
+                          key={doctorProfile?.specialitiesServices?.toString()}>
+                          {doctorProfile?.specialitiesServices &&
+                            doctorProfile?.specialitiesServices.map((s: string, i: number) => {
+                              return (
+                                <Grid key={s + i} item component="span" aria-label='key specilaities'>{s}</Grid>
+                              )
+                            })
+                          }
+                        </Grid>
                       </h4>
                       <br />
                       <h4 className="mb-0">
@@ -308,15 +321,15 @@ const Appointment: FC = (() => {
                 setShow(false)
               }, 500);
             }}>
-            <Link target='_blank' className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
+            <Link target='_blank' className="avatar mx-2" href={`/doctors/profile/${btoa(editValues?.patientId as string)}`}>
               <StyledBadge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant="dot"
-                online={editValues?.patientProfile?.online as boolean}
+                online={editValues?.doctorProfile?.online as boolean}
               >
-                <Avatar alt="" src={`${editValues?.patientProfile?.profileImage}?random=${new Date().getTime()}`} >
-                  <img src={patient_profile} alt="" className="avatar" />
+                <Avatar alt="" src={`${editValues?.doctorProfile?.profileImage}?random=${new Date().getTime()}`} >
+                  <img src={doctors_profile} alt="" className="avatar" />
                 </Avatar>
               </StyledBadge>
             </Link>
@@ -329,8 +342,8 @@ const Appointment: FC = (() => {
                 "&:hover": {
                   color: theme.palette.secondary.light
                 }
-              }} href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
-              {`${editValues?.patientProfile?.gender} ${editValues?.patientProfile?.gender !== '' ? '.' : ''} ${editValues?.patientProfile?.firstName} ${editValues?.patientProfile?.lastName}`}
+              }} href={`/doctors/profile/${btoa(editValues?.doctorId as string)}`}>
+              {`Dr. ${editValues?.doctorProfile?.firstName} ${editValues?.doctorProfile?.lastName}`}
             </Typography>
           </BootstrapDialogTitle>
           <DialogContent dividers>
@@ -355,19 +368,6 @@ const Appointment: FC = (() => {
                     </div>
                   </div>
                 </div>
-              </li>
-              <li>
-                <span className="title">Status:</span>
-                <span className="text">
-                  <Chip
-                    color={
-                      editValues?.doctorPaymentStatus == 'Paid' ? 'success' :
-                        editValues?.doctorPaymentStatus == 'Awaiting Request' ? 'error' :
-                          'primary'}
-                    label={`${editValues?.doctorPaymentStatus}`}
-                    size="small"
-                    sx={{ color: theme.palette.primary.contrastText }} />
-                </span>
               </li>
               <li>
                 <span className="title">Confirm Date:</span>

@@ -532,7 +532,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = (({ sortBy, setSor
                       maxHeight: 190,
                       transition: theme.transitions.create('all', { duration: 200, }),
                     }}>
-                      <Typography component="div" variant="h5" sx={{ wordBreak: 'break-all', fontSize: '1.2rem' }}>
+                      <Typography component="div" variant="h5" sx={{ wordBreak: 'break-all', fontSize: '1rem' }}>
                         <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
                           Dr. {doctor?.firstName} {" "} {doctor?.lastName}
                         </Link>

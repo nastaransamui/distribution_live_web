@@ -101,6 +101,12 @@ const PatientDashboardSidebar: FC = (() => {
                       <span>Favourites</span>
                     </Link>
                   </li>
+                  <li className={router.pathname == "/patient/dashboard/appointments" ? "active" : ""}>
+                    <Link href="/patient/dashboard/appointments">
+                      <i className="fas fa-calendar-check" />
+                      <span>Appointments</span>
+                    </Link>
+                  </li>
                   <li className={router.pathname.includes("/dependent") ? "active" : ""}>
                     <Link href="/patient/dashboard/dependent">
                       <i className="fas fa-users"></i>

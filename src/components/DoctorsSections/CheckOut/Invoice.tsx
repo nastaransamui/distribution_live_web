@@ -7,7 +7,7 @@ import html2canvas from 'html2canvas';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
-import { formatNumberWithCommas, TimeType } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { toast } from 'react-toastify';
 
 import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
@@ -146,7 +146,7 @@ const Invoice: FC = (() => {
     styleSheet.remove();
 
     // Save the PDF
-    pdf.save("invoice.pdf");
+    pdf.save(`${reservation?.invoiceId}.pdf`);
   };
 
   return (
@@ -170,7 +170,7 @@ const Invoice: FC = (() => {
                         <div className="row">
                           <div className="col-md-4">
                             <div className="invoice-logo">
-                              <img src={logo} alt="logo" className='imgColorPrimary' />
+                              <img src={logo} alt="logo" />
                             </div>
                           </div>
                           <div className="col-md-4"></div>

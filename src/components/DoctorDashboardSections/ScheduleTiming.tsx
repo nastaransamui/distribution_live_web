@@ -1666,7 +1666,7 @@ const ScheduleTiming: FC = (() => {
         const calculateTotalPrice = (array: TimeType[]) => {
           array.map((a: TimeType) => {
             if (a.price !== '') {
-              a.total = (Number(a.price) * (1 + Number(a.bookingsFee) / 100)).toString();
+              a.total = Number((Number(a.price) * (1 + Number(a.bookingsFee) / 100)).toFixed(2)).toString();
               a.bookingsFeePrice = (Number(a.price!) * (Number(a.bookingsFee) / 100)).toString()
             }
           })
