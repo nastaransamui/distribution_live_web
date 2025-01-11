@@ -4,7 +4,7 @@ import useScssVar from '@/hooks/useScssVar'
 import { logo } from '@/public/assets/imagepath';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
@@ -17,6 +17,7 @@ import { useTheme } from '@mui/material/styles';
 import { AppointmentReservationExtendType } from './PaymentSuccess';
 import { base64regex } from '../Profile/ProfilePage';
 import Tooltip from '@mui/material/Tooltip';
+import { useRouter } from 'next/router';
 
 export function truncateString(str: string, maxLength: number) {
   if (!str || str.length <= maxLength) return str;
@@ -105,6 +106,7 @@ const Invoice: FC = (() => {
     const A4_HEIGHT = 297; // mm
     const DPI = 96; // Dots per inch
     const PX_PER_MM = DPI / 25.4;
+
     const A4_WIDTH_PX = Math.floor(A4_WIDTH * PX_PER_MM) - 56; // A4 width in pixels
     const A4_HEIGHT_PX = Math.floor(A4_HEIGHT * PX_PER_MM); // A4 height in pixels
 
@@ -255,6 +257,16 @@ const Invoice: FC = (() => {
                             </table>
                           </div>
                         </div>
+                        {router.asPath.startsWith('/doctors') &&
+                          <div className="col-md-6 col-xl-4 ms-auto" style={{ minHeight: '300px' }}>
+                            <div className={
+                              `${reservation?.doctorPaymentStatus == "Awaiting Request"
+                                ? "rubber_stamp_await"
+                                : reservation?.doctorPaymentStatus == "Paid"
+                                  ? "rubber_stamp_paid" : "rubber_stamp_pendign"}
+                              `}>{reservation?.doctorPaymentStatus}</div>
+                          </div>
+                        }
                         <div className="col-md-6 col-xl-4 ms-auto">
                           <div className="table-responsive">
                             <table className="invoice-table-two table">

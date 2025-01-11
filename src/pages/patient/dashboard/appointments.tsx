@@ -12,13 +12,13 @@ import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import Footer from '@/components/sections/Footer';
-import DoctorDashboardSidebar from '@/components/shared/DoctorDashboardSidebar';
 import Appointment from '@/components/PatientDashboardSections/Appointment';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import useScssVar from '@/hooks/useScssVar';
+import PatientDashboardSidebar from '@/components/shared/PatientDashboardSidebar';
 const AppointmentsPage: NextPage = () => {
   const { muiVar } = useScssVar();
 
@@ -38,7 +38,7 @@ const AppointmentsPage: NextPage = () => {
       <div className="content" style={muiVar}>
         <div className="container-fluid">
           <div className="row">
-            <DoctorDashboardSidebar />
+            <PatientDashboardSidebar />
             <Appointment />
           </div>
         </div>

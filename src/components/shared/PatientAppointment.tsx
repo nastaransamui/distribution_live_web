@@ -99,7 +99,7 @@ const PatientAppointment: FC<PatientSidebarDoctorTypes> = (({ userType, doctorPa
                   style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
                   {formattedValue}
                 </Link>
-                <Link href={`/doctors/invoice-view/${btoa(params.id as string)}`}>{row.invoiceId}</Link></Stack>
+                <Link href={`/patient/dashboard/invoice-view/${btoa(params.id as string)}`}>{row.invoiceId}</Link></Stack>
             </>
           )
         }

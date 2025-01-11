@@ -10369,7 +10369,6 @@ table .table-hover tbody tr:hover td {
 }
 
 .footer .footer-bottom .copyright {
-  border-top: 1px solid #1663a6;
   padding: 30px 0;
 }
 
@@ -10447,6 +10446,7 @@ table .table-hover tbody tr:hover td {
 .footer-one .footer-top {
   margin: 0;
   padding: 50px 0;
+  border-bottom: 1px solid var(--secondaryMain);
 }
 
 @media (max-width: 991.98px) {
@@ -10562,7 +10562,7 @@ table .table-hover tbody tr:hover td {
 }
 
 .footer-one .footer-bottom .copyright {
-  border-top: 1px solid #e5e7eb;
+  /* border-top: 1px solid #e5e7eb; */
   margin: 0;
   padding: 30px 0;
 }
@@ -45580,4 +45580,68 @@ svg.feather {
 .force-perfix-ltr{
   direction: ltr !important; /* Forces the input to render in LTR */
   text-align: start; /* Ensures alignment is correct */
+}
+.rubber_stamp_await {
+  font-size: 20px;
+  line-height: 45px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--errorMain);
+  border: 3px solid var(--errorMain);
+  float: left;
+  padding: 10px 7px;
+  border-radius: 10px;
+  
+  opacity: 0.8;
+  -webkit-transform: rotate(-10deg);
+  transform: rotate(-10deg);
+  -o-transform: rotate(-10deg);
+  -moz-transform: rotate(-10deg);
+  -ms-transform: rotate(-10deg);
+  position:absolute;
+  top:105%;
+  left: 30%
+}
+
+.rubber_stamp_paid {
+  font-size: 20px;
+  line-height: 45px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--successMain);
+  border: 3px solid var(--successMain);
+  float: left;
+  padding: 10px 75px;
+  border-radius: 10px;
+  
+  opacity: 0.8;
+  -webkit-transform: rotate(-10deg);
+  transform: rotate(-10deg);
+  -o-transform: rotate(-10deg);
+  -moz-transform: rotate(-10deg);
+  -ms-transform: rotate(-10deg);
+  position:absolute;
+  top:105%;
+  left: 32%
+}
+.rubber_stamp_pendign {
+  font-size: 20px;
+  line-height: 45px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--primaryMain);
+  border: 3px solid var(--primaryMain);
+  float: left;
+  padding: 10px 75px;
+  border-radius: 10px;
+  
+  opacity: 0.8;
+  -webkit-transform: rotate(-10deg);
+  transform: rotate(-10deg);
+  -o-transform: rotate(-10deg);
+  -moz-transform: rotate(-10deg);
+  -ms-transform: rotate(-10deg);
+  position:absolute;
+  top:105%;
+  left: 32%
 }

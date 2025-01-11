@@ -39,6 +39,7 @@ export interface UserProfileType {
     reservations_id: string[];
     doctors_id: string[];
     patients_id: string[];
+    dependentsArray: string[];
     favorite_doctors_id: string[];
     roleName: "doctors" | "patient" | "pharmacist";
     accessToken: string;

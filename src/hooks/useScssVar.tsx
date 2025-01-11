@@ -49,6 +49,8 @@ const useScssVar = (() => {
     ['--primaryLight' as string]: theme.palette.primary.light as CSSProperties,
     ['--primaryContrastText' as string]: theme.palette.primary.contrastText as CSSProperties,
     ['--secondaryContrastText' as string]: theme.palette.secondary.contrastText as CSSProperties,
+    ['--successMain' as string]: theme.palette.success.main as CSSProperties,
+    ['--errorMain' as string]: theme.palette.error.main as CSSProperties,
   }
 
   const secondaryMain: { [key: string]: CSSProperties } = {
