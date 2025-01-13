@@ -95,6 +95,12 @@ const PatientDashboardSidebar: FC = (() => {
                       <span>Dashboard</span>
                     </Link>
                   </li>
+                  <li className={router.pathname.includes("/profile") ? "active" : ""}>
+                    <Link href="/patient/dashboard/profile">
+                      <i className="fas fa-user-cog"></i>
+                      <span>Profile Settings</span>
+                    </Link>
+                  </li>
                   <li className={router.pathname.includes("/favourites") ? "active" : ""}>
                     <Link href="/patient/dashboard/favourites">
                       <i className="fas fa-bookmark"></i>
@@ -134,15 +140,9 @@ const PatientDashboardSidebar: FC = (() => {
                     </Link>
                   </li>
                   <li className={router.pathname.includes("/medicaldetails") ? "active" : ""}>
-                    <Link href="/patient/dashboard/medicaldetails">
+                    <Link href={`/patient/dashboard/medicaldetails${`?${btoa(JSON.stringify({ name: 'heartRate' }))}`}`}>
                       <i className="fas fa-file-medical-alt"></i>
                       <span>Medical Details</span>
-                    </Link>
-                  </li>
-                  <li className={router.pathname.includes("/profile") ? "active" : ""}>
-                    <Link href="/patient/dashboard/profile">
-                      <i className="fas fa-user-cog"></i>
-                      <span>Profile Settings</span>
                     </Link>
                   </li>
                   <li className={router.pathname.includes("/change-password") ? "active" : ""}>

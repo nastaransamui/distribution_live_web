@@ -1,237 +1,893 @@
 /* eslint-disable react/jsx-key */
 
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useState, useRef, SyntheticEvent } from 'react'
+import { FC, Fragment, useState, useRef, useEffect, useMemo, ReactNode } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 
 //Mui
 import { Transition, BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
 import DialogContent from '@mui/material/DialogContent'
 import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams } from '@mui/x-data-grid';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import TextField from '@mui/material/TextField';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import InputAdornment from '@mui/material/InputAdornment';
 import DeleteForever from '@mui/icons-material/DeleteForever'
 import Stack from '@mui/material/Stack';
 import Link from 'next/link';
-import Edit from '@mui/icons-material/Edit';
+import { ExtendedVitalSignTypes } from './ClinicalSignsHistory';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux/store';
+import { toast } from 'react-toastify';
+import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
+import MuiSwipeableTabs from '../shared/MuiSwipeableTabs';
+import { Dashboard1, Dashboard2, Dashboard5, Dashboard6 } from '@/public/assets/imagepath';
 
-export interface ValueType {
+import { useRouter } from 'next/router';
+import { Controller, useForm } from 'react-hook-form';
+import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
+import CustomPagination from '../shared/CustomPagination';
+import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor } from '../DoctorDashboardSections/ScheduleTiming';
+export interface VitalTypeObjectForm {
+  value: string;
   id: number;
+  userId: string;
   name: string;
-  bmi: string;
-  heartRate: string;
-  fbc: string;
-  weight: string;
-  orderDate: string;
+  date: Date;
 }
 
-
-const initialState: ValueType = {
+const initialState: VitalTypeObjectForm = {
+  value: '',
   id: 0,
+  userId: '',
   name: '',
-  bmi: '',
-  heartRate: '',
-  fbc: '',
-  weight: '',
-  orderDate: '',
+  date: new Date(),
 }
+
 
 const MedicalDetails: FC = (() => {
-  const { muiVar } = useScssVar();
-  const theme = useTheme()
-  const matches = useMediaQuery(theme.breakpoints.down('lg'));
-  const grdiRef = useRef<any>(null)
-  const [data, setData] = useState<ValueType[]>([
-    { id: 0, name: "Richard Wilson", bmi: '23.7', heartRate: '89', fbc: '140', weight: '74', orderDate: dayjs('27 Sep 2019').format('DD MMM YYYY') },
-    { id: 1, name: "Vena", bmi: '25.2', heartRate: '92', fbc: '135', weight: '73', orderDate: dayjs("1 Nov 2019").format('DD MMM YYYY') },
-    { id: 2, name: "Champagne", bmi: '24.5', heartRate: '90', fbc: '125', weight: '73.5', orderDate: dayjs("3 Nov 2019").format('DD MMM YYYY') },
-    { id: 3, name: "Tressie", bmi: '24.2', heartRate: '95', fbc: '128', weight: '10.2', orderDate: dayjs("16 Jun 2019").format('DD MMM YYYY') },
-    { id: 4, name: "Christopher", bmi: '24.7', heartRate: '99', fbc: '122', weight: '12.8', orderDate: dayjs("16 Jun 2019").format('DD MMM YYYY') },
+  const { muiVar, bounce } = useScssVar();
+  const router = useRouter();
+  dayjs.extend(utc)
+  dayjs.extend(timezone)
+  const [vitalSign, setvitalSign] = useState<ExtendedVitalSignTypes[]>([])
+  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [stepName, setStepName] = useState<'bodyTemp' | 'heartRate' | 'height' | 'weight'>('heartRate')
 
-  ])
+  const [reload, setReload] = useState<boolean>(false);
+  const perPage = 5;
+
+  const [dataGridBodyTempFilters, setDataGridBodyTempFilters] = useState({
+    limit: perPage,
+    skip: 0,
+  });
+  const [rowBodyTempCount, setRowBodyTempCount] = useState<number>(0)
+  const [paginationBodyTempModel, setPaginationBodyTempModel] = useState({
+    pageSize: 5,
+    page: 0,
+  });
+
+
+  const [dataGridHeartRateFilters, setDataGridHeartRateFilters] = useState({
+    limit: perPage,
+    skip: 0,
+  });
+  const [rowHeartRateCount, setRowHeartRateCount] = useState<number>(0)
+  const [paginationHeartRateModel, setPaginationHeartRateModel] = useState({
+    pageSize: 5,
+    page: 0,
+  });
+
+  const [dataGridHeightFilters, setDataGridHeightFilters] = useState({
+    limit: perPage,
+    skip: 0,
+  });
+  const [rowHeightCount, setRowHeightCount] = useState<number>(0)
+  const [paginationHeightModel, setPaginationHeightModel] = useState({
+    pageSize: 5,
+    page: 0,
+  });
+
+  const [dataGridWeightFilters, setDataGridWeightFilters] = useState({
+    limit: perPage,
+    skip: 0,
+  });
+  const [rowWeightCount, setRowWeightCount] = useState<number>(0)
+  const [paginationWeightModel, setPaginationWeightModel] = useState({
+    pageSize: 5,
+    page: 0,
+  });
+
+  const {
+    handleSubmit,
+    clearErrors,
+    formState: { errors },
+    reset,
+    control,
+    register,
+    setValue: setFormValue,
+    getValues: getFormValues,
+    watch,
+  } = useForm({
+    defaultValues: {
+      ...initialState,
+      userId: userProfile?._id
+    }
+  })
+
+  const theme = useTheme()
+  const grdiRefBodyTemp = useRef<any>(null)
+  const grdiRefHeartRate = useRef<any>(null)
+  const grdiRefHeight = useRef<any>(null)
+  const grdiRefweight = useRef<any>(null)
+
+  useEffect(() => {
+    if (homeSocket.current !== undefined) {
+      let userId = userProfile?._id
+      // Get vital sing on entrance of page
+      let skipLimit =
+        stepName == 'bodyTemp' ? dataGridBodyTempFilters :
+          stepName == 'heartRate' ? dataGridHeartRateFilters :
+            stepName == 'height' ? dataGridHeightFilters :
+              dataGridWeightFilters;
+      homeSocket.current.emit('getVitalSign', { userId, limit: skipLimit.limit, skip: skipLimit.skip, sort: { date: -1 } })
+      homeSocket.current.once('getVitalSignReturn', (msg: { status: number, message?: string, vitalSign: ExtendedVitalSignTypes[] }) => {
+        const { status, message, vitalSign } = msg;
+        if (status !== 200) {
+          setIsLoading(false)
+          toast.error(message || `Error ${status} find Vital signs`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => { }
+          });
+        } else {
+          if (vitalSign) {
+            setvitalSign(vitalSign)
+            vitalSign[0]?.totalBodyTemp !== undefined && setRowBodyTempCount(vitalSign[0].totalBodyTemp);
+            vitalSign[0]?.totalHeartRate !== undefined && setRowHeartRateCount(vitalSign[0].totalHeartRate);
+            vitalSign[0]?.totalHeight !== undefined && setRowHeightCount(vitalSign[0].totalHeight);
+            vitalSign[0]?.totalWeight !== undefined && setRowWeightCount(vitalSign[0].totalWeight);
+          }
+          setIsLoading(false)
+        }
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeSocket, userProfile?._id, reload, stepName, dataGridBodyTempFilters, dataGridHeartRateFilters, dataGridHeightFilters, dataGridWeightFilters])
+
 
   const [edit, setEdit] = useState(false);
-  const [editValues, setEditValues] = useState<ValueType>(initialState)
 
-  const editClicked = (params: GridRowParams) => {
-    setEdit(true)
-    setEditValues((prevState) => {
-      return {
-        ...prevState,
-        id: params.row.id,
-        name: params.row.name,
-        bmi: params.row.bmi,
-        heartRate: params.row.heartRate,
-        fbc: params.row.fbc,
-        weight: params.row.weight,
-        orderDate: params.row.orderDate,
-      }
-    })
-  }
+
   const [deleteId, setDeleteId] = useState<number>()
   const deleteClicked = (params: GridRowParams) => {
     setDeleteId(() => (params.row.id))
     document.getElementById('delete_modal')?.classList.replace('animate__backOutDown', 'animate__backInDown')
     window.$('#delete_modal').modal('toggle')
   }
-  const columns: GridColDef[] = [
-    {
-      field: 'id',
-      headerName: "ID",
-      width: 50,
-      headerAlign: 'center',
-      align: 'center',
-    },
-    {
-      field: 'name',
-      headerName: "Name",
-      width: 150,
-      headerAlign: 'left',
-      align: 'left',
-      renderCell: (data: any) => {
-        const { row } = data;
-        return (
-          <>
-            {row.name}
-          </>
-        )
-      },
-    },
-    {
-      field: 'bmi',
-      headerName: "Bmi",
-      width: 100,
-      headerAlign: 'center',
-      align: 'center',
-    },
-    {
-      field: 'heartRate',
-      headerName: "Heart Rate",
-      width: 100,
-      headerAlign: 'center',
-      align: 'center',
-    },
-    {
-      field: 'fbc',
-      headerName: "FBC Status",
-      width: 100,
-      headerAlign: 'center',
-      align: 'center',
-    },
-    {
-      field: 'weight',
-      headerName: "Weight",
-      width: 100,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (data: any) => {
-        const { row } = data;
-        return (
-          <>
-            {row.weight + " Kg"}
-          </>
-        )
+
+  useEffect(() => {
+    let decodedParams = { name: '' };
+    if (typeof window !== 'undefined') {
+      if (router.asPath.includes("?")) {
+        const encodedParams = router.asPath.split("?")[1]; // Extract query string
+        decodedParams = JSON.parse(atob(encodedParams)); // Decode and parse JSON
       }
-    },
-    {
-      field: 'orderDate',
-      headerName: "Order Date",
-      flex: matches ? 0 : 1,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (data: any) => {
-        const { row } = data;
-        return (
-          <>
-            <Stack >
-              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.orderDate).format(`MMM D, YYYY`)}</span>
-              <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.orderDate).format(` h:mm A`)}</span>
-            </Stack>
-          </>
-        )
-      }
-    },
-    {
-      field: "actions",
-      type: 'actions',
-      headerName: "Action",
-      headerAlign: 'center',
-      align: 'center',
-      getActions: (params: GridRowParams) => [
-        <GridActionsCellItem icon={<Edit color='secondary' />} onClick={() => { editClicked(params) }} label="Edit" />,
-        <GridActionsCellItem icon={<DeleteForever sx={{ color: 'crimson' }} />} onClick={() => { deleteClicked(params) }} label="Delete" />,
-      ]
     }
-  ]
+    setStepName(decodedParams?.name as 'bodyTemp' | 'heartRate' | 'height' | 'weight')
+  }, [router])
+
+  const columns: GridColDef[] = useMemo(() => {
+    let unit =
+      stepName == "heartRate" ? 'bpm'
+        : stepName == "bodyTemp" ? '℃'
+          : stepName == 'weight' ? '㎏'
+            : '㎝'
+    let formatTitle =
+      stepName == 'heartRate' ? ` Heart Rate /bpm `
+        : stepName == 'bodyTemp' ? `Body tempreture /℃ `
+          : stepName == 'weight' ? `Weight /㎏ `
+            : `Height /㎝ `
 
 
-  const [paginationModel, setPaginationModel] = useState({
-    pageSize: 5,
-    page: 0,
-  });
+    return [
+      {
+        field: 'id',
+        headerName: "ID",
+        width: 90,
+        headerAlign: 'center',
+        align: 'center',
+      },
+      {
+        field: 'value',
+        headerName: `${formatTitle}`,
+        width: 250,
+        headerAlign: 'center',
+        align: 'center',
+        renderCell: (data: any) => {
+          const { row } = data;
+          return (
+            <>
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex', fontWeight: 'bold' }}>{row?.value}</span>&nbsp;
+              <span style={{ justifyContent: 'center', display: 'flex', color: theme.palette.secondary.main, fontWeight: 'bolder' }}>{unit}</span>
+            </>
+          )
+        }
+      },
+      {
+        field: 'date',
+        headerName: "Submit Date",
+        flex: 1,
+        headerAlign: 'center',
+        align: 'center',
+        renderCell: (data: any) => {
+          const { row } = data;
+          return (
+            <>
+              <Stack >
+                <span className="user-name" style={{ justifyContent: 'center', display: 'flex', color: theme.palette.primary.main }}>{dayjs(row.date).format(`MMM D, YYYY`)}</span>
+                <span style={{ justifyContent: 'center', color: theme.palette.secondary.main, display: 'flex' }}>{dayjs(row.date).format(` h:mm:ss A`)}</span>
+              </Stack>
+            </>
+          )
+        }
+      },
+      {
+        field: "actions",
+        type: 'actions',
+        headerName: "Action",
+        headerAlign: 'center',
+        align: 'center',
+        getActions: (params: GridRowParams) => [
+          <GridActionsCellItem icon={<DeleteForever sx={{ color: 'crimson' }} />} onClick={() => { deleteClicked(params) }} label="Delete" />,
+        ]
+      }
+    ]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stepName, userProfile?._id])
+
+  const onSubmit = (data: any) => {
+    if (homeSocket.current !== undefined) {
+      homeSocket.current.emit('vitalSignsUpdate', { name: data.name, value: data.value, userId: data.userId })
+      setReload(!reload)
+    }
+    document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+    setTimeout(() => {
+      setEdit(false)
+    }, 500);
+  }
+
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    switch (stepName) {
+      case 'bodyTemp':
+        setPaginationBodyTempModel((prevState) => {
+          var maximuPage: number = prevState.page;
+          if (rowBodyTempCount !== 0) {
+            if ((maximuPage + 1) >= (Math.floor(rowBodyTempCount / parseInt(event.target.value, 10)))) {
+              maximuPage = (Math.floor(rowBodyTempCount / parseInt(event.target.value, 10))) - 1
+            }
+          }
+          return {
+            pageSize: parseInt(event.target.value, 10),
+            page: maximuPage <= 0 ? 0 : maximuPage,
+          }
+        })
+        setDataGridBodyTempFilters((prevState) => {
+          var maximuPage: number = prevState.skip;
+          if (rowBodyTempCount !== 0) {
+            if ((maximuPage + 1) >= (Math.floor(rowBodyTempCount / parseInt(event.target.value, 10)))) {
+              maximuPage = (Math.floor(rowBodyTempCount / parseInt(event.target.value, 10))) - 1
+            }
+          }
+          return {
+            limit: parseInt(event.target.value, 10),
+            skip: maximuPage <= 0 ? 0 : maximuPage
+          }
+        })
+        break;
+      case 'heartRate':
+        setPaginationHeartRateModel((prevState) => {
+          var maximuPage: number = prevState.page;
+          if (rowHeartRateCount !== 0) {
+            if ((maximuPage + 1) >= (Math.floor(rowHeartRateCount / parseInt(event.target.value, 10)))) {
+              maximuPage = (Math.floor(rowHeartRateCount / parseInt(event.target.value, 10))) - 1
+            }
+          }
+          return {
+            pageSize: parseInt(event.target.value, 10),
+            page: maximuPage <= 0 ? 0 : maximuPage,
+          }
+        })
+        setDataGridHeartRateFilters((prevState) => {
+          var maximuPage: number = prevState.skip;
+          if (rowHeartRateCount !== 0) {
+            if ((maximuPage + 1) >= (Math.floor(rowHeartRateCount / parseInt(event.target.value, 10)))) {
+              maximuPage = (Math.floor(rowHeartRateCount / parseInt(event.target.value, 10))) - 1
+            }
+          }
+          return {
+            limit: parseInt(event.target.value, 10),
+            skip: maximuPage <= 0 ? 0 : maximuPage
+          }
+        })
+        break;
+      case 'height':
+        setPaginationHeightModel((prevState) => {
+          var maximuPage: number = prevState.page;
+          if (rowHeightCount !== 0) {
+            if ((maximuPage + 1) >= (Math.floor(rowHeightCount / parseInt(event.target.value, 10)))) {
+              maximuPage = (Math.floor(rowHeightCount / parseInt(event.target.value, 10))) - 1
+            }
+          }
+          return {
+            pageSize: parseInt(event.target.value, 10),
+            page: maximuPage <= 0 ? 0 : maximuPage,
+          }
+        })
+        setDataGridHeightFilters((prevState) => {
+          var maximuPage: number = prevState.skip;
+          if (rowHeightCount !== 0) {
+            if ((maximuPage + 1) >= (Math.floor(rowHeightCount / parseInt(event.target.value, 10)))) {
+              maximuPage = (Math.floor(rowHeightCount / parseInt(event.target.value, 10))) - 1
+            }
+          }
+          return {
+            limit: parseInt(event.target.value, 10),
+            skip: maximuPage <= 0 ? 0 : maximuPage
+          }
+        })
+        break;
+      default:
+
+        setPaginationWeightModel((prevState) => {
+          var maximuPage: number = prevState.page;
+          if (rowWeightCount !== 0) {
+            if ((maximuPage + 1) >= (Math.floor(rowWeightCount / parseInt(event.target.value, 10)))) {
+              maximuPage = (Math.floor(rowWeightCount / parseInt(event.target.value, 10))) - 1
+            }
+          }
+          return {
+            pageSize: parseInt(event.target.value, 10),
+            page: maximuPage <= 0 ? 0 : maximuPage,
+          }
+        })
+        setDataGridWeightFilters((prevState) => {
+          var maximuPage: number = prevState.skip;
+          if (rowWeightCount !== 0) {
+            if ((maximuPage + 1) >= (Math.floor(rowWeightCount / parseInt(event.target.value, 10)))) {
+              maximuPage = (Math.floor(rowWeightCount / parseInt(event.target.value, 10))) - 1
+            }
+          }
+          return {
+            limit: parseInt(event.target.value, 10),
+            skip: maximuPage <= 0 ? 0 : maximuPage
+          }
+        })
+        break;
+    }
+  }
+
+  const handleChangePage = (_event: React.ChangeEvent<unknown>, value: number) => {
+
+    switch (stepName) {
+      case 'bodyTemp':
+        setDataGridBodyTempFilters((prevState) => {
+          return {
+            limit: perPage !== paginationBodyTempModel.pageSize ? paginationBodyTempModel.pageSize : perPage * value,
+            skip: (value - 1) * perPage,
+          }
+        })
+        setPaginationBodyTempModel((prevState) => {
+          return {
+            ...prevState,
+            page: value - 1
+          }
+        })
+        break;
+      case 'heartRate':
+        setDataGridHeartRateFilters((prevState) => {
+          return {
+            limit: perPage !== paginationHeartRateModel.pageSize ? paginationHeartRateModel.pageSize : perPage * value,
+            skip: (value - 1) * perPage,
+          }
+        })
+        setPaginationHeartRateModel((prevState) => {
+          return {
+            ...prevState,
+            page: value - 1
+          }
+        })
+        break;
+      case 'height':
+        setDataGridHeightFilters((prevState) => {
+          return {
+            limit: perPage !== paginationHeightModel.pageSize ? paginationHeightModel.pageSize : perPage * value,
+            skip: (value - 1) * perPage,
+          }
+        })
+        setPaginationHeightModel((prevState) => {
+          return {
+            ...prevState,
+            page: value - 1
+          }
+        })
+        break;
+      default:
+        setDataGridWeightFilters((prevState) => {
+          return {
+            limit: perPage !== paginationWeightModel.pageSize ? paginationWeightModel.pageSize : perPage * value,
+            skip: (value - 1) * perPage,
+          }
+        })
+        setPaginationWeightModel((prevState) => {
+          return {
+            ...prevState,
+            page: value - 1
+          }
+        })
+        break;
+    }
+  }
+
+  const confirmDelete = () => {
+
+
+    if (homeSocket.current !== undefined) {
+      homeSocket.current.emit('vitalSignDelete', { userId: userProfile?._id, name: stepName, id: deleteId })
+      homeSocket.current.once('vitalSignDeleteReturn', (msg: { status: number, message: string, }) => {
+        const { status, message } = msg;
+        if (status !== 200) {
+          toast.error(message || `Error ${status} find Vital signs`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => { }
+          });
+        } else {
+          setReload(!reload)
+          document.getElementById('delete_modal')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+          setTimeout(() => {
+            window.$('#delete_modal').modal("hide")
+          }, 500);
+        }
+      })
+    }
+  }
 
   return (
     <Fragment>
       <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
         <div className="row">
-          <div className="col-sm-12">
-            <div className="card">
-              <div className="card-header">
-                <h4 className="card-title float-start">Medical details</h4>
-                <Link href=""
-                  style={{ lineHeight: `25px` }}
-                  className="btn btn-primary float-end" onClick={(e) => {
-                    e.preventDefault();
-                    setEdit(true)
-                  }} >Add Details</Link>
-              </div>
-              <div className="card-body ">
-                <div className="card card-table mb-0">
-                  <div className="card-body">
-                    <div className="table-responsive">
-                      <DataGrid
-                        experimentalFeatures={{ ariaV7: true }}
-                        slotProps={{
-                          pagination: {
-                            SelectProps: {
-                              inputProps: {
-                                id: 'pagination-select',
-                                name: 'pagination-select',
-                              },
-                            },
-                          },
-                        }}
-                        rows={data}
-                        rowCount={data.length}
-                        ref={grdiRef}
-                        // localeText={muiLocaleText()}
-                        columns={columns}
-                        disableRowSelectionOnClick
-                        paginationModel={paginationModel}
-                        onPaginationModelChange={setPaginationModel}
-                        pageSizeOptions={[5, 10]}
-                        showCellVerticalBorder
-                        isRowSelectable={(params: GridRowParams) => params.row.disabled}
-                        showColumnVerticalBorder
-                        sx={{
-                          ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
-                            "marginTop": "1em",
-                            "marginBottom": "1em"
-                          }
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {
+            isLoading ?
+              <CircleToBlockLoading color={theme.palette.primary.main} size="small"
+                style={{
+                  minWidth: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }} /> :
+              <>
+                <MuiSwipeableTabs steps={
+                  [
+                    {
+                      stepName: 'Heart Rate',
+                      stepComponent: <div className="col-sm-12">
+                        <div className="card">
+                          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h4 className="card-title float-start">Heart Rate details</h4>
+                            <Link href=""
+                              style={{ lineHeight: `25px` }}
+                              className="btn btn-primary float-end" onClick={(e) => {
+                                e.preventDefault();
+                                setEdit(true)
+                                setFormValue("value", initialState.value);
+                                setFormValue("id", initialState.id);
+                                setFormValue("userId", userProfile?._id);
+                                setFormValue("name", stepName);
+                                setFormValue("date", initialState.date);
+                              }} >Add Heart Rate</Link>
+                          </div>
+                          <div className="card-body ">
+                            <div className="card card-table mb-0">
+                              <div className="card-body">
+                                <div className="table-responsive" style={{ height: 580, width: '100%' }}>
+                                  <DataGrid
+                                    experimentalFeatures={{ ariaV7: true }}
+                                    slots={{
+                                      noResultsOverlay: CustomNoRowsOverlay,
+                                      noRowsOverlay: CustomNoRowsOverlay,
+                                      pagination: CustomPagination,
+                                    }}
+                                    slotProps={{
+                                      baseCheckbox: {
+                                        name: 'row-checkbox',
+                                      },
+                                      pagination: { //@ts-ignore
+                                        handleChangePage: handleChangePage,
+                                        handleChangeRowsPerPage: handleChangeRowsPerPage,
+                                        count: rowHeartRateCount,
+                                        SelectProps: {
+                                          inputProps: {
+                                            id: 'pagination-select',
+                                            name: 'pagination-select',
+                                          },
+                                        },
+                                      },
+                                    }}
+                                    rowHeight={screen.height / 15.2}
+                                    rows={vitalSign.length > 0 && vitalSign[0]?.heartRate ? vitalSign[0]?.heartRate : []}
+                                    rowCount={rowHeartRateCount}
+                                    ref={grdiRefHeartRate}
+                                    columns={columns}
+                                    paginationModel={paginationHeartRateModel}
+                                    pageSizeOptions={[5, 10]}
+                                    disableRowSelectionOnClick
+                                    onPaginationModelChange={setPaginationHeartRateModel}
+                                    showCellVerticalBorder
+                                    showColumnVerticalBorder
+                                    sx={{
+                                      ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                                        "marginTop": "1em",
+                                        "marginBottom": "1em"
+                                      },
+                                      "&.MuiDataGrid-root .MuiDataGrid-row": {
+                                        backgroundColor:
+                                          false ? getSelectedBackgroundColor(
+                                            theme.palette.primary.dark,
+                                            theme.palette.mode,
+                                          ) : '',
+                                        '&:hover': {
+                                          backgroundColor: getSelectedHoverBackgroundColor(
+                                            theme.palette.primary.light,
+                                            theme.palette.mode,
+                                          ),
+                                        }
+                                      },
+                                      "& .MuiDataGrid-footerContainer": {
+                                        [theme.breakpoints.only("xs")]: {
+                                          justifyContent: 'center',
+                                          mb: 2
+                                        }
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>,
+                      stepId: <Stack sx={{ alignItems: 'center' }}>
+                        <img src={Dashboard1} width={35} alt='' />
+                        <span>Heart Rate</span>
+                      </Stack>,
+                      isValidated: () => true,
+                      isDisable: false,
+                      hasParams: true,
+                      paramsObj: {
+                        name: 'heartRate'
+                      },
+                    },
+                    {
+                      stepName: 'Body Tempreture',
+                      stepComponent: <div className="col-sm-12">
+                        <div className="card">
+                          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h4 className="card-title float-start">Body Tempreture details</h4>
+                            <Link href=""
+                              style={{ lineHeight: `25px` }}
+                              className="btn btn-primary float-end" onClick={(e) => {
+                                e.preventDefault();
+                                setEdit(true)
+                                setFormValue("value", initialState.value);
+                                setFormValue("id", initialState.id);
+                                setFormValue("userId", userProfile?._id);
+                                setFormValue("name", stepName);
+                                setFormValue("date", initialState.date);
+                              }} >Add Body Tempreture</Link>
+                          </div>
+                          <div className="card-body ">
+                            <div className="card card-table mb-0">
+                              <div className="card-body">
+                                <div className="table-responsive" style={{ height: 580, width: '100%' }}>
+                                  <DataGrid
+                                    experimentalFeatures={{ ariaV7: true }}
+                                    slots={{
+                                      noResultsOverlay: CustomNoRowsOverlay,
+                                      noRowsOverlay: CustomNoRowsOverlay,
+                                      pagination: CustomPagination,
+                                    }}
+                                    slotProps={{
+                                      baseCheckbox: {
+                                        name: 'row-checkbox',
+                                      },
+                                      pagination: { //@ts-ignore
+                                        handleChangePage: handleChangePage,
+                                        handleChangeRowsPerPage: handleChangeRowsPerPage,
+                                        count: rowBodyTempCount,
+                                        SelectProps: {
+                                          inputProps: {
+                                            id: 'pagination-select',
+                                            name: 'pagination-select',
+                                          },
+                                        },
+                                      },
+                                    }}
+                                    rowHeight={screen.height / 15.2}
+                                    rows={vitalSign.length > 0 && vitalSign[0]?.bodyTemp ? vitalSign[0]?.bodyTemp : []}
+                                    rowCount={rowBodyTempCount}
+                                    ref={grdiRefBodyTemp}
+                                    columns={columns}
+                                    paginationModel={paginationBodyTempModel}
+                                    pageSizeOptions={[5, 10]}
+                                    disableRowSelectionOnClick
+                                    onPaginationModelChange={setPaginationBodyTempModel}
+                                    showCellVerticalBorder
+                                    showColumnVerticalBorder
+                                    sx={{
+                                      ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                                        "marginTop": "1em",
+                                        "marginBottom": "1em"
+                                      },
+                                      "&.MuiDataGrid-root .MuiDataGrid-row": {
+                                        backgroundColor:
+                                          false ? getSelectedBackgroundColor(
+                                            theme.palette.primary.dark,
+                                            theme.palette.mode,
+                                          ) : '',
+                                        '&:hover': {
+                                          backgroundColor: getSelectedHoverBackgroundColor(
+                                            theme.palette.primary.light,
+                                            theme.palette.mode,
+                                          ),
+                                        }
+                                      },
+                                      "& .MuiDataGrid-footerContainer": {
+                                        [theme.breakpoints.only("xs")]: {
+                                          justifyContent: 'center',
+                                          mb: 2
+                                        }
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>,
+                      stepId: <Stack sx={{ alignItems: 'center' }}>
+                        <img src={Dashboard2} width={35} alt='' />
+                        <span>Body Tempreture</span>
+                      </Stack>,
+                      isValidated: () => true,
+                      isDisable: false,
+                      hasParams: true,
+                      paramsObj: {
+                        name: 'bodyTemp'
+                      },
+                    },
+                    {
+                      stepName: 'Weight',
+                      stepComponent: <div className="col-sm-12">
+                        <div className="card">
+                          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h4 className="card-title float-start">Weight details</h4>
+                            <Link href=""
+                              style={{ lineHeight: `25px` }}
+                              className="btn btn-primary float-end" onClick={(e) => {
+                                e.preventDefault();
+                                setEdit(true)
+                                setFormValue("value", initialState.value);
+                                setFormValue("id", initialState.id);
+                                setFormValue("userId", userProfile?._id);
+                                setFormValue("name", stepName);
+                                setFormValue("date", initialState.date);
+                              }} >Add Weight </Link>
+                          </div>
+                          <div className="card-body ">
+                            <div className="card card-table mb-0">
+                              <div className="card-body">
+                                <div className="table-responsive" style={{ height: 580, width: '100%' }}>
+                                  <DataGrid
+                                    experimentalFeatures={{ ariaV7: true }}
+                                    slots={{
+                                      noResultsOverlay: CustomNoRowsOverlay,
+                                      noRowsOverlay: CustomNoRowsOverlay,
+                                      pagination: CustomPagination,
+                                    }}
+                                    slotProps={{
+                                      baseCheckbox: {
+                                        name: 'row-checkbox',
+                                      },
+                                      pagination: { //@ts-ignore
+                                        handleChangePage: handleChangePage,
+                                        handleChangeRowsPerPage: handleChangeRowsPerPage,
+                                        count: rowWeightCount,
+                                        SelectProps: {
+                                          inputProps: {
+                                            id: 'pagination-select',
+                                            name: 'pagination-select',
+                                          },
+                                        },
+                                      },
+                                    }}
+                                    rowHeight={screen.height / 15.2}
+                                    rows={vitalSign.length > 0 && vitalSign[0]?.weight ? vitalSign[0]?.weight : []}
+                                    rowCount={rowWeightCount}
+                                    ref={grdiRefweight}
+                                    columns={columns}
+                                    paginationModel={paginationWeightModel}
+                                    pageSizeOptions={[5, 10]}
+                                    disableRowSelectionOnClick
+                                    onPaginationModelChange={setPaginationWeightModel}
+                                    showCellVerticalBorder
+                                    showColumnVerticalBorder
+                                    sx={{
+                                      ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                                        "marginTop": "1em",
+                                        "marginBottom": "1em"
+                                      },
+                                      "&.MuiDataGrid-root .MuiDataGrid-row": {
+                                        backgroundColor:
+                                          false ? getSelectedBackgroundColor(
+                                            theme.palette.primary.dark,
+                                            theme.palette.mode,
+                                          ) : '',
+                                        '&:hover': {
+                                          backgroundColor: getSelectedHoverBackgroundColor(
+                                            theme.palette.primary.light,
+                                            theme.palette.mode,
+                                          ),
+                                        }
+                                      },
+                                      "& .MuiDataGrid-footerContainer": {
+                                        [theme.breakpoints.only("xs")]: {
+                                          justifyContent: 'center',
+                                          mb: 2
+                                        }
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>,
+                      stepId: <Stack sx={{ alignItems: 'center' }}>
+                        <img src={Dashboard5} width={35} alt='' />
+                        <span>Weight</span>
+                      </Stack>,
+                      isValidated: () => true,
+                      isDisable: false,
+                      hasParams: true,
+                      paramsObj: {
+                        name: 'weight'
+                      },
+                    },
+                    {
+                      stepName: 'Height',
+                      stepComponent: <div className="col-sm-12">
+                        <div className="card">
+                          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h4 className="card-title float-start">Height details</h4>
+                            <Link href=""
+                              style={{ lineHeight: `25px` }}
+                              className="btn btn-primary float-end" onClick={(e) => {
+                                e.preventDefault();
+                                setFormValue("value", initialState.value);
+                                setFormValue("id", initialState.id);
+                                setFormValue("userId", userProfile?._id);
+                                setFormValue("name", stepName);
+                                setFormValue("date", initialState.date);
+                                setEdit(true)
+                              }} >Add Height</Link>
+                          </div>
+                          <div className="card-body ">
+                            <div className="card card-table mb-0">
+                              <div className="card-body">
+                                <div className="table-responsive" style={{ height: 580, width: '100%' }}>
+                                  <DataGrid
+                                    experimentalFeatures={{ ariaV7: true }}
+                                    slots={{
+                                      noResultsOverlay: CustomNoRowsOverlay,
+                                      noRowsOverlay: CustomNoRowsOverlay,
+                                      pagination: CustomPagination,
+                                    }}
+                                    slotProps={{
+                                      baseCheckbox: {
+                                        name: 'row-checkbox',
+                                      },
+                                      pagination: { //@ts-ignore
+                                        handleChangePage: handleChangePage,
+                                        handleChangeRowsPerPage: handleChangeRowsPerPage,
+                                        count: rowHeightCount,
+                                        SelectProps: {
+                                          inputProps: {
+                                            id: 'pagination-select',
+                                            name: 'pagination-select',
+                                          },
+                                        },
+                                      },
+                                    }}
+                                    rowHeight={screen.height / 15.2}
+                                    rows={vitalSign.length > 0 && vitalSign[0]?.height ? vitalSign[0]?.height : []}
+                                    rowCount={rowHeightCount}
+                                    ref={grdiRefHeight}
+                                    columns={columns}
+                                    paginationModel={paginationHeightModel}
+                                    pageSizeOptions={[5, 10]}
+                                    disableRowSelectionOnClick
+                                    onPaginationModelChange={setPaginationHeightModel}
+                                    showCellVerticalBorder
+                                    showColumnVerticalBorder
+                                    sx={{
+                                      ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                                        "marginTop": "1em",
+                                        "marginBottom": "1em"
+                                      },
+                                      "&.MuiDataGrid-root .MuiDataGrid-row": {
+                                        backgroundColor:
+                                          false ? getSelectedBackgroundColor(
+                                            theme.palette.primary.dark,
+                                            theme.palette.mode,
+                                          ) : '',
+                                        '&:hover': {
+                                          backgroundColor: getSelectedHoverBackgroundColor(
+                                            theme.palette.primary.light,
+                                            theme.palette.mode,
+                                          ),
+                                        }
+                                      },
+                                      "& .MuiDataGrid-footerContainer": {
+                                        [theme.breakpoints.only("xs")]: {
+                                          justifyContent: 'center',
+                                          mb: 2
+                                        }
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>,
+                      stepId: <Stack sx={{ alignItems: 'center' }}>
+                        <img src={Dashboard6} width={35} alt='' />
+                        <span>Height</span>
+                      </Stack>,
+                      isValidated: () => true,
+                      isDisable: false,
+                      hasParams: true,
+                      paramsObj: {
+                        name: 'height'
+                      },
+                    },
+                  ]
+                } activeTab={stepName == 'heartRate' ? 0 : stepName == 'bodyTemp' ? 1 : stepName == 'weight' ? 2 : 3} />
+              </>
+          }
+
         </div>
       </div>
       {edit && <BootstrapDialog
@@ -239,6 +895,7 @@ const MedicalDetails: FC = (() => {
         onClose={() => {
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
           setTimeout(() => {
+            reset();
             setEdit(false)
           }, 500);
         }}
@@ -249,180 +906,92 @@ const MedicalDetails: FC = (() => {
           id="edit_invoice_details" onClose={() => {
             document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
             setTimeout(() => {
+              reset();
               setEdit(false)
             }, 500);
           }}>
-          {editValues.name == '' ? "Add new data" : editValues.name}
+          {
+            stepName == "heartRate" ? <img src={Dashboard1} width={35} alt='' />
+              : stepName == "bodyTemp" ? <img src={Dashboard2} width={35} alt='' />
+                : stepName == 'weight' ? <img src={Dashboard5} width={35} alt='' />
+                  : <img src={Dashboard6} width={35} alt='' />
+          }&nbsp;
+          {getFormValues('value') == '' ? `Add new ${stepName}` : `Edit ${stepName}`}
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          <form noValidate>
+          <form noValidate onSubmit={handleSubmit(onSubmit)}>
             <div className="row form-row">
               <div className="col-12 col-sm-6">
                 <div className="form-group">
                   <TextField
-                    variant='outlined'
-                    size="small"
-                    fullWidth
                     required
+                    size="small"
+                    label="Value"
+                    variant='outlined'
+                    fullWidth
                     id="name"
-                    label={`Name`}
-                    inputProps={{
-                      autoComplete: 'name'
-                    }}
-                    onChange={(e) => {
-                      setEditValues((prevState) => {
-                        return {
-                          ...prevState,
-                          name: e.target.value
-                        }
-                      })
-                    }}
-                    value={editValues.name}
-                  />
-                </div>
-              </div>
-              <div className="col-12 col-sm-6">
-                <div className="form-group">
-                  <TextField
-                    variant='outlined'
-                    size="small"
-                    fullWidth
-                    required
-                    id="bmi"
-                    name="bmi"
                     inputProps={{
                       autoComplete: 'off'
                     }}
-                    label={`BMI`}
-                    onChange={(e) => {
-                      setEditValues((prevState) => {
-                        return {
-                          ...prevState,
-                          bmi: e.target.value
-                        }
-                      })
+                    onKeyDown={(e) => {
+                      const allowKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Backspace', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Tab']
+                      if (!allowKeys.includes(e.key)) {
+                        e.preventDefault()
+                      }
                     }}
-                    value={editValues.bmi}
-                  />
-                </div>
-              </div>
-              <div className="col-12 col-sm-6">
-                <div className="form-group">
-                  <TextField
-                    variant='outlined'
-                    size="small"
-                    fullWidth
-                    required
-                    id="heart-rate"
-                    name='heart-rate'
-                    inputProps={{
-                      autoComplete: 'off'
-                    }}
-                    label={`Heart rate`}
-                    onChange={(e) => {
-                      setEditValues((prevState) => {
-                        return {
-                          ...prevState,
-                          heartRate: e.target.value
-                        }
-                      })
-                    }}
-                    value={editValues.heartRate}
-                  />
-                </div>
-              </div>
-              <div className="col-12 col-sm-6">
-                <div className="form-group">
-                  <TextField
-                    variant='outlined'
-                    fullWidth
-                    size="small"
-                    required
-                    id="weight"
-                    name='weight'
-                    inputProps={{
-                      autoComplete: "off"
-                    }}
-                    disabled
-                    label={'Weight'}
-                    onChange={(e) => {
-                      setEditValues((prevState) => {
-                        return {
-                          ...prevState,
-                          weight: e.target.value
-                        }
-                      })
-                    }}
-                    value={editValues.weight}
+                    error={errors.value == undefined ? false : true}
+                    helperText={errors.value && errors['value']['message'] as ReactNode}
+                    {...register("value", {
+                      required: "This field is required",
+                    })}
                     InputProps={{
-                      endAdornment:
-                        <InputAdornment position="start"  >
-                          Kg
-                        </InputAdornment>,
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="col-12 col-sm-6">
-                <div className="form-group">
-                  <TextField
-                    variant='outlined'
-                    size="small"
-                    fullWidth
-                    required
-                    id="fbc"
-                    name='fbc'
-                    inputProps={{
-                      autoComplete: "off"
-                    }}
-                    label={`FBC`}
-                    value={editValues.fbc}
-                    onChange={(e) => {
-                      setEditValues((prevState) => {
-                        return {
-                          ...prevState,
-                          fbc: e.target.value
+                      endAdornment: <InputAdornment position="end">
+                        {
+                          stepName == "heartRate" ? 'bpm'
+                            : stepName == "bodyTemp" ? '℃'
+                              : stepName == 'weight' ? '㎏'
+                                : '㎝'
                         }
-                      })
+                      </InputAdornment>
                     }}
                   />
                 </div>
               </div>
               <div className="col-12 col-sm-6">
                 <div className="form-group">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <MobileDatePicker
-                      closeOnSelect
-                      format="DD MMM YYYY"
-                      onChange={(event: any) => {
-                        setEditValues((prevState: ValueType) => ({
-                          ...prevState,
-                          orderDate: dayjs(event).format('DD MMM YYYY')
-                        }))
-                      }}
-                      slotProps={{
-                        textField: {
-                          size: 'small',
-                          fullWidth: true,
-                          required: true,
-                          label: 'Order Date'
-                        },
-
-                      }}
-                      value={dayjs(editValues.orderDate)}
-                    />
-                  </LocalizationProvider>
+                  <Controller
+                    rules={{
+                      required: "This field is required",
+                    }}
+                    name='date'
+                    control={control}
+                    render={(props: any) => {
+                      const { field, } = props;
+                      const { value } = field;
+                      const { ref, onChange } = field;
+                      return (
+                        <TextField
+                          disabled
+                          required
+                          id='date'
+                          label="Date"
+                          size='small'
+                          value={`${value ? `${dayjs(value).tz(process.env.TZ).format('YYYY MMM DD HH:mm:ss')}` : ''}`}
+                          error={errors.date == undefined ? false : true}
+                          helperText={errors.date && errors['date']['message'] as ReactNode}
+                          fullWidth
+                          ref={ref}
+                          inputProps={{ style: { textTransform: 'lowercase' }, autoComplete: 'date' }}
+                          onChange={(e: any) => {
+                            onChange(e)
+                          }}
+                        />
+                      )
+                    }} />
                 </div>
               </div>
             </div>
-            <button type="submit" className="submitButton w-100" style={{ marginTop: 25 }} onClick={(e) => {
-              e.preventDefault();
-
-              document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-              setTimeout(() => {
-                setEdit(false)
-              }, 500);
-            }}>
+            <button type="submit" className="submitButton w-100" style={{ marginTop: 25 }} >
               Submit
             </button>
           </form>
@@ -437,25 +1006,7 @@ const MedicalDetails: FC = (() => {
                 <p className="mb-4" style={{ display: 'flex', justifyContent: 'center' }}>Are you sure to delete  this record?</p>
                 <span style={{ display: 'flex', justifyContent: 'center' }}><button type="button" className="btnLogin mx-1"
                   onClick={() => {
-                    document.getElementById('delete_modal')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-
-                    if (data.filter((a) => a.id !== deleteId).length > 0) {
-                      if (paginationModel.pageSize > data.filter((a) => a.id !== deleteId).length / paginationModel.pageSize) {
-                        if (Math.ceil(data.filter((a) => a.id !== deleteId).length / paginationModel.pageSize) == paginationModel.page) {
-                          setPaginationModel((prevState) => ({
-                            ...prevState, page:
-                              Math.ceil(data.filter((a) => a.id !== deleteId).length / paginationModel.pageSize) - paginationModel.page
-                          }))
-                        }
-
-                      }
-                    }
-
-                    setTimeout(() => {
-                      window.$('#delete_modal').modal("hide")
-                      setData(() => (data.filter((a) => a.id !== deleteId)))
-                    }, 500);
-
+                    confirmDelete();
                   }}>Delete </button>
                   <button type="button" className="btnLogout" style={muiVar}
                     onClick={() => {

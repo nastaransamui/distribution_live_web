@@ -35,7 +35,7 @@ const ClinicalSignsHistoryPage: NextPage = () => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
-      <BreadCrumb subtitle='Heart Rate Status' title='Heart Rate Status' />
+      <BreadCrumb subtitle='Clinical Signs History' title='Clinical Signs History' />
       <div className="content" style={muiVar}>
         <div className="container-fluid">
           <div className="row">

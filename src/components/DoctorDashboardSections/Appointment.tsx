@@ -223,9 +223,9 @@ const Appointment: FC = (() => {
   }
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9 doctors-appointment-wrapper" style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9 " style={{ ...muiVar, border: `1px solid ${theme.palette.primary.main}`, borderRadius: '4px', paddingTop: '20px' }}>
         <div style={{ position: 'relative' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', top: '-50px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
 
             {!isLoading &&
               myAppointmentData.length !== 0 &&

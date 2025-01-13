@@ -22,10 +22,12 @@ import { AppState } from '@/redux/store';
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
+import { toast } from 'react-toastify';
 
 export interface VitalTypeObject {
   value: string;
-  date: string;
+  date: Date;
+  id: number;
 }
 
 export interface VitalSignTypes {
@@ -37,6 +39,12 @@ export interface VitalSignTypes {
   height: VitalTypeObject[];
   createdAt: Date;
   updateAt: Date;
+}
+export interface ExtendedVitalSignTypes extends VitalSignTypes {
+  totalBodyTemp: number;
+  totalHeartRate: number;
+  totalHeight: number;
+  totalWeight: number;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -59,11 +67,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const ClinicalSignsHistory: FC = (() => {
 
-  const [vitalSign, setvitalSign] = useState<VitalSignTypes[]>([])
+  const [vitalSign, setvitalSign] = useState<ExtendedVitalSignTypes[]>([])
   dayjs.extend(utc)
   dayjs.extend(timezone)
 
-  const { muiVar } = useScssVar();
+  const { muiVar, bounce } = useScssVar();
   const theme = useTheme();
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
@@ -94,13 +102,30 @@ const ClinicalSignsHistory: FC = (() => {
       })
       let userId = userProfile?._id
       // Get vital sing on entrance of page
-      homeSocket.current.emit('getVitalSign', { userId })
-      homeSocket.current.once('getVitalSignReturn', (msg: any) => {
-        setvitalSign(msg)
+      homeSocket.current.emit('getVitalSign', { userId, limit: 5, skip: 0, sort: { date: -1 } })
+      homeSocket.current.once('getVitalSignReturn', (msg: { status: number, message?: string, vitalSign: ExtendedVitalSignTypes[] }) => {
+        const { status, message, vitalSign } = msg;
+        if (status !== 200) {
+          toast.error(message || `Error ${status} find Vital signs`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+
+            }
+          });
+        } else {
+          setvitalSign(vitalSign)
+        }
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeSocket, userProfile?._id])
-
   return (
     <Fragment>
       <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
@@ -114,10 +139,10 @@ const ClinicalSignsHistory: FC = (() => {
                       : title == 'weight' ? '㎏'
                         : '㎝'
                 let formatTitle =
-                  title == 'heartRate' ? " Heart Rate /bpm"
-                    : title == 'bodyTemp' ? "Body tempreture /℃"
-                      : title == 'weight' ? "Weight /㎏"
-                        : 'Height /㎝'
+                  title == 'heartRate' ? ` Heart Rate /bpm ${vitalSign.length > 0 && vitalSign[0]?.totalHeartRate} record${vitalSign[0]?.totalHeartRate > 1 ? 's' : ''}`
+                    : title == 'bodyTemp' ? `Body tempreture /℃ ${vitalSign.length > 0 && vitalSign[0]?.totalBodyTemp} record${vitalSign[0]?.totalBodyTemp > 1 ? 's' : ''}`
+                      : title == 'weight' ? `Weight /㎏ ${vitalSign.length > 0 && vitalSign[0]?.totalWeight} record${vitalSign[0]?.totalWeight > 1 ? 's' : ''}`
+                        : `Height /㎝ ${vitalSign.length > 0 && vitalSign[0]?.totalHeight} record${vitalSign[0]?.totalHeight > 1 ? 's' : ''}`
                 let dataArray: VitalTypeObject[] = vitalSign[0]?.[title as keyof typeof vitalSign[0]] as VitalTypeObject[]
                 return (
                   <Fragment key={index}>
@@ -126,6 +151,7 @@ const ClinicalSignsHistory: FC = (() => {
                       <Table sx={{ minWidth: 650, }} size="small">
                         <TableHead>
                           <StyledTableRow>
+                            <StyledTableCell align="center">id</StyledTableCell>
                             <StyledTableCell align="center">Value / {unit}</StyledTableCell>
                             <StyledTableCell align="center">Date</StyledTableCell>
                           </StyledTableRow>
@@ -137,8 +163,9 @@ const ClinicalSignsHistory: FC = (() => {
                               dataArray.map((a, i) => {
                                 return (
                                   <StyledTableRow key={i + index} sx={{ 'th': { borderRight: `1px solid rgba(81, 81, 81, 1)` } }} >
+                                    <TableCell component="th" scope="row" align='center'>{a.id}</TableCell>
                                     <TableCell component="th" scope="row" align='center'>{a.value} {unit}</TableCell>
-                                    <TableCell align="center">{dayjs(a.date).tz(process.env.TZ).format('YY MMM DD HH:mm')}</TableCell>
+                                    <TableCell align="center">{dayjs(a.date).tz(process.env.TZ).format('YY MMM DD HH:mm:ss')}</TableCell>
                                   </StyledTableRow>
                                 )
                               })

@@ -90,6 +90,12 @@ const DoctorDashboardSidebar: FC = (() => {
                       <span>Dashboard</span>
                     </Link>
                   </li>
+                  <li className={router.pathname == "/doctors/dashboard/profile" ? "active" : ""}>
+                    <Link href="/doctors/dashboard/profile">
+                      <i className="fas fa-user-cog" />
+                      <span>Profile Settings</span>
+                    </Link>
+                  </li>
                   <li className={router.pathname == "/doctors/dashboard/favourites" ? "active" : ""}>
                     <Link href="/doctors/dashboard/favourites">
                       <i className="fas fa-bookmark"></i>
@@ -144,12 +150,6 @@ const DoctorDashboardSidebar: FC = (() => {
                       <i className="fas fa-comments" />
                       <span>Message</span>
                       <small className="unread-msg">23</small>
-                    </Link>
-                  </li>
-                  <li className={router.pathname == "/doctors/dashboard/profile" ? "active" : ""}>
-                    <Link href="/doctors/dashboard/profile">
-                      <i className="fas fa-user-cog" />
-                      <span>Profile Settings</span>
                     </Link>
                   </li>
                   <li className={router.pathname == "/doctors/dashboard/social-media" ? "active" : ""}>

@@ -3,18 +3,17 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useState, useRef, useEffect, ReactNode, useMemo } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import Link from 'next/link'
-import { daughter, father, mother, patient_profile, son } from '@/public/assets/imagepath';
+import { patient_profile } from '@/public/assets/imagepath';
 
 //Mui
-import IconButton from '@mui/material/IconButton';
+
 import Edit from "@mui/icons-material/Edit";
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { Transition, BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
 import DialogContent from '@mui/material/DialogContent'
 import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridRowId, GridValueFormatterParams } from '@mui/x-data-grid';
-import useMediaQuery from '@mui/material/useMediaQuery';
+
 import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone'
@@ -43,7 +42,6 @@ import CustomPagination from '../shared/CustomPagination';
 import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor } from '../DoctorDashboardSections/ScheduleTiming';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
-import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 
@@ -83,10 +81,8 @@ const Dependent: FC = (() => {
   dayjs.extend(utc)
   dayjs.extend(timezone)
   const { muiVar, bounce } = useScssVar();
-  const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState(false);
   const theme = useTheme()
-  const matches = useMediaQuery(theme.breakpoints.down('lg'));
   const grdiRef = useRef<any>(null)
   const [dependents, setDependents] = useState<DependentsTypes[] | []>([])
   const dispatch = useDispatch();
@@ -101,7 +97,6 @@ const Dependent: FC = (() => {
     limit: perPage,
     skip: 0,
   });
-  const [updateStatusArray, setUpdateStatusArray] = useState<GridRowId[]>([])
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 5,
     page: 0,
@@ -364,8 +359,8 @@ const Dependent: FC = (() => {
     dispatch(updateHomeFormSubmit(true))
     if (homeSocket.current !== undefined) {
       homeSocket.current.emit('updateDependent', data)
-      homeSocket.current.once('updateDependentReturn', (msg: { status: number, message?: string, dependent?: DependentsTypes }) => {
-        const { status, message, dependent } = msg;
+      homeSocket.current.once('updateDependentReturn', (msg: { status: number, message?: string }) => {
+        const { status, message } = msg;
         if (status !== 200) {
           toast.error(message || `Error ${status} udpate Dependent`, {
             position: "bottom-center",
@@ -383,7 +378,7 @@ const Dependent: FC = (() => {
         } else {
           dispatch(updateHomeFormSubmit(false))
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-          // setReload(!reload)
+
           reset();
           clearErrors();
           setTimeout(() => {

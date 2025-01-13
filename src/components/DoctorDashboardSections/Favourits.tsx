@@ -112,7 +112,7 @@ const Favourits: FC = (() => {
 
   const doctorComponents = () => {
     return (
-      <Grid container spacing={1}>
+      <Grid container spacing={1} >
         {
           favPatientsProfile.map((patient: FavPatientProfile, index: number) => {
             const title = `${patient.profile?.gender !== '' ? `${patient?.profile?.gender}.` : ``} ${patient?.profile?.firstName} ${patient?.profile?.lastName}`;
@@ -158,7 +158,13 @@ const Favourits: FC = (() => {
 
                     <ul className="available-info">
                       <li>
-                        <i className="fas fa-map-marker-alt"></i>
+                        {
+                          patient?.profile?.address1 !== ''
+                            || patient?.profile?.address2 !== ''
+                            || patient?.profile?.city !== ''
+                            || patient?.profile?.state !== ''
+                            || patient?.profile?.country !== ''
+                            ? <i className="fas fa-map-marker-alt"></i> : <></>}
                         {`${patient?.profile?.address1 !== '' ? patient?.profile?.address1 + ',' : ''}`}
                         {`${patient?.profile?.address2 !== '' ? patient?.profile?.address2 + ',' : ''}`}<br />
                         {`${patient?.profile?.city !== '' ? patient?.profile?.city + ',' : ''}`}<br />
@@ -166,8 +172,8 @@ const Favourits: FC = (() => {
                         {`${patient?.profile?.country !== '' ? patient?.profile?.country + ',' : ''}`}
                       </li>
                       <li>
-                        <i className="fas fa-birthday-cake"></i>
-                        {dayjs(patient?.profile?.dob).format(`MMMM D, YYYY`)}
+                        {patient?.profile?.dob !== "" ? <i className="fas fa-birthday-cake"></i> : <></>}
+                        {patient?.profile?.dob !== "" ? dayjs(patient?.profile?.dob).format(`MMMM D, YYYY`) : ""}
                       </li>
                       <li>
                         {patient?.profile.bloodG !== '' ? `🩸  - ${patient?.profile.bloodG}` : ''}
@@ -194,9 +200,9 @@ const Favourits: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9 " style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9 " style={{ ...muiVar, border: `1px solid ${theme.palette.primary.main}`, borderRadius: '4px', paddingTop: '20px' }}>
         <div style={{ position: 'relative' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', position: 'absolute', minWidth: '100%', top: '-50px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
 
             {!isLoading &&
               favPatientsProfile.length !== 0 &&
@@ -211,6 +217,11 @@ const Favourits: FC = (() => {
                 count={userProfile ? Math.ceil(userProfile?.favs_id.length / perPage) : 0}
                 page={page}
                 onChange={handlePageChange}
+                sx={{
+                  minWidth: '100%',
+                  justifyContent: 'center',
+                  display: 'flex',
+                }}
               />}
           </div>
 
@@ -218,7 +229,9 @@ const Favourits: FC = (() => {
             <LoadingCompoenent /> :
             favPatientsProfile.length !== 0 ?
               <>{doctorComponents()}</> :
-              <div className='card' style={{ minHeight: '90vh', justifyContent: 'center' }}><CustomNoRowsOverlay text='No Favarite Patients' /></div>}
+              <div className='card' style={{ minHeight: '90vh', justifyContent: 'center' }}>
+                <CustomNoRowsOverlay text='No Favarite Patients' />
+              </div>}
 
 
 
@@ -238,7 +251,11 @@ const Favourits: FC = (() => {
               count={userProfile ? Math.ceil(userProfile?.favs_id.length / perPage) : 0}
               page={page}
               onChange={handlePageChange}
-              sx={{ mb: 3 }}
+              sx={{
+                mb: 3, minWidth: '100%',
+                justifyContent: 'center',
+                display: 'flex',
+              }}
             />}
         </div>
 

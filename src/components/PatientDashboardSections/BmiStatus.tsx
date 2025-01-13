@@ -29,6 +29,7 @@ import { AppState } from '@/redux/store';
 
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import { toast } from 'react-toastify';
 
 export interface VitalTypeObject {
   value: string;
@@ -71,7 +72,7 @@ const BmiStatus: FC = (() => {
   const [bmi, setBmi] = useState('')
   const [vitalSign, setvitalSign] = useState<VitalSignTypes[]>([])
 
-  const { muiVar } = useScssVar();
+  const { muiVar, bounce } = useScssVar();
   const theme = useTheme();
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
@@ -204,11 +205,29 @@ const BmiStatus: FC = (() => {
       })
       let userId = userProfile?._id
       // Get vital sing on entrance of page
-      homeSocket.current.emit('getVitalSign', { userId })
-      homeSocket.current.once('getVitalSignReturn', (msg: any) => {
-        setvitalSign(msg)
+      homeSocket.current.emit('getVitalSign', { userId, limit: 1, skip: 0, sort: { date: -1 } })
+      homeSocket.current.once('getVitalSignReturn', (msg: { status: number, message?: string, vitalSign: VitalSignTypes[] }) => {
+        const { status, message, vitalSign } = msg;
+        if (status !== 200) {
+          toast.error(message || `Error ${status} find Vital signs`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+
+            }
+          });
+        } else {
+          setvitalSign(vitalSign)
+        }
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeSocket, userProfile?._id])
 
   useEffect(() => {

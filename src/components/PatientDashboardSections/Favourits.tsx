@@ -282,9 +282,9 @@ const Favourits: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9 " style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9 " style={{ ...muiVar, border: `1px solid ${theme.palette.primary.main}`, borderRadius: '4px', paddingTop: '20px' }}>
         <div style={{ position: 'relative' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', position: 'absolute', minWidth: '100%', top: '-50px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
 
             {!isLoading &&
               favDoctorsProfile.length !== 0 &&
@@ -299,6 +299,12 @@ const Favourits: FC = (() => {
                 count={userProfile ? Math.ceil(userProfile?.favs_id.length / perPage) : 0}
                 page={page}
                 onChange={handlePageChange}
+                sx={{
+                  minWidth: '100%',
+                  justifyContent: 'center',
+                  display: 'flex',
+                  mb: 1
+                }}
               />}
           </div>
 
@@ -326,7 +332,11 @@ const Favourits: FC = (() => {
               count={userProfile ? Math.ceil(userProfile?.favs_id.length / perPage) : 0}
               page={page}
               onChange={handlePageChange}
-              sx={{ mb: 3 }}
+              sx={{
+                mb: 3, minWidth: '100%',
+                justifyContent: 'center',
+                display: 'flex',
+              }}
             />}
         </div>
 

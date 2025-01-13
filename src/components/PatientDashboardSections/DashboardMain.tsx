@@ -92,17 +92,41 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
   }
 
   useEffect(() => {
-    if (homeSocket.current !== undefined) {
-      //Get vital Sign on change database
-      homeSocket.current.on('getVitalSignFromAdmin', (msg: any) => {
-        setvitalSign(msg)
-      })
+    if (homeSocket?.current !== undefined) {
+      // //Get vital Sign on change database
+      // homeSocket.current.on('getVitalSignFromAdmin', (msg: any) => {
+      //   // setvitalSign(msg)
+      // })
       let userId = userProfile?._id
       // Get vital sing on entrance of page
-      homeSocket.current.emit('getVitalSign', { userId })
-      homeSocket.current.once('getVitalSignReturn', (msg: any) => {
-        setvitalSign(msg)
+      homeSocket.current.emit('getVitalSign', { userId, limit: 1, skip: 0, sort: { date: -1 } })
+      homeSocket.current.once('getVitalSignReturn', (msg: { status: number, message?: string, vitalSign: VitalSignTypes[] }) => {
+        const { status, message, vitalSign } = msg;
+        if (status !== 200) {
+          toast.error(message || `Error ${status} find Vital signs`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+
+            }
+          });
+        } else {
+          setvitalSign(vitalSign)
+        }
       })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeSocket, userProfile?._id])
+
+  useEffect(() => {
+    if (homeSocket.current !== undefined) {
+      let userId = userProfile?._id
       homeSocket.current.emit(`findDocterPatientProfileById`, { _id: userId, ...dataGridFilters })
       homeSocket.current.once(`findDocterPatientProfileByIdReturn`, (msg: { status: number, user: PatientProfileExtendType, reason?: string }) => {
         const { status, user, reason } = msg;
@@ -294,7 +318,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                     <div className="col-12 col-md-6 col-lg-6 col-xl-6 patient-graph-box">
                       <Link href="/patient/dashboard/clinical-signs-history" className="graph-box pink-graph" data-bs-target="#graph2">
                         <div>
-                          <h4>Clinical Signs History</h4>
+                          <h4>Clinical Signs History (last five record)</h4>
                         </div>
                         <div className="graph-img imgColorPrimary">
                           <img src={Graph2} alt='' />
