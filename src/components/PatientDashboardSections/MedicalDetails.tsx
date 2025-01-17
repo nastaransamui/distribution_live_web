@@ -1002,7 +1002,7 @@ const MedicalDetails: FC = (() => {
           <div className="modal-content" >
             <div className="modal-body">
               <div className="form-content p-2">
-                <h4 className="modal-title" style={{ display: 'flex', justifyContent: 'center' }}>Deactive</h4>
+                <h4 className="modal-title" style={{ display: 'flex', justifyContent: 'center' }}>Delete</h4>
                 <p className="mb-4" style={{ display: 'flex', justifyContent: 'center' }}>Are you sure to delete  this record?</p>
                 <span style={{ display: 'flex', justifyContent: 'center' }}><button type="button" className="btnLogin mx-1"
                   onClick={() => {

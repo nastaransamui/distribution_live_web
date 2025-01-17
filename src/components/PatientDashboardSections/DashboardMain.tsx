@@ -58,10 +58,10 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
     height: vitalSign[0]?.height?.length || 0,
   }
   let values = {
-    heartRate: vitalSign[0]?.heartRate?.[lengths['heartRate' as keyof typeof lengths] - 1]['value'],
-    bodyTemp: vitalSign[0]?.bodyTemp?.[lengths['bodyTemp' as keyof typeof lengths] - 1]['value'],
-    weight: vitalSign[0]?.weight?.[lengths['weight' as keyof typeof lengths] - 1]['value'],
-    height: vitalSign[0]?.height?.[lengths['height' as keyof typeof lengths] - 1]['value'],
+    heartRate: vitalSign[0]?.heartRate?.[lengths['heartRate' as keyof typeof lengths] - 1]?.['value'],
+    bodyTemp: vitalSign[0]?.bodyTemp?.[lengths['bodyTemp' as keyof typeof lengths] - 1]?.['value'],
+    weight: vitalSign[0]?.weight?.[lengths['weight' as keyof typeof lengths] - 1]?.['value'],
+    height: vitalSign[0]?.height?.[lengths['height' as keyof typeof lengths] - 1]?.['value'],
   }
   const vitalChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

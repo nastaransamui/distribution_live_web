@@ -122,7 +122,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           })
           const data = await res.json();
           const { status, user: doctorPatientProfile } = data
-          console.log({ data })
           if (status == 200) {
             props = {
               ...props,

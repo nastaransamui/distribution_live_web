@@ -13,12 +13,12 @@ import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import PatientDashboardSidebar from '@/components/shared/PatientDashboardSidebar';
 import Footer from '@/components/sections/Footer';
-import MedicalRecords from '@/components/PatientDashboardSections/MedicalRecords';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import useScssVar from '@/hooks/useScssVar';
+import MedicalRecordsPrepage from '@/components/PatientDashboardSections/MedicalRecordsPrepage';
 
 const MedialRecordPage: NextPage = () => {
   const { muiVar } = useScssVar();
@@ -40,7 +40,7 @@ const MedialRecordPage: NextPage = () => {
         <div className="container-fluid">
           <div className="row">
             <PatientDashboardSidebar />
-            <MedicalRecords />
+            <MedicalRecordsPrepage />
           </div>
         </div>
       </div>

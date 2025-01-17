@@ -33,6 +33,7 @@ const Invoice: FC = (() => {
   const router = useRouter()
   const theme = useTheme();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const [reload, setReload] = useState<boolean>(false)
   const [reservation, setReservation] = useState<AppointmentReservationExtendType | null>(null)
 
@@ -81,13 +82,13 @@ const Invoice: FC = (() => {
 
   const handleExport = async () => {
     if (!exportRef.current) return;
-
-    // Inject custom CSS for the PDF
     const customStyles = `
       #pdf-content {
-        font-size: 18px;
-        background-color: #fff;
-        width: 100%; /* Ensure content width is dynamic */
+         width: 794px; /* A4 width in pixels at 96 DPI */
+  background-color: #fff;
+  font-size: 18px;
+  overflow: hidden;
+  margin: 0 auto; 
       }
       #pdf-content p,
       #pdf-content td {
@@ -100,20 +101,22 @@ const Invoice: FC = (() => {
 
     // Append styles to the exportRef content
     exportRef.current.appendChild(styleSheet);
-
-    // Define A4 page dimensions in pixels (assuming 96dpi)
-    const A4_WIDTH = 210; // mm
-    const A4_HEIGHT = 297; // mm
+    // Define A4 page dimensions in pixels (at 96 DPI)
     const DPI = 96; // Dots per inch
-    const PX_PER_MM = DPI / 25.4;
+    const PX_PER_MM = DPI / 25.4; // Pixels per mm
+    const A4_WIDTH_PX = Math.floor(210 * PX_PER_MM); // A4 width in pixels
+    const A4_HEIGHT_PX = Math.floor(297 * PX_PER_MM); // A4 height in pixels
 
-    const A4_WIDTH_PX = Math.floor(A4_WIDTH * PX_PER_MM) - 56; // A4 width in pixels
-    const A4_HEIGHT_PX = Math.floor(A4_HEIGHT * PX_PER_MM); // A4 height in pixels
+    // Ensure the export container matches A4 dimensions
+    const exportContent = exportRef.current;
+    exportContent.style.width = `${A4_WIDTH_PX}px`;
+    exportContent.style.height = `auto`; // Let height adjust naturally for content
 
-    // Render the HTML content to a canvas with A4 dimensions
-    const canvas = await html2canvas(exportRef.current, {
-      scale: 2, // High resolution
-      width: A4_WIDTH_PX, // Match A4 width
+    // Render the HTML content to a canvas
+    const canvas = await html2canvas(exportContent, {
+      scale: 1, // No scaling
+      width: A4_WIDTH_PX,
+      height: exportContent.offsetHeight, // Render full content height
       scrollX: 0,
       scrollY: 0,
     });
@@ -121,34 +124,32 @@ const Invoice: FC = (() => {
     // Create a jsPDF instance
     const pdf = new jsPDF("p", "mm", "a4");
 
-    // Calculate image dimensions to fully fill the A4 page
+    // Slice the canvas into A4-sized chunks and add to PDF
     const imgData = canvas.toDataURL("image/png");
-    const imgWidth = A4_WIDTH; // Full width of A4 in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Scale height proportionally
-    const headerHeight = invoiceHeaderRef.current?.offsetHeight;
-    const bodyHeight = invoiceBodyRef.current?.clientHeight
-    const footerHeight = invoiceFooterRef.current?.clientHeight
+    const totalHeight = canvas.height;
     let positionY = 0;
 
-    // Loop to handle multiple pages
-    while (positionY < imgHeight) {
+    while (positionY < totalHeight) {
+      // Add the current slice to the PDF
       pdf.addImage(
         imgData,
         "PNG",
         0,
-        positionY === 0 ? 0 : -positionY, // Start from the top of the next slice
-        imgWidth,
-        imgHeight
+        0,
+        210, // Full A4 width in mm
+        (canvas.height * 210) / canvas.width // Scale height proportionally
       );
-      positionY += A4_HEIGHT; // Increment by page height
-      if (positionY < imgHeight) pdf.addPage(); // Add a new page if more content
+
+      positionY += A4_HEIGHT_PX; // Move to the next slice
+      if (positionY < totalHeight) pdf.addPage(); // Add a new page if needed
     }
 
-    // Remove the custom styles after exporting
-    styleSheet.remove();
-
     // Save the PDF
-    pdf.save(`${reservation?.invoiceId}.pdf`);
+    pdf.save(`${reservation?.invoiceId || "document"}.pdf`);
+    // Clean up the custom styles
+    exportRef.current.removeChild(styleSheet);
+    exportContent.style.width = "";
+    exportContent.style.height = "";
   };
 
   return (
@@ -257,8 +258,8 @@ const Invoice: FC = (() => {
                             </table>
                           </div>
                         </div>
-                        {router.asPath.startsWith('/doctors') &&
-                          <div className="col-md-6 col-xl-4 ms-auto" style={{ minHeight: '300px' }}>
+                        {userProfile?.roleName == 'doctors' &&
+                          <div className="col-md-6 col-xl-6 ms-auto" style={{ minHeight: '300px', position: 'relative' }}>
                             <div className={
                               `${reservation?.doctorPaymentStatus == "Awaiting Request"
                                 ? "rubber_stamp_await"

@@ -197,7 +197,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         try {
           const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/publications/homeTheme`, { method: 'GET', })
           const homeObject = await res.json();
-          console.log(homeObject)
           const hometheme = homeObject['hometheme']
           let redirect = hometheme[0]?.['homeRedirect']
           if (redirect !== ctx.resolvedUrl) {

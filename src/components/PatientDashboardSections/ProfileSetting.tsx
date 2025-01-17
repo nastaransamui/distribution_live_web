@@ -119,7 +119,6 @@ const ProfileSetting: FC = (() => {
                 dispatch(updateHomeAccessToken(msg?.accessToken))
                 setCookie('homeAccessToken', msg?.accessToken);
                 var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-                console.log({ accessToken, user_id, services, roleName, iat, exp, userProfile })
                 dispatch(updateUserProfile(userProfile))
                 toast.info('Profile update successfully.', {
                   position: "bottom-center",
@@ -264,7 +263,6 @@ const ProfileSetting: FC = (() => {
     if (homeSocket?.current) {
       homeSocket.current.emit('deleteUser', data)
       homeSocket.current.once('deleteUserReturn', (msg: any) => {
-        console.log(msg)
         if (msg?.status !== 200) {
           toast.error(msg?.message || 'null', {
             position: "bottom-center",

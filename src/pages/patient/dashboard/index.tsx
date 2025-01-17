@@ -134,7 +134,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           doctorPatientProfile: doctorPatientProfile
         }
       } else {
-        console.log(data)
         return {
           ...props,
           redirect: {

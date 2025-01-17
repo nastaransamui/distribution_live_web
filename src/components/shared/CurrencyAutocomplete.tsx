@@ -179,7 +179,6 @@ const CurrencyAutocomplete: FC<CurrencyAutocompleteProps> = ({
               break;
 
             default:
-              console.log(`default onChange ${details}`)
               break;
           }
 

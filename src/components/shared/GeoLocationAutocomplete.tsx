@@ -265,7 +265,6 @@ const GeoLocationAutocomplete: FC<GeoLocationAutocompleteProps> = ((props: GeoLo
               break;
 
             default:
-              console.log(`default onChanbe ${details}`)
               break;
           }
 

@@ -63,7 +63,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       //   }
       // })
       // const doctor = await docJson.json();
-      // console.log(doctor)
       const result = await fetch('http://ip-api.com/json/', {
         method: 'GET',
         headers: {

@@ -223,7 +223,6 @@ const DoctorsSections: FC = (() => {
       limit: number,
       skip: number,
       sortBy: string, homeSocket: any, reload: boolean) => {
-      // console.log({ limit, skip })
       homeSocket.current.emit(`doctorSearch`, {
         keyWord,
         specialities,

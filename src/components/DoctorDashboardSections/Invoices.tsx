@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect, useRef, useState } from 'react'
+import { FC, forwardRef, Fragment, useEffect, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridSortModel, GridValueFormatterParams, GridRenderCellParams } from '@mui/x-data-grid';
-import { patient_profile, PatientImg1, PatientImg2, PatientImg3, PatientImg4, PatientImg5, PatientImg6, PatientImg7 } from '@/public/assets/imagepath';
+import { logo, patient_profile, PatientImg1, PatientImg2, PatientImg3, PatientImg4, PatientImg5, PatientImg6, PatientImg7 } from '@/public/assets/imagepath';
 import dayjs from 'dayjs';
 import Stack from '@mui/material/Stack';
 import Link from 'next/link';
@@ -23,6 +23,7 @@ import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 import { formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor, StyledBadge } from './ScheduleTiming';
 import Avatar from '@mui/material/Avatar';
 import CustomPagination from '../shared/CustomPagination';
+import { useReactToPrint } from 'react-to-print';
 export interface AppointmentReservationExtendType extends AppointmentReservationType {
   patientProfile: PatientProfile;
   patientStatus: {
@@ -35,6 +36,214 @@ export interface AppointmentReservationExtendType extends AppointmentReservation
 
   }
 }
+
+interface PrintProps {
+  printProps: any
+}
+export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((props, ref) => {
+  const { muiVar } = useScssVar();
+  const { printProps } = props
+  const {
+    invoiceId,
+    issueDay,
+    drName,
+    drAddress,
+    drCity,
+    drState,
+    drCountry,
+    paName,
+    paAddress,
+    paCity,
+    paState,
+    paCountry,
+    doctorPaymentStatus,
+    selectedDate,
+    timeSlot,
+    paymentType,
+    paymentToken,
+  } = printProps
+
+  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  return (
+    <div ref={ref} >
+      <Fragment >
+        {/*  minHeight: '3508px' */}
+        <div className="content" style={muiVar}>
+          <div className="container">
+            <div className="row" >
+              <div className="col-lg-8 offset-lg-2">
+                <div className="invoice-content" style={{
+                  background: '#fff',
+                  fontSize: '16px',
+                  width: '100%'
+                }}>
+                  <div className="invoice-item">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: "center" }}>
+                      <div className="col-md-4">
+                        <div className="invoice-logo">
+                          <img src={logo} alt="logo" />
+                        </div>
+                      </div>
+                      <div className="col-md-4"></div>
+                      <div className="col-md-4">
+                        <p className="invoice-details" style={{ color: '#000' }}>
+                          <strong>Invoice Id:</strong> {invoiceId} <br />
+                          <strong>Issued:</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {issueDay}<br />
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Invoice Item */}
+                  <div className="invoice-item">
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <div className="col-md-4">
+                        <div className="invoice-info">
+                          <strong className="customer-text">Doctor information</strong>
+                          <p className="invoice-details invoice-details-two" style={{ color: '#000' }}>
+                            Name: {drName} <br />
+                            Address: {`${drAddress.trim().length === 0 ? '---' : drAddress}`}
+                            <br />
+                            City: {`${drCity.trim().length === 0 ? '---' : drCity}`}
+                            <br />
+                            State: {`${drState.trim().length === 0 ? '---' : drState}`}
+                            <br />
+                            Country: {`${drCountry.trim().length === 0 ? '---' : drCountry}`}
+                            <br />
+                          </p>
+                        </div>
+                      </div>
+                      <div className="col-md-4">
+                        <div className="invoice-info invoice-info2">
+                          <strong className="customer-text">Patient information</strong>
+                          <p className="invoice-details" style={{ color: '#000' }}>
+                            Name: {paName} <br />
+                            Address: {`${paAddress.trim().length === 0 ? '---' : paAddress}`}
+                            <br />
+                            City: {`${paCity.trim().length === 0 ? '---' : paCity}`}
+                            <br />
+                            State: {`${paState.trim().length === 0 ? '---' : paState}`}
+                            <br />
+                            Country: {`${paCountry.trim().length === 0 ? '---' : paCountry}`}
+                            <br />
+                          </p>
+                        </div>
+                      </div>
+                      <div className="col-md-4">
+                        <div className="invoice-info invoice-info2">
+                          <strong className="customer-text">Payment Method</strong>
+                          <p className="invoice-details invoice-details-two" style={{ color: '#000' }}>
+                            {paymentType} <br />
+                            {paymentToken} <br />
+                            <br />
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="invoice-item invoice-table-wrap">
+                    <div className="row">
+                      <div className="col-md-12">
+                        <div className="table-responsive">
+                          <table className="invoice-table table table-bordered" style={{ color: '#000' }}>
+                            <thead style={{ borderBottom: "none" }}>
+                              <tr>
+                                <th>Description</th>
+                                <th className="text-center">Quantity</th>
+                                <th className="text-center">Price</th>
+                                <th className="text-end">Total</th>
+                              </tr>
+                            </thead>
+                            <tbody style={{ borderTop: "none", }}>
+                              <tr>
+                                <td style={{ padding: '10px 0px', color: '#000' }}>{selectedDate} - {timeSlot?.period}</td>
+                                <td className="text-center" style={{ color: '#000' }} >1</td>
+                                <td className="text-center" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(timeSlot?.price)}</td>
+                                <td className="text-end" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(timeSlot?.price)}</td>
+                              </tr>
+                              <tr>
+                                <td style={{ padding: '10px 0px', color: '#000' }}>Booking Fee</td>
+                                <td className="text-center" style={{ color: '#000' }} >1</td>
+                                <td className="text-center" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                  timeSlot?.bookingsFeePrice
+                                )}</td>
+                                <td className="text-end" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                  timeSlot?.bookingsFeePrice
+                                )}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      <div style={{ maxWidth: '50%' }}>
+                        {userProfile?.roleName == 'doctors' ?
+                          <div className="col-md-6 col-xl-6 ms-auto" style={{ minHeight: '410px', position: 'relative' }}>
+                            <div style={{ left: "50px" }} className={
+                              `${doctorPaymentStatus == "Awaiting Request"
+                                ? "rubber_stamp_await"
+                                : doctorPaymentStatus == "Paid"
+                                  ? "rubber_stamp_paid" : "rubber_stamp_pendign"}
+                              `}>{doctorPaymentStatus}</div>
+                          </div> :
+                          <div className="col-md-6 col-xl-6 ms-auto" style={{ minHeight: '350px', position: 'relative' }}></div>
+                        }
+
+                      </div>
+                      <div style={{ maxWidth: '50%' }}>
+                        <div className="table-responsive">
+                          <table className="invoice-table-two table">
+                            <tbody>
+                              <tr>
+                                <th>Subtotal:</th>
+                                <td style={{ padding: '10px 0px', color: '#000' }}>
+                                  <span>{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                    timeSlot?.total
+                                  )}</span>
+                                </td>
+                              </tr>
+                              <tr>
+                                <th>Discount:</th>
+                                <td style={{ color: "#000" }}>
+                                  <span>---</span>
+                                </td>
+                              </tr>
+                              <tr>
+                                <th>Total Amount:</th>
+                                <td style={{ padding: '10px 0px', color: '#000' }}>
+                                  <span>{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                    timeSlot?.total
+                                  )}</span>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="other-info">
+                    <h4>Other information</h4>
+                    <p className=" mb-0" style={{ color: '#000' }}>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
+                      sed dictum ligula, cursus blandit risus. Maecenas eget metus non
+                      tellus dignissim aliquam ut a ex. Maecenas sed vehicula dui, ac
+                      suscipit lacus. Sed finibus leo vitae lorem interdum, eu
+                      scelerisque tellus fermentum. Curabitur sit amet lacinia lorem.
+                      Nullam finibus pellentesque libero.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Fragment>
+    </div>
+
+  )
+})
+PrintInvoiceComponent.displayName = "PrintInvoiceComponent"
+
 export interface ValueType {
   id: number;
   invoiceNo: string;
@@ -101,9 +310,68 @@ const Invoices: FC = (() => {
   }
   const grdiRef = useRef<any>(null)
   const theme = useTheme()
-  const matches = useMediaQuery(theme.breakpoints.down('lg'));
 
-  const router = useRouter();
+  const [printProps, setPrintProps] = useState<any>({})
+  const printRef = useRef(null);
+
+  // We store the resolve Promise being used in `onBeforeGetContent` here
+  const promiseResolveRef = useRef<any>(null);
+  const [isPrinting, setIsPrinting] = useState<any>(false);
+  // We watch for the state to change here, and for the Promise resolve to be available
+  useEffect(() => {
+    if (isPrinting && promiseResolveRef.current) {
+      // Resolves the Promise, letting `react-to-print` know that the DOM updates are completed
+      promiseResolveRef.current();
+    }
+  }, [isPrinting]);
+
+  const handlePrint = useReactToPrint({
+    // content: () => printRef.current,
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        promiseResolveRef.current = resolve;
+
+        setIsPrinting(true);
+      });
+    },
+    onAfterPrint: () => {
+      // Reset the Promise resolve so we can print again
+      promiseResolveRef.current = null;
+      setIsPrinting(false);
+    }
+  });
+  const printButtonClicked = (row: any) => {
+    const { patientProfile } = row;
+    const { firstName, lastName, country, city, state, address1, address2 } = userProfile!
+    const { gender, firstName: paFirstName, lastName: paLastName, country: paCountry,
+      city: paCity, state: paState, address1: paAddress1, address2: paAddress2 } = patientProfile
+
+    setPrintProps(() => {
+      let newState = {}
+      newState = {
+        _id: row?._id,
+        issueDay: dayjs(row.createdAt).format('DD/MMM/YYYY'),
+        drName: `Dr. ${firstName} ${lastName}`,
+        drAddress: `${address1} ${address1 !== '' ? ', ' : ''} ${address2}`,
+        drCity: city,
+        drState: state,
+        drCountry: country,
+        paName: `${gender}${gender !== '' ? '.' : ''} ${paFirstName} ${paLastName}`,
+        paAddress: `${paAddress1} ${paAddress1 !== '' ? ', ' : ''} ${paAddress2}`,
+        paCity: paCity,
+        paState: paState,
+        paCountry: paCountry,
+        invoiceId: row?.invoiceId,
+        doctorPaymentStatus: row?.doctorPaymentStatus,
+        selectedDate: row?.selectedDate,
+        timeSlot: row?.timeSlot,
+        paymentType: row?.paymentType,
+        paymentToken: row?.paymentToken,
+      }
+      return newState
+    })
+    handlePrint(null, () => printRef.current);
+  }
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -135,7 +403,7 @@ const Invoices: FC = (() => {
         const { row } = data;
         return (
           <>
-            <Link href={`/doctors/invoice-view/${btoa(row?._id!)}`}>{row.invoiceId}</Link>
+            <Link href={`/doctors/invoice-view/${btoa(row?._id!)}`} target='_blank'>{row.invoiceId}</Link>
           </>
         )
       },
@@ -201,7 +469,6 @@ const Invoices: FC = (() => {
       width: 100,
       headerAlign: 'center',
       align: 'center',
-      flex: matches ? 0 : 1,
       renderCell: (data: any) => {
         const { row } = data;
         const { timeSlot } = row;
@@ -243,7 +510,7 @@ const Invoices: FC = (() => {
           disableRipple
           disableTouchRipple
           onClick={() => {
-            router.push(`/doctors/invoice-view/${btoa(params.row?._id!)}`)
+            printButtonClicked(params.row)
           }}
           icon={<i className="fas fa-print"
             style={{ color: theme.palette.primary.main }}></i>} label="Print" />,
@@ -303,10 +570,13 @@ const Invoices: FC = (() => {
 
   return (
     <Fragment>
+      <iframe style={{ height: 0, width: 0, position: 'absolute' }}>
+        {isPrinting && <PrintInvoiceComponent ref={printRef} printProps={printProps} />}
+      </iframe>
       <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
         <div className="card card-table">
           <div className="card-body">
-            <div className="table-responsive">
+            <div className="table-responsive" style={{ height: 480, width: '100%' }}>
               {isLoading ? <CircleToBlockLoading color={theme.palette.primary.main} size="small"
                 style={{
                   minWidth: '100%',
@@ -342,7 +612,7 @@ const Invoices: FC = (() => {
                     ref={grdiRef}
                     columns={columns}
                     paginationModel={paginationModel}
-
+                    isRowSelectable={() => false}
                     pageSizeOptions={[5, 10]}
                     showCellVerticalBorder
                     showColumnVerticalBorder

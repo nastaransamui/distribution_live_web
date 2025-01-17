@@ -139,7 +139,6 @@ const AvailableTiming: FC = (() => {
     let eventArray: any = []
     if (myAppointmentData.length > 0) {
       myAppointmentData.forEach((a: AppointmentReservationExtendType) => {
-        // console.log({ a })
         const startTime = a?.timeSlot?.period.split(' - ')[0]
         const endTime = a?.timeSlot?.period.split(' - ')[1]
         // create a date object with a specific date

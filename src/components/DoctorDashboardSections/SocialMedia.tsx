@@ -47,7 +47,6 @@ const SocialMedia: FC = (() => {
     dispatch(updateHomeFormSubmit(true))
     homeSocket.current.emit('socialMediaUpdate', data)
     homeSocket.current.once('socialMediaUpdateReturn', (msg: any) => {
-      console.log(msg)
       if (msg?.status !== 200) {
         toast.error(msg?.message, {
           position: "bottom-center",

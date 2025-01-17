@@ -95,7 +95,6 @@ const AppWrapper = ({ children }: ChildrenProps) => {
         secure: true // Explicitly use secure connection
       });
       socket.current.on('connect', () => {
-        // console.log('connect in Appwrapper page first')
         dispatch(updateHomeSocket(socket))
         setPercent(() => 100)
         setShowLoading(false)
@@ -152,7 +151,6 @@ const AppWrapper = ({ children }: ChildrenProps) => {
         //Handle update token
         var { accessToken, user_id, services, roleName, iat, exp, userProfile: newUserProfile } = verifyHomeAccessToken(msg)
         const { isActive } = newUserProfile;
-        // console.log({ accessToken, user_id, services, roleName, iat, exp, userProfile, isActive })
 
         if (accessToken == '' || accessToken !== userProfile?.accessToken || !isActive) {
           //Logut users
@@ -219,7 +217,7 @@ const AppWrapper = ({ children }: ChildrenProps) => {
       })
       socket.current.emit('webJoin', { userProfile, userData: { ...userData, userAgent: navigator.userAgent } })
       // socket.current.on('event', (data: any) => {
-      //   console.log('event in login page', data)
+
       // });
       socket.current.on('disconnect', () => {
         console.log('disconnect')
@@ -249,18 +247,11 @@ const AppWrapper = ({ children }: ChildrenProps) => {
       socket.current.on('connect_failed', () => {
         console.log('connect_failed ')
       });
-      // socket.current.on("loginPageUsers", (msg: number) => {
-      //   console.log(msg)
-      // });
-      // socket.current.on('ping', (msg: any) => {
-      //   console.log('ping')
-      //   console.log(msg)
-      // })
+
 
 
     } else {
       if (!socket.current?.connected) {
-        console.log('socket.current?.connected in Appwrapper is false')
         // toast.info('Now connection to server is closed you need to refresh the page to be online again', {
         //   position: "bottom-center",
         //   autoClose: 5000,
@@ -283,7 +274,6 @@ const AppWrapper = ({ children }: ChildrenProps) => {
     return () => {
 
       socket.current.disconnect()
-      console.log(socket.current)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -39,9 +39,6 @@ const Header: FC = () => {
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const dispatch = useDispatch();
-  // let profile: any = userProfile;
-  // console.log(userProfile)
-  // if (userProfile !== null) profile = userProfile?.profile
   const { muiVar, bounce } = useScssVar()
   const [navbar, setNavbar] = useState(false);
   const [clinicsOpen, setClinicsOpen] = useState(false)
@@ -383,7 +380,7 @@ const Header: FC = () => {
                       let primaryColor = theme.palette.primary.main
                       // const url = clinic.hasThemeImage ? `${clinic?.image.replace('primaryMain', primaryColor.slice(1))}`
                       //   : `${clinic?.image}`
-                      // console.log(url)
+
                       const url = clinic.hasThemeImage
                         ? `${clinic?.image
                           .replace('primaryMain', primaryColor.slice(1))

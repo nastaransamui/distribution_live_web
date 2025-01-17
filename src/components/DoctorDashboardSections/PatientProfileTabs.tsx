@@ -9,9 +9,7 @@ import TabPanel from '@mui/lab/TabPanel';
 import SwipeableViews from 'react-swipeable-views';
 import { useTheme } from '@mui/material';
 import PatientAppointment from '../shared/PatientAppointment';
-import PatientPrescription from '../shared/PatientPrescription';
 import Link from 'next/link';
-import PatientMedicalRecords from '../shared/PatientMedicalRecords';
 import PatientBillingRecords from '../shared/PatientBillingRecords';
 
 
@@ -23,14 +21,13 @@ import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import InputAdornment from '@mui/material/InputAdornment';
 import UploadFile from '@mui/icons-material/UploadFile';
-import { PatientProfile } from './MyPtients';
 import { DoctorPatientInitialLimitsAndSkipsTypes, PatientProfileExtendType } from '../DoctorPatientProfile/DoctorPatientProfile';
+import MedicalRecords from '../PatientDashboardSections/MedicalRecords';
+import MedicalRecordsPriscription from '../PatientDashboardSections/MedicalRecordsPriscription';
+import { AppState } from '@/redux/store';
+import { useSelector } from 'react-redux';
 if (typeof window !== 'undefined') {
   window.mobileCheck = function () {
     let check = false;
@@ -71,11 +68,11 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
   const theme = useTheme();
   const [index, setIndex] = useState(0);
   const [edit, setEdit] = useState(false);
+  const userProfile = useSelector((state: AppState) => state.userProfile.value);
   const handleChangeTab = (event: SyntheticEvent, newValue: string) => {
     setIndex(Number(newValue))
     setValue(newValue);
   };
-
   const [editValues, setEditValues] = useState<ValueType>(initialState)
   const [imageName, setImageName] = useState("")
   const inputFileRef = useRef<any>(null)
@@ -97,14 +94,7 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
 
   }
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setEditValues((prevState) => {
-      return {
-        ...prevState,
-        orderBy: event.target.value
-      }
-    })
-  }
+
   const [isMobile, setIsmobile] = useState(false)
   useEffect(() => {
     setIsmobile(typeof window !== 'undefined' && window.mobileCheck())
@@ -130,79 +120,59 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                 {
                   isMobile ? <>
                     <TabPanel value="0">
-                      <PatientAppointment
-                        userType={userType}
-                        doctorPatientProfile={doctorPatientProfile}
-                        dataGridFilters={dataGridFilters}
-                        setDataGridFilters={setDataGridFilters}
-                        isMobile={isMobile} />
+                      <PatientAppointment userType={userType} patientId={doctorPatientProfile?._id} />
                     </TabPanel>
                     <TabPanel value="1">
-
-                      <PatientPrescription
-                        userType={userType}
-                        doctorPatientProfile={doctorPatientProfile}
-                        dataGridFilters={dataGridFilters}
-                        setDataGridFilters={setDataGridFilters}
-                        isMobile={isMobile} />
+                      {userType == 'doctor' && <div className="text-end">
+                        <Link href={`/doctors/dashboard/add-prescription/${btoa(doctorPatientProfile._id)}`} target='_blank' className="add-new-btn">
+                          Add Prescription
+                        </Link>
+                      </div>}
+                      <MedicalRecordsPriscription patientProfile={doctorPatientProfile} />
                     </TabPanel>
                     <TabPanel value="2">
-                      {userType == 'doctor' && <div className="text-end">
-                        <Link href="" onClick={(e) => {
-                          e.preventDefault();
-                          setEdit(true)
-                        }} className="add-new-btn">
-                          Add Medical Records
-                        </Link>
-                      </div>}
-                      <PatientMedicalRecords userType={userType} />
+                      <MedicalRecords patientProfile={doctorPatientProfile} />
                     </TabPanel>
                     <TabPanel value="3">
-                      {userType == 'doctor' && <div className="text-end">
-                        <Link href="/doctors/dashboard/add-billing" className="add-new-btn">
-                          Add Billing
-                        </Link>
-                      </div>}
-                      <PatientBillingRecords userType={userType} />
+                      {userType == 'doctor' && userProfile?.currency &&
+                        <>{userProfile?.currency.length > 0 ? <div className="text-end">
+                          <Link href={`/doctors/dashboard/add-billing/${btoa(doctorPatientProfile._id)}`} target='_blank' className="add-new-btn">
+                            Add Billing
+                          </Link>
+                        </div> : <div className="text-end" style={{ minHeight: "50px" }}>
+                          <span style={{ color: theme.palette.text.color }}>Add currency to your profile then can add Billing</span>
+                        </div>}</>
+                      }
+                      <PatientBillingRecords userType={userType} patientId={doctorPatientProfile?._id} />
                     </TabPanel>
                   </> : <SwipeableViews
                     axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
                     index={index}>
                     <TabPanel value="0">
-                      <PatientAppointment
-                        userType={userType}
-                        doctorPatientProfile={doctorPatientProfile}
-                        dataGridFilters={dataGridFilters}
-                        setDataGridFilters={setDataGridFilters}
-                        isMobile={isMobile} />
+                      <PatientAppointment userType={userType} patientId={doctorPatientProfile?._id} />
                     </TabPanel>
                     <TabPanel value="1">
-
-                      <PatientPrescription
-                        userType={userType}
-                        doctorPatientProfile={doctorPatientProfile}
-                        dataGridFilters={dataGridFilters}
-                        setDataGridFilters={setDataGridFilters}
-                        isMobile={isMobile} />
+                      {userType == 'doctor' && <div className="text-end">
+                        <Link href={`/doctors/dashboard/add-prescription/${btoa(doctorPatientProfile._id)}`} target='_blank' className="add-new-btn">
+                          Add Prescription
+                        </Link>
+                      </div>}
+                      <MedicalRecordsPriscription patientProfile={doctorPatientProfile} />
                     </TabPanel>
                     <TabPanel value="2">
-                      {userType == 'doctor' && <div className="text-end">
-                        <Link href="" onClick={(e) => {
-                          e.preventDefault();
-                          setEdit(true)
-                        }} className="add-new-btn">
-                          Add Medical Records
-                        </Link>
-                      </div>}
-                      <PatientMedicalRecords userType={userType} />
+                      <MedicalRecords patientProfile={doctorPatientProfile} />
                     </TabPanel>
                     <TabPanel value="3">
-                      {userType == 'doctor' && <div className="text-end">
-                        <Link href="/doctors/dashboard/add-billing" className="add-new-btn">
-                          Add Billing
-                        </Link>
-                      </div>}
-                      <PatientBillingRecords userType={userType} />
+                      {userType == 'doctor' && userProfile?.currency &&
+                        <>{userProfile?.currency.length > 0 ? <div className="text-end">
+                          <Link href={`/doctors/dashboard/add-billing/${btoa(doctorPatientProfile._id)}`} target='_blank' className="add-new-btn">
+                            Add Billing
+                          </Link>
+                        </div> : <div className="text-end" style={{ minHeight: "50px" }}>
+                          <span style={{ color: theme.palette.text.color }}>Add currency to your profile then can add Billing</span>
+                        </div>}</>
+                      }
+                      <PatientBillingRecords userType={userType} patientId={doctorPatientProfile?._id} />
                     </TabPanel>
                   </SwipeableViews>
                 }

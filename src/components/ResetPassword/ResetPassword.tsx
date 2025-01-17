@@ -125,7 +125,6 @@ const ResetPassword: FC = ((props) => {
           }
         });
       } else if (msg?.status == 200) {
-        console.log(msg)
         toast.info(msg?.message, {
           position: "bottom-center",
           autoClose: 5000,

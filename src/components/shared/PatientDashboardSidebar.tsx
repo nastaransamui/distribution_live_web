@@ -113,6 +113,19 @@ const PatientDashboardSidebar: FC = (() => {
                       <span>Appointments</span>
                     </Link>
                   </li>
+                  <li className={router.pathname == "/patient/dashboard/billings" ? "active" : ""}>
+                    <Link href="/patient/dashboard/billings">
+                      <i className="fas fa-file-invoice" />
+                      <span>Billings</span>
+                    </Link>
+                  </li>
+
+                  <li className={router.pathname == "/patient/dashboard/invoice" ? "active" : ""}>
+                    <Link href="/patient/dashboard/invoice">
+                      <i className="fas fa-file-invoice" />
+                      <span>Reservations Invoices</span>
+                    </Link>
+                  </li>
                   <li className={router.pathname.includes("/dependent") ? "active" : ""}>
                     <Link href="/patient/dashboard/dependent">
                       <i className="fas fa-users"></i>
@@ -136,7 +149,7 @@ const PatientDashboardSidebar: FC = (() => {
                   <li className={router.pathname.includes("/medicalrecords") ? "active" : ""}>
                     <Link href="/patient/dashboard/medicalrecords">
                       <i className="fas fa-clipboard"></i>
-                      <span>Add Medical Records</span>
+                      <span>Medical Records / Prescriptions</span>
                     </Link>
                   </li>
                   <li className={router.pathname.includes("/medicaldetails") ? "active" : ""}>

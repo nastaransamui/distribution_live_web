@@ -20,8 +20,10 @@ import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import DoctorDashboardSidebar from '@/components/shared/DoctorDashboardSidebar';
 import useScssVar from '@/hooks/useScssVar';
-const EditBillingPage: NextPage = (props: any) => {
-  // const { doctorPatientProfile } = props;
+import BillingPage from '@/components/BillingPage/BilingPage';
+
+const AddBillingPage: NextPage = (props: any) => {
+  const { doctorPatientProfile } = props;
   const { muiVar } = useScssVar();
   return (
     <>
@@ -35,13 +37,11 @@ const EditBillingPage: NextPage = (props: any) => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
-      <BreadCrumb subtitle='Edit Billing' title='Edit Billing' />
+      <BreadCrumb subtitle='Add Billing' title='Add Billing' />
       <div className="content" style={muiVar}>
         <div className="container-fluid">
           <div className="row">
-            {/* <PatientSidebarDoctorDashboard doctorPatientProfile={doctorPatientProfile} /> */}
-            <DoctorDashboardSidebar />
-            <AddBilling />
+            <BillingPage pageType="add" userType='doctor' doctorPatientProfile={doctorPatientProfile} />
           </div>
         </div>
       </div>
@@ -124,8 +124,8 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         props
       }
     } catch (error) {
-      let props = {}
       console.log(error)
+      let props = {}
       if (hasCookie('homeThemeType', ctx)) {
         store.dispatch(updateHomeThemeType(getCookie('homeThemeType', ctx)))
       }
@@ -188,4 +188,4 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     }
   })
 
-export default connect((state: AppState) => state)(EditBillingPage);
+export default connect((state: AppState) => state)(AddBillingPage);

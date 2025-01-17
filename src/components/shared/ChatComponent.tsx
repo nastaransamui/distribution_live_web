@@ -412,7 +412,6 @@ const ChatComponent: FC = (() => {
     }, 100);
   }, [activeChat, userChatData])
 
-  console.log(userChatData)
   const [options, setOptions] = useState<readonly ChatDataType[]>([]);
   const [value, setValue] = useState<ChatDataType | null>(null);
   const [inputValue, setInputValue] = useState('');

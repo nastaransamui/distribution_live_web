@@ -20,7 +20,8 @@ import isJsonString from '@/helpers/isJson';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 
 
-const InvoiceViewPage: NextPage = () => {
+const InvoiceViewPage: NextPage = (props: any) => {
+  const { userProfile } = props;
 
 
   return (
@@ -35,7 +36,7 @@ const InvoiceViewPage: NextPage = () => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
-      <BreadCrumb title='Doctor Profile' subtitle='Doctor Profile' />
+      <BreadCrumb title={`${userProfile?.value?.roleName.charAt(0).toLocaleUpperCase()}${userProfile?.value?.roleName.slice(1)} Invoice`} subtitle={`${userProfile?.value?.roleName.charAt(0).toLocaleUpperCase()}${userProfile?.value?.roleName.slice(1)} Invoice`} />
       <Invoice />
       <Footer />
       <CookieConsentComponent />

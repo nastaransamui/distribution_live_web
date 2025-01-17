@@ -41,7 +41,6 @@ const ContactSection: FC = (() => {
   })
 
   const onRegisterSubmit = (data: FormType) => {
-    console.log(data)
     data.email = data.email.toLowerCase();
     dispatch(updateHomeFormSubmit(true))
     homeSocket.current.emit('sendEmail', {

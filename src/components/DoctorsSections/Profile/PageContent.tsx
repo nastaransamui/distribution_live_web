@@ -291,7 +291,6 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                   <Link href="/chat-doctor" aria-label='chat' className="btn btn-white msg-btn" onClick={(e) => {
                     e.preventDefault();
                     if (userProfile) {
-                      // console.log(userProfile)
                     } else {
                       setLoginDialog(true)
                     }
@@ -309,7 +308,6 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                       e.preventDefault();
 
                       if (userProfile) {
-                        // console.log(userProfile)
                         window.$('#voice_call').modal('toggle')
                       } else {
                         setLoginDialog(true)
@@ -328,7 +326,6 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                       e.preventDefault();
 
                       if (userProfile) {
-                        // console.log(userProfile)
                         window.$('#video_call').modal('toggle')
                       } else {
                         setLoginDialog(true)

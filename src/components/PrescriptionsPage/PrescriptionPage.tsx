@@ -1,7 +1,6 @@
 import { FC, Fragment, useEffect, useState } from 'react'
 import { PatientProfile } from '../DoctorDashboardSections/MyPtients'
 import PatientSidebarDoctorDashboard from '../shared/PatientSidebarDoctorDashboard'
-import PatientProfileTabs from '../DoctorDashboardSections/PatientProfileTabs'
 import { useRouter } from 'next/router'
 import { useSearchParams } from 'next/navigation'
 import { AppState } from '@/redux/store'
@@ -13,7 +12,7 @@ import _ from 'lodash'
 import { AppointmentReservationType } from '../DoctorsSections/CheckOut/PaymentSuccess'
 import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection'
 import PatientDashboardSidebar from '../shared/PatientDashboardSidebar'
-import AddPrescription, { PrescriptionsType } from '../DoctorDashboardSections/AddPrescription'
+import AddPrescription from '../DoctorDashboardSections/AddPrescription'
 import SeePrescription, { PrescriptionsTypeWithDoctorProfile } from '../DoctorDashboardSections/SeePrescription'
 import EditPrescription from '../DoctorDashboardSections/EditPrescription'
 
@@ -46,7 +45,7 @@ export interface PatientProfileExtendType extends PatientProfile {
   appointments: AppointmentReservationExtendType[];
   lastTwoAppointments: AppointmentReservationExtendType[];
   prescriptions: any[];
-  singlePrescription: PrescriptionsTypeWithDoctorProfile
+  singlePrescription: PrescriptionsTypeWithDoctorProfile;
 }
 export interface DoctorPatientProfileTypes {
   doctorPatientProfile: PatientProfileExtendType;

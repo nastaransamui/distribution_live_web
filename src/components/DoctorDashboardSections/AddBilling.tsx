@@ -1,77 +1,172 @@
-import { FC, Fragment, useState, useEffect } from 'react'
+import { FC, Fragment, useState, useEffect, ReactNode } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
-
+import { AppState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import { useRouter } from 'next/router';
-import FormLabel from '@mui/material/FormLabel';
+import { useTheme } from '@mui/material/styles';
+import dayjs from 'dayjs';
+import { DoctorPatientProfileTypes } from '../DoctorPatientProfile/DoctorPatientProfile';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
+import { formatNumberWithCommas } from './ScheduleTiming';
+import InputAdornment from '@mui/material/InputAdornment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
+import { toast } from 'react-toastify';
+export interface BillingDetailsArrayType {
+  title: string;
+  price: number | null | string;
+  bookingsFee: string;
+  bookingsFeePrice: string;
+  total: string;
 
+}
 export interface BillingType {
-  title?: string;
-  amount?: string;
+  _id: string;
+  id: number;
+  doctorId: string;
+  patientId: string;
+  price: string;
+  bookingsFee: string;
+  bookingsFeePrice: string;
+  total: string;
+  currencySymbol: string;
+  paymentToken: string;
+  paymentType: string;
+  billDetailsArray: BillingDetailsArrayType[];
+  createdAt: Date;
+  updateAt: Date;
+  invoiceId: string;
+  status: "Pending" | "Paid";
+  paymentDate: Date | string;
+  dueDate: Date | null;
 }
 
-const initialState: BillingType = {
+const initialState: BillingDetailsArrayType = {
   title: '',
-  amount: '',
+  price: null,
+  bookingsFee: "",
+  bookingsFeePrice: '',
+  total: '',
 }
 
-const AddBilling: FC = (() => {
-  const { muiVar } = useScssVar();
+const AddBilling: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) => {
+  const { muiVar, bounce, threeOptionMain } = useScssVar();
+  const theme = useTheme();
   const router = useRouter();
+  const dispatch = useDispatch();
+  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  const {
+    formState: { errors },
+    control,
+    handleSubmit,
+    reset,
+    setValue: setFormValue,
+    getValues: getFormValue,
+    watch,
+  } = useForm({
+    defaultValues: {
+      doctorId: userProfile?._id,
+      patientId: doctorPatientProfile?._id,
+      price: "",
+      bookingsFee: userProfile?.bookingsFee,
+      bookingsFeePrice: '',
+      total: '',
+      currencySymbol: userProfile?.currency[0]?.currency,
+      paymentToken: "",
+      paymentType: '',
+      billDetailsArray: [{
+        ...initialState,
+        bookingsFee: userProfile?.bookingsFee,
+      }],
+      status: 'Pending',
+      paymentDate: "",
+      dueDate: null
+    } as BillingType
+  })
 
-  const [inputFields, setInputFields] = useState<BillingType[]>([initialState]);
-
+  const { fields: billsFields, append: appendBill, remove: removeBill } = useFieldArray<any>({
+    control,
+    name: "billDetailsArray"
+  });
   const addInputField = () => {
-    setInputFields([...inputFields, {
+    appendBill([{
+      ...initialState,
+      bookingsFee: userProfile?.bookingsFee,
     }])
 
   }
   const removeInputFields = (index: number) => {
-    const rows = [...inputFields];
-    rows.splice(index, 1);
-    setInputFields(rows);
+    removeBill(index)
   }
 
   useEffect(() => {
-    if (router.asPath.endsWith('editbilling')) {
-      setInputFields([
-        {
-          title: 'Consulting Fee',
-          amount: '$330',
-        },
-        {
-          title: 'Video Calling Appointment',
-          amount: '$100',
-        }
-      ])
+    let isActive = true;
+    if (isActive) {
+      doctorPatientProfile && setFormValue('patientId', doctorPatientProfile?._id)
     }
-    if (router.asPath.endsWith('see-billing')) {
-      setInputFields([
-        {
-          title: 'Consulting Fee',
-          amount: '$330',
-        },
-        {
-          title: 'Video Calling Appointment',
-          amount: '$100',
-        }
-      ])
+    return () => {
+      isActive = false;
     }
-  }, [router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doctorPatientProfile])
 
+  useEffect(() => {
+    // Listen to changes in the billDetailsArray to update total price
+    const subscription = watch((value) => {
+      if (value?.billDetailsArray) {
+        const billDetailsArray = value.billDetailsArray;
 
+        // Calculate total price
+        const totalPrice = billDetailsArray.reduce((sum, bill) => {
+          return sum + (Number(bill?.price) || 0);
+        }, 0);
 
-  const inputChange = (e: any, index: number, name: string) => {
-    setInputFields((prevState: BillingType[]) => {
-      let newPrev = [...prevState]
-      let newVal = newPrev[index]
-      newVal[name as keyof typeof newVal] = e.target.value
-      return newPrev
+        // Update total price and total (batch updates)
+        const bookingsFee = Number(getFormValue('bookingsFee')) || 0;
+        const bookingsFeePrice = (totalPrice * (bookingsFee / 100)).toFixed(2);
+        const total = (totalPrice * (1 + bookingsFee / 100)).toFixed(2);
+        // Use setFormValue to update only when values have actually changed
+        if (getFormValue('price') !== totalPrice.toFixed(2)) setFormValue('price', totalPrice.toFixed(2));
+        if (getFormValue('bookingsFeePrice') !== bookingsFeePrice) setFormValue('bookingsFeePrice', bookingsFeePrice);
+        if (getFormValue('total') !== total) setFormValue('total', total);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watch, getFormValue, setFormValue]);
+  const onBillSubmit = (data: BillingType) => {
+    dispatch(updateHomeFormSubmit(true))
+
+    homeSocket.current.emit('updateBilling', data)
+    homeSocket.current.once('updateBillingReturn', (msg: { status: number, newBilling: BillingType, message?: string }) => {
+      if (msg?.status !== 200) {
+        toast.error(msg?.message || 'null', {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          transition: bounce,
+          onClose: () => {
+            dispatch(updateHomeFormSubmit(false))
+          }
+        });
+      } else if (msg?.status == 200) {
+        router.push(`/doctors/dashboard/edit-billing/${btoa(msg.newBilling?._id)}`)
+      }
+
     })
   }
-
 
   return (
     <Fragment>
@@ -80,32 +175,77 @@ const AddBilling: FC = (() => {
           <div className="card-header">
             <h4 className="card-title mb-0">{router.asPath.endsWith('editbilling') ? `Edit Billing` : `Add Billing`}</h4>
           </div>
-          <div className="card-body">
+          {!doctorPatientProfile ? <CircleToBlockLoading color={theme.palette.primary.main} size="small"
+            style={{
+              minWidth: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+            }} /> : <form noValidate onSubmit={handleSubmit(onBillSubmit)} className="card-body">
             <div className="row">
               <div className="col-sm-6">
                 <div className="biller-info">
-                  <h4 className="d-block">Dr. Darren Elder</h4>
-                  <span className="d-block text-sm text-muted">Dentist</span>
-                  <span className="d-block text-sm text-muted">Newyork, United States</span>
+                  <h4 className="d-block">Dr. {`${userProfile?.firstName} ${userProfile?.lastName}`}</h4>
+                  <span className="d-block text-sm text-muted">{userProfile?.specialities && userProfile?.specialities.length > 0 && userProfile?.specialities[0]?.specialities}</span>
+                  <span className="d-block text-sm text-muted">
+                    Country: {userProfile?.country || '-------'}<br />
+                    State: {userProfile?.state || '-------'}<br />
+                    City: {userProfile?.city || '-------'}
+                  </span>
                 </div>
               </div>
               <div className="col-sm-6 text-sm-end">
                 <div className="billing-info">
-                  <h4 className="d-block">1 November 2019</h4>
-                  <span className="d-block text-muted">#INV0001</span>
+                  <h4 className="d-block">{dayjs().format('DD MMMM YYYY')}</h4>
+                  <span className="d-block text-muted">#INV?????</span>
                 </div>
               </div>
             </div>
 
 
-            {/* <div className="add-more-item text-end">
-              <Link href="" onClick={(e) => {
-                e.preventDefault();
-              }} ><i className="fas fa-plus-circle"></i> Add Item</Link>
-            </div> */}
-            {!router.asPath.endsWith('see-billing') && <div className="add-more text-end" onClick={addInputField} style={{ marginBottom: 8 }}>
-              <Link href="#" onClick={(e) => { e.preventDefault() }} className="add-education"><i className="fa fa-plus-circle"></i> Add More</Link>
-            </div>}
+            <div style={{ display: 'flex', alignItems: "center", justifyContent: 'space-between', minHeight: '90px' }}>
+              <div className="col-md-6">
+                <div className="form-group mb-0">
+                  <Controller
+                    rules={{ required: 'This field is required' }}
+                    name="dueDate"
+                    control={control}
+                    render={(props: any) => {
+                      const { field, fieldState, formState } = props;
+                      const { ref, onChange, value } = field;
+                      const { defaultValues } = formState;
+                      return (
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <MobileDatePicker
+                            closeOnSelect
+                            disablePast
+                            format="DD MMM YYYY"
+                            onChange={(event: any) => {
+                              onChange(dayjs(event).format(`YYYY-MM-DDTHH:mm:ss`));
+                            }}
+                            slotProps={{
+                              textField: {
+                                inputProps: { value: value == null ? 'Due Date' : dayjs(value).format('DD MMM YYYY') },
+                                fullWidth: true,
+                                required: false,
+                                label: 'Due Date',
+                                error: errors.dueDate == undefined ? false : true,
+                                helperText: errors.dueDate && errors['dueDate']['message'] as ReactNode,
+                                size: 'small'
+                              },
+                            }}
+
+                            value={dayjs(defaultValues.dueDate)}
+                          />
+                        </LocalizationProvider>
+                      )
+                    }}
+                  />
+                </div>
+              </div>
+              {billsFields.length < 5 && <div className="add-more text-end" onClick={addInputField} style={{ marginBottom: 8 }}>
+                <Link href="" onClick={(e) => { e.preventDefault() }} className="add-education"><i className="fa fa-plus-circle"></i> Add More</Link>
+              </div>}
+            </div>
 
 
 
@@ -115,52 +255,142 @@ const AddBilling: FC = (() => {
                   <table className="table table-hover table-center">
                     <thead>
                       <tr>
-                        <th style={{ minWidth: 200 }}>Title</th>
-                        <th style={{ minWidth: 200 }}>Amount</th>
-                        <th style={{ width: 80 }} />
+
+                        <th style={{ minWidth: 200, textAlign: 'center' }}>Title</th>
+                        <th style={{ minWidth: 150, textAlign: 'center' }}>Price</th>
+                        <th style={{ maxWidth: 50, textAlign: 'center' }}>Bookings Fee</th>
+                        <th style={{ minWidth: 100, textAlign: 'center' }}>Fee Price</th>
+                        <th style={{ minWidth: 100, textAlign: 'center' }}>Total</th>
+                        <th style={{ width: 50 }} />
                       </tr>
                     </thead>
                     {
-                      inputFields.map((data, index) => {
+                      billsFields.map((data, index) => {
                         return (
                           <tbody key={index}>
                             <tr>
                               <td>
                                 <FormControl fullWidth>
-                                  {/* Use FormLabel to associate it correctly */}
-                                  <FormLabel htmlFor={`consult-title-${index}`} sx={{ display: 'none' }}>
-                                    Title
-                                  </FormLabel>
                                   <TextField
                                     required
-                                    id={`consult-title-${index}`} // Directly set the id here
-                                    name={`consult-title-${index}`}
-                                    aria-label="Title"
-                                    autoComplete="off"
+                                    id={`title${index}`}
+                                    autoComplete='off'
+                                    error={errors?.['billDetailsArray']?.[index]?.['title'] == undefined ? false : true}
+                                    helperText={errors?.['billDetailsArray']?.[index]?.['title'] && errors?.['billDetailsArray']?.[index]?.['title']?.['message'] as ReactNode}
+                                    {
+                                    ...control.register(`billDetailsArray.${index}.title`, {
+                                      required: `This field is required `,
+                                    })
+                                    }
                                     label="Title"
-                                    value={data?.title || ''}
-                                    onChange={(e) => inputChange(e, index, 'title')}
-                                    size="small"
+                                    size='small'
                                     fullWidth
-                                    disabled={router.asPath.endsWith('see-billing')}
+                                    disabled={router.asPath.endsWith('see-prescription')}
+                                  />
+                                </FormControl>
+                              </td>
+                              <td>
+                                <Controller
+                                  rules={{
+                                    required: "This field is required",
+                                  }}
+                                  name={`billDetailsArray.${index}.price`}
+                                  control={control}
+                                  render={(props: any) => {
+                                    const { field, fieldState, formState } = props;
+                                    const { ref, onChange } = field;
+                                    return (
+                                      <TextField
+                                        required
+                                        id={`price${index}`}
+                                        onKeyDown={(e) => {
+                                          const allowKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Tab', 'Backspace', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Tab']
+                                          if (!allowKeys.includes(e.key)) {
+                                            e.preventDefault()
+                                          }
+                                        }}
+                                        autoComplete='off'
+                                        label="Price"
+                                        size='small'
+                                        error={errors?.['billDetailsArray']?.[index]?.['price'] == undefined ? false : true}
+                                        helperText={errors?.['billDetailsArray']?.[index]?.['price'] && errors?.['billDetailsArray']?.[index]?.['price']?.['message'] as ReactNode}
+                                        fullWidth
+                                        ref={ref}
+                                        inputProps={{ style: { textTransform: 'lowercase' }, autoComplete: 'email' }}
+                                        onChange={(e: any) => {
+                                          setFormValue(`billDetailsArray.${index}.bookingsFeePrice`, ((Number(e.target.value) * (Number(getFormValue('bookingsFee')) / 100)).toFixed(2)).toString())
+                                          setFormValue(`billDetailsArray.${index}.total`, Number((Number(e.target.value) * (1 + Number(getFormValue('bookingsFee')) / 100)).toFixed(2)).toString())
+                                          onChange(e)
+                                        }}
+                                        disabled={router.asPath.endsWith('see-prescription')}
+                                        InputProps={{
+                                          endAdornment:
+                                            <InputAdornment position="end" >
+                                              <span style={{ fontSize: '12px' }}>{userProfile?.currency[0]?.currency_symbol}</span>
+                                            </InputAdornment>,
+                                        }}
+                                      />
+                                    )
+                                  }} />
+                              </td>
+                              <td>
+                                <FormControl fullWidth>
+                                  <TextField
+                                    required
+                                    id={`bookingsFee${index}`}
+                                    autoComplete='off'
+                                    {
+                                    ...control.register(`billDetailsArray.${index}.bookingsFee`, {
+                                      required: `This field is required `,
+                                    })
+                                    }
+                                    label="Fee"
+                                    size='small'
+                                    fullWidth
+                                    disabled
+                                    value={watch(`billDetailsArray.${index}.bookingsFee`)}
                                   />
                                 </FormControl>
                               </td>
                               <td>
                                 <FormControl fullWidth>
-                                  <label htmlFor={`consult-amount-${index}`} style={{ display: "none" }}>Amount</label>
                                   <TextField
                                     required
-                                    id={`consult-amount-${index}`}
-                                    name={`consult-amount-${index}`}
-                                    aria-label="Amount"
+                                    id={`bookingsFeePrice${index}`}
                                     autoComplete='off'
-                                    label="Amount"
-                                    value={data?.amount || ''}
-                                    onChange={(e) => { inputChange(e, index, 'amount') }}
+                                    {
+                                    ...control.register(`billDetailsArray.${index}.bookingsFeePrice`, {
+                                      required: `This field is required `,
+                                    })
+                                    }
+                                    InputLabelProps={{
+                                      shrink: !!watch(`billDetailsArray.${index}.bookingsFeePrice`),
+                                    }}
+                                    label="Fee Price"
                                     size='small'
                                     fullWidth
-                                    disabled={router.asPath.endsWith('see-billing')}
+                                    disabled
+                                  />
+                                </FormControl>
+                              </td>
+                              <td>
+                                <FormControl fullWidth>
+                                  <TextField
+                                    required
+                                    id={`total${index}`}
+                                    autoComplete='off'
+                                    {
+                                    ...control.register(`billDetailsArray.${index}.total`, {
+                                      required: `This field is required `,
+                                    })
+                                    }
+                                    InputLabelProps={{
+                                      shrink: !!watch(`billDetailsArray.${index}.total`),
+                                    }}
+                                    label="Total"
+                                    size='small'
+                                    fullWidth
+                                    disabled
                                   />
                                 </FormControl>
                               </td>
@@ -169,7 +399,7 @@ const AddBilling: FC = (() => {
                                   e.preventDefault();
                                   removeInputFields(index)
                                 }} className="btn bg-danger-light trash">
-                                  <i className="far fa-trash-alt"></i></Link>}
+                                  <i className="far fa-trash-alt" style={{ color: '#000' }}></i></Link>}
                               </td>
                             </tr>
                           </tbody>
@@ -181,31 +411,54 @@ const AddBilling: FC = (() => {
               </div>
             </div>
 
-            {!router.asPath.endsWith('see-billing') && <div className="row">
-              <div className="col-md-12 text-end">
-                <div className="signature-wrap">
-                  <div className="signature">
-                    Click here to sign
-                  </div>
-                  <div className="sign-name">
-                    <p className="mb-0">( Dr. Darren Elder )</p>
-                    <span className="text-muted">Signature</span>
-                  </div>
-                </div>
+            <div className="col-md-6 col-xl-4 ms-auto">
+              <div className="table-responsive">
+                <table className="invoice-table-two table">
+                  <tbody>
+                    <tr>
+                      <th>Total Price:</th>
+                      <td style={{ padding: '10px 0px' }}>
+                        <span>{userProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
+                          watch('price')
+                        )}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Total Fee Price:</th>
+                      <td style={{ padding: '10px 0px' }}>
+                        <span>{userProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
+                          watch('bookingsFeePrice')
+                        )}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Total:</th>
+                      <td style={{ padding: '10px 0px' }}>
+                        <span>{userProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
+                          watch('total')
+                        )}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-            </div>}
+            </div>
+
 
             {!router.asPath.endsWith('see-billing') && <div className="row">
               <div className="col-md-12">
                 <div className="submit-section">
                   <button type="submit" className="btn btn-primary submit-btn">Save</button>
-                  <button type="reset" className="btn btn-primary submit-btn" onClick={() => { setInputFields(() => { return [{ ...initialState }] }) }}>Clear</button>
+                  <button type="reset" className="btn btn-primary submit-btn"
+                    onClick={() => {
+                      reset();
+                    }}>Clear</button>
                 </div>
               </div>
             </div>}
 
 
-          </div>
+          </form>}
         </div>
       </div>
     </Fragment >

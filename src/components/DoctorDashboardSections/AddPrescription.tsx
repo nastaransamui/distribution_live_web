@@ -23,6 +23,7 @@ export interface PrescriptionsArrayType {
 
 export interface PrescriptionsType {
   _id: string;
+  id: number;
   doctorId: string;
   patientId: string;
   prescriptionsArray: PrescriptionsArrayType[];

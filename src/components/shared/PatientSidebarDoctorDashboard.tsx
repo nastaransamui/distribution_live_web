@@ -47,7 +47,7 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
               <div className="profile-sidebar">
 
 
-                <div className="card widget-profile pat-widget-profile">
+                <div className="card widget-profile pat-widget-profile" style={{ border: 'none', borderRadius: 'unset' }}>
                   <div className="card-body">
                     <div className="pro-widget-content">
                       <div className="profile-info-widget">
@@ -86,7 +86,7 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                   </div>
                 </div>
 
-                <div className="card">
+                <div className="card" style={{ border: 'none' }}>
                   {doctorPatientProfile?.lastTwoAppointments.length > 0 && <div className="card-header">
                     <h4 className="card-title">Last Booking</h4>
                   </div>}

@@ -12,6 +12,7 @@ import useScssVar from '@/hooks/useScssVar'
 import _ from 'lodash'
 import { AppointmentReservationType } from '../DoctorsSections/CheckOut/PaymentSuccess'
 import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection'
+import { UserProfileNotNullType } from '@/redux/userProfile'
 
 export interface DoctorPatientInitialLimitsAndSkipsTypes {
   appointMentsLimit: number;

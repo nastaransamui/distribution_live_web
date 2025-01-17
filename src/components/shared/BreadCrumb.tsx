@@ -36,11 +36,11 @@ const BreadCrumb: FC<BreadCrumbProps> = (({ title, subtitle }: BreadCrumbProps) 
                         if (router.pathname.split('/')[2] == 'dashboard') {
                           router.push(`/${userProfile?.roleName}/dashboard`)
                         } else {
-                          router.push(`/${router.pathname.split('/')[1]}`)
+                          // router.push(`/${router.pathname.split('/')[1]}`)
+                          router.push(`/${userProfile?.roleName}/dashboard`)
                           if (document.referrer == '') {
 
                           } else {
-                            // console.log('first')
                             // router.back()
                           }
 
@@ -49,7 +49,7 @@ const BreadCrumb: FC<BreadCrumbProps> = (({ title, subtitle }: BreadCrumbProps) 
                         {
                           router.pathname.split('/')[2] == 'dashboard' ?
                             'Dashboard' :
-                            `${router.pathname.split('/')[1].charAt(0).toUpperCase()}${router.pathname.split('/')[1].slice(1)}`
+                            `${userProfile?.roleName.charAt(0).toUpperCase()}${userProfile?.roleName.slice(1)}`
                         }
                       </Link>
                     </li>

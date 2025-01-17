@@ -45599,8 +45599,7 @@ svg.feather {
   -moz-transform: rotate(-10deg);
   -ms-transform: rotate(-10deg);
   position:absolute;
-  top:105%;
-  left: 30%
+  top:50px;
 }
 
 .rubber_stamp_paid {
@@ -45621,8 +45620,7 @@ svg.feather {
   -moz-transform: rotate(-10deg);
   -ms-transform: rotate(-10deg);
   position:absolute;
-  top:105%;
-  left: 32%
+   top:50px;
 }
 .rubber_stamp_pendign {
   font-size: 20px;
@@ -45642,6 +45640,5 @@ svg.feather {
   -moz-transform: rotate(-10deg);
   -ms-transform: rotate(-10deg);
   position:absolute;
-  top:105%;
-  left: 32%
+  top:50px;
 }

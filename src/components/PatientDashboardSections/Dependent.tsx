@@ -128,14 +128,6 @@ const Dependent: FC = (() => {
 
     if (e.target.files[0]) {
       setImageName(e.target.files[0].name)
-      // createSetValue('image', e.target.files[0])
-      // createClearErrors('image')
-      // setEditValues((prevState) => {
-      //   return {
-      //     ...prevState,
-      //     profileImage: URL.createObjectURL(e.target.files[0])
-      //   }
-      // })
     }
   }
   const handleClickInputFile = () => {
@@ -261,6 +253,16 @@ const Dependent: FC = (() => {
             <>{dayjs(row.updateAt).tz(process.env.NEXT_PUBLIC_TZ).format('YYYY MMM DD HH:mm')}</>
           )
         }
+      },
+      {
+        field: 'medicalRecordsArray',
+        headerName: "Medical Records",
+        width: 200,
+        headerAlign: 'center',
+        align: 'center',
+        valueFormatter: (params: GridValueFormatterParams<string>) => {
+          return `${params?.value?.length} record${params?.value?.length <= 1 ? "" : 's'}`
+        },
       },
       {
         field: "actions",

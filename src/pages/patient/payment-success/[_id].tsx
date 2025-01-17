@@ -12,17 +12,17 @@ import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import Footer from '@/components/sections/Footer';
-import PatientSidebarDoctorDashboard from '@/components/shared/PatientSidebarDoctorDashboard';
-import AddBilling from '@/components/DoctorDashboardSections/AddBilling';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
-import DoctorDashboardSidebar from '@/components/shared/DoctorDashboardSidebar';
 import useScssVar from '@/hooks/useScssVar';
+import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
+import BillPaymentSuccess from '@/components/PatientSection/BillPayment/BillPaymentSuccess';
 
-const AddBillingPage: NextPage = (props: any) => {
-  const { doctorPatientProfile } = props;
+
+const CheckoutPage: NextPage = () => {
+
   const { muiVar } = useScssVar();
   return (
     <>
@@ -36,17 +36,11 @@ const AddBillingPage: NextPage = (props: any) => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
-      <BreadCrumb subtitle='Add Billing' title='Add Billing' />
-      <div className="content" style={muiVar}>
-        <div className="container-fluid">
-          <div className="row">
-            {/* <PatientSidebarDoctorDashboard doctorPatientProfile={doctorPatientProfile} />      */}
-            <DoctorDashboardSidebar />
-            <AddBilling />
-          </div>
-        </div>
+      <div className="main-wrapper">
+        <BillPaymentSuccess />
+        <Footer />
+        <CookieConsentComponent />
       </div>
-      <Footer />
     </>
   )
 }
@@ -54,13 +48,15 @@ const AddBillingPage: NextPage = (props: any) => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx) => {
     try {
-      let props = {}
       const result = await fetch('http://ip-api.com/json/', {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
         }
       })
+
+
+      let props: any = {}
       const userData = await result.json();
       if (userData['status'] == 'success') {
         store.dispatch(updateUserData(userData))
@@ -81,37 +77,17 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             }
             if (fullToken !== '') {
               var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(fullToken)
-              if (roleName == 'doctors') {
-                store.dispatch(updateHomeAccessToken(fullToken))
-                store.dispatch(updateUserProfile(userProfile))
-              } else {
-                return {
-                  redirect: {
-                    destination: `/${roleName}/dashboard`,
-                    permanent: false,
-                  },
-                }
-              }
+              store.dispatch(updateUserProfile(userProfile))
+              store.dispatch(updateHomeAccessToken(fullToken))
             }
             break;
 
           default:
             var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(getCookie('homeAccessToken', ctx))
-
-            if (roleName == 'doctors') {
-              store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
-              store.dispatch(updateUserProfile(userProfile))
-            } else {
-              return {
-                redirect: {
-                  destination: `/${roleName}/dashboard`,
-                  permanent: false,
-                },
-              }
-            }
+            store.dispatch(updateUserProfile(userProfile))
+            store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
             break;
         }
-
       } else {
         return {
           ...props,
@@ -126,7 +102,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       }
     } catch (error) {
       console.log(error)
-      let props = {}
       if (hasCookie('homeThemeType', ctx)) {
         store.dispatch(updateHomeThemeType(getCookie('homeThemeType', ctx)))
       }
@@ -143,50 +118,23 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             }
             if (fullToken !== '') {
               var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(fullToken)
-              if (roleName == 'doctors') {
-                store.dispatch(updateHomeAccessToken(fullToken))
-                store.dispatch(updateUserProfile(userProfile))
-              } else {
-                return {
-                  redirect: {
-                    destination: `/${roleName}/dashboard`,
-                    permanent: false,
-                  },
-                }
-              }
+              store.dispatch(updateUserProfile(userProfile))
+              store.dispatch(updateHomeAccessToken(fullToken))
             }
             break;
 
           default:
             var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(getCookie('homeAccessToken', ctx))
-
-            if (roleName == 'doctors') {
-              store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
-              store.dispatch(updateUserProfile(userProfile))
-            } else {
-              return {
-                redirect: {
-                  destination: `/${roleName}/dashboard`,
-                  permanent: false,
-                },
-              }
-            }
+            store.dispatch(updateUserProfile(userProfile))
+            store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
             break;
         }
-
-      } else {
-        return {
-          ...props,
-          redirect: {
-            destination: `/login`,
-            permanent: false,
-          },
-        }
       }
+      let props = {}
       return {
         props
       }
     }
   })
 
-export default connect((state: AppState) => state)(AddBillingPage);
+export default connect((state: AppState) => state)(CheckoutPage);

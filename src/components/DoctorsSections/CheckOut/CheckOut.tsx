@@ -215,7 +215,7 @@ const Checkout: FC = (() => {
       }
     }
   }
-  console.log(paymentInfo)
+
   return (
     <Fragment>
       <Dialog
@@ -388,53 +388,54 @@ const Checkout: FC = (() => {
                       <div className="filter-grid">
                         <h4>
                           <Link data-bs-toggle="collapse" href="/doctors/check-out#collapseone">
-                            Payment Method
+                            {watch('paymentConfirm') ? `Paid already` : `Payment Method`}
                           </Link>
                         </h4>
-                        <div id="collapseone" className="collapse show">
-                          <div className="filter-collapse">
-                            <GooglePayButton
-                              environment="TEST"
-                              paymentRequest={{
-                                apiVersion: 2,
-                                apiVersionMinor: 0,
-                                allowedPaymentMethods: [
-                                  {
-                                    type: 'CARD',
-                                    parameters: {
-                                      allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                                      allowedCardNetworks: ['MASTERCARD', 'VISA'],
-                                    },
-                                    tokenizationSpecification: {
-                                      type: 'PAYMENT_GATEWAY',
+                        {!watch('paymentConfirm') &&
+                          <div id="collapseone" className="collapse show">
+                            <div className="filter-collapse">
+                              <GooglePayButton
+                                environment="TEST"
+                                paymentRequest={{
+                                  apiVersion: 2,
+                                  apiVersionMinor: 0,
+                                  allowedPaymentMethods: [
+                                    {
+                                      type: 'CARD',
                                       parameters: {
-                                        gateway: 'example',
-                                        gatewayMerchantId: 'exampleGatewayMerchantId',
+                                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                                        allowedCardNetworks: ['MASTERCARD', 'VISA'],
+                                      },
+                                      tokenizationSpecification: {
+                                        type: 'PAYMENT_GATEWAY',
+                                        parameters: {
+                                          gateway: 'example',
+                                          gatewayMerchantId: 'exampleGatewayMerchantId',
+                                        },
                                       },
                                     },
+                                  ],
+                                  merchantInfo: {
+                                    merchantId: '12345678901234567890',
+                                    merchantName: 'Demo Merchant',
                                   },
-                                ],
-                                merchantInfo: {
-                                  merchantId: '12345678901234567890',
-                                  merchantName: 'Demo Merchant',
-                                },
-                                transactionInfo: paymentInfo,
-                              }}
-                              onCancel={reason => { console.log(reason) }}
-                              onLoadPaymentData={paymentRequest => {
-                                const { paymentMethodData } = paymentRequest
-                                const { tokenizationData } = paymentMethodData
-                                const { token, type } = tokenizationData
-                                setValue('paymentToken', token);
-                                setValue('paymentType', type)
-                                setValue('paymentConfirm', true)
-                                clearErrors('paymentConfirm')
-                              }}
-                              buttonColor={theme.palette.mode == 'dark' ? 'black' : 'white'}
-                              buttonType='checkout'
-                            />
-                          </div>
-                        </div>
+                                  transactionInfo: paymentInfo,
+                                }}
+                                onCancel={reason => { console.log(reason) }}
+                                onLoadPaymentData={paymentRequest => {
+                                  const { paymentMethodData } = paymentRequest
+                                  const { tokenizationData } = paymentMethodData
+                                  const { token, type } = tokenizationData
+                                  setValue('paymentToken', token);
+                                  setValue('paymentType', type)
+                                  setValue('paymentConfirm', true)
+                                  clearErrors('paymentConfirm')
+                                }}
+                                buttonColor={theme.palette.mode == 'dark' ? 'black' : 'white'}
+                                buttonType='checkout'
+                              />
+                            </div>
+                          </div>}
                       </div>
 
                       <div className="terms-accept">
@@ -490,7 +491,7 @@ const Checkout: FC = (() => {
                   </div>
                   <div className="card-body">
                     <div className="booking-doc-info">
-                      <Link target="_blank" aria-label='booking-doc' rel="noopener noreferrer" href={`/doctors/search/${btoa(profile?._id)}`} className="booking-doc-img">
+                      <Link target="_blank" aria-label='booking-doc' rel="noopener noreferrer" href={`/doctors/profile/${btoa(profile?._id)}`} className="booking-doc-img">
                         <Avatar sx={{
                           width: 'auto',
                           height: 'auto',
@@ -508,7 +509,7 @@ const Checkout: FC = (() => {
                       </Link>
                       <div className="booking-info">
                         <h4>
-                          <Link target="_blank" rel="noopener noreferrer" href={`/doctors/search/${btoa(profile?._id)}`}>
+                          <Link target="_blank" rel="noopener noreferrer" href={`/doctors/profile/${btoa(profile?._id)}`}>
                             Dr. {profile?.firstName} {" "} {profile?.lastName}
                           </Link>
                         </h4>

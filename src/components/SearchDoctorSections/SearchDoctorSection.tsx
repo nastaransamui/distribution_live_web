@@ -150,7 +150,6 @@ const SearchDoctorSection: FC = (() => {
       limit: number,
       skip: number,
       sortBy: string, homeSocket: any, reload: boolean) => {
-      // console.log({ limit, skip })
       homeSocket.current.emit(`doctorSearch`, {
         keyWord,
         specialities,
@@ -183,7 +182,6 @@ const SearchDoctorSection: FC = (() => {
           });
         } else {
           homeSocket.current.on(`updateDoctorSearch`, (msg: any) => {
-            console.log(msg);
             setReload(!reload)
           })
           setDoctorResults((prevState) => {

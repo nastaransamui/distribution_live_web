@@ -67,7 +67,6 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
 
 
   const onPrescriptionSubmit = (data: PrescriptionsType) => {
-    console.log(data)
     if (getValues('prescriptionsArray').length == 0) {
       toast.error('You can\'t save Prescription without medicine.', {
         position: "bottom-center",
