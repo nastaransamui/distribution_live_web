@@ -130,7 +130,7 @@ const DoctorDashboardSidebar: FC = (() => {
                   <li className={router.pathname == "/doctors/dashboard/invoice" ? "active" : ""}>
                     <Link href="/doctors/dashboard/invoice">
                       <i className="fas fa-file-invoice" />
-                      <span>Reservations Invoices</span>
+                      <span>Appointments / Invoices</span>
                     </Link>
                   </li>
                   <li className={router.pathname == "/doctors/dashboard/billings" ? "active" : ""}>

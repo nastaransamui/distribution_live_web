@@ -47,7 +47,6 @@ import Radio from '@mui/material/Radio';
 import Avatar from '@mui/material/Avatar';
 import FormHelperText from '@mui/material/FormHelperText';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
-import { UserProfileNotNullType } from '@/redux/userProfile';
 import { PatientProfile } from '../DoctorDashboardSections/MyPtients';
 
 

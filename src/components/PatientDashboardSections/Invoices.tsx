@@ -2,7 +2,7 @@
 import { FC, forwardRef, Fragment, useEffect, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { DataGrid, GridColDef, GridActionsCellItem, GridRenderCellParams, GridRowParams } from '@mui/x-data-grid';
-import { doctors_profile, logo, patient_profile, } from '@/public/assets/imagepath';
+import { doctors_profile, logo } from '@/public/assets/imagepath';
 import dayjs from 'dayjs';
 import Stack from '@mui/material/Stack';
 import Link from 'next/link';
@@ -299,15 +299,6 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
 })
 PrintInvoiceComponent.displayName = "PrintInvoiceComponent"
 
-export interface ValueType {
-  id: number;
-  invoiceNo: string;
-  patientName: string;
-  patientId: string;
-  patientImage: string;
-  paidAmount: string;
-  paidOn: string;
-}
 const Invoices: FC = (() => {
   const { muiVar, bounce } = useScssVar();
   const userProfile = useSelector((state: AppState) => state.userProfile.value)

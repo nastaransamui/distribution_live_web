@@ -123,7 +123,7 @@ const PatientDashboardSidebar: FC = (() => {
                   <li className={router.pathname == "/patient/dashboard/invoice" ? "active" : ""}>
                     <Link href="/patient/dashboard/invoice">
                       <i className="fas fa-file-invoice" />
-                      <span>Reservations Invoices</span>
+                      <span>Appointments / Invoices</span>
                     </Link>
                   </li>
                   <li className={router.pathname.includes("/dependent") ? "active" : ""}>

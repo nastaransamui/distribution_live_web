@@ -127,6 +127,7 @@ const BillCheckOut: FC = (() => {
       active = false;
     }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encryptId, homeSocket, reload, router])
 
   const {

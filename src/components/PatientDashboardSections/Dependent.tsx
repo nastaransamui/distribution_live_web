@@ -496,7 +496,7 @@ const Dependent: FC = (() => {
                 justifyContent: 'center',
               }} />
             :
-            <div className="table-responsive" style={{ height: 580, width: '100%' }}>
+            <div className="table-responsive" style={{ height: 480, width: '100%' }}>
               <DataGrid
                 paginationMode='server'
                 experimentalFeatures={{ ariaV7: true }}
@@ -531,6 +531,7 @@ const Dependent: FC = (() => {
                 pageSizeOptions={[5, 10]}
                 showCellVerticalBorder
                 showColumnVerticalBorder
+                isRowSelectable={(params) => false}
                 sx={{
                   ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
                     "marginTop": "1em",

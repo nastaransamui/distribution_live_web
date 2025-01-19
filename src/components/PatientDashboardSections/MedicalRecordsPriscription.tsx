@@ -22,7 +22,7 @@ import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, StyledBadg
 
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
-import { DeleteForever } from '@mui/icons-material';
+import DeleteForever from '@mui/icons-material/DeleteForever';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import { DialogContent } from '@mui/material';
 
@@ -273,6 +273,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                 style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }} target='_blank'>
                 {`Dr.${row?.doctorProfile?.fullName}`}
               </Link>
+              <small>{row?.doctorProfile?.specialities[0]?.specialities}</small>
             </Stack>
           </>
         )
@@ -351,8 +352,15 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
       width: 200,
       headerAlign: 'center',
       align: 'center',
+      valueGetter: (params) => {
+        const prescriptionsArray = params?.row?.prescriptionsArray;
+        return prescriptionsArray.length;
+      },
+      sortComparator: (v1: any, v2: any) => {
+        return v1 > v2 ? -1 : 1
+      },
       renderCell: (params: GridRenderCellParams) => {
-        const { value } = params;
+        const { prescriptionsArray: value } = params?.row;
         const tooltipText = value.map((obj: any) => {
           // Map over each key-value pair in the object
           const formattedEntries = Object.entries(obj)
@@ -376,13 +384,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                       textOverflow: 'ellipsis',
                     }}
                   >
-                    {value.map((a: any) => {
-                      let keys = Object.keys(a)
-                      return `
-                    ${keys[0]}: 
-                    ${a?.[keys[0]]}
-                  `
-                    })}
+                    {`${value.length} medicine ${value.length <= 1 ? '' : "s"}`}
                   </span>
                 </Tooltip>
               </> :

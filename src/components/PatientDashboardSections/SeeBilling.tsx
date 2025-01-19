@@ -1,11 +1,9 @@
 import { FC, Fragment, useEffect, ReactNode } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import Link from 'next/link';
 import { AppState } from '@/redux/store';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
-import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -15,29 +13,18 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
-import { toast } from 'react-toastify';
-import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection';
 
 import _ from 'lodash';
-import { BillingDetailsArrayType, BillingType } from '../DoctorDashboardSections/AddBilling';
+import { BillingType } from '../DoctorDashboardSections/AddBilling';
 import { formatNumberWithCommas } from '../DoctorDashboardSections/ScheduleTiming';
 import { BillingTypeWithDoctorProfile } from '../DoctorDashboardSections/EditBilling';
+import Chip from '@mui/material/Chip';
 
-const initialState: BillingDetailsArrayType = {
-  title: '',
-  price: "",
-  bookingsFee: "",
-  bookingsFeePrice: '',
-  total: '',
-}
 
 
 const SeeBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ singleBill }) => {
-  const { muiVar, bounce } = useScssVar();
+  const { muiVar } = useScssVar();
   const theme = useTheme();
-  const router = useRouter();
-  const dispatch = useDispatch();
   const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const {
@@ -157,7 +144,18 @@ const SeeBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ singleB
                   />
                 </div>
               </div>
+              <div className="col-md-6">
+                <div className="form-group mb-0" style={{ paddingLeft: '10px' }}>
+                  <Chip
+                    color={
+                      singleBill?.status == 'Paid' ? 'success' :
+                        (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ? 'error' :
+                          'primary'}
+                    label={`${singleBill?.status !== 'Paid' && (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ? `Over Due` : singleBill?.status}`}
 
+                    sx={{ color: '#000', fontSize: '18px', minWidth: '100%', height: '40px' }} />
+                </div>
+              </div>
             </div>
 
 

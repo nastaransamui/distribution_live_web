@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useState, useRef, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import { DataGrid, GridActionsCellItem, GridRowParams, GridRenderCellParams, GridValueFormatterParams } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridRowParams, GridRenderCellParams, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 
 import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
@@ -221,6 +221,13 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
       align: 'center',
       width: 150,
       headerAlign: 'center',
+      valueGetter: (params: GridValueGetterParams) => {
+        const timeSlot = params?.row?.timeSlot;
+        return timeSlot ? parseFloat(timeSlot?.total) || 0 : 0; // Ensure a numeric value
+      },
+      sortComparator: (v1: any, v2: any) => {
+        return v1 > v2 ? -1 : 1
+      },
       renderCell: (params: GridRenderCellParams) => {
         return (
           <Stack >

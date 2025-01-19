@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, forwardRef, Fragment, useEffect, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import { DataGrid, GridActionsCellItem, GridRowParams, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridRowParams, GridRenderCellParams, GridValueGetterParams } from '@mui/x-data-grid';
 
 import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
@@ -28,14 +28,7 @@ import Chip from '@mui/material/Chip';
 import DeleteForever from '@mui/icons-material/DeleteForever';
 import { BootstrapDialog, BootstrapDialogTitle, Transition } from './Dialog';
 import DialogContent from '@mui/material/DialogContent';
-export interface BillingValueType {
-  invoiceNo: string;
-  doctorName: string;
-  doctorImage: string;
-  speciality: string;
-  amount: string;
-  payDate: string;
-}
+
 interface PrintProps {
   printProps: any
 }
@@ -610,6 +603,13 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
       width: 200,
       headerAlign: 'center',
       align: 'center',
+      valueGetter: (params: GridValueGetterParams) => {
+        const total = params?.row?.total;
+        return total ? parseFloat(total) || 0 : 0; // Ensure a numeric value
+      },
+      sortComparator: (v1: any, v2: any) => {
+        return v1 > v2 ? -1 : 1
+      },
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params;
         return (
@@ -625,6 +625,13 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
       width: 100,
       headerAlign: 'center',
       align: 'center',
+      valueGetter: (params: GridValueGetterParams) => {
+        const bookingsFee = params?.row?.bookingsFee;
+        return bookingsFee ? parseFloat(bookingsFee) || 0 : 0; // Ensure a numeric value
+      },
+      sortComparator: (v1: any, v2: any) => {
+        return v1 > v2 ? -1 : 1
+      },
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params;
         return (
@@ -640,6 +647,13 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
       width: 150,
       headerAlign: 'center',
       align: 'center',
+      valueGetter: (params: GridValueGetterParams) => {
+        const bookingsFeePrice = params?.row?.bookingsFeePrice;
+        return bookingsFeePrice ? parseFloat(bookingsFeePrice) || 0 : 0; // Ensure a numeric value
+      },
+      sortComparator: (v1: any, v2: any) => {
+        return v1 > v2 ? -1 : 1
+      },
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params;
         return (
@@ -655,6 +669,13 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
       width: 150,
       headerAlign: 'center',
       align: 'center',
+      valueGetter: (params: GridValueGetterParams) => {
+        const price = params?.row?.price;
+        return price ? parseFloat(price) || 0 : 0; // Ensure a numeric value
+      },
+      sortComparator: (v1: any, v2: any) => {
+        return v1 > v2 ? -1 : 1
+      },
       renderCell: (params: GridRenderCellParams) => {
         const { row } = params;
         return (
@@ -671,10 +692,16 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
       headerAlign: 'center',
       align: 'center',
       renderCell: (params: GridRenderCellParams) => {
+        const currentDate = dayjs();
         const { row } = params;
+        const isDue = row?.dueDate !== 'Paid' && (dayjs(row?.dueDate).isBefore(currentDate, 'day') || dayjs(row?.dueDate).isSame(currentDate, 'day'))
+
         return (
           <>
-            <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.dueDate).format(`MMM D, YYYY`)}</span>
+            <span className="user-name"
+              style={{ justifyContent: 'center', display: 'flex', color: isDue ? 'crimson' : theme.palette.text.color }}>
+              {dayjs(row.dueDate).format(`MMM D, YYYY`)}
+            </span>
           </>
         )
       }
@@ -685,8 +712,15 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
       width: 100,
       headerAlign: 'center',
       align: 'center',
+      valueGetter: (params: GridValueGetterParams) => {
+        const billDetailsArray = params?.row?.billDetailsArray;
+        return billDetailsArray.length;
+      },
+      sortComparator: (v1: any, v2: any) => {
+        return v1 > v2 ? -1 : 1
+      },
       renderCell: (params: GridRenderCellParams) => {
-        const { value } = params;
+        const { billDetailsArray: value } = params?.row;
         const tooltipText = value.map((obj: any) => {
           // Map over each key-value pair in the object
           const formattedEntries = Object.entries(obj)
@@ -711,7 +745,8 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                       textOverflow: 'ellipsis',
                     }}
                   >
-                    {`${value.length} Items`}
+                    {`${value.length} Item${value?.length <= 1 ? '' : 's'}`}
+
                   </span>
                 </Tooltip>
               </> :

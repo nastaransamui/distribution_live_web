@@ -1,7 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
-import dayjs from 'dayjs'
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
