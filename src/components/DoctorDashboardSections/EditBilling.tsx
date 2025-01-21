@@ -20,6 +20,7 @@ import { toast } from 'react-toastify';
 import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection';
 import { BillingDetailsArrayType, BillingType } from './AddBilling';
 import _ from 'lodash';
+import Chip from '@mui/material/Chip';
 
 const initialState: BillingDetailsArrayType = {
   title: '',
@@ -195,7 +196,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                 size: 'small'
                               },
                             }}
-
+                            disabled={watch('status') == 'Paid'}
                             value={dayjs(defaultValues.dueDate)}
                           />
                         </LocalizationProvider>
@@ -204,11 +205,23 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                   />
                 </div>
               </div>
-              {billsFields.length < 5 && <div className="add-more text-end" onClick={addInputField} style={{ marginBottom: 8 }}>
-                <Link href="" onClick={(e) => { e.preventDefault() }} className="add-education"><i className="fa fa-plus-circle"></i> Add More</Link>
-              </div>}
+              {billsFields.length < 5 &&
+                <div className="add-more text-end" onClick={addInputField} style={{ marginBottom: 8 }}>
+                  <Link href="" onClick={(e) => { e.preventDefault() }} className="add-education"><i className="fa fa-plus-circle"></i> Add More</Link>
+                </div>}
             </div>
+            <div className="col-md-12">
+              <div className="form-group mb-0" style={{ paddingLeft: '10px' }}>
+                <Chip
+                  color={
+                    singleBill?.status == 'Paid' ? 'success' :
+                      (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ? 'error' :
+                        'primary'}
+                  label={`${singleBill?.status !== 'Paid' && (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ? `Over Due` : singleBill?.status}`}
 
+                  sx={{ color: '#000', fontSize: '18px', minWidth: '100%', height: '40px', mb: 3 }} />
+              </div>
+            </div>
 
 
             <div className="card card-table">
@@ -247,7 +260,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                     label="Title"
                                     size='small'
                                     fullWidth
-                                    disabled={router.asPath.endsWith('see-prescription')}
+                                    disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'}
                                   />
                                 </FormControl>
                               </td>
@@ -284,11 +297,16 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                           setFormValue(`billDetailsArray.${index}.total`, Number((Number(e.target.value) * (1 + Number(getFormValue('bookingsFee')) / 100)).toFixed(2)).toString())
                                           onChange(e)
                                         }}
-                                        disabled={router.asPath.endsWith('see-prescription')}
+                                        disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'}
                                         InputProps={{
                                           endAdornment:
                                             <InputAdornment position="end" >
-                                              <span style={{ fontSize: '12px' }}>{userProfile?.currency[0]?.currency_symbol}</span>
+                                              <span style={{
+                                                fontSize: '12px',
+                                                color: router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'
+                                                  ? theme.palette.text.disabled :
+                                                  theme.palette.text.color
+                                              }}>{userProfile?.currency[0]?.currency_symbol}</span>
                                             </InputAdornment>,
                                         }}
                                         value={watch(`billDetailsArray.${index}.price`)}
@@ -312,6 +330,12 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                     fullWidth
                                     disabled
                                     value={watch(`billDetailsArray.${index}.bookingsFee`)}
+                                    InputProps={{
+                                      startAdornment:
+                                        <InputAdornment position="start" >
+                                          <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>%</span>
+                                        </InputAdornment>,
+                                    }}
                                   />
                                 </FormControl>
                               </td>
@@ -333,6 +357,12 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                     size='small'
                                     fullWidth
                                     disabled
+                                    InputProps={{
+                                      endAdornment:
+                                        <InputAdornment position="end" >
+                                          <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userProfile?.currency[0]?.currency_symbol}</span>
+                                        </InputAdornment>,
+                                    }}
                                   />
                                 </FormControl>
                               </td>
@@ -354,15 +384,23 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                     size='small'
                                     fullWidth
                                     disabled
+                                    InputProps={{
+                                      endAdornment:
+                                        <InputAdornment position="end" >
+                                          <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userProfile?.currency[0]?.currency_symbol}</span>
+                                        </InputAdornment>,
+                                    }}
                                   />
                                 </FormControl>
                               </td>
                               <td>
-                                {!router.asPath.endsWith('see-billing') && <Link href="" aria-label='delete' onClick={(e) => {
-                                  e.preventDefault();
-                                  removeInputFields(index)
-                                }} className="btn bg-danger-light trash">
-                                  <i className="far fa-trash-alt" style={{ color: '#000' }}></i></Link>}
+                                {!router.asPath.endsWith('see-billing') &&
+                                  <Link href="" aria-label='delete' onClick={(e) => {
+                                    e.preventDefault();
+                                    removeInputFields(index)
+                                    //
+                                  }} className={`btn ${router.asPath.endsWith('see-prescription') || watch('status') == 'Paid' ? 'disabled' : ""}`}>
+                                    <i className="far fa-trash-alt" style={{ color: '#000', }}></i></Link>}
                               </td>
                             </tr>
                           </tbody>
@@ -411,8 +449,8 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
             {!router.asPath.endsWith('see-billing') && <div className="row">
               <div className="col-md-12">
                 <div className="submit-section">
-                  <button type="submit" className="btn btn-primary submit-btn">Save</button>
-                  <button type="reset" className="btn btn-primary submit-btn"
+                  <button type="submit" disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'} className="btn btn-primary submit-btn">Save</button>
+                  <button type="reset" disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'} className="btn btn-primary submit-btn"
                     onClick={() => {
                       reset();
                       setFormValue('billDetailsArray.0.bookingsFee', userProfile?.bookingsFee!)

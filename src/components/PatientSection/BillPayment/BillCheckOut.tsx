@@ -184,7 +184,7 @@ const BillCheckOut: FC = (() => {
     } else {
       dispatch(updateHomeFormSubmit(true))
       if (homeSocket?.current) {
-        homeSocket.current.emit(`updateBillingPayment`, { ...singleBill, paymentToken: data.paymentToken, paymentType: data.paymentType, status: "Paid" })
+        homeSocket.current.emit(`updateBillingPayment`, { ...singleBill, paymentToken: data.paymentToken, paymentType: data.paymentType, paymentDate: new Date(), status: "Paid" })
         homeSocket.current.once(`updateBillingPaymentReturn`, (msg: { status: number, newBilling: BillingType, reason?: string, message?: string }) => {
           const { status, newBilling, reason, message } = msg;
 

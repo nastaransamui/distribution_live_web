@@ -694,7 +694,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
       renderCell: (params: GridRenderCellParams) => {
         const currentDate = dayjs();
         const { row } = params;
-        const isDue = row?.dueDate !== 'Paid' && (dayjs(row?.dueDate).isBefore(currentDate, 'day') || dayjs(row?.dueDate).isSame(currentDate, 'day'))
+        const isDue = row?.status !== 'Paid' && (dayjs(row?.dueDate).isBefore(currentDate, 'day') || dayjs(row?.dueDate).isSame(currentDate, 'day'))
 
         return (
           <>
@@ -782,6 +782,40 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
               sx={{ color: theme.palette.primary.contrastText }} />
           </>
         )
+      }
+    },
+
+    {
+      field: "paymentType",
+      headerName: `Payment Type`,
+      width: 170,
+      align: 'center',
+      headerAlign: 'center',
+      valueGetter(params: GridRenderCellParams) {
+        const { value } = params
+        return value == '' ? '====' : value;
+      }
+    },
+    {
+      field: "paymentToken",
+      headerName: `PaymentToken`,
+      width: 270,
+      align: 'center',
+      headerAlign: 'center',
+      valueGetter(params: GridRenderCellParams) {
+        const { value } = params
+        return value == '' ? '====' : value;
+      }
+    },
+    {
+      field: 'paymentDate',
+      headerName: `Payment Date`,
+      align: 'center',
+      width: 150,
+      headerAlign: 'center',
+      valueGetter(params: GridRenderCellParams) {
+        const { value } = params
+        return value == '' ? '====' : dayjs(value).format('DD MMM YYYY  HH:mm')
       }
     },
     {

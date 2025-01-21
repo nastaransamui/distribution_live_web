@@ -91,11 +91,11 @@ const BillInvoice: FC = (() => {
     if (!exportRef.current) return;
     const customStyles = `
       #pdf-content {
-         width: 794px; /* A4 width in pixels at 96 DPI */
-  background-color: #fff;
-  font-size: 18px;
-  overflow: hidden;
-  margin: 0 auto; 
+        width: 794px; /* A4 width in pixels at 96 DPI */
+        background-color: #fff;
+        font-size: 18px;
+        overflow: hidden;
+        margin: 0 auto; 
       }
       #pdf-content p,
       #pdf-content td {

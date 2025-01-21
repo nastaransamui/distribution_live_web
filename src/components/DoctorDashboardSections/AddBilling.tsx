@@ -349,6 +349,12 @@ const AddBilling: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) =>
                                     fullWidth
                                     disabled
                                     value={watch(`billDetailsArray.${index}.bookingsFee`)}
+                                    InputProps={{
+                                      startAdornment:
+                                        <InputAdornment position="start" >
+                                          <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>%</span>
+                                        </InputAdornment>,
+                                    }}
                                   />
                                 </FormControl>
                               </td>
@@ -370,6 +376,12 @@ const AddBilling: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) =>
                                     size='small'
                                     fullWidth
                                     disabled
+                                    InputProps={{
+                                      endAdornment:
+                                        <InputAdornment position="end" >
+                                          <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userProfile?.currency[0]?.currency_symbol}</span>
+                                        </InputAdornment>,
+                                    }}
                                   />
                                 </FormControl>
                               </td>
@@ -391,6 +403,12 @@ const AddBilling: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) =>
                                     size='small'
                                     fullWidth
                                     disabled
+                                    InputProps={{
+                                      endAdornment:
+                                        <InputAdornment position="end" >
+                                          <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userProfile?.currency[0]?.currency_symbol}</span>
+                                        </InputAdornment>,
+                                    }}
                                   />
                                 </FormControl>
                               </td>
