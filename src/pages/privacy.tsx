@@ -18,6 +18,7 @@ import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
+import PrivacyDetails from '@/components/PrivacySecion/PrivacyDetails';
 
 const PrivacyPage: NextPage = () => {
 
@@ -35,7 +36,7 @@ const PrivacyPage: NextPage = () => {
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb title='Privacy Policy' subtitle='Privacy Policy' />
-      <TermsDetails />
+      <PrivacyDetails />
       <CookieConsentComponent />
       <Footer />
     </>

@@ -23,7 +23,6 @@ import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 
 const ProfileHomePage: NextPage = () => {
 
-
   return (
     <>
       <Head>

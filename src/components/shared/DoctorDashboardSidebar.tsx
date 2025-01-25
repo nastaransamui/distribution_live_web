@@ -76,7 +76,14 @@ const DoctorDashboardSidebar: FC = (() => {
                       {userProfile?.dob !== '' ? dayjs(userProfile?.dob).format('DD MMM YYYY') : '---- -- --'}
                     </h4>
                     <h5>{`${isNaN(years) ? '--' : years} years ${isNaN(months) ? '--' : months} months ${isNaN(days) ? '--' : days} days`}</h5>
-                    <h6 className="mb-0"><i className="fas fa-map-marker-alt"></i>{userProfile?.city} <br />{userProfile?.state} <br />{userProfile?.country}</h6>
+                    <h6 className="mb-0" style={{ display: 'flex', justifyContent: 'center', gap: 20, alignItems: 'center' }}>
+                      <i className="fas fa-map-marker-alt"></i>
+                      <span style={{ textAlign: 'left' }}>
+                        {userProfile?.city !== "" ? `City: ${userProfile?.city}` : `City: -----`} <br />
+                        {userProfile?.state !== "" ? `State: ${userProfile?.state}` : `State: -----`} <br />
+                        {userProfile?.country !== "" ? `Country: ${userProfile?.country}` : `Country: -----`}
+                      </span>
+                    </h6>
                   </div>
                 </div>
               </div>
@@ -147,13 +154,19 @@ const DoctorDashboardSidebar: FC = (() => {
                   </li>
                   <li className={router.pathname == "/doctors/dashboard/review" ? "active" : ""}>
                     <Link href="/doctors/dashboard/review">
-                      <i className="fas fa-star" />
+                      <i className="fa-solid fa-comments"></i>
                       <span>Reviews</span>
+                    </Link>
+                  </li>
+                  <li className={router.pathname == "/doctors/dashboard/rate" ? "active" : ""}>
+                    <Link href="/doctors/dashboard/rate">
+                      <i className="fas fa-star" />
+                      <span>Rates</span>
                     </Link>
                   </li>
                   <li className={router.pathname == "/doctors/dashboard/chat-doctor" ? "active" : ""}>
                     <Link href="/doctors/dashboard/chat-doctor">
-                      <i className="fas fa-comments" />
+                      <i className="fas fa-comment-alt"></i>
                       <span>Message</span>
                       <small className="unread-msg">23</small>
                     </Link>

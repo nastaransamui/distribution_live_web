@@ -148,6 +148,7 @@ export interface DoctorsTimeSlotType {
   isTommorowAvailable?: boolean;
   isTodayAvailable?: boolean;
   isThisWeekAvailable?: boolean;
+  averageHourlyPrice?: number;
   doctorId: string;
   _id: string;
   createDate: Date;
@@ -1496,6 +1497,10 @@ const ScheduleTiming: FC = (() => {
                         value={allPricesEqual ? fieldValue[0].price : ''}
                         thousandSeparator
                         customInput={TextField}
+                        isAllowed={(values) => {
+                          const { floatValue } = values;
+                          return floatValue === undefined || floatValue >= 0; // Prevent negative values
+                        }}
                         onClick={() => {
                           let myInput = document.getElementById(`${period}`)!;
                           myInput.focus();
@@ -1504,6 +1509,13 @@ const ScheduleTiming: FC = (() => {
                         onChange={(e) => {
                           e.target.focus();
                           e.target.autofocus = true;
+                        }}
+                        onKeyUp={(e: any) => {
+                          // Return false for invalid keys like '-' or any other disallowed keys
+                          if (e.key === '-' || e.key === 'e' || e.key === '+') {
+                            e.preventDefault();
+                            return false;
+                          }
                         }}
                         onValueChange={(values) => {
                           const { value, floatValue } = values;
@@ -1586,6 +1598,10 @@ const ScheduleTiming: FC = (() => {
                                   value={fieldValue}
                                   thousandSeparator
                                   customInput={TextField}
+                                  isAllowed={(values) => {
+                                    const { floatValue } = values;
+                                    return floatValue === undefined || floatValue >= 0; // Prevent negative values
+                                  }}
                                   onClick={() => {
                                     let myInput = document.getElementById(`${i} ${JSON.stringify(timeObjec)}`)!;
                                     myInput.focus();
@@ -1594,6 +1610,13 @@ const ScheduleTiming: FC = (() => {
                                   onChange={(e) => {
                                     e.target.focus();
                                     e.target.autofocus = true;
+                                  }}
+                                  onKeyUp={(e: any) => {
+                                    // Return false for invalid keys like '-' or any other disallowed keys
+                                    if (e.key === '-' || e.key === 'e' || e.key === '+') {
+                                      e.preventDefault();
+                                      return false;
+                                    }
                                   }}
                                   onValueChange={(values) => {
                                     const { value, floatValue } = values;
@@ -1667,7 +1690,7 @@ const ScheduleTiming: FC = (() => {
           array.map((a: TimeType) => {
             if (a.price !== '') {
               a.total = Number((Number(a.price) * (1 + Number(a.bookingsFee) / 100)).toFixed(2)).toString();
-              a.bookingsFeePrice = (Number(a.price!) * (Number(a.bookingsFee) / 100)).toString()
+              a.bookingsFeePrice = ((Number(a.price!) * (Number(a.bookingsFee) / 100)).toFixed(2)).toString()
             }
           })
           return array;
@@ -1828,6 +1851,8 @@ const ScheduleTiming: FC = (() => {
 
   const updateDb = () => {
     if (userProfile) {
+      delete doctorAvailableTimeSlot?.reservations
+      delete doctorAvailableTimeSlot?.totalReservation
       dispatch(updateHomeFormSubmit(true))
       homeSocket.current.emit('updateDoctorsTimeslots', doctorAvailableTimeSlot)
       homeSocket.current.once('updateDoctorsTimeslotsReturn', (msg: { status: number, message?: string, doctorAvailableTimeSlot?: DoctorsTimeSlotType }) => {
@@ -2227,7 +2252,7 @@ const ScheduleTiming: FC = (() => {
                   ref={grdiRef}
                   columns={columns}
                   paginationModel={paginationModel}
-
+                  isRowSelectable={() => false}
                   pageSizeOptions={[5, 10]}
                   showCellVerticalBorder
                   showColumnVerticalBorder

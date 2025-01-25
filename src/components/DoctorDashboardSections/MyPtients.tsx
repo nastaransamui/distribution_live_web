@@ -91,6 +91,7 @@ export interface PatientProfile {
   isActive: boolean;
   lastUpdate: Date;
   isVerified: boolean | 'google';
+  fullName?: string;
   idle?: boolean;
   lastLogin?: {
     date: Date;

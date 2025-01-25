@@ -10,11 +10,11 @@ import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
-import { initialGridRowHeight, initialListRowHeight } from '@/components/SearchDoctorSections/DoctorSearchResults'
+
 import Link from 'next/link';
 import CardActions from '@mui/material/CardActions'
 import CardActionArea from '@mui/material/CardActionArea'
-export const DoctorListSearchSkleton: FC = (() => {
+export const DoctorListSearchSkeleton: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme()
 
@@ -32,7 +32,7 @@ export const DoctorListSearchSkleton: FC = (() => {
           position: 'relative',
           flexWrap: 'wrap',
           boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
-          minHeight: initialListRowHeight - 100,
+          minHeight: 260,
         }}>
           <Grid container >
             <Grid item xl={3} lg={2.87} md={2.87} sm={2} xs={12} >
@@ -191,7 +191,7 @@ export const DoctorListSearchSkleton: FC = (() => {
 })
 
 
-export const DoctorGridSearchSkleton: FC = (() => {
+export const DoctorGridSearchSkeleton: FC = (() => {
   const theme = useTheme()
 
   return (

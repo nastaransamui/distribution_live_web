@@ -33,23 +33,27 @@ const BreadCrumb: FC<BreadCrumbProps> = (({ title, subtitle }: BreadCrumbProps) 
                     <li className="breadcrumb-item">
                       <Link href='' onClick={(e) => {
                         e.preventDefault();
-                        if (router.pathname.split('/')[2] == 'dashboard') {
-                          router.push(`/${userProfile?.roleName}/dashboard`)
-                        } else {
-                          // router.push(`/${router.pathname.split('/')[1]}`)
-                          router.push(`/${userProfile?.roleName}/dashboard`)
-                          if (document.referrer == '') {
-
+                        if (userProfile) {
+                          if (router.pathname.split('/')[2] == 'dashboard') {
+                            router.push(`/${userProfile?.roleName}/dashboard`)
                           } else {
-                            // router.back()
-                          }
+                            // router.push(`/${router.pathname.split('/')[1]}`)
+                            router.push(`/${userProfile?.roleName}/dashboard`)
+                            if (document.referrer == '') {
 
+                            } else {
+                              // router.back()
+                            }
+
+                          }
+                        } else {
+                          router.push('/doctors/search')
                         }
                       }}>
                         {
                           router.pathname.split('/')[2] == 'dashboard' ?
                             'Dashboard' :
-                            `${userProfile?.roleName.charAt(0).toUpperCase()}${userProfile?.roleName.slice(1)}`
+                            userProfile ? `${userProfile?.roleName.charAt(0).toUpperCase()}${userProfile?.roleName.slice(1)}` : 'Doctors'
                         }
                       </Link>
                     </li>

@@ -103,9 +103,13 @@ export interface DoctorProfileType {
   favs_id: string[];
   reservations_id: string[];
   prescriptions_id: string[];
+  rate_array: number[];
+  reviews_array: string[];
+  recommendArray: number[];
   isVerified: boolean | 'google';
   online: boolean;
   idle?: boolean;
+  fullName?: string;
   lastLogin?: {
     date: Date;
     ipAddr: string;
@@ -130,14 +134,13 @@ const SearchDoctorSection: FC = (() => {
   const country = searchParams.get('country')
   const state = searchParams.get('state')
   const city = searchParams.get('city')
-  const [limit, setLimit] = useState<number>(15)
-  const [skip, setSkip] = useState<number>(0)
+  const [perPage, setPerPage] = useState(10);
+  const [page, setPage] = useState(1);
 
   const [doctorResults, setDoctorResults] = useState<DoctorProfileType[] | []>([])
   const [totalDoctors, setTotalDoctors] = useState<number>(0)
   const [sortBy, setSortBy] = useState('profile.userName');
   const componentRef = useRef<any>()
-  const { width, height } = useContainerDimensions(componentRef)
   const fetch = useMemo(() => (
     throttle((
       keyWord: string,
@@ -147,9 +150,14 @@ const SearchDoctorSection: FC = (() => {
       country: string,
       state: string,
       city: string,
-      limit: number,
-      skip: number,
-      sortBy: string, homeSocket: any, reload: boolean) => {
+      sortBy: string,
+      homeSocket: any,
+      reload: boolean,
+      page: number,
+      perPage: number,
+    ) => {
+      let limit = perPage * page;
+      let skip = (page - 1) * perPage
       homeSocket.current.emit(`doctorSearch`, {
         keyWord,
         specialities,
@@ -195,15 +203,6 @@ const SearchDoctorSection: FC = (() => {
           setTotalDoctors(total || 0)
           dispatch(updateHomeFormSubmit(false))
           setIsLoading(false)
-          // if (doctors) {
-          //   if (doctors.length < total) {
-          //     setHasMore(true)
-          //   } else {
-          //     setHasMore(false)
-          //   }
-          // } else {
-          //   setHasMore(false)
-          // }
         }
       })
     }, 1000)
@@ -223,14 +222,16 @@ const SearchDoctorSection: FC = (() => {
         country,
         state,
         city,
-        limit,
-        skip,
-        sortBy, homeSocket, reload)
+        sortBy,
+        homeSocket,
+        reload,
+        page,
+        perPage)
     }
     return () => {
       active = false;
     }
-  }, [city, country, gender, available, homeSocket, keyWord, specialities, state, reload, limit, skip, sortBy,
+  }, [city, country, gender, available, homeSocket, keyWord, specialities, state, reload, page, sortBy, perPage,
     // isLoading,
     fetch])
 
@@ -243,24 +244,22 @@ const SearchDoctorSection: FC = (() => {
               <div className="row">
                 <div className="col-lg-3  theiaStickySidebar">
                   <StickyBox offsetTop={100} offsetBottom={20}>
-                    <SearchFilter setSkip={setSkip} />
+                    <SearchFilter setPage={setPage} />
                   </StickyBox>
                 </div>
                 <div className="col-lg-9" ref={componentRef}>
                   <DoctorSearchResults
                     doctorResults={doctorResults}
                     totalDoctors={totalDoctors}
-                    limit={limit}
-                    skip={skip}
-                    setLimit={setLimit}
-                    parentHeight={height}
-                    parentWidth={width}
+                    page={page}
+                    setPage={setPage}
+                    perPage={perPage}
+                    setPerPage={setPerPage}
                     setSortBy={setSortBy}
                     sortBy={sortBy}
                     isLoading={isLoading}
-                    setSkip={setSkip}
                   />
-                  <ScrollToTop setLimit={setLimit} setSkip={setSkip} />
+                  <ScrollToTop />
                 </div>
               </div>
             </div>

@@ -13,23 +13,24 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import GeoLocationAutocomplete from '../shared/GeoLocationAutocomplete';
 import { useForm } from 'react-hook-form';
-
+import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 
 
 function valuetext(value: number) {
   return `${value}°C`;
 }
-const SearchFilter: FC<{ setSkip: Function }> = (({ setSkip }) => {
+const SearchFilter: FC<{ setPage: Function }> = (({ setPage }) => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
   const searchParams = useSearchParams()
   const router = useRouter()
   const specialitiesData = useSelector((state: AppState) => state.specialities.value)
   const specialities = searchParams.get('specialities')
+  const dispatch = useDispatch();
   // const keyWord = searchParams.get('keyWord')
   const [keyWord, setKeyWord] = useState<string | null>(searchParams.get('keyWord'))
   const gender = searchParams.get('gender')
@@ -98,8 +99,8 @@ const SearchFilter: FC<{ setSkip: Function }> = (({ setSkip }) => {
 
 
     if (router.asPath !== url) {
-      router.push(url, undefined, { shallow: true, scroll: true })
-      setSkip(0)
+      router.push(url, undefined, { shallow: true, scroll: false })
+      setPage(1)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,8 +161,9 @@ const SearchFilter: FC<{ setSkip: Function }> = (({ setSkip }) => {
                           query: { ...router.query, gender: e.target.value }
                         }
                       }
-                      router.push(url, undefined, { shallow: true, scroll: true })
-                      setSkip(0)
+                      dispatch(updateHomeFormSubmit(true))
+                      router.push(url, undefined, { shallow: true, scroll: false })
+                      setPage(1)
                     }}
                   >
                     <FormControlLabel sx={{ color: theme.palette.text.color }} value="Mr" control={<Radio />} label="Mr" />
@@ -202,8 +204,9 @@ const SearchFilter: FC<{ setSkip: Function }> = (({ setSkip }) => {
                           query: { ...router.query, available: e.target.value }
                         }
                       }
-                      router.push(url, undefined, { shallow: true, scroll: true })
-                      setSkip(0)
+                      dispatch(updateHomeFormSubmit(true))
+                      router.push(url, undefined, { shallow: true, scroll: false })
+                      setPage(1)
                     }}
                   >
                     <FormControlLabel sx={{ color: theme.palette.text.color }} value="Available" control={<Radio />} label="Available" />
@@ -266,8 +269,9 @@ const SearchFilter: FC<{ setSkip: Function }> = (({ setSkip }) => {
                           query: { ...router.query, specialities: e.target.value }
                         }
                       }
-                      router.push(url, undefined, { shallow: true, scroll: true })
-                      setSkip(0)
+                      dispatch(updateHomeFormSubmit(true))
+                      router.push(url, undefined, { shallow: true, scroll: false })
+                      setPage(1)
                     }}
                   >
                     {
@@ -440,8 +444,8 @@ const SearchFilter: FC<{ setSkip: Function }> = (({ setSkip }) => {
                   href={router.pathname}
                   onClick={(e) => {
                     e.preventDefault();
-                    router.push(router.pathname, undefined, { shallow: true, scroll: true })
-                    setSkip(0)
+                    router.push(router.pathname, undefined, { shallow: true, scroll: false })
+                    setPage(1)
                     setValue(() => ({ city: null, state: null, country: null }))
                     setInputValue(() => ({ city: '', state: '', country: '' }))
                     setKeyWord(() => (null))

@@ -36,6 +36,7 @@ import { OccupyTimeType } from '../Booking/Calendar';
 import GooglePayButton from '@google-pay/button-react'
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { Terms } from '@/components/TermsSections/TermsDetails';
 
 export interface GoogleInfoType {
   totalPriceStatus: string;
@@ -227,19 +228,11 @@ const Checkout: FC = (() => {
       >
         <DialogTitle id="terms">Terms &amp; Conditions</DialogTitle>
         <DialogContent dividers>
-          <DialogContentText
-            id="terms&condition"
-            tabIndex={-1}
-          >
-            {[...new Array(50)]
-              .map(
-                () => `Cras mattis consectetur purus sit amet fermentum.
-                        Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-                        Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`,
-              )
-              .join('\n')}
-          </DialogContentText>
+          <section className="terms-section" style={muiVar}>
+            <div className="terms-content" style={{ marginLeft: '-2rem' }}>
+              <Terms />
+            </div>
+          </section>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => {

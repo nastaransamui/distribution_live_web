@@ -1,16 +1,78 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useState, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import { PatientImg, PatientImg3, PatientImg4, PatientImg5, PatientImg6, PatientImg7 } from '@/public/assets/imagepath';
-import Link from 'next/link';
+import ScrollToTop from '@/components/sections/ScrollToTop';
 
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux/store';
+import { DoctorPublicProfileReviewsTap } from '../DoctorsSections/Profile/DoctorPublicProfileReviewsTap';
+import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
+import { useTheme } from '@mui/material/styles';
+import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 const Reviews: FC = (() => {
-  const { muiVar } = useScssVar();
+  const { bounce, muiVar } = useScssVar();
+
+  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  const router = useRouter()
+  const [profile, setProfile] = useState<DoctorProfileType | null>(null);
+  const [reload, setReload] = useState<boolean>(false)
+  const theme = useTheme();
+  useEffect(() => {
+    let active = true;
+    if (active && homeSocket?.current && userProfile) {
+      homeSocket.current.emit(`findUserById`, { _id: userProfile?._id })
+      homeSocket.current.once(`findUserByIdReturn`, (msg: { status: number, user: DoctorProfileType, reason?: string }) => {
+        const { status, user, reason } = msg;
+        if (status !== 200) {
+          toast.error(reason || `Error ${status} find Doctor`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+              router.back()
+            }
+          });
+        } else {
+          homeSocket.current.once(`updateFindUserById`, () => {
+            setReload(!reload)
+          })
+          setProfile(user)
+        }
+      })
+    }
+    return () => {
+      active = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeSocket, router, reload])
 
   return (
     <Fragment>
       <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
         <div className="doc-review review-listing" >
+          {
+            userProfile == null ?
+              <CircleToBlockLoading color={theme.palette.primary.main} size="small" style={{
+                minWidth: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+              }} />
+              :
+              <>
+                {profile !== null && <DoctorPublicProfileReviewsTap profile={profile} />}
+              </>
+          }
+        </div>
+        <ScrollToTop />
+        {/* <div className="doc-review review-listing" >
           <ul className="comments-list">
             <li>
               <div className="comment">
@@ -281,7 +343,7 @@ const Reviews: FC = (() => {
               </div>
             </li>
           </ul>
-        </div>
+        </div> */}
       </div>
     </Fragment>
   )

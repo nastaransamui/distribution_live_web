@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 
+/DoctorSearchResults_infinit_scroll.tsx
 # testing
 /coverage
 

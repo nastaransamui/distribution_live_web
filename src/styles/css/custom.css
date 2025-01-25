@@ -17891,6 +17891,7 @@ call-btn:focus {
 
 .review-listing > ul li .comment .comment-body {
   margin-left: 16px;
+  width: 90%;
 }
 
 .review-listing > ul li .comment .comment-body .meta-data {
@@ -17938,6 +17939,9 @@ call-btn:focus {
   margin-top: 15px;
   margin-bottom: 15px;
   font-size: 14px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .review-listing > ul li .comment .comment-body .comment-reply .comment-btn {
@@ -17973,7 +17977,7 @@ call-btn:focus {
   }
 }
 
-.review-listing .recommend-btn a {
+.recommend-btn a {
   border: 1px solid var(--secondaryMain);
   display: inline-block;
   color: var(--primaryLight);
@@ -17985,24 +17989,26 @@ call-btn:focus {
   padding: 4px 12px;
 }
 
-.review-listing .recommend-btn a.like-btn:hover {
+.recommend-btn a.like-btn:hover,
+.recommend-btn a.like-btn-active {
   background-color: #28a745;
   border: 1px solid #28a745;
   color: #ffffff;
 }
 
-.review-listing .recommend-btn a.dislike-btn:hover {
+.recommend-btn a.dislike-btn:hover,
+.recommend-btn a.dislike-btn-active {
   background-color: crimson;
   border: 1px solid crimson;
   color: #ffffff;
 }
 
-.review-listing .recommend-btn a i {
+.recommend-btn a i {
   font-size: 16px;
 }
 
 @media (max-width: 479.98px) {
-  .review-listing .recommend-btn span {
+  .recommend-btn span {
     display: block;
     margin-bottom: 10px;
   }
@@ -18460,7 +18466,7 @@ call-btn:focus {
 .profile-det-info .patient-details h5 i,
 .profile-det-info .patient-details h4 i,
 .profile-det-info .patient-details h1 i,
-.profile-det-info .patient-details h2 i  {
+.profile-det-info .patient-details h2 i {
   width: 18px;
 }
 
@@ -24169,9 +24175,7 @@ span.call-duration.float-end {
   margin-top: 10px;
 }
 
-.terms-text {
-  margin-bottom: 20px;
-}
+
 
 .terms-text h4 {
   font-size: 24px;
@@ -40315,7 +40319,7 @@ ul.benifits-col li i {
 .faq-inner-page {
   background-color: var(--bgPaper);
   margin: 0;
-  padding: 80px 0 55px;
+  padding: 0px 0 55px;
 }
 
 .faq-inner-info .accordion-item {
@@ -42602,7 +42606,6 @@ input:checked + .tog-slider:before {
 
 .terms-section {
   margin: 0;
-  padding: 80px 0;
 }
 
 @media (max-width: 991.98px) {
@@ -42615,7 +42618,37 @@ input:checked + .tog-slider:before {
 .terms-section .terms-content {
   padding-bottom: 50px;
 }
+.terms-section .terms-content h2 {
+  font-size: 26px;
+  font-weight: 700;
+  padding: 30px 0 6px 0;
+  text-align: left;
+  text-transform: uppercase;
+}
+.terms-section .terms-content h3 {
+  font-weight: bold;
+  font-size: 18px;
+  text-align: left;
+}
+.terms-section .terms-content ol li span,
+.terms-section .terms-content ol li a {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--secondaryMain);
+}
+.terms-section .privacy-content h3 {
+  color: var(--secondaryMain);
+}
 
+.terms-section .terms-content ol li li strong {
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--secondaryMain);
+}
+.terms-section .terms-content ol li p {
+  padding-left: 1rem;
+  text-align: justify;
+}
 .terms-section .terms-content .terms-text {
   padding-bottom: 24px;
   word-break: break-all;
@@ -42642,11 +42675,12 @@ input:checked + .tog-slider:before {
   }
 }
 
-.terms-section .terms-content .terms-text.terms-list p {
+.terms-section .privacy-content .terms-text.terms-list p {
   margin-bottom: 10px;
+  color: var(--color);
 }
 
-.terms-section .terms-content .terms-text.terms-list p i {
+.terms-section .privacy-content .terms-text.terms-list p i {
   position: relative;
   top: 4px;
   margin-right: 8px;
@@ -42654,7 +42688,7 @@ input:checked + .tog-slider:before {
 }
 
 @media (max-width: 991.98px) {
-  .terms-section .terms-content {
+  .terms-section .privacy-content {
     padding-bottom: 30px;
   }
 }
@@ -43288,6 +43322,11 @@ svg.feather {
 .theiaStickySidebar {
   margin-bottom: 125px;
 }
+@media (max-width: 500px) {
+  .theiaStickySidebar {
+    margin-bottom: 14px;
+  }
+}
 
 .text-secondary {
   color: var(--secondaryMain);
@@ -43333,7 +43372,7 @@ svg.feather {
 .rbc-off-range-bg {
   background: var(--primaryLight) !important;
 }
-.rbc-off-range button{
+.rbc-off-range button {
   color: #000000 !important;
 }
 
@@ -45576,8 +45615,7 @@ svg.feather {
   content: "𝕏";
 }
 
-
-.force-perfix-ltr{
+.force-perfix-ltr {
   direction: ltr !important; /* Forces the input to render in LTR */
   text-align: start; /* Ensures alignment is correct */
 }
@@ -45591,15 +45629,15 @@ svg.feather {
   float: left;
   padding: 10px 7px;
   border-radius: 10px;
-  
+
   opacity: 0.8;
   -webkit-transform: rotate(-10deg);
   transform: rotate(-10deg);
   -o-transform: rotate(-10deg);
   -moz-transform: rotate(-10deg);
   -ms-transform: rotate(-10deg);
-  position:absolute;
-  top:50px;
+  position: absolute;
+  top: 50px;
 }
 
 .rubber_stamp_paid {
@@ -45612,15 +45650,15 @@ svg.feather {
   float: left;
   padding: 10px 75px;
   border-radius: 10px;
-  
+
   opacity: 0.8;
   -webkit-transform: rotate(-10deg);
   transform: rotate(-10deg);
   -o-transform: rotate(-10deg);
   -moz-transform: rotate(-10deg);
   -ms-transform: rotate(-10deg);
-  position:absolute;
-   top:50px;
+  position: absolute;
+  top: 50px;
 }
 .rubber_stamp_pendign {
   font-size: 20px;
@@ -45632,13 +45670,59 @@ svg.feather {
   float: left;
   padding: 10px 75px;
   border-radius: 10px;
-  
+
   opacity: 0.8;
   -webkit-transform: rotate(-10deg);
   transform: rotate(-10deg);
   -o-transform: rotate(-10deg);
   -moz-transform: rotate(-10deg);
   -ms-transform: rotate(-10deg);
-  position:absolute;
-  top:50px;
+  position: absolute;
+  top: 50px;
+}
+
+.collapse-service {
+  transition: max-height visilbility 0.4s ease-in-out;
+}
+
+.hide-service {
+  max-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: max-height 0.4s ease-in-out, visibility 0s linear 0.4s;
+}
+
+.show-service {
+  max-height: 100px;
+  visibility: visible;
+  transition: max-height 0.4s ease-in-out, visibility 0s linear 0s;
+}
+/* Base counter for the outer list */
+.outer-list {
+  counter-reset: list-counter; /* Initialize a counter */
+  padding-left: 3rem;
+}
+
+.outer-list > li {
+  counter-increment: list-counter;
+  color: var(--color);
+}
+
+.outer-list > li::marker {
+  content: counter(list-counter) ") "; /* Display the counter with a period */
+}
+
+.outer-list ol {
+  counter-reset: sublist-counter; /* Initialize a sub-counter for nested lists */
+  padding-left: 3rem;
+}
+
+.outer-list > li > ol > li {
+  counter-increment: sublist-counter; /* Increment the sub-counter for each nested list item */
+}
+.outer-list > li > ol > li strong {
+  padding-left: 5px;
+}
+.outer-list > li > ol > li::marker {
+  content: counter(list-counter) "." counter(sublist-counter); /* Combine the outer counter and sub-counter */
 }

@@ -106,7 +106,7 @@ const HeaderCart: FC = (() => {
                     <li>
                       <div className="clinic-booking pt-3">
                         <Link className="apt-btn" href="/pharmacy/cart">
-                          View Card
+                          View Cart
                         </Link>
                       </div>
                     </li>

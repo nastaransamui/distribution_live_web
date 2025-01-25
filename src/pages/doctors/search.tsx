@@ -17,7 +17,7 @@ import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import isJsonString from '@/helpers/isJson';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
-
+import Footer from '@/components/sections/Footer';
 
 
 const SearchPage: NextPage = () => {
@@ -39,6 +39,7 @@ const SearchPage: NextPage = () => {
         <BreadCrumb title='Search Doctors' subtitle='Search Doctors' />
         <SearchDoctorSection />
         <CookieConsentComponent />
+        <Footer />
       </div>
     </>
   )

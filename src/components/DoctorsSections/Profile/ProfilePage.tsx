@@ -1,6 +1,5 @@
 import { FC, Fragment, useEffect, useState } from 'react'
 import PageContent from '@/components/DoctorsSections/Profile/PageContent';
-import PageTabs from '@/components/DoctorsSections/Profile/PageTabs';
 import { useSearchParams, useParams } from 'next/navigation'
 import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material/styles';
@@ -10,6 +9,7 @@ import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
 import useScssVar from '@/hooks/useScssVar';
 import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
+import DoctorPublicProfilePageTab from './DoctorPublicProfilePageTab';
 
 
 export const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
@@ -80,7 +80,7 @@ const ProfilePage: FC = (() => {
                 :
                 <>
                   <PageContent profile={profile} />
-                  <PageTabs profile={profile} />
+                  <DoctorPublicProfilePageTab profile={profile} />
                 </>
             }
           </Fragment>

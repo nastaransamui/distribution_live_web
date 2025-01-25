@@ -25,6 +25,8 @@ import DialogActions from '@mui/material/DialogActions';
 import { LoginBox } from '@/components/AuthSections/LoginSection';
 import CloseIcon from '@mui/icons-material/Close';
 import { Transition } from '@/components/shared/Dialog';
+import { FiCalendar, FiClock, FiDollarSign, FiInfo, FiThumbsUp } from 'react-icons/fi';
+import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
 
 const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
   const { muiVar, bounce } = useScssVar();
@@ -234,8 +236,10 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                     />
                     {profile?.specialities?.[0]?.specialities}
                   </p>
-                  <Rating name="read-only" value={4} readOnly size='small' />
-                  <span className="d-inline-block average-rating">(35)</span>
+                  <span style={{ display: 'flex', alignItems: 'center', marginBottom: '6px' }}>
+                    <Rating name="read-only" precision={0.5} value={profile?.rate_array.length == 0 ? 0 : (profile?.rate_array.reduce((acc, num) => acc + num, 0) / profile?.rate_array.length)} readOnly size='small' />
+                    <span className="d-inline-block average-rating" style={{ marginLeft: '6px' }}>({profile?.rate_array.length})</span>
+                  </span>
                   <div className="clinic-details">
                     <div className="doctor-widget-one">
 
@@ -273,14 +277,20 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
               <div className="doc-info-right">
                 <div className="clini-infos">
                   <ul>
-                    <li>
-                      <i className="far fa-thumbs-up" /> 99%
+                    <li style={{ marginBottom: 10 }}>
+                      <FiThumbsUp />&nbsp; {`${profile?.recommendArray ? ((profile?.recommendArray.filter(vote => vote === 1).length / profile?.recommendArray?.length) * 100).toFixed(0) : `0`}%`}{" "}
+                      <span className="votes">({profile?.recommendArray ? profile?.recommendArray?.length : 0} Votes)</span>
                     </li>
                     <li>
-                      <i className="far fa-comment" /> 35 Feedback
+                      <i className="far fa-comment" /> {profile?.reviews_array?.length} Feedback
                     </li>
                     <li>
-                      <i className="far fa-money-bill-alt" /> $100 per hour{" "}
+                      <i className="far fa-money-bill-alt" />
+                      <Tooltip arrow title="Averrage price per hour">
+                        <span> A/H:</span>
+                      </Tooltip>{" "}
+                      {profile?.currency && profile?.currency.length > 0 && `${profile?.currency[0]?.currency_symbol}`}{" "}
+                      {profile?.timeslots && profile?.timeslots.length > 0 && formatNumberWithCommas(`${profile?.timeslots[0]?.averageHourlyPrice!.toFixed(0)}`)}{" "}
                     </li>
                   </ul>
                 </div>

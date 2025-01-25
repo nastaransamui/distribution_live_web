@@ -28,6 +28,7 @@ import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 
 
 import GooglePayButton from '@google-pay/button-react'
+import { Terms } from '../TermsSections/TermsDetails';
 const Checkout: FC = (() => {
   const { muiVar, theme } = useScssVar();
   const router = useRouter()
@@ -659,20 +660,11 @@ const Checkout: FC = (() => {
       >
         <DialogTitle id="terms">Terms &amp; Conditions</DialogTitle>
         <DialogContent dividers>
-          <DialogContentText
-            id="terms&condition"
-            tabIndex={-1}
-            sx={{ textAlign: 'justify' }}
-          >
-            {[...new Array(50)]
-              .map(
-                () => `Cras mattis consectetur purus sit amet fermentum.
-                        Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-                        Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                        Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`,
-              )
-              .join('\n')}
-          </DialogContentText>
+          <section className="terms-section" style={muiVar}>
+            <div className="terms-content" style={{ marginLeft: '-2rem' }}>
+              <Terms />
+            </div>
+          </section>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => {
