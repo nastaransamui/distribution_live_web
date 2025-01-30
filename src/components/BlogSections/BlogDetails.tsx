@@ -132,11 +132,6 @@ const BlogDetails: FC = (() => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="#0" title="Google Plus" aria-label='social'>
-                    <i className="fab fa-google-plus"></i>
-                  </Link>
-                </li>
-                <li>
                   <Link href="#0" title="Youtube" aria-label='social'>
                     <i className="fab fa-youtube"></i>
                   </Link>

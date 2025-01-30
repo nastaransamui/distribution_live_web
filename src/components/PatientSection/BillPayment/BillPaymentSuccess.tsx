@@ -27,7 +27,12 @@ const BillPaymentSuccess: FC = (() => {
   const router = useRouter()
   const theme = useTheme();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
-  const userProfile = useSelector((state: AppState) => state.userProfile.value);
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const [reload, setReload] = useState<boolean>(false)
   const [singleBill, setSingleBill] = useState<BillingTypeWithDoctorProfile>();
 
@@ -124,13 +129,31 @@ const BillPaymentSuccess: FC = (() => {
                                       Dr. {singleBill?.doctorProfile?.firstName} {" "} {singleBill?.doctorProfile?.lastName}
                                     </Link>
                                   </h4>
-                                  <Rating name="read-only" value={4} readOnly size='small' />
-
-                                  <span className="d-inline-block average-rating">35</span>
-                                  <p className="text-muted mb-0">
-                                    <i className="fas fa-map-marker-alt" style={{ width: 10, height: 10, backgroundColor: 'transparent', float: 'left', fontSize: '17px' }}></i> &nbsp;
-                                    {singleBill?.doctorProfile?.city}  {singleBill?.doctorProfile?.country}
-                                  </p>
+                                  <span style={{ display: 'flex', alignItems: 'center', marginBottom: '6px', justifyContent: 'center' }}>
+                                    <Rating
+                                      name="read-only"
+                                      precision={0.5}
+                                      value={
+                                        singleBill?.doctorProfile?.rate_array.length == 0 ?
+                                          0 :
+                                          (singleBill?.doctorProfile?.rate_array.reduce((acc, num) => acc + num, 0) / singleBill?.doctorProfile?.rate_array.length)}
+                                      readOnly
+                                      className='star-span'
+                                      size="small"
+                                      sx={{
+                                        color: 'warning.main',
+                                      }}
+                                    />
+                                    <span className="d-inline-block average-rating">({singleBill?.doctorProfile?.rate_array.length})</span>
+                                  </span>
+                                  <h6 className="mb-0" style={{ display: 'flex', justifyContent: 'center', gap: 20, alignItems: 'center' }}>
+                                    <i className="fas fa-map-marker-alt" style={{ width: 10, height: 10, backgroundColor: 'transparent', float: 'left', fontSize: '17px', marginTop: 'auto' }}></i>
+                                    <span style={{ textAlign: 'left' }}>
+                                      {singleBill?.doctorProfile?.city !== "" ? `City: ${singleBill?.doctorProfile?.city}` : `City: -----`} <br />
+                                      {singleBill?.doctorProfile?.state !== "" ? `State: ${singleBill?.doctorProfile?.state}` : `State: -----`} <br />
+                                      {singleBill?.doctorProfile?.country !== "" ? `Country: ${singleBill?.doctorProfile?.country}` : `Country: -----`}
+                                    </span>
+                                  </h6>
                                 </div>
                               </div>
                               <div className="booking-summary">

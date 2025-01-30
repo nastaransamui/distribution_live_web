@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 //next
 import Head from 'next/head'
 import { GetServerSideProps, NextPage } from 'next'
-import { hasCookie, getCookie } from 'cookies-next';
+import { hasCookie, getCookie, deleteCookie } from 'cookies-next';
 
 //Redux
 import { wrapper } from '@/redux/store'
@@ -30,6 +30,13 @@ import isJsonString from '@/helpers/isJson';
 import getClinicsStatus from '@/helpers/getClinicsStatus';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import { LazyLoadWrapper } from './index';
+import { updateHomeExp } from '@/redux/homeExp';
+import { updateHomeIAT } from '@/redux/homeIAT';
+import { updateHomeRoleName } from '@/redux/homeRoleName';
+import { updateHomeServices } from '@/redux/homeServices';
+import { updateHomeUserId } from '@/redux/homeUserId';
+import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
+import { updateUserPatientProfile } from '@/redux/userPatientProfile';
 
 
 const Home: NextPage = () => {
@@ -67,6 +74,7 @@ const Home: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx) => {
     try {
+      let props = {}
       const { resolvedUrl } = ctx
       const isClinickActive = await getClinicsStatus(resolvedUrl);
       if (!isClinickActive) {
@@ -93,33 +101,54 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       if (hasCookie('homeThemeName', ctx)) {
         store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
       }
-      if (hasCookie('homeAccessToken', ctx)) {
-        switch (true) {
-          case isJsonString(getCookie('homeAccessToken', ctx) as string):
-            const { length } = JSON.parse(getCookie('homeAccessToken', ctx) as string)
-            var fullToken: string = '';
-            for (var i = 0; i < parseInt(length); i++) {
-              fullToken += getCookie(`${i}`, ctx);
-            }
-            if (fullToken !== '') {
-              var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(fullToken)
-              store.dispatch(updateUserProfile(userProfile))
-              store.dispatch(updateHomeAccessToken(fullToken))
-            }
-            break;
 
-          default:
-            var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(getCookie('homeAccessToken', ctx))
-            store.dispatch(updateUserProfile(userProfile))
-            store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
-            break;
+      if (hasCookie('homeAccessToken', ctx)) {
+        const accessToken = getCookie('homeAccessToken', ctx);
+        const user_id = getCookie('user_id', ctx);
+        const services = getCookie('services', ctx);
+        const roleName = getCookie('roleName', ctx)
+        const iat = getCookie('iat', ctx)
+        const exp = getCookie('exp', ctx);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/api/singlePatient?_id=${user_id}`, {
+          method: "GET",
+          headers: {
+            'Accept': 'application/json',
+            Authorization: `Bearer ${accessToken}`
+          }
+        })
+        const data = await res.json();
+
+
+        if (data.error) {
+          deleteCookie('homeAccessToken', ctx);
+          deleteCookie('user_id', ctx);
+          deleteCookie('services', ctx);
+          deleteCookie('roleName', ctx);
+          deleteCookie('iat', ctx);
+          deleteCookie('exp', ctx);
+          return {
+            ...props,
+            redirect: {
+              destination: `/`,
+              permanent: false,
+            },
+          }
         }
+        store.dispatch(updateHomeAccessToken(accessToken))
+        store.dispatch(updateHomeUserId(user_id))
+        store.dispatch(updateHomeServices(services))
+        store.dispatch(updateHomeRoleName(roleName))
+        store.dispatch(updateHomeIAT(iat))
+        store.dispatch(updateHomeExp(exp))
+        roleName == 'patient' ?
+          store.dispatch(updateUserPatientProfile(data)) :
+          store.dispatch(updateUserDoctorProfile(data))
       }
-      let props = {}
       return {
         props
       }
     } catch (error) {
+      let props = {}
       console.log(error)
       if (hasCookie('homeThemeType', ctx)) {
         store.dispatch(updateHomeThemeType(getCookie('homeThemeType', ctx)))
@@ -127,29 +156,49 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       if (hasCookie('homeThemeName', ctx)) {
         store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
       }
-      if (hasCookie('homeAccessToken', ctx)) {
-        switch (true) {
-          case isJsonString(getCookie('homeAccessToken', ctx) as string):
-            const { length } = JSON.parse(getCookie('homeAccessToken', ctx) as string)
-            var fullToken: string = '';
-            for (var i = 0; i < parseInt(length); i++) {
-              fullToken += getCookie(`${i}`, ctx);
-            }
-            if (fullToken !== '') {
-              var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(fullToken)
-              store.dispatch(updateUserProfile(userProfile))
-              store.dispatch(updateHomeAccessToken(fullToken))
-            }
-            break;
 
-          default:
-            var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(getCookie('homeAccessToken', ctx))
-            store.dispatch(updateUserProfile(userProfile))
-            store.dispatch(updateHomeAccessToken(getCookie('homeAccessToken', ctx)))
-            break;
+      if (hasCookie('homeAccessToken', ctx)) {
+        const accessToken = getCookie('homeAccessToken', ctx);
+        const user_id = getCookie('user_id', ctx);
+        const services = getCookie('services', ctx);
+        const roleName = getCookie('roleName', ctx)
+        const iat = getCookie('iat', ctx)
+        const exp = getCookie('exp', ctx);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/api/singlePatient?_id=${user_id}`, {
+          method: "GET",
+          headers: {
+            'Accept': 'application/json',
+            Authorization: `Bearer ${accessToken}`
+          }
+        })
+        const data = await res.json();
+
+
+        if (data.error) {
+          deleteCookie('homeAccessToken', ctx);
+          deleteCookie('user_id', ctx);
+          deleteCookie('services', ctx);
+          deleteCookie('roleName', ctx);
+          deleteCookie('iat', ctx);
+          deleteCookie('exp', ctx);
+          return {
+            ...props,
+            redirect: {
+              destination: `/`,
+              permanent: false,
+            },
+          }
         }
+        store.dispatch(updateHomeAccessToken(accessToken))
+        store.dispatch(updateHomeUserId(user_id))
+        store.dispatch(updateHomeServices(services))
+        store.dispatch(updateHomeRoleName(roleName))
+        store.dispatch(updateHomeIAT(iat))
+        store.dispatch(updateHomeExp(exp))
+        roleName == 'patient' ?
+          store.dispatch(updateUserPatientProfile(data)) :
+          store.dispatch(updateUserDoctorProfile(data))
       }
-      let props = {}
       return {
         props
       }

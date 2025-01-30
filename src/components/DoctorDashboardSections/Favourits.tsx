@@ -40,7 +40,13 @@ const Favourits: FC = (() => {
   const [reload, setReload] = useState<boolean>(false)
   const [favPatientsProfile, setFavPatientsProfile] = useState<FavPatientProfile[]>([])
   const theme = useTheme();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const minWidth767max923 = useMediaQuery('@media (min-width: 767px) and (max-width:923px)');
   const [page, setPage] = useState(1);
@@ -158,25 +164,23 @@ const Favourits: FC = (() => {
 
                     <ul className="available-info">
                       <li>
-                        {
-                          patient?.profile?.address1 !== ''
-                            || patient?.profile?.address2 !== ''
-                            || patient?.profile?.city !== ''
-                            || patient?.profile?.state !== ''
-                            || patient?.profile?.country !== ''
-                            ? <i className="fas fa-map-marker-alt"></i> : <></>}
-                        {`${patient?.profile?.address1 !== '' ? patient?.profile?.address1 + ',' : ''}`}
-                        {`${patient?.profile?.address2 !== '' ? patient?.profile?.address2 + ',' : ''}`}<br />
+                        <i className="fas fa-map-marker-alt"></i>
+                        Address: {`${patient?.profile?.address1 !== '' ? patient?.profile?.address1 + ',' : "-----------"}`}
+                        {/* {`${patient?.profile?.address2 !== '' ? patient?.profile?.address2 + ',' : ''}`}<br />
                         {`${patient?.profile?.city !== '' ? patient?.profile?.city + ',' : ''}`}<br />
                         {`${patient?.profile?.state !== '' ? patient?.profile?.state + ',' : ''}`}<br />
-                        {`${patient?.profile?.country !== '' ? patient?.profile?.country + ',' : ''}`}
+                        {`${patient?.profile?.country !== '' ? patient?.profile?.country + ',' : ''}`} */}
+                      </li>
+                      <li>{`${patient?.profile?.address2 !== '' ? patient?.profile?.address2 + ',' : '-----------'}`}</li>
+                      <li>City: {`${patient?.profile?.city !== '' ? patient?.profile?.city + ',' : '-----------'}`}</li>
+                      <li>State: {`${patient?.profile?.state !== '' ? patient?.profile?.state + ',' : '-----------'}`}</li>
+                      <li>Country: {`${patient?.profile?.country !== '' ? patient?.profile?.country + ',' : '-----------'}`}</li>
+                      <li>
+                        <i className="fas fa-birthday-cake"></i>
+                        Birth Day: {patient?.profile?.dob !== "" ? dayjs(patient?.profile?.dob).format(`MMMM D, YYYY`) : "-----------"}
                       </li>
                       <li>
-                        {patient?.profile?.dob !== "" ? <i className="fas fa-birthday-cake"></i> : <></>}
-                        {patient?.profile?.dob !== "" ? dayjs(patient?.profile?.dob).format(`MMMM D, YYYY`) : ""}
-                      </li>
-                      <li>
-                        {patient?.profile.bloodG !== '' ? `🩸  - ${patient?.profile.bloodG}` : ''}
+                        Blood Type: {patient?.profile.bloodG !== '' ? `🩸  - ${patient?.profile.bloodG}` : '-----------'}
                       </li>
                     </ul>
                     <div className="row row-sm">

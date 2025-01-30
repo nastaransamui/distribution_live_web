@@ -115,7 +115,13 @@ const MyPtients: FC = (() => {
   const [reload, setReload] = useState<boolean>(false)
   const [patiensDataProfile, setpatiensDataProfile] = useState<MyPatientsProfile[]>([])
   const theme = useTheme();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const minWidth767max923 = useMediaQuery('@media (min-width: 767px) and (max-width:923px)');
   const [page, setPage] = useState(1);
@@ -127,11 +133,11 @@ const MyPtients: FC = (() => {
   useEffect(() => {
     let isActive = true;
     let userId = userProfile?._id
-    let patientsIdArray = userProfile?.patients_id
+    let patientsIdArray = userDoctorProfile?.patients_id
     let limit = perPage * page;
     let skip = (page - 1) * perPage
     if (isActive && homeSocket.current !== undefined && userProfile !== null) {
-      if (userProfile?.patients_id && userProfile?.patients_id.length !== 0) {
+      if (userDoctorProfile?.patients_id && userDoctorProfile?.patients_id.length !== 0) {
         homeSocket.current.emit('getMyPatientsProfile', { userId, patientsIdArray, limit, skip })
         homeSocket.current.once('getMyPatientsProfileReturn', (msg: { status: number, myPatientsProfile: MyPatientsProfile[], message?: string }) => {
           const { status, myPatientsProfile, message } = msg;
@@ -306,7 +312,7 @@ const MyPtients: FC = (() => {
                   boundaryCount={1}
                   variant="outlined"
                   color="secondary"
-                  count={userProfile ? Math.ceil(userProfile?.patients_id.length / perPage) : 0}
+                  count={userDoctorProfile ? Math.ceil(userDoctorProfile?.patients_id.length / perPage) : 0}
                   page={page}
                   onChange={handlePageChange}
                   sx={{
@@ -314,7 +320,7 @@ const MyPtients: FC = (() => {
                     marginRight: 'auto'
                   }}
                 />
-                <Typography variant='h5' align='center' gutterBottom>Total: {userProfile?.patients_id.length} Patients</Typography>
+                <Typography variant='h5' align='center' gutterBottom>Total: {userDoctorProfile?.patients_id.length} Patients</Typography>
               </Stack>
             }
           </div>
@@ -340,7 +346,7 @@ const MyPtients: FC = (() => {
               boundaryCount={1}
               variant="outlined"
               color="secondary"
-              count={userProfile ? Math.ceil(userProfile?.patients_id.length / perPage) : 0}
+              count={userDoctorProfile ? Math.ceil(userDoctorProfile?.patients_id.length / perPage) : 0}
               page={page}
               onChange={handlePageChange}
               sx={{

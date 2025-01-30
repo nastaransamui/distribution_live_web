@@ -33,7 +33,12 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const router = useRouter();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const [loginDialog, setLoginDialog] = useState<boolean>(false)
   const [favIconLoading, setFavIconLoading] = useState<boolean>(false);
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)

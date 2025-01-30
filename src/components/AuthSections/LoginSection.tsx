@@ -20,7 +20,6 @@ import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { hasCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
-import { updateUserProfile } from '@/redux/userProfile';
 import { useGoogleLogin } from '@react-oauth/google';
 
 //Mui
@@ -32,8 +31,14 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import FormHelperText from '@mui/material/FormHelperText'
 import DialogContent from '@mui/material/DialogContent'
-import chunkString from '@/helpers/chunkString';
 import Typography from '@mui/material/Typography';
+import { updateHomeUserId } from '@/redux/homeUserId';
+import { updateHomeServices } from '@/redux/homeServices';
+import { updateHomeRoleName } from '@/redux/homeRoleName';
+import { updateHomeIAT } from '@/redux/homeIAT';
+import { updateHomeExp } from '@/redux/homeExp';
+import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
+import { updateUserPatientProfile } from '@/redux/userPatientProfile';
 
 
 
@@ -122,7 +127,7 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
       data.ipAddr = userData?.query;
       data.userAgent = navigator.userAgent;
       data.email = data.email.toLowerCase();
-      dispatch(updateHomeFormSubmit(true))
+      // dispatch(updateHomeFormSubmit(true))
       if (homeSocket?.current) {
         homeSocket.current.emit('loginFormSubmit', data)
         homeSocket.current.once('loginFormReturn', (msg: any) => {
@@ -202,57 +207,84 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
             }
           } else if (msg?.status == 200) {
             const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-
-            switch (true) {
-              //AccessToken length is equal or less that 4095
-              case msg?.accessToken.length <= 4095:
-                dispatch(updateHomeAccessToken(msg?.accessToken))
-                setCookie('homeAccessToken', msg?.accessToken);
-                dispatch(updateUserProfile(userProfile))
-                toast.info('Login successfully', {
-                  position: "bottom-center",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  transition: bounce,
-                  onClose: () => {
-                    dispatch(updateHomeFormSubmit(false))
-                    reset()
-                    router.reload();
-                  }
-                });
-                break;
-              default:
-                const result = chunkString(msg?.accessToken, 4095)
-                if (result !== null) {
-                  setCookie('homeAccessToken', { isSplit: true, length: result.length });
-                  for (let index = 0; index < result.length; index++) {
-                    const element = result[index];
-                    setCookie(`${index}`, element)
-                  }
-                  dispatch(updateHomeAccessToken(msg?.accessToken))
-                  dispatch(updateUserProfile(userProfile))
-                  toast.info('Login successfully', {
-                    position: "bottom-center",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    transition: bounce,
-                    onClose: () => {
-                      dispatch(updateHomeFormSubmit(false))
-                      // reset()
-                      router.reload();
-                    }
-                  });
-                }
-                break;
-            }
+            setCookie('homeAccessToken', accessToken);
+            setCookie('user_id', user_id);
+            setCookie('services', services);
+            setCookie('roleName', roleName);
+            setCookie('iat', iat);
+            setCookie('exp', exp);
+            dispatch(updateHomeAccessToken(accessToken))
+            dispatch(updateHomeUserId(user_id));
+            dispatch(updateHomeServices(services));
+            dispatch(updateHomeRoleName(roleName));
+            dispatch(updateHomeIAT(iat));
+            dispatch(updateHomeExp(exp))
+            roleName == 'patient' ? dispatch(updateUserDoctorProfile(userProfile)) : dispatch(updateUserPatientProfile(userProfile))
+            toast.info('Login successfully', {
+              position: "bottom-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              transition: bounce,
+              onClose: () => {
+                dispatch(updateHomeFormSubmit(false))
+                reset()
+                router.reload();
+              }
+            });
+            // switch (true) {
+            //   //AccessToken length is equal or less that 4095
+            //   case msg?.accessToken.length <= 4095:
+            //     dispatch(updateHomeAccessToken(msg?.accessToken))
+            //     setCookie('homeAccessToken', msg?.accessToken);
+            //     dispatch(updateUserProfile(userProfile))
+            //     toast.info('Login successfully', {
+            //       position: "bottom-center",
+            //       autoClose: 5000,
+            //       hideProgressBar: false,
+            //       closeOnClick: true,
+            //       pauseOnHover: true,
+            //       draggable: true,
+            //       progress: undefined,
+            //       transition: bounce,
+            //       onClose: () => {
+            //         dispatch(updateHomeFormSubmit(false))
+            //         reset()
+            //         router.reload();
+            //       }
+            //     });
+            //     break;
+            //   default:
+            //     const result = chunkString(msg?.accessToken, 4095)
+            //     if (result !== null) {
+            //       setCookie('homeAccessToken', { isSplit: true, length: result.length });
+            //       for (let index = 0; index < result.length; index++) {
+            //         const element = result[index];
+            //         setCookie(`${index}`, element)
+            //       }
+            //       dispatch(updateHomeAccessToken(msg?.accessToken))
+            //       dispatch(updateUserProfile(userProfile))
+            //       toast.info('Login successfully', {
+            //         position: "bottom-center",
+            //         autoClose: 5000,
+            //         hideProgressBar: false,
+            //         closeOnClick: true,
+            //         pauseOnHover: true,
+            //         draggable: true,
+            //         progress: undefined,
+            //         transition: bounce,
+            //         onClose: () => {
+            //           dispatch(updateHomeFormSubmit(false))
+            //           // reset()
+            //           router.reload();
+            //         }
+            //       });
+            //     }
+            //     break;
+            // }
           }
         })
       }
@@ -400,56 +432,85 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
             }
           } else if (msg?.status == 200) {
             const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-            switch (true) {
-              //AccessToken length is equal or less that 4095
-              case msg?.accessToken.length <= 4095:
-                dispatch(updateHomeAccessToken(msg?.accessToken))
-                setCookie('homeAccessToken', msg?.accessToken);
-                dispatch(updateUserProfile(userProfile))
-                toast.info('Login successfully', {
-                  position: "bottom-center",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  transition: bounce,
-                  onClose: () => {
-                    dispatch(updateHomeFormSubmit(false))
-                    reset()
-                    router.reload();
-                  }
-                });
-                break;
-              default:
-                const result = chunkString(msg?.accessToken, 4095)
-                if (result !== null) {
-                  setCookie('homeAccessToken', { isSplit: true, length: result.length });
-                  for (let index = 0; index < result.length; index++) {
-                    const element = result[index];
-                    setCookie(`${index}`, element)
-                  }
-                  dispatch(updateHomeAccessToken(msg?.accessToken))
-                  dispatch(updateUserProfile(userProfile))
-                  toast.info('Login successfully', {
-                    position: "bottom-center",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    transition: bounce,
-                    onClose: () => {
-                      dispatch(updateHomeFormSubmit(false))
-                      // reset()
-                      router.reload();
-                    }
-                  });
-                }
-                break;
-            }
+            setCookie('homeAccessToken', accessToken);
+            setCookie('user_id', user_id);
+            setCookie('services', services);
+            setCookie('roleName', roleName);
+            setCookie('iat', iat);
+            setCookie('exp', exp);
+            dispatch(updateHomeAccessToken(accessToken))
+            dispatch(updateHomeUserId(user_id));
+            dispatch(updateHomeServices(services));
+            dispatch(updateHomeRoleName(roleName));
+            dispatch(updateHomeIAT(iat));
+            dispatch(updateHomeExp(exp))
+            roleName == 'patient' ? dispatch(updateUserDoctorProfile(userProfile)) : dispatch(updateUserPatientProfile(userProfile))
+            toast.info('Login successfully', {
+              position: "bottom-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              transition: bounce,
+              onClose: () => {
+                dispatch(updateHomeFormSubmit(false))
+                reset()
+                router.reload();
+              }
+            });
+            // const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
+            // switch (true) {
+            //   //AccessToken length is equal or less that 4095
+            //   case msg?.accessToken.length <= 4095:
+            //     dispatch(updateHomeAccessToken(msg?.accessToken))
+            //     setCookie('homeAccessToken', msg?.accessToken);
+            //     dispatch(updateUserProfile(userProfile))
+            //     toast.info('Login successfully', {
+            //       position: "bottom-center",
+            //       autoClose: 5000,
+            //       hideProgressBar: false,
+            //       closeOnClick: true,
+            //       pauseOnHover: true,
+            //       draggable: true,
+            //       progress: undefined,
+            //       transition: bounce,
+            //       onClose: () => {
+            //         dispatch(updateHomeFormSubmit(false))
+            //         reset()
+            //         router.reload();
+            //       }
+            //     });
+            //     break;
+            //   default:
+            //     const result = chunkString(msg?.accessToken, 4095)
+            //     if (result !== null) {
+            //       setCookie('homeAccessToken', { isSplit: true, length: result.length });
+            //       for (let index = 0; index < result.length; index++) {
+            //         const element = result[index];
+            //         setCookie(`${index}`, element)
+            //       }
+            //       dispatch(updateHomeAccessToken(msg?.accessToken))
+            //       dispatch(updateUserProfile(userProfile))
+            //       toast.info('Login successfully', {
+            //         position: "bottom-center",
+            //         autoClose: 5000,
+            //         hideProgressBar: false,
+            //         closeOnClick: true,
+            //         pauseOnHover: true,
+            //         draggable: true,
+            //         progress: undefined,
+            //         transition: bounce,
+            //         onClose: () => {
+            //           dispatch(updateHomeFormSubmit(false))
+            //           // reset()
+            //           router.reload();
+            //         }
+            //       });
+            //     }
+            //     break;
+            // }
           }
         })
       } catch (error: any) {

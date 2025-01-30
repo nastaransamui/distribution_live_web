@@ -33,7 +33,12 @@ const Invoice: FC = (() => {
   const router = useRouter()
   const theme = useTheme();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const [reload, setReload] = useState<boolean>(false)
   const [reservation, setReservation] = useState<AppointmentReservationExtendType | null>(null)
 
@@ -258,23 +263,24 @@ const Invoice: FC = (() => {
                             </table>
                           </div>
                         </div>
-                        {userProfile?.roleName == 'doctors' &&
-                          <div className="col-md-6 col-xl-6 ms-auto" style={{ minHeight: '300px', position: 'relative' }}>
+                        {userProfile?.roleName == 'doctors' ?
+                          <div className="col-md-6 col-xl-6 " style={{ minHeight: '300px', position: 'relative' }}>
                             <div className={
                               `${reservation?.doctorPaymentStatus == "Awaiting Request"
                                 ? "rubber_stamp_await"
                                 : reservation?.doctorPaymentStatus == "Paid"
                                   ? "rubber_stamp_paid" : "rubber_stamp_pendign"}
                               `}>{reservation?.doctorPaymentStatus}</div>
-                          </div>
+                          </div> :
+                          <div className="col-md-6 col-xl-6 " style={{ minHeight: '300px', position: 'relative' }}></div>
                         }
-                        <div className="col-md-6 col-xl-4 ms-auto">
+                        <div className="col-md-6 col-xl-6 ">
                           <div className="table-responsive">
                             <table className="invoice-table-two table">
                               <tbody>
                                 <tr>
-                                  <th>Subtotal:</th>
-                                  <td style={{ padding: '10px 0px' }}>
+                                  <th >Subtotal:</th>
+                                  <td style={{ padding: '10px 18px', width: '100%' }}>
                                     <span>{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                       reservation?.timeSlot?.total
                                     )}</span>
@@ -287,8 +293,8 @@ const Invoice: FC = (() => {
                                   </td>
                                 </tr>
                                 <tr>
-                                  <th>Total Amount:</th>
-                                  <td style={{ padding: '10px 0px' }}>
+                                  <th style={{ width: '40%', }}>Total Amount:</th>
+                                  <td style={{ padding: '10px 18px', width: '100%' }}>
                                     <span>{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                       reservation?.timeSlot?.total
                                     )}</span>

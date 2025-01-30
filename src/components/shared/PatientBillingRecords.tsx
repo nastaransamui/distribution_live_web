@@ -62,6 +62,7 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
   const router = useRouter();
   const currentDate = dayjs();
   const isDue = status !== 'Paid' && (dayjs(dueDate).isBefore(currentDate, 'day') || dayjs(dueDate).isSame(currentDate, 'day'))
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   return (
     <div ref={ref} >
       <Fragment >
@@ -138,7 +139,7 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                               <tr>
                                 {
                                   billKeys.filter((a: string) => {
-                                    if (router.asPath.startsWith('/patient')) {
+                                    if (homeRoleName == 'patient') {
                                       return a == 'title' || a == 'total'
                                     } else {
                                       return a !== 'amount'
@@ -158,7 +159,7 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                                     <tr key={index}>
                                       <td style={{ color: '#000' }} >{a.title}</td>
                                       {
-                                        router.asPath.startsWith('/doctors') &&
+                                        homeRoleName == 'doctors' &&
                                         <>
                                           <td style={{ color: '#000' }} className="text-center">
                                             {`${currencySymbol} ${formatNumberWithCommas(a.price?.toString()!)}`}
@@ -199,9 +200,9 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                             <tbody>
                               <tr>
                                 {
-                                  router.asPath.startsWith('/doctors') && <>
+                                  homeRoleName == 'doctors' && <>
                                     <th>Total Price:</th>
-                                    <td style={{ padding: '10px 0px', color: "#000" }}>
+                                    <td style={{ padding: '10px 20px', color: "#000" }}>
                                       <span>
                                         {currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                           price
@@ -213,9 +214,9 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                               </tr>
                               <tr>
                                 {
-                                  router.asPath.startsWith('/doctors') ? <>
+                                  homeRoleName == 'doctors' ? <>
                                     <th>Total Fee Price:</th>
-                                    <td style={{ padding: '10px 0px', color: "#000" }}>
+                                    <td style={{ padding: '10px 20px', color: "#000" }}>
                                       <span>
                                         {currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                           bookingsFeePrice
@@ -235,9 +236,9 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                               </tr>
                               <tr>
                                 {
-                                  router.asPath.startsWith('/doctors') && <>
+                                  homeRoleName == 'doctors' && <>
                                     <th>Total:</th>
-                                    <td style={{ padding: '10px 0px', color: "#000" }}>
+                                    <td style={{ padding: '10px 20px', color: "#000" }}>
                                       <span>{currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                         total
                                       )}</span>
@@ -291,7 +292,12 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
   const [billingRecords, setBillingRecords] = useState<BillingType[] | []>([])
   const dispatch = useDispatch();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false)
   const [rowBillingCount, setRowBillingCount] = useState<number>(0)
@@ -301,7 +307,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
     skip: 0,
   });
   const [billingPaginationModel, setBillingPaginationModel] = useState({
-    pageSize: 5,
+    pageSize: perPage,
     page: 0,
   });
   const [printProps, setPrintProps] = useState<any>({})
@@ -376,8 +382,8 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
     setBillingPaginationModel((prevState) => {
       var maximuPage: number = prevState.page;
       if (rowBillingCount !== 0) {
-        if ((maximuPage + 1) >= (Math.floor(rowBillingCount / parseInt(event.target.value, 10)))) {
-          maximuPage = (Math.floor(rowBillingCount / parseInt(event.target.value, 10))) - 1
+        if ((maximuPage + 1) >= (Math.ceil(rowBillingCount / parseInt(event.target.value, 10)))) {
+          maximuPage = (Math.ceil(rowBillingCount / parseInt(event.target.value, 10))) - 1
         }
       }
       return {
@@ -388,13 +394,14 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
     setDataGridBillingFilters((prevState) => {
       var maximuPage: number = prevState.skip;
       if (rowBillingCount !== 0) {
-        if ((maximuPage + 1) >= (Math.floor(rowBillingCount / parseInt(event.target.value, 10)))) {
-          maximuPage = (Math.floor(rowBillingCount / parseInt(event.target.value, 10))) - 1
+        if ((maximuPage + 1) >= (Math.ceil(rowBillingCount / parseInt(event.target.value, 10)))) {
+          maximuPage = (Math.ceil(rowBillingCount / parseInt(event.target.value, 10))) - 1
         }
       }
+      let limit = parseInt(event.target.value, 10) * (maximuPage == 0 ? 1 : maximuPage)
       return {
-        limit: parseInt(event.target.value, 10),
-        skip: maximuPage <= 0 ? 0 : maximuPage
+        limit: limit,
+        skip: maximuPage <= 0 ? 0 : limit - parseInt(event.target.value, 10)
       }
     })
   };
@@ -402,8 +409,8 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
   const handleChangeBillingPage = (_event: React.ChangeEvent<unknown>, value: number) => {
     setDataGridBillingFilters((prevState) => {
       return {
-        limit: perPage !== billingPaginationModel.pageSize ? billingPaginationModel.pageSize : perPage * value,
-        skip: (value - 1) * perPage,
+        limit: billingPaginationModel.pageSize !== billingPaginationModel.pageSize ? billingPaginationModel.pageSize : billingPaginationModel.pageSize * value,
+        skip: (value - 1) * billingPaginationModel.pageSize,
       }
     })
     setBillingPaginationModel((prevState) => {
@@ -944,8 +951,9 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                 <div className="card-body ">
                   <div className="card card-table mb-0">
                     <div className="card-body">
-                      <div className="table-responsive" style={{ height: 480, width: '100%' }}>
+                      <div className="table-responsive" style={{ height: billingPaginationModel.pageSize == 5 ? 480 : 900, width: '100%' }}>
                         <DataGrid
+                          paginationMode='server'
                           experimentalFeatures={{ ariaV7: true }}
                           slots={{
                             noResultsOverlay: CustomNoRowsOverlay,

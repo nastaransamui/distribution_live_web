@@ -21,12 +21,7 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useForm } from 'react-hook-form';
 import { paswordRegex } from '../PatientDashboardSections/ChangePassword';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import { setCookie } from 'cookies-next';
 import { toast } from 'react-toastify';
-import jwt from 'jsonwebtoken';
 
 import { updateUserProfile } from '@/redux/userProfile';
 

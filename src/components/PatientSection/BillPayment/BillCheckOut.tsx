@@ -8,18 +8,15 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { doctors_profile } from '@/public/assets/imagepath';
 import dayjs from 'dayjs'
-import isJsonString from '@/helpers/isJson';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
 import Button from '@mui/material/Button';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
+import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 import { useTheme } from '@mui/material/styles';
@@ -62,7 +59,12 @@ const BillCheckOut: FC = (() => {
     countryCode: '',
   })
   const [singleBill, setSingleBill] = useState<BillingTypeWithDoctorProfile>();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const userData = useSelector((state: AppState) => state.userData.value)
   const { muiVar, bounce } = useScssVar();
@@ -111,7 +113,7 @@ const BillCheckOut: FC = (() => {
                   totalPriceLabel: 'Total',
                   totalPrice: Number(singleBill[0].total).toFixed(2),
                   currencyCode: singleBill[0]?.currencySymbol || 'THB',
-                  countryCode: userProfile?.country || 'TH',
+                  countryCode: 'TH',
                 })
               }
 
@@ -178,48 +180,104 @@ const BillCheckOut: FC = (() => {
 
   }, [clearErrors, setError, watch])
 
+  const submitPaymentOnly = (paymentToken: string, paymentType: string,) => {
+    dispatch(updateHomeFormSubmit(true))
+    if (homeSocket?.current) {
+      homeSocket.current.emit(`updateBillingPayment`, {
+        ...singleBill,
+        paymentToken: paymentToken,
+        paymentType: paymentType,
+        paymentDate: new Date(),
+        status: "Paid"
+      })
+      homeSocket.current.once(`updateBillingPaymentReturn`, (msg: { status: number, newBilling: BillingType, reason?: string, message?: string }) => {
+        const { status, newBilling, reason, message } = msg;
+
+        if (status !== 200) {
+          toast.error(reason || message || `${status} : You don't have correct access for this`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+              dispatch(updateHomeFormSubmit(false))
+            }
+          });
+        } else {
+          toast.info('Payment done Successfully.', {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+              dispatch(updateHomeFormSubmit(false))
+            }
+          });
+        }
+      })
+    }
+  }
+
   const onFormSubmit = (data: any) => {
     const { paymentConfirm } = data
     if (!paymentConfirm) {
       setError('paymentConfirm', { type: 'required', message: "This field is required" })
     } else {
       dispatch(updateHomeFormSubmit(true))
-      if (homeSocket?.current) {
-        homeSocket.current.emit(`updateBillingPayment`, { ...singleBill, paymentToken: data.paymentToken, paymentType: data.paymentType, paymentDate: new Date(), status: "Paid" })
-        homeSocket.current.once(`updateBillingPaymentReturn`, (msg: { status: number, newBilling: BillingType, reason?: string, message?: string }) => {
-          const { status, newBilling, reason, message } = msg;
+      if (singleBill?.status == 'Paid') {
+        router.push(`/patient/payment-success/${btoa(singleBill?._id)}`)
+      } else {
+        if (homeSocket?.current) {
+          homeSocket.current.emit(`updateBillingPayment`, {
+            ...singleBill,
+            paymentToken: data.paymentToken,
+            paymentType: data.paymentType,
+            paymentDate: new Date(),
+            status: "Paid"
+          })
+          homeSocket.current.once(`updateBillingPaymentReturn`, (msg: { status: number, newBilling: BillingType, reason?: string, message?: string }) => {
+            const { status, newBilling, reason, message } = msg;
 
-          if (status !== 200) {
-            toast.error(reason || message || `${status} : You don't have correct access for this`, {
-              position: "bottom-center",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              transition: bounce,
-              onClose: () => {
-                dispatch(updateHomeFormSubmit(false))
-              }
-            });
-          } else {
-            toast.info('Payment done Successfully.', {
-              position: "bottom-center",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              transition: bounce,
-              onClose: () => {
-                dispatch(updateHomeFormSubmit(false))
-                router.push(`/patient/payment-success/${btoa(newBilling?._id)}`)
-              }
-            });
-          }
-        })
+            if (status !== 200) {
+              toast.error(reason || message || `${status} : You don't have correct access for this`, {
+                position: "bottom-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                transition: bounce,
+                onClose: () => {
+                  dispatch(updateHomeFormSubmit(false))
+                }
+              });
+            } else {
+              toast.info('Payment done Successfully.', {
+                position: "bottom-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                transition: bounce,
+                onClose: () => {
+                  dispatch(updateHomeFormSubmit(false))
+                  router.push(`/patient/payment-success/${btoa(newBilling?._id)}`)
+                }
+              });
+            }
+          })
+        }
       }
     }
   }
@@ -436,6 +494,7 @@ const BillCheckOut: FC = (() => {
                                   setValue('paymentType', type)
                                   setValue('paymentConfirm', true)
                                   clearErrors('paymentConfirm')
+                                  submitPaymentOnly(token, type,)
                                 }}
                                 buttonColor={theme.palette.mode == 'dark' ? 'black' : 'white'}
                                 buttonType='checkout'

@@ -29,7 +29,7 @@ const WaySection: FC = (() => {
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                     eiusmod tempor incididunt ut labore et dolore magna aliqua.
                   </p>
-                  <Link href="/contactus" className="btn btn-primary">
+                  <Link href="/contact" className="btn btn-primary">
                     Contact With Us
                   </Link>
                 </div>               </div>

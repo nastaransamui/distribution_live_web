@@ -52,8 +52,12 @@ const Appointment: FC = (() => {
     setPage(value);
   };
   const theme = useTheme();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
 
   useEffect(() => {
     let isActive = true;
@@ -196,7 +200,7 @@ const Appointment: FC = (() => {
                     </div>
                   </div>
                 </div>
-                <div className="appointment-action">
+                <div className="appointment-action" style={{ paddingTop: 30 }}>
                   <Link
                     href=""
                     className="btnLogin"

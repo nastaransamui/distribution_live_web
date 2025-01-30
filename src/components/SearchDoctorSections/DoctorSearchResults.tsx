@@ -1415,7 +1415,12 @@ export interface FavButtonTypes {
 export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
   const { bounce, muiVar } = useScssVar();
   const [loginDialog, setLoginDialog] = useState<boolean>(false)
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   let isFav = !!userProfile ? doctor?.favs_id?.includes(userProfile?._id as string) : false
   const [favIconLoading, setFavIconLoading] = useState<{ [key: string]: boolean }>({ 0: false });
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)

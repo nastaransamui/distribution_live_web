@@ -79,7 +79,7 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                           Phone <span>{doctorPatientProfile?.mobileNumber}</span>
                         </li>
                         <li>
-                          Blood Group <span>{doctorPatientProfile?.bloodG}</span>
+                          Blood Group <span>{doctorPatientProfile?.bloodG !== '' ? `🩸   ${doctorPatientProfile.bloodG}` : '-----------'}</span>
                         </li>
                       </ul>
                     </div>

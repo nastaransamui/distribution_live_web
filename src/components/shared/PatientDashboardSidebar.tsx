@@ -22,7 +22,11 @@ const PatientDashboardSidebar: FC = (() => {
   const router = useRouter()
   const dispatch = useDispatch();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value);
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
 
 
   dayjs.extend(preciseDiff)
@@ -81,7 +85,14 @@ const PatientDashboardSidebar: FC = (() => {
                       {userProfile?.dob !== '' ? dayjs(userProfile?.dob).format('DD MMM YYYY') : '---- -- --'}
                     </h4>
                     <h5>{`${isNaN(years) ? '--' : years} years ${isNaN(months) ? '--' : months} months ${isNaN(days) ? '--' : days} days`}</h5>
-                    <h6 className="mb-0"><i className="fas fa-map-marker-alt"></i>{userProfile?.city} <br />{userProfile?.state} <br />{userProfile?.country}</h6>
+                    <h6 className="mb-0" style={{ display: 'flex', justifyContent: 'center', gap: 20, alignItems: 'center' }}>
+                      <i className="fas fa-map-marker-alt"></i>
+                      <span style={{ textAlign: 'left' }}>
+                        {userProfile?.city !== "" ? `City: ${userProfile?.city}` : `City: -----`} <br />
+                        {userProfile?.state !== "" ? `State: ${userProfile?.state}` : `State: -----`} <br />
+                        {userProfile?.country !== "" ? `Country: ${userProfile?.country}` : `Country: -----`}
+                      </span>
+                    </h6>
                   </div>
                 </div>
               </div>
@@ -130,6 +141,18 @@ const PatientDashboardSidebar: FC = (() => {
                     <Link href="/patient/dashboard/dependent">
                       <i className="fas fa-users"></i>
                       <span>Dependent</span>
+                    </Link>
+                  </li>
+                  <li className={router.pathname == "/patient/dashboard/review" ? "active" : ""}>
+                    <Link href="/patient/dashboard/review">
+                      <i className="fa-solid fa-comments"></i>
+                      <span>Reviews</span>
+                    </Link>
+                  </li>
+                  <li className={router.pathname == "/patient/dashboard/rates" ? "active" : ""}>
+                    <Link href="/patient/dashboard/rates">
+                      <i className="fas fa-star" />
+                      <span>Rates</span>
                     </Link>
                   </li>
                   <li className={router.pathname.includes("/chat-doctor") ? "active" : ""}>

@@ -46,6 +46,13 @@ import { UserProfileType, updateUserProfile } from '@/redux/userProfile';
 import isJsonString from '@/helpers/isJson';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import chunkString from '@/helpers/chunkString';
+import { updateHomeExp } from '@/redux/homeExp';
+import { updateHomeIAT } from '@/redux/homeIAT';
+import { updateHomeRoleName } from '@/redux/homeRoleName';
+import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
+import { updateUserPatientProfile } from '@/redux/userPatientProfile';
+import { updateHomeServices } from '@/redux/homeServices';
+import { updateHomeUserId } from '@/redux/homeUserId';
 
 export type ChildrenProps = {
   children: JSX.Element;
@@ -63,12 +70,15 @@ const AppWrapper = ({ children }: ChildrenProps) => {
   const homeThemeType = useSelector((state: AppState) => state.homeThemeType.value)
   const homeLoadingBar = useSelector((state: AppState) => state.homeLoadingBar.value)
   const homeFormSubmit = useSelector((state: AppState) => state.homeFormSubmit.value)
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userData = useSelector((state: AppState) => state.userData.value)
   const clinicStatus = useSelector((state: AppState) => state.clinicStatus.value)
   const homeAccessToken = useSelector((state: AppState) => state.homeAccessToken.value)
   const specialities = useSelector((state: AppState) => state.specialities.value)
-
+  const homeUserId = useSelector((state: AppState) => state.homeUserId.value)
 
   const [homeTheme, setHomeTheme] = useState({
     ...appTheme(homeThemeName as string,
@@ -77,19 +87,19 @@ const AppWrapper = ({ children }: ChildrenProps) => {
     ),
   });
 
-  const { accessToken, user_id, services, roleName, iat, exp } = verifyHomeAccessToken(homeAccessToken)
+  // const { accessToken, user_id, services, roleName, iat, exp } = verifyHomeAccessToken(homeAccessToken)
 
   const socket = useRef<any>();
 
   useEffect(() => {
     if (socket.current == undefined) {
-
+      const userProfile = homeRoleName == "doctors" ? userDoctorProfile : userPatientProfile
       createBrowserDb().catch(err => console.log(err))
       socket.current = io(process.env.NEXT_PUBLIC_SOCKET_URL as string, {
         extraHeaders: {
           userData: JSON.stringify(userData),
-          token: `Bearer ${accessToken}`,
-          userid: user_id
+          token: `Bearer ${homeAccessToken}`,
+          userid: homeUserId || ''
         },
         // transports: ['websocket'], // Ensure WebSocket is used
         secure: true // Explicitly use secure connection
@@ -100,28 +110,15 @@ const AppWrapper = ({ children }: ChildrenProps) => {
         setShowLoading(false)
       });
       socket.current.on('getThemeFromAdmin', (msg: { homeThemeName: string, homeThemeType: string, homeActivePage: string }) => {
-        // if (!hasCookie('homeActivePage')) {
-        //   switch (msg.homeActivePage) {
-        //     case 'general_0':
-        //       router.push('/home')
-        //       break;
-        //     case 'general_1':
-        //       router.push('/home3')
-        //       break;
-        //     case 'general_2':
-        //       router.push('/home4')
-        //       break;
-        //   }
-        // }
 
-        setCookie('homeThemeType', msg.homeThemeType)
-        setCookie('homeThemeName', msg.homeThemeName)
-        setCookie('homeActivePage', msg.homeActivePage)
+        setCookie('homeThemeType', msg?.homeThemeType || "dark")
+        setCookie('homeThemeName', msg?.homeThemeName || "joker")
+        setCookie('homeActivePage', msg?.homeActivePage || "default")
         dispatch(updateHomeLoadingBar(homeLoadingBar == 100 ? 0 : 100))
         setHomeTheme((prevState: any) => {
           return {
-            ...appTheme(msg.homeThemeName as string,
-              msg.homeThemeType as PaletteMode,
+            ...appTheme(msg?.homeThemeName || "joker" as string,
+              msg?.homeThemeType as PaletteMode || "dark",
               'ltr'
             )
           }
@@ -151,17 +148,11 @@ const AppWrapper = ({ children }: ChildrenProps) => {
         //Handle update token
         var { accessToken, user_id, services, roleName, iat, exp, userProfile: newUserProfile } = verifyHomeAccessToken(msg)
         const { isActive } = newUserProfile;
-
         if (accessToken == '' || accessToken !== userProfile?.accessToken || !isActive) {
           //Logut users
-          if (isJsonString(getCookie('homeAccessToken') as string)) {
-            const { length } = JSON.parse(getCookie('homeAccessToken') as string)
-            for (var i = 0; i < parseInt(length); i++) {
-              deleteCookie(`${i}`);
-            }
-          }
           if (getCookie('homeAccessToken')) {
             deleteCookie('homeAccessToken')
+            dispatch(updateHomeAccessToken(null))
             toast.info('This user is not eligible to login any more', {
               position: "bottom-center",
               autoClose: 5000,
@@ -179,46 +170,29 @@ const AppWrapper = ({ children }: ChildrenProps) => {
             });
           }
         } else {
-          switch (true) {
-            case msg.length <= 4095:
-              if (isJsonString(getCookie('homeAccessToken') as string)) {
-                const { length } = JSON.parse(getCookie('homeAccessToken') as string)
-                for (var i = 0; i < parseInt(length); i++) {
-                  deleteCookie(`${i}`);
-                }
-              }
-              dispatch(updateHomeAccessToken(msg))
-              dispatch(updateUserProfile(newUserProfile))
-              setCookie('homeAccessToken', msg);
-              break;
-            default:
-              const result = chunkString(msg, 4095)
-              if (result !== null) {
-                setCookie('homeAccessToken', { isSplit: true, length: result.length });
-                for (let index = 0; index < result.length; index++) {
-                  const element = result[index];
-                  setCookie(`${index}`, element)
-                }
-                dispatch(updateHomeAccessToken(msg))
-                dispatch(updateUserProfile(newUserProfile))
-              }
-              break;
+          dispatch(updateHomeAccessToken(accessToken))
+          dispatch(updateHomeExp(exp));
+          dispatch(updateHomeIAT(iat))
+          dispatch(updateHomeRoleName(roleName))
+          dispatch(updateHomeServices(services));
+          dispatch(updateHomeUserId(user_id));
+          if (roleName == 'doctors') {
+            dispatch(updateUserDoctorProfile(newUserProfile))
+          } else if (roleName == 'patient') {
+            dispatch(updateUserPatientProfile(newUserProfile));
           }
+
+          setCookie('homeAccessToken', accessToken);
+          setCookie('user_id', user_id);
+          setCookie('services', services);
+          setCookie('roleName', roleName);
+          setCookie('iat', iat);
+          setCookie('exp', exp);
         }
 
-        // dispatch(updateSpecialities(msg))
-        // const specialitiesBrowserTable = await browserDb.specialitiesBrowserTable.toArray();
-        // if (specialitiesBrowserTable.length == 0) {
-        //   await browserDb.specialitiesBrowserTable.bulkAdd(msg)
-        // } else {
-        //   await browserDb.specialitiesBrowserTable.clear();
-        //   await browserDb.specialitiesBrowserTable.bulkAdd(msg)
-        // }
       })
       socket.current.emit('webJoin', { userProfile, userData: { ...userData, userAgent: navigator.userAgent } })
-      // socket.current.on('event', (data: any) => {
 
-      // });
       socket.current.on('disconnect', () => {
         console.log('disconnect')
       });
@@ -252,20 +226,6 @@ const AppWrapper = ({ children }: ChildrenProps) => {
 
     } else {
       if (!socket.current?.connected) {
-        // toast.info('Now connection to server is closed you need to refresh the page to be online again', {
-        //   position: "bottom-center",
-        //   autoClose: 5000,
-        //   toastId: 'connectionError',
-        //   hideProgressBar: false,
-        //   closeOnClick: true,
-        //   pauseOnHover: true,
-        //   draggable: true,
-        //   progress: undefined,
-        //   transition: bounce,
-        //   onClose: () => {
-        //     toast.dismiss('connectionError')
-        //   }
-        // });
         setPercent(() => 100)
         setShowLoading(false)
 
@@ -273,23 +233,11 @@ const AppWrapper = ({ children }: ChildrenProps) => {
     }
     return () => {
 
-      socket.current.disconnect()
+      // socket.current.disconnect()
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    // bounce,
-    // dispatch,
-    // homeLoadingBar,
-    // router,
-    // userData,
-    // clinicStatus,
-    // userProfile,
-    // homeAccessToken,
-    // specialities.length,
-    // accessToken,
-    // user_id
-  ])
+
+  }, [bounce, clinicStatus, dispatch, homeAccessToken, homeLoadingBar, homeRoleName, homeUserId, router, specialities, userData, userDoctorProfile, userPatientProfile])
 
 
   const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
@@ -327,39 +275,18 @@ const AppWrapper = ({ children }: ChildrenProps) => {
             theme={homeTheme?.palette?.mode}
           />
           <>
-            {/* {
-              showLoading ?
-                <div className="flexy-column" >
-                  <div className="progress-factor flexy-item" >
-                    <div className="progress-bar" style={{ position: 'absolute', top: '50%', right: 3 }}>
-                      <div className="bar has-rotation has-colors dark dots-pattern" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100} >
-                        <div className="tooltip"></div>
-                        <div className="bar-face face-position roof percentage"></div>
-                        <div className="bar-face face-position back percentage"></div>
-                        <div className="bar-face face-position floor percentage volume-lights"></div>
-                        <div className="bar-face face-position left"></div>
-                        <div className="bar-face face-position right"></div>
-                        <div className="bar-face face-position front percentage volume-lights shine"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                :  */}
-            <>
-              {router.route !== '/404' ?
-                <Fragment>
-                  {(!router.route.startsWith('/verify-email') && !router.route.startsWith('/reset-password')) && <Header />}
-                  <div dir={homeTheme.direction} style={{ background: homeTheme.palette.background.paper, overflowX: 'hidden' }}>
-                    {children}
-                  </div>
-                </Fragment>
-                :
-                <div dir={homeTheme.direction} >
+            {router.route !== '/404' ?
+              <Fragment>
+                {(!router.route.startsWith('/verify-email') && !router.route.startsWith('/reset-password')) && <Header />}
+                <div dir={homeTheme.direction} style={{ background: homeTheme.palette.background.paper, overflowX: 'hidden' }}>
                   {children}
                 </div>
-              }
-            </>
-            {/* } */}
+              </Fragment>
+              :
+              <div dir={homeTheme.direction} >
+                {children}
+              </div>
+            }
           </>
 
         </StylesProvider>

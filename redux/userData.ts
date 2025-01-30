@@ -1,9 +1,9 @@
-import { createSlice, AnyAction } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { HYDRATE } from 'next-redux-wrapper';
-export interface UserData {
+import { createSlice, AnyAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
+export interface HomeUserData {
   value: {
-    status: 'success' | 'fail';
+    status: "success" | "fail";
     country: string;
     countryCode: string;
     region: string;
@@ -21,12 +21,12 @@ export interface UserData {
   } | null;
 }
 
-const initialState: UserData = {
+const initialState: HomeUserData = {
   value: null,
 };
 
 export const userDataSlice = createSlice({
-  name: 'userData',
+  name: "userData",
   initialState,
   reducers: {
     updateUserData: (state, action: PayloadAction<any>) => {

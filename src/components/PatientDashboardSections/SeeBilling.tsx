@@ -25,7 +25,12 @@ import Chip from '@mui/material/Chip';
 const SeeBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ singleBill }) => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const {
     formState: { errors },
@@ -69,7 +74,6 @@ const SeeBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ singleB
 
 
 
-
   return (
     <Fragment>
       <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
@@ -86,12 +90,12 @@ const SeeBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ singleB
             <div className="row">
               <div className="col-sm-6">
                 <div className="biller-info">
-                  <h4 className="d-block">Dr. {`${userProfile?.firstName} ${userProfile?.lastName}`}</h4>
-                  <span className="d-block text-sm text-muted">{userProfile?.specialities && userProfile?.specialities.length > 0 && userProfile?.specialities[0]?.specialities}</span>
+                  <h4 className="d-block">Dr. {`${singleBill?.doctorProfile?.fullName?.charAt(0).toUpperCase() + singleBill?.doctorProfile?.fullName!.slice(1)}`}</h4>
+                  <span className="d-block text-sm text-muted">{singleBill?.doctorProfile?.specialities && singleBill?.doctorProfile?.specialities.length > 0 && singleBill?.doctorProfile?.specialities[0]?.specialities}</span>
                   <span className="d-block text-sm text-muted">
-                    Country: {userProfile?.country || '-------'}<br />
-                    State: {userProfile?.state || '-------'}<br />
-                    City: {userProfile?.city || '-------'}
+                    Country: {singleBill?.doctorProfile?.country || '-------'}<br />
+                    State: {singleBill?.doctorProfile?.state || '-------'}<br />
+                    City: {singleBill?.doctorProfile?.city || '-------'}
                   </span>
                 </div>
               </div>
@@ -244,7 +248,7 @@ const SeeBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ singleB
                     <tr>
                       <th>Total:</th>
                       <td style={{ padding: '10px 0px' }}>
-                        <span>{userProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
+                        <span>{singleBill?.doctorProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
                           watch('total')
                         )}</span>
                       </td>

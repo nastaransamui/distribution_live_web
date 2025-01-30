@@ -36,7 +36,7 @@ const LookingFor: FC = (() => {
                     <div className="doctor-book-card-content tile-card-content-1">
                       <div>
                         <h3 className="card-title mb-0">Find a Pharmacy</h3>
-                        <Link href="/Pharmacy/pharmacy-search" className="btn book-btn1 px-3 py-2 mt-3" tabIndex={0}>Find Now</Link>
+                        <Link href="/pharmacy/results" className="btn book-btn1 px-3 py-2 mt-3" tabIndex={0}>Find Now</Link>
                       </div>
                     </div>
                   </div>

@@ -1,16 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { AnyAction, PayloadAction } from '@reduxjs/toolkit';
-import { HYDRATE } from 'next-redux-wrapper';
-export interface FormSubmitState {
+import { createSlice } from "@reduxjs/toolkit";
+import type { AnyAction, PayloadAction } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
+export interface HomeFormSubmitState {
   value: boolean;
 }
 
-const initialState: FormSubmitState = {
+const initialState: HomeFormSubmitState = {
   value: false,
 };
 
 export const homeFormSubmitSlice = createSlice({
-  name: 'homeFormSubmit',
+  name: "homeFormSubmit",
   initialState,
   reducers: {
     updateHomeFormSubmit: (state, action: PayloadAction<any>) => {

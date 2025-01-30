@@ -43,6 +43,13 @@ import GeoLocationAutocomplete from '@/shared/GeoLocationAutocomplete';
 import { toast } from 'react-toastify';
 import isJsonString from '@/helpers/isJson';
 import chunkString from '@/helpers/chunkString';
+import { updateUserPatientProfile, UserPatientProfileType, UserPatientProfileTypeValue } from '@/redux/userPatientProfile';
+import { updateHomeExp } from '@/redux/homeExp';
+import { updateHomeIAT } from '@/redux/homeIAT';
+import { updateHomeRoleName } from '@/redux/homeRoleName';
+import { updateHomeServices } from '@/redux/homeServices';
+import { updateHomeUserId } from '@/redux/homeUserId';
+import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 
 
 
@@ -53,10 +60,51 @@ const ProfileSetting: FC = (() => {
   const router = useRouter();
   const theme = useTheme()
   const [uploadImage, setUploadImage] = useState(patient_profile)
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  // const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  // const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  // const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const userData = useSelector((state: AppState) => state.userData.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
-
+  const userProfileForForm = userPatientProfile ?? {
+    accessToken: '',
+    address1: '',
+    address2: '',
+    billingsIds: [],
+    bloodG: undefined,
+    city: '',
+    country: '',
+    createdAt: new Date(),
+    dependentsArray: [],
+    dob: '',
+    doctors_id: [],
+    favs_id: [],
+    firstName: '',
+    gender: '',
+    idle: false,
+    invoice_ids: [],
+    isActive: false,
+    isVerified: false,
+    lastLogin: undefined,
+    lastName: '',
+    lastUpdate: new Date(),
+    medicalRecordsArray: [],
+    mobileNumber: '',
+    online: false,
+    prescriptions_id: [],
+    profileImage: '',
+    rate_array: [],
+    reservations_id: [],
+    reviews_array: [],
+    roleName: 'patient',
+    services: 'password',
+    state: '',
+    userName: '',
+    zipCode: '',
+    _id: '',
+  };
   const {
     register,
     handleSubmit,
@@ -66,10 +114,8 @@ const ProfileSetting: FC = (() => {
     control,
     getValues,
     setValue: setFormValue
-  } = useForm({
-    defaultValues: {
-      ...userProfile
-    }
+  } = useForm<UserPatientProfileTypeValue>({
+    defaultValues: userProfileForForm,
   })
   const onProfileSubmit = (data: any) => {
     !data.city ? data.city = inputValue.city : data.city;
@@ -79,7 +125,7 @@ const ProfileSetting: FC = (() => {
     data.profileImageFiles = [];
     data.clinicImagesFiles = [];
     data.deletedImages = [];
-    data.userId = userProfile?._id
+    data.userId = userPatientProfile?._id
     var file;
     if (fileToRead.files.length !== 0) {
       file = fileToRead.files[0]
@@ -107,85 +153,34 @@ const ProfileSetting: FC = (() => {
           }
         });
       } else if (msg?.status == 200) {
-        switch (true) {
-          //AccessToken length is equal or less that 4095
-          case msg?.accessToken.length <= 4095:
-            switch (true) {
-              case isJsonString(getCookie('homeAccessToken') as string):
-                const { length } = JSON.parse(getCookie('homeAccessToken') as string)
-                for (var i = 0; i < parseInt(length); i++) {
-                  deleteCookie(`${i}`);
-                }
-                dispatch(updateHomeAccessToken(msg?.accessToken))
-                setCookie('homeAccessToken', msg?.accessToken);
-                var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-                dispatch(updateUserProfile(userProfile))
-                toast.info('Profile update successfully.', {
-                  position: "bottom-center",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  transition: bounce,
-                  onClose: () => {
-                    dispatch(updateHomeFormSubmit(false))
-                  }
-                });
-                break;
+        const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
+        setCookie('homeAccessToken', accessToken);
+        setCookie('user_id', user_id);
+        setCookie('services', services);
+        setCookie('roleName', roleName);
+        setCookie('iat', iat);
+        setCookie('exp', exp);
+        dispatch(updateHomeAccessToken(accessToken))
+        dispatch(updateHomeUserId(user_id));
+        dispatch(updateHomeServices(services));
+        dispatch(updateHomeRoleName(roleName));
+        dispatch(updateHomeIAT(iat));
+        dispatch(updateHomeExp(exp))
+        roleName == 'patient' ? dispatch(updateUserDoctorProfile(userProfile)) : dispatch(updateUserPatientProfile(userProfile))
+        toast.info('Profile update successfully.', {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          transition: bounce,
+          onClose: () => {
+            dispatch(updateHomeFormSubmit(false))
+          }
+        });
 
-              default:
-                dispatch(updateHomeAccessToken(msg?.accessToken))
-                setCookie('homeAccessToken', msg?.accessToken);
-                var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-                dispatch(updateUserProfile(userProfile))
-                toast.info('Profile update successfully.', {
-                  position: "bottom-center",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  transition: bounce,
-                  onClose: () => {
-                    dispatch(updateHomeFormSubmit(false))
-                    setUploadImage(patient_profile)
-                  }
-                });
-                break;
-            }
-            break;
-
-          default:
-            const result = chunkString(msg?.accessToken, 4095)
-            if (result !== null) {
-              setCookie('homeAccessToken', { isSplit: true, length: result.length });
-              for (let index = 0; index < result.length; index++) {
-                const element = result[index];
-                setCookie(`${index}`, element)
-              }
-              var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-              dispatch(updateHomeAccessToken(msg?.accessToken))
-              dispatch(updateUserProfile(userProfile))
-              toast.info('Profile update successfully.', {
-                position: "bottom-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                transition: bounce,
-                onClose: () => {
-                  dispatch(updateHomeFormSubmit(false))
-                  setUploadImage(patient_profile)
-                }
-              });
-            }
-            break;
-        }
       }
     })
   }
@@ -238,14 +233,14 @@ const ProfileSetting: FC = (() => {
 
 
   useEffect(() => {
-    if (userProfile !== null && isClient) {
-      let profileObj: any = Object.entries(userProfile)
+    if (userPatientProfile !== null && isClient) {
+      let profileObj: any = Object.entries(userPatientProfile)
       profileObj.map((a: any) => {
         setFormValue(a[0], a[1])
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userProfile, isClient])
+  }, [userPatientProfile, isClient])
 
   const deleteUser = () => {
 
@@ -255,7 +250,7 @@ const ProfileSetting: FC = (() => {
 
   const confirmDeleteClick = () => {
     let data = {
-      userId: userProfile?._id,
+      userId: userPatientProfile?._id,
       ipAddr: userData?.query,
       userAgent: navigator.userAgent,
     }
@@ -328,11 +323,11 @@ const ProfileSetting: FC = (() => {
                               objectFit: 'cover',
                               borderRadius: '4px',
                             }} alt="" src={
-                              userProfile?.profileImage == "" ?
+                              userPatientProfile?.profileImage == "" ?
                                 uploadImage : uploadImage.startsWith('blob') ?
                                   uploadImage :
-                                  `${userProfile?.profileImage}?random=${new Date().getTime()}`}
-                              key={userProfile?.profileImage}
+                                  `${userPatientProfile?.profileImage}?random=${new Date().getTime()}`}
+                              key={userPatientProfile?.profileImage}
                             >
                               <img src={patient_profile} alt="" />
                             </Avatar>

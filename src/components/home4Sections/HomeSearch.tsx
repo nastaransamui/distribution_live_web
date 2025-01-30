@@ -405,7 +405,7 @@ const HomeSearch: FC = (() => {
                                     borderColor: "#000000",
                                   },
                                   "& .MuiInputBase-input.MuiOutlinedInput-input.Mui-disabled": {
-                                    '-webkit-text-fill-color': '#000000'
+                                    'WebkitTextFillColor': '#000000'
                                   },
                                   '.MuiOutlinedInput-notchedOutline': {
                                     borderColor: '#000000'
@@ -468,7 +468,7 @@ const HomeSearch: FC = (() => {
                                     borderColor: "#000000",
                                   },
                                   "& .MuiInputBase-input.MuiOutlinedInput-input.Mui-disabled": {
-                                    '-webkit-text-fill-color': '#000000'
+                                    'WebkitTextFillColor': '#000000'
                                   },
                                   '.MuiOutlinedInput-notchedOutline': {
                                     borderColor: '#000000'

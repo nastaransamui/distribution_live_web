@@ -62,7 +62,12 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
     paymentToken,
   } = printProps
 
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   return (
     <div ref={ref} >
       <Fragment >
@@ -194,7 +199,7 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                             <tbody>
                               <tr>
                                 <th>Subtotal:</th>
-                                <td style={{ padding: '10px 0px', color: '#000' }}>
+                                <td style={{ padding: '10px 20px', color: '#000' }}>
                                   <span>{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                     timeSlot?.total
                                   )}</span>
@@ -208,59 +213,17 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                               </tr>
                               <tr>
                                 <th>Total Amount:</th>
-                                <td style={{ padding: '10px 0px', color: '#000' }}>
+                                <td style={{ padding: '10px 20px', color: '#000' }}>
                                   <span>{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                     timeSlot?.total
                                   )}</span>
                                 </td>
                               </tr>
                               <tr>
-                                {/* {
-                                  router.asPath.startsWith('/doctors') && <>
-                                    <th>Total Price:</th>
-                                    <td style={{ padding: '10px 0px', color: "#000" }}>
-                                      <span>
-                                        {currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                          price
-                                        )}
-                                      </span>
-                                    </td>
-                                  </>
-                                } */}
                               </tr>
                               <tr>
-                                {/* {
-                                  router.asPath.startsWith('/doctors') ? <>
-                                    <th>Total Fee Price:</th>
-                                    <td style={{ padding: '10px 0px', color: "#000" }}>
-                                      <span>
-                                        {currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                          bookingsFeePrice
-                                        )}
-                                      </span>
-                                    </td>
-                                  </> :
-                                    <>
-                                      <th>Total:</th>
-                                      <td style={{ padding: '10px 0px', color: "#000" }}>
-                                        <span>{currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                          total
-                                        )}</span>
-                                      </td>
-                                    </>
-                                } */}
                               </tr>
                               <tr>
-                                {/* {
-                                  router.asPath.startsWith('/doctors') && <>
-                                    <th>Total:</th>
-                                    <td style={{ padding: '10px 0px', color: "#000" }}>
-                                      <span>{currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                        total
-                                      )}</span>
-                                    </td>
-                                  </>
-                                } */}
                               </tr>
                             </tbody>
                           </table>
@@ -268,14 +231,6 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                       </div>
                     </div>
                   </div>
-                  {/* <div className="col-md-6 col-xl-4 ms-auto" style={{
-                    minHeight: `${billDetailsArray.length == 1 ? 250 :
-                      billDetailsArray.length == 2 ? 250 :
-                        billDetailsArray.length == 3 ? 150 :
-                          billDetailsArray.length == 4 ? 115 :
-                            160
-                      }px`
-                  }}></div> */}
                   <div className="other-info">
                     <h4>Other information</h4>
                     <p className=" mb-0" style={{ color: '#000' }}>
@@ -301,7 +256,12 @@ PrintInvoiceComponent.displayName = "PrintInvoiceComponent"
 
 const Invoices: FC = (() => {
   const { muiVar, bounce } = useScssVar();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [rows, setRows] = useState<AppointmentReservationExtendType[] | []>([])
   const [rowCount, setRowCount] = useState<number>(0)
@@ -462,7 +422,7 @@ const Invoices: FC = (() => {
     {
       field: 'doctorProfile',
       headerName: "Doctor",
-      width: 200,
+      width: 300,
       headerAlign: 'center',
       align: 'left',
       renderCell: (data: any) => {

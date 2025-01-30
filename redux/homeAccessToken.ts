@@ -1,16 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { AnyAction, PayloadAction } from '@reduxjs/toolkit';
-import { HYDRATE } from 'next-redux-wrapper';
-export interface AccessTokenState {
+import { createSlice } from "@reduxjs/toolkit";
+import type { AnyAction, PayloadAction } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
+export interface HomeAccessTokenState {
   value: string | null;
 }
 
-const initialState: AccessTokenState = {
+const initialState: HomeAccessTokenState = {
   value: null,
 };
 
 export const homeAccessTokenSlice = createSlice({
-  name: 'homeAccessToken',
+  name: "homeAccessToken",
   initialState,
   reducers: {
     updateHomeAccessToken: (state, action: PayloadAction<any>) => {

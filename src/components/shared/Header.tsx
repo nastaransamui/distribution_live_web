@@ -36,7 +36,11 @@ const Header: FC = () => {
   const maxWidth991 = useMediaQuery('(max-width:991px)');
   const minWidth1200 = useMediaQuery('(min-width:1200px)');
   const clinicStatus = useSelector((state: AppState) => state.clinicStatus.value)
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const dispatch = useDispatch();
   const { muiVar, bounce } = useScssVar()
@@ -136,9 +140,9 @@ const Header: FC = () => {
   const [imageTimestamp, setImageTimestamp] = useState(new Date().getTime());
 
   // Update the timestamp only when the profile image URL changes
-  useEffect(() => {
-    setImageTimestamp(new Date().getTime());
-  }, [userProfile]);
+  // useEffect(() => {
+  //   setImageTimestamp(new Date().getTime());
+  // }, [userProfile]);
 
   const PatientHeaderUL = () => {
     return (

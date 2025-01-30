@@ -40,7 +40,12 @@ const Favourits: FC = (() => {
   const [reload, setReload] = useState<boolean>(false)
   const [favDoctorsProfile, setFavDoctorsProfile] = useState<FavDoctorProfile[]>([])
   const theme = useTheme();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const minWidth767max923 = useMediaQuery('@media (min-width: 767px) and (max-width:923px)');
   const [page, setPage] = useState(1);

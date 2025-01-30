@@ -140,7 +140,6 @@ const PrescriptionPage: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile
         <PatientSidebarDoctorDashboard doctorPatientProfile={profile} /> :
         <PatientDashboardSidebar />
       }
-
       {(() => {
         switch (pageType) {
           case 'add':

@@ -32,7 +32,11 @@ export interface VitalSignTypes {
 
 const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) => {
   const { muiVar, bounce } = useScssVar();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const router = useRouter();
   const [reload, setReload] = useState<boolean>(false)

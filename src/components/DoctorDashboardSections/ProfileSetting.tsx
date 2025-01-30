@@ -242,7 +242,7 @@ const ProfileSetting: FC = (() => {
   const [images, setImages] = useState<{ clinicImage: File, clinicImageName: string, random: string }[]>([]);
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const userData = useSelector((state: AppState) => state.userData.value)
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [uploadImage, setUploadImage] = useState(doctors_profile)
   // const [specialities, setSpecialities] = useState<SpecialitiesType[]>([])
@@ -250,10 +250,10 @@ const ProfileSetting: FC = (() => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [currencyValue, setcurrencyValue] = useState<string | null>(
-    userProfile?.currency.length === 0 ? null : `${userProfile?.currency[0].currency_name} ${userProfile?.currency[0].emoji}`)
+    userDoctorProfile?.currency.length === 0 ? null : `${userDoctorProfile?.currency[0].currency_name} ${userDoctorProfile?.currency[0].emoji}`)
   const [currencyInputValue, setcurrencyInputValue] = useState<string>(
-    userProfile?.currency.length === 0 ? '' : `${userProfile?.currency[0].currency_name} ${userProfile?.currency[0].emoji}`)
-  const [currencyDisable, setcurrencyDisable] = useState<boolean>(userProfile?.reservations_id.length !== 0 ? true : false)
+    userDoctorProfile?.currency.length === 0 ? '' : `${userDoctorProfile?.currency[0].currency_name} ${userDoctorProfile?.currency[0].emoji}`)
+  const [currencyDisable, setcurrencyDisable] = useState<boolean>(userDoctorProfile?.reservations_id.length !== 0 ? true : false)
 
   const {
     register,
@@ -267,7 +267,7 @@ const ProfileSetting: FC = (() => {
     setError
   } = useForm({
     defaultValues: {
-      ...userProfile,
+      ...userDoctorProfile,
     }
   })
 
@@ -314,7 +314,7 @@ const ProfileSetting: FC = (() => {
     data.profileImageFiles = [];
     data.clinicImagesFiles = [];
     data.deletedImages = [];
-    data.userId = userProfile?._id
+    data.userId = userDoctorProfile?._id
     var file;
     if (fileToRead.files.length !== 0) {
       file = fileToRead.files[0]
@@ -485,8 +485,8 @@ const ProfileSetting: FC = (() => {
 
 
   useEffect(() => {
-    if (userProfile !== null && isClient) {
-      let profileObj: any = Object.entries(userProfile)
+    if (userDoctorProfile !== null && isClient) {
+      let profileObj: any = Object.entries(userDoctorProfile)
       profileObj.map((a: any) => {
         if (a[0] == 'currency') {
           setFormValue(a[0], a[1])
@@ -500,7 +500,7 @@ const ProfileSetting: FC = (() => {
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userProfile, isClient])
+  }, [userDoctorProfile, isClient])
 
   const deleteUser = () => {
 
@@ -510,7 +510,7 @@ const ProfileSetting: FC = (() => {
 
   const confirmDeleteClick = () => {
     let data = {
-      userId: userProfile?._id,
+      userId: userDoctorProfile?._id,
       ipAddr: userData?.query,
       userAgent: navigator.userAgent,
     }
@@ -585,11 +585,11 @@ const ProfileSetting: FC = (() => {
                               objectFit: 'cover',
                               borderRadius: '4px',
                             }} alt="" src={
-                              userProfile?.profileImage == "" ?
+                              userDoctorProfile?.profileImage == "" ?
                                 uploadImage : uploadImage.startsWith('blob') ?
                                   uploadImage :
-                                  `${userProfile?.profileImage}`}
-                              key={userProfile?.profileImage}
+                                  `${userDoctorProfile?.profileImage}`}
+                              key={userDoctorProfile?.profileImage}
                             // ${isClient ? `?random=${new Date().getTime()}` : ``}
                             >
                               <img src={doctors_profile} alt="" />
@@ -798,7 +798,7 @@ const ProfileSetting: FC = (() => {
                         name: "aboutMe",
                       }}
                       label="About Me"
-                      defaultValue={userProfile?.aboutMe}
+                      defaultValue={userDoctorProfile?.aboutMe}
                       multiline
                       minRows={6}
                       fullWidth
@@ -826,7 +826,7 @@ const ProfileSetting: FC = (() => {
                           // required
                           id="clinicName"
                           label="Clinic Name"
-                          defaultValue={userProfile?.clinicName}
+                          defaultValue={userDoctorProfile?.clinicName}
                           autoComplete='off'
                           fullWidth
                           error={errors.clinicName == undefined ? false : true}
@@ -846,7 +846,7 @@ const ProfileSetting: FC = (() => {
                           // required
                           id="clinicAddress"
                           label="Clinic Address"
-                          defaultValue={userProfile?.clinicAddress}
+                          defaultValue={userDoctorProfile?.clinicAddress}
                           autoComplete='off'
                           fullWidth
                           error={errors.clinicAddress == undefined ? false : true}

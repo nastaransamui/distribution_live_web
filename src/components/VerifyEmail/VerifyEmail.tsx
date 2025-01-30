@@ -30,6 +30,13 @@ import jwt from 'jsonwebtoken';
 import verifyHomeAccessToken from '../../../helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import chunkString from '@/helpers/chunkString';
+import { updateHomeExp } from '@/redux/homeExp';
+import { updateHomeIAT } from '@/redux/homeIAT';
+import { updateHomeRoleName } from '@/redux/homeRoleName';
+import { updateHomeServices } from '@/redux/homeServices';
+import { updateHomeUserId } from '@/redux/homeUserId';
+import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
+import { updateUserPatientProfile } from '@/redux/userPatientProfile';
 
 const VerifyEmail: FC = ((props) => {
   const router = useRouter();
@@ -126,56 +133,34 @@ const VerifyEmail: FC = ((props) => {
           homeSocket.current.once('verificationEmailReturn', (msg: any) => {
             if (msg?.status == 200) {
               const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-              switch (true) {
-                //AccessToken length is equal or less that 4095
-                case msg?.accessToken.length <= 4095:
-                  dispatch(updateHomeAccessToken(msg?.accessToken))
-                  setCookie('homeAccessToken', msg?.accessToken);
-                  dispatch(updateUserProfile(userProfile))
-                  toast.info('Login successfully', {
-                    position: "bottom-center",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    transition: bounce,
-                    onClose: () => {
-                      dispatch(updateHomeFormSubmit(false))
-                      reset()
-                      router.reload();
-                    }
-                  });
-                  break;
-                default:
-                  const result = chunkString(msg?.accessToken, 4095)
-                  if (result !== null) {
-                    setCookie('homeAccessToken', { isSplit: true, length: result.length });
-                    for (let index = 0; index < result.length; index++) {
-                      const element = result[index];
-                      setCookie(`${index}`, element)
-                    }
-                    dispatch(updateHomeAccessToken(msg?.accessToken))
-                    dispatch(updateUserProfile(userProfile))
-                    toast.info('Login successfully', {
-                      position: "bottom-center",
-                      autoClose: 5000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                      transition: bounce,
-                      onClose: () => {
-                        dispatch(updateHomeFormSubmit(false))
-                        // reset()
-                        router.reload();
-                      }
-                    });
-                  }
-                  break;
-              }
+              setCookie('homeAccessToken', accessToken);
+              setCookie('user_id', user_id);
+              setCookie('services', services);
+              setCookie('roleName', roleName);
+              setCookie('iat', iat);
+              setCookie('exp', exp);
+              dispatch(updateHomeAccessToken(accessToken))
+              dispatch(updateHomeUserId(user_id));
+              dispatch(updateHomeServices(services));
+              dispatch(updateHomeRoleName(roleName));
+              dispatch(updateHomeIAT(iat));
+              dispatch(updateHomeExp(exp))
+              roleName == 'patient' ? dispatch(updateUserDoctorProfile(userProfile)) : dispatch(updateUserPatientProfile(userProfile))
+              toast.info('Login successfully', {
+                position: "bottom-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                transition: bounce,
+                onClose: () => {
+                  dispatch(updateHomeFormSubmit(false))
+                  reset()
+                  router.reload();
+                }
+              });
             } else {
               toast.info(msg?.reason, {
                 position: "bottom-center",

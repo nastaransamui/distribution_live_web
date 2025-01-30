@@ -42,7 +42,12 @@ const AddPrescription: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile 
   const { muiVar, bounce, threeOptionMain } = useScssVar();
   const router = useRouter();
   const dispatch = useDispatch();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
 
   const {
@@ -123,7 +128,7 @@ const AddPrescription: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile 
               <div className="col-sm-6">
                 <div className="biller-info">
                   <h4 className="d-block">{userProfile !== null && `Dr. ${userProfile?.firstName} ${userProfile?.lastName}`}</h4>
-                  <span className="d-block text-sm text-muted">{userProfile !== null && userProfile?.specialities?.[0]?.specialities}</span>
+                  <span className="d-block text-sm text-muted">{userProfile !== null && userDoctorProfile?.specialities?.[0]?.specialities}</span>
                   <span className="d-block text-sm text-muted">{userProfile !== null && `${userProfile?.country} ${userProfile?.state} ${userProfile?.city}`}</span>
                 </div>
               </div>

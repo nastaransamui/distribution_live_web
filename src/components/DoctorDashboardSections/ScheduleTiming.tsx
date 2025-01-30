@@ -30,7 +30,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid, GridColDef, GridRenderCellParams, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
-import Pagination from '@mui/material/Pagination';
 import { NumericFormat } from 'react-number-format'
 
 //utilites
@@ -216,7 +215,9 @@ const ScheduleTiming: FC = (() => {
   dayjs.extend(isBetween)
   const theme = useTheme();
   const searchParams = useSearchParams();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [calendarValue, setCalendarValue] = useState<any>()
   let initStateKey = dayjs().format('DDMMYYYY')
@@ -314,9 +315,9 @@ const ScheduleTiming: FC = (() => {
 
   useEffect(() => {
     let isActive = true;
-    let userId = userProfile?._id
+    let userId = userDoctorProfile?._id
     if (isActive && homeSocket.current !== undefined) {
-      if (userProfile?.timeSlotId && userProfile?.timeSlotId.length !== 0) {
+      if (userDoctorProfile?.timeSlotId && userDoctorProfile?.timeSlotId.length !== 0) {
         homeSocket.current.emit('getDoctorTimeSlots', { userId: userId, ...dataGridFilters })
         homeSocket.current.once('getDoctorTimeSlotsReturn', (msg: { status: number, timeSlots: DoctorsTimeSlotType[], message?: string }) => {
 
@@ -594,10 +595,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFee: userDoctorProfile?.bookingsFee!,
                 bookingsFeePrice: '',
                 total: '',
-                currencySymbol: userProfile?.currency?.[0]?.currency!,
+                currencySymbol: userDoctorProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
               appendmorning({
@@ -605,10 +606,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFee: userDoctorProfile?.bookingsFee!,
                 bookingsFeePrice: '',
                 total: '',
-                currencySymbol: userProfile?.currency?.[0]?.currency!,
+                currencySymbol: userDoctorProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
             })
@@ -620,10 +621,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFee: userDoctorProfile?.bookingsFee!,
                 bookingsFeePrice: '',
                 total: '',
-                currencySymbol: userProfile?.currency?.[0]?.currency!,
+                currencySymbol: userDoctorProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
               appendafternoon({
@@ -631,10 +632,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFee: userDoctorProfile?.bookingsFee!,
                 bookingsFeePrice: '',
                 total: '',
-                currencySymbol: userProfile?.currency?.[0]?.currency!,
+                currencySymbol: userDoctorProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
             })
@@ -646,10 +647,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFee: userDoctorProfile?.bookingsFee!,
                 bookingsFeePrice: '',
                 total: '',
-                currencySymbol: userProfile?.currency?.[0]?.currency!,
+                currencySymbol: userDoctorProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
               appendevening({
@@ -657,10 +658,10 @@ const ScheduleTiming: FC = (() => {
                 active: false,
                 isReserved: false,
                 price: '',
-                bookingsFee: userProfile?.bookingsFee!,
+                bookingsFee: userDoctorProfile?.bookingsFee!,
                 bookingsFeePrice: '',
                 total: '',
-                currencySymbol: userProfile?.currency?.[0]?.currency!,
+                currencySymbol: userDoctorProfile?.currency?.[0]?.currency!,
                 reservations: []
               })
             })
@@ -1493,7 +1494,7 @@ const ScheduleTiming: FC = (() => {
                       <NumericFormat
                         dir="ltr"
                         key={`${period}`}
-                        prefix={` ${userProfile?.currency[0]?.currency} `}
+                        prefix={` ${userDoctorProfile?.currency[0]?.currency} `}
                         value={allPricesEqual ? fieldValue[0].price : ''}
                         thousandSeparator
                         customInput={TextField}
@@ -1594,7 +1595,7 @@ const ScheduleTiming: FC = (() => {
                               return (
                                 <NumericFormat
                                   key={`${i} ${JSON.stringify(timeObjec)}`}
-                                  prefix={` ${userProfile?.currency[0]?.currency} `}
+                                  prefix={` ${userDoctorProfile?.currency[0]?.currency} `}
                                   value={fieldValue}
                                   thousandSeparator
                                   customInput={TextField}
@@ -1677,7 +1678,7 @@ const ScheduleTiming: FC = (() => {
         if (prevState == null) {
           prevState = {
             _id: '',
-            doctorId: userProfile?._id as string,
+            doctorId: userDoctorProfile?._id as string,
             createDate: new Date(),
             updateDate: new Date(),
             availableSlots: []
@@ -1805,7 +1806,7 @@ const ScheduleTiming: FC = (() => {
   }
 
   const saveTodb = () => {
-    if (userProfile) {
+    if (userDoctorProfile) {
       dispatch(updateHomeFormSubmit(true))
       homeSocket.current.emit('createDoctorsTimeslots', doctorAvailableTimeSlot)
       homeSocket.current.once('createDoctorsTimeslotsReturn', (msg: { status: number, message?: string, doctorAvailableTimeSlot?: DoctorsTimeSlotType }) => {
@@ -1850,7 +1851,7 @@ const ScheduleTiming: FC = (() => {
   }
 
   const updateDb = () => {
-    if (userProfile) {
+    if (userDoctorProfile) {
       delete doctorAvailableTimeSlot?.reservations
       delete doctorAvailableTimeSlot?.totalReservation
       dispatch(updateHomeFormSubmit(true))
@@ -1895,7 +1896,7 @@ const ScheduleTiming: FC = (() => {
   }
 
   const deleteDb = () => {
-    if (userProfile) {
+    if (userDoctorProfile) {
       dispatch(updateHomeFormSubmit(true))
       homeSocket.current.emit('deleteDoctorsTimeslots', doctorAvailableTimeSlot)
       homeSocket.current.once('deleteDoctorsTimeslotsReturn', (msg: { status: number, message?: string }) => {
@@ -2318,7 +2319,7 @@ const ScheduleTiming: FC = (() => {
   return (
     <Fragment>
       {
-        userProfile?.currency.length == 0 ?
+        userDoctorProfile?.currency.length == 0 ?
           <>
             <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
               <div className="row">

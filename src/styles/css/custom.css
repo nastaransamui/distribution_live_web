@@ -13118,6 +13118,7 @@ table .table-hover tbody tr:hover td {
   -webkit-transition: all 0.3s ease 0s;
   -ms-transition: all 0.3s ease 0s;
   transition: all 0.3s ease 0s;
+  min-height: 522px;
 }
 
 .profile-widget .fav-btn {
@@ -13245,6 +13246,7 @@ table .table-hover tbody tr:hover td {
   list-style: none;
   margin: auto auto 15px;
   padding: 0;
+  min-height: 127px;
 }
 
 .profile-widget .pro-content .available-info li i {
@@ -17899,10 +17901,14 @@ call-btn:focus {
   margin-bottom: 10px;
 }
 
-.review-listing > ul li .comment .comment-body .meta-data span {
+.review-listing > ul li .comment .comment-body .meta-data .comment-date,
+.review-listing > ul li .comment .comment-body  .comment-reply {
   display: block;
   font-size: 16px;
   color: var(--color);
+}
+.star-span{
+  display: flex !important;
 }
 
 .review-listing > ul li .comment .comment-body .meta-data span.comment-author {
@@ -18020,6 +18026,14 @@ call-btn:focus {
   font-weight: 500;
   margin: 0;
 }
+
+.not-recommended {
+  color: crimson;
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0;
+}
+
 
 .all-feedback {
   margin-top: 20px;
@@ -42678,6 +42692,9 @@ input:checked + .tog-slider:before {
 .terms-section .privacy-content .terms-text.terms-list p {
   margin-bottom: 10px;
   color: var(--color);
+}
+.terms-section .privacy-content p{
+  text-align: justify;
 }
 
 .terms-section .privacy-content .terms-text.terms-list p i {

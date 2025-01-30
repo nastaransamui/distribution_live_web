@@ -68,7 +68,11 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
   const theme = useTheme();
   const [index, setIndex] = useState(0);
   const [edit, setEdit] = useState(false);
-  const userProfile = useSelector((state: AppState) => state.userProfile.value);
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
   const handleChangeTab = (event: SyntheticEvent, newValue: string) => {
     setIndex(Number(newValue))
     setValue(newValue);
@@ -134,8 +138,8 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                       <MedicalRecords patientProfile={doctorPatientProfile} />
                     </TabPanel>
                     <TabPanel value="3">
-                      {userType == 'doctor' && userProfile?.currency &&
-                        <>{userProfile?.currency.length > 0 ? <div className="text-end">
+                      {userDoctorProfile?.currency &&
+                        <>{userDoctorProfile?.currency.length > 0 ? <div className="text-end">
                           <Link href={`/doctors/dashboard/add-billing/${btoa(doctorPatientProfile._id)}`} target='_blank' className="add-new-btn">
                             Add Billing
                           </Link>
@@ -163,8 +167,8 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                       <MedicalRecords patientProfile={doctorPatientProfile} />
                     </TabPanel>
                     <TabPanel value="3">
-                      {userType == 'doctor' && userProfile?.currency &&
-                        <>{userProfile?.currency.length > 0 ? <div className="text-end">
+                      {userDoctorProfile?.currency &&
+                        <>{userDoctorProfile?.currency.length > 0 ? <div className="text-end">
                           <Link href={`/doctors/dashboard/add-billing/${btoa(doctorPatientProfile._id)}`} target='_blank' className="add-new-btn">
                             Add Billing
                           </Link>

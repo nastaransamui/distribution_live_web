@@ -118,7 +118,12 @@ const Accounts: FC = (() => {
   const [req, setReq] = useState(false);
   const [bankData, setBankData] = useState<BankType>()
   const dispatch = useDispatch();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false)
@@ -143,7 +148,7 @@ const Accounts: FC = (() => {
 
   const open = Boolean(anchorEl);
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 5,
+    pageSize: perPage,
     page: 0,
   });
   const columns: GridColDef[] = [
@@ -487,8 +492,8 @@ const Accounts: FC = (() => {
 
     setDataGridFilters((prevState) => {
       return {
-        limit: perPage !== paginationModel.pageSize ? paginationModel.pageSize : perPage * value,
-        skip: (value - 1) * perPage,
+        limit: paginationModel.pageSize !== paginationModel.pageSize ? paginationModel.pageSize : paginationModel.pageSize * value,
+        skip: (value - 1) * paginationModel.pageSize,
         filter: prevState.filter
       }
     })
@@ -676,7 +681,7 @@ const Accounts: FC = (() => {
                       </Divider>
                       <div className="col-lg-4">
                         <div className="account-card bg-success-light">
-                          <span>{userProfile?.currency[0]?.currency_symbol} {" "}
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
                               !!totals?.AwaitingRequest ?
                                 formatNumberWithCommas(String(totals?.AwaitingRequest?.totalAmount)) : `0.00`
@@ -686,7 +691,7 @@ const Accounts: FC = (() => {
                       </div>
                       <div className="col-lg-4">
                         <div className="account-card bg-warning-light">
-                          <span>{userProfile?.currency[0]?.currency_symbol} {" "}
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
                               !!totals?.AwaitingRequest ?
                                 formatNumberWithCommas(String(totals?.AwaitingRequest?.totalPrice)) : `0.00`
@@ -696,7 +701,7 @@ const Accounts: FC = (() => {
                       </div>
                       <div className="col-lg-4">
                         <div className="account-card bg-purple-light">
-                          <span>{userProfile?.currency[0]?.currency_symbol} {" "}
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
                               !!totals?.AwaitingRequest ?
                                 formatNumberWithCommas(String(totals?.AwaitingRequest?.totalBookingsFeePrice)) : `0.00`
@@ -715,7 +720,7 @@ const Accounts: FC = (() => {
                       </Divider>
                       <div className="col-lg-4">
                         <div className="account-card bg-success-light">
-                          <span>{userProfile?.currency[0]?.currency_symbol} {" "}
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
                               !!totals?.Pending ?
                                 formatNumberWithCommas(String(totals?.Pending?.totalAmount)) : `0.00`
@@ -725,7 +730,7 @@ const Accounts: FC = (() => {
                       </div>
                       <div className="col-lg-4">
                         <div className="account-card bg-warning-light">
-                          <span>{userProfile?.currency[0]?.currency_symbol} {" "}
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
                               !!totals?.Pending ?
                                 formatNumberWithCommas(String(totals?.Pending?.totalPrice)) : `0.00`
@@ -735,7 +740,7 @@ const Accounts: FC = (() => {
                       </div>
                       <div className="col-lg-4">
                         <div className="account-card bg-purple-light">
-                          <span>{userProfile?.currency[0]?.currency_symbol} {" "}
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
                               !!totals?.Pending ?
                                 formatNumberWithCommas(String(totals?.Pending?.totalBookingsFeePrice)) : `0.00`
@@ -754,7 +759,7 @@ const Accounts: FC = (() => {
                       </Divider>
                       <div className="col-lg-4">
                         <div className="account-card bg-success-light">
-                          <span>{userProfile?.currency[0]?.currency_symbol} {" "}
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
                               !!totals?.Paid ?
                                 formatNumberWithCommas(String(totals?.Paid?.totalAmount)) : `0.00`
@@ -764,7 +769,7 @@ const Accounts: FC = (() => {
                       </div>
                       <div className="col-lg-4">
                         <div className="account-card bg-warning-light">
-                          <span>{userProfile?.currency[0]?.currency_symbol} {" "}
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
                               !!totals?.Paid ?
                                 formatNumberWithCommas(String(totals?.Paid?.totalPrice)) : `0.00`
@@ -774,7 +779,7 @@ const Accounts: FC = (() => {
                       </div>
                       <div className="col-lg-4">
                         <div className="account-card bg-purple-light">
-                          <span>{userProfile?.currency[0]?.currency_symbol} {" "}
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
                               !!totals?.Paid ?
                                 formatNumberWithCommas(String(totals?.Paid?.totalBookingsFeePrice)) : `0.00`

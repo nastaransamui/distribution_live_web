@@ -6,7 +6,6 @@ import IconButton from '@mui/material/IconButton'
 import { useTheme } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import Link from 'next/link';
-import Slider from '@mui/material/Slider';
 import { useSearchParams } from 'next/navigation';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';

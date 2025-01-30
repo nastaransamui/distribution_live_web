@@ -22,12 +22,10 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { useForm, Controller } from 'react-hook-form';
 import FormHelperText from '@mui/material/FormHelperText'
 import FormControl from '@mui/material/FormControl';
-import StarRoundedIcon from '@mui/icons-material/StarRounded';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { LoginBox } from '@/components/AuthSections/LoginSection';
 import { useDispatch, useSelector } from 'react-redux';
@@ -111,7 +109,12 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
   }, [])
   const { bounce, muiVar } = useScssVar();
   const theme = useTheme();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -367,44 +370,45 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                     }} />
                 </div> :
                 <Fragment>
-                  {totalReviews !== 0 ? <div style={{ position: 'relative' }}>
-                    <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
-                      {
-                        <Stack spacing={2}>
-                          <Pagination
-                            showFirstButton
-                            showLastButton
-                            hideNextButton
-                            hidePrevButton
-                            boundaryCount={1}
-                            variant="outlined"
-                            color="secondary"
-                            count={Math.ceil(totalReviews / perPage)}
-                            page={page}
-                            onChange={handlePageChange}
-                            sx={{
-                              marginLeft: 'auto',
-                              marginRight: 'auto'
-                            }}
-                          />
-                          <Typography variant='h5' align='center' sx={{ paddingBottom: 2 }}>Total: {totalReviews} reviews</Typography>
-                        </Stack>
-                      }
-                    </div>
-                  </div> : <CustomNoRowsOverlay text="No Reviews yet" />}
+                  {totalReviews !== 0 ?
+                    <div style={{ position: 'relative' }}>
+                      <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
+                        {
+                          <Stack spacing={2}>
+                            <Pagination
+                              showFirstButton
+                              showLastButton
+                              hideNextButton
+                              hidePrevButton
+                              boundaryCount={1}
+                              variant="outlined"
+                              color="secondary"
+                              count={Math.ceil(totalReviews / perPage)}
+                              page={page}
+                              onChange={handlePageChange}
+                              sx={{
+                                marginLeft: 'auto',
+                                marginRight: 'auto'
+                              }}
+                            />
+                            <Typography variant='h5' align='center' sx={{ paddingBottom: 2 }}>Total: {totalReviews} reviews</Typography>
+                          </Stack>
+                        }
+                      </div>
+                    </div> : <CustomNoRowsOverlay text="No Reviews yet" />}
                   <div className="doc-review review-listing">
 
                     <ul className="comments-list">
                       {
                         doctorReviews.map((reviews: ReviewTypes, index: number) => {
-                          const { createdAt } = reviews;
+                          const { createdAt, updatedAt } = reviews;
                           const online = reviews?.role == 'doctors' ? reviews?.doctorProfile?.online : reviews?.patientProfile?.online
                           const profileImage = reviews?.role == 'doctors' ? reviews?.doctorProfile?.profileImage : reviews?.patientProfile?.profileImage;
                           const authorName = reviews?.role == 'doctors' ? reviews?.doctorProfile?.fullName : reviews?.patientProfile?.fullName;
-                          const formattedDate = `Reviewed ${dayjs(createdAt).fromNow()}`;
-                          const fullStars = Math.floor(reviews.rating); // Count of fully filled stars
-                          const halfStars = reviews.rating % 1 >= 0.5 ? 1 : 0; // 1 if there's a half-star
-                          const emptyStars = 5 - fullStars - halfStars; // Remaining stars to make 5
+                          const formattedDate =
+                            createdAt == updatedAt ?
+                              `Reviewed ${dayjs(createdAt).fromNow()}` :
+                              `Reviewed Updated ${dayjs(updatedAt).fromNow()}`;
                           return (
                             <li key={`${reviews._id}`}>
                               <div className="comment" >
@@ -425,26 +429,30 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                                     <span className="comment-author">{reviews?.role == 'doctors' ? 'Dr.' : `${reviews?.patientProfile?.gender} `}{authorName}</span>
 
                                     <span className="comment-date">{`#${reviews?.id}`}</span>
-                                    <span className="comment-date">{formattedDate}{reviews?._id}</span>
+                                    <span className="comment-date">{formattedDate}</span>
                                     <div className="review-count rating">
-                                      {Array(fullStars)
-                                        .fill(0)
-                                        .map((_, index) => (
-                                          <i key={`full-${index}`} className="fas fa-star filled" />
-                                        ))}
-
-                                      {halfStars === 1 && <i className="fas fa-star-half-alt filled" />}
-
-                                      {Array(emptyStars)
-                                        .fill(0)
-                                        .map((_, index) => (
-                                          <i key={`empty-${index}`} className="fas fa-star" />
-                                        ))}
+                                      {reviews?.rating}
+                                      <Rating
+                                        name="read-only"
+                                        precision={0.5}
+                                        value={reviews?.rating}
+                                        readOnly
+                                        className='star-span'
+                                        size="small"
+                                        sx={{
+                                          color: 'warning.main',
+                                        }}
+                                      />
                                     </div>
                                   </div>
-                                  {reviews?.recommend && <p className="recommended">
-                                    <i className="far fa-thumbs-up" /> I recommend the doctor
-                                  </p>}
+                                  {reviews?.recommend ?
+                                    <p className="recommended">
+                                      <i className="far fa-thumbs-up" /> I recommend the doctor
+                                    </p> :
+                                    <p className="not-recommended">
+                                      <i className="far fa-thumbs-down" /> Not recommend
+                                    </p>
+                                  }
                                   <p className="comment-content">
                                     Title: {reviews.title}
                                   </p>
@@ -640,7 +648,8 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                                       )
                                     })
                                   }
-                                </ul>}
+                                </ul>
+                              }
                             </li>
                           )
                         })
@@ -728,7 +737,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                               fullWidth
                               required
                             >
-                              <span id="rating" style={{ color: theme.palette.text.color }}>Review</span>
+                              <span id="rating" style={{ color: theme.palette.text.color }}>Rating</span>
                               <Rating
                                 ref={ref}
                                 aria-labelledby='rating'
@@ -738,8 +747,10 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                                 onChange={(_event, newValue) => {
                                   onChange(newValue === null ? 0 : newValue);
                                 }}
-                                icon={<StarRoundedIcon fontSize="inherit" />}
-                                emptyIcon={<StarRoundedIcon fontSize="inherit" />}
+                                className='star-span'
+                                sx={{
+                                  color: 'warning.main',
+                                }}
 
                               />
                               {errors?.rating && <FormHelperText>{errors['rating']['message']}</FormHelperText>}

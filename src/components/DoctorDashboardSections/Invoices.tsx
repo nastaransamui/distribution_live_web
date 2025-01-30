@@ -63,7 +63,12 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
     paymentToken,
   } = printProps
 
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   return (
     <div ref={ref} >
       <Fragment >
@@ -195,7 +200,7 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                             <tbody>
                               <tr>
                                 <th>Subtotal:</th>
-                                <td style={{ padding: '10px 0px', color: '#000' }}>
+                                <td style={{ padding: '10px 20px', color: '#000' }}>
                                   <span>{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                     timeSlot?.total
                                   )}</span>
@@ -209,7 +214,7 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                               </tr>
                               <tr>
                                 <th>Total Amount:</th>
-                                <td style={{ padding: '10px 0px', color: '#000' }}>
+                                <td style={{ padding: '10px 20px', color: '#000' }}>
                                   <span>{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                     timeSlot?.total
                                   )}</span>
@@ -255,7 +260,12 @@ export interface ValueType {
 }
 const Invoices: FC = (() => {
   const { muiVar, bounce } = useScssVar();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [rows, setRows] = useState<AppointmentReservationExtendType[] | []>([])
   const [rowCount, setRowCount] = useState<number>(0)

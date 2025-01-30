@@ -21,7 +21,12 @@ const DoctorDashboardSidebar: FC = (() => {
 
   const dispatch = useDispatch();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value);
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
 
 
   dayjs.extend(preciseDiff)
@@ -67,7 +72,7 @@ const DoctorDashboardSidebar: FC = (() => {
                 </Link>
                 <div className="profile-det-info">
                   <h1>Dr. {userProfile?.firstName} {userProfile?.lastName}</h1>
-                  <h2>{userProfile?.specialities?.[0]?.specialities}</h2>
+                  <h2>{userDoctorProfile?.specialities?.[0]?.specialities}</h2>
                   <h3>{userProfile?.userName}</h3>
                   <h3>{`${userProfile?.roleName?.charAt(0).toUpperCase()}${userProfile?.roleName.slice(1)}`}</h3>
                   <div className="patient-details">
@@ -159,7 +164,7 @@ const DoctorDashboardSidebar: FC = (() => {
                     </Link>
                   </li>
                   <li className={router.pathname == "/doctors/dashboard/rate" ? "active" : ""}>
-                    <Link href="/doctors/dashboard/rate">
+                    <Link href="/doctors/dashboard/rates">
                       <i className="fas fa-star" />
                       <span>Rates</span>
                     </Link>

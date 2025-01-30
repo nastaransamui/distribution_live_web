@@ -39,7 +39,13 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
   const theme = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const {
     formState: { errors },
@@ -72,7 +78,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
   const addInputField = () => {
     appendBill([{
       ...initialState,
-      bookingsFee: userProfile?.bookingsFee,
+      bookingsFee: userDoctorProfile?.bookingsFee,
     }])
 
   }
@@ -148,7 +154,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
               <div className="col-sm-6">
                 <div className="biller-info">
                   <h4 className="d-block">Dr. {`${userProfile?.firstName} ${userProfile?.lastName}`}</h4>
-                  <span className="d-block text-sm text-muted">{userProfile?.specialities && userProfile?.specialities.length > 0 && userProfile?.specialities[0]?.specialities}</span>
+                  <span className="d-block text-sm text-muted">{userDoctorProfile?.specialities && userDoctorProfile?.specialities.length > 0 && userDoctorProfile?.specialities[0]?.specialities}</span>
                   <span className="d-block text-sm text-muted">
                     Country: {userProfile?.country || '-------'}<br />
                     State: {userProfile?.state || '-------'}<br />
@@ -306,7 +312,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                                 color: router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'
                                                   ? theme.palette.text.disabled :
                                                   theme.palette.text.color
-                                              }}>{userProfile?.currency[0]?.currency_symbol}</span>
+                                              }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
                                             </InputAdornment>,
                                         }}
                                         value={watch(`billDetailsArray.${index}.price`)}
@@ -360,7 +366,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                     InputProps={{
                                       endAdornment:
                                         <InputAdornment position="end" >
-                                          <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userProfile?.currency[0]?.currency_symbol}</span>
+                                          <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
                                         </InputAdornment>,
                                     }}
                                   />
@@ -387,7 +393,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                     InputProps={{
                                       endAdornment:
                                         <InputAdornment position="end" >
-                                          <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userProfile?.currency[0]?.currency_symbol}</span>
+                                          <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
                                         </InputAdornment>,
                                     }}
                                   />
@@ -419,7 +425,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                     <tr>
                       <th>Total Price:</th>
                       <td style={{ padding: '10px 0px' }}>
-                        <span>{userProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
+                        <span>{userDoctorProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
                           watch('price')
                         )}</span>
                       </td>
@@ -427,7 +433,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                     <tr>
                       <th>Total Fee Price:</th>
                       <td style={{ padding: '10px 0px' }}>
-                        <span>{userProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
+                        <span>{userDoctorProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
                           watch('bookingsFeePrice')
                         )}</span>
                       </td>
@@ -435,7 +441,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                     <tr>
                       <th>Total:</th>
                       <td style={{ padding: '10px 0px' }}>
-                        <span>{userProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
+                        <span>{userDoctorProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
                           watch('total')
                         )}</span>
                       </td>
@@ -453,7 +459,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                   <button type="reset" disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'} className="btn btn-primary submit-btn"
                     onClick={() => {
                       reset();
-                      setFormValue('billDetailsArray.0.bookingsFee', userProfile?.bookingsFee!)
+                      setFormValue('billDetailsArray.0.bookingsFee', userDoctorProfile?.bookingsFee!)
                       setFormValue('billDetailsArray.0.price', "")
                     }}>Clear</button>
                 </div>

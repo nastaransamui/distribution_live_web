@@ -3,11 +3,13 @@ import useScssVar from '@/hooks/useScssVar'
 import TextField from '@mui/material/TextField'
 import InputAdornment from "@mui/material/InputAdornment";
 import { useTheme } from '@mui/material';
+import { useRouter } from 'next/router';
 
 
 const SearchSection: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
+  const router = useRouter()
 
   return (
     <Fragment>
@@ -37,7 +39,12 @@ const SearchSection: FC = (() => {
                         }}
                       />
                     </div>
-                    <button type="submit" aria-label='search' className="btn btn-primary search-btn" onClick={(e) => e.preventDefault()} style={{ marginLeft: -5 }}><i className="fas fa-search" /> <span>Search</span></button>
+                    <button type="submit" aria-label='search' className="btn btn-primary search-btn" onClick={
+                      (e) => {
+                        e.preventDefault()
+                        router.push('/pharmacy/results')
+                      }
+                    } style={{ marginLeft: -5 }}><i className="fas fa-search" /> <span>Search</span></button>
                   </form>
                 </div>
                 {/* /Search */}

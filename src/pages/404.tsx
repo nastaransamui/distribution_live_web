@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { NextPage } from "next";
 //react
-import { Fragment, useEffect } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
@@ -21,21 +21,10 @@ import useScssVar from '@/hooks/useScssVar';
 import { AppState } from '@/redux/store';
 
 const Custom404: NextPage = (props: any) => {
-  const router = useRouter()
+
   const errorCode = props.router.route.substring(1);
   const dispatch = useDispatch()
-  const {
-    secondaryMain,
-    primaryMain,
-    circleMain,
-    circleOne,
-    pieceOne,
-    pieceTwo,
-    pieceThree,
-    threeOptionMain,
-    textColor,
-    muiVar
-  } = useScssVar()
+
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -54,6 +43,30 @@ const Custom404: NextPage = (props: any) => {
     }
   }, [dispatch]);
 
+  return (
+    <Fragment>
+      <ErrorComponent errorCode={errorCode} />
+    </Fragment>
+  );
+}
+
+export const ErrorComponent: FC<{ errorCode: number, errorText?: string }> = (({
+  errorCode,
+  errorText = `Uh oh Looks like you got lost. <br />Go back to the homepage`
+}) => {
+  const {
+    secondaryMain,
+    primaryMain,
+    circleMain,
+    circleOne,
+    pieceOne,
+    pieceTwo,
+    pieceThree,
+    threeOptionMain,
+    textColor,
+    muiVar
+  } = useScssVar()
+  const router = useRouter()
   return (
     <Fragment>
       <Head>
@@ -147,7 +160,7 @@ const Custom404: NextPage = (props: any) => {
 
           <div className="text">
             <article>
-              <p>Uh oh Looks like you got lost. <br />Go back to the homepage</p>
+              <p dangerouslySetInnerHTML={{ __html: errorText }}></p>
               <button
                 style={secondaryMain}
                 onClick={() => {
@@ -158,8 +171,7 @@ const Custom404: NextPage = (props: any) => {
         </div>
       </section>
     </Fragment>
-  );
-}
-
+  )
+})
 
 export default connect((state: AppState) => state)(Custom404);

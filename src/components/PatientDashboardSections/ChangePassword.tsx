@@ -22,7 +22,12 @@ const ChangePassword: FC = (() => {
   const { muiVar, bounce } = useScssVar();
 
   const dispatch = useDispatch()
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -150,108 +155,120 @@ const ChangePassword: FC = (() => {
           <div className="card-body">
             <h5 className="card-title" style={{ marginBottom: 20 }}>Change Password</h5>
             <div className="row">
-              <div className="col-md-10 col-lg-6">
-                <form noValidate onSubmit={passwordSubmit(onPasswordSubmit)}>
-                  <div className="form-group">
-                    <TextField
-                      variant='outlined'
-                      fullWidth
-                      required
-                      error={passwordErrors.oldPassword == undefined ? false : true}
-                      helperText={passwordErrors?.oldPassword && passwordErrors['oldPassword'][`message`] as ReactNode}
-                      id="password"
-                      label="Password"
-                      type={showOldPassword ? 'text' : 'password'}
-                      {...passwordRegister("oldPassword", {
-                        required: "This field is required",
-                        pattern: {
-                          value: paswordRegex,
-                          message: "Password should be at least 8 characters long and should contain one number,one character and one special character"
-                        }
-                      })}
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowOldPassword}
-                            onMouseDown={handleMouseDownOldPassword}
-                            edge="end"
-                          >
-                            {showOldPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      }}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <FormLabel component="legend">New Password</FormLabel>
-                    <TextField
-                      variant='outlined'
-                      fullWidth
-                      required
-                      error={passwordErrors.newPassword == undefined ? false : true}
-                      helperText={passwordErrors?.newPassword && passwordErrors['newPassword'][`message`] as ReactNode}
-                      id="newPassword"
-                      label="New Password"
-                      type={showNewPassword ? 'text' : 'password'}
-                      {...passwordRegister("newPassword", {
-                        required: "This field is required",
-                        pattern: {
-                          value: paswordRegex,
-                          message: "Password should be at least 8 characters long and should contain one number,one character and one special character"
-                        },
-                        validate: {
-                          passwordMissMatch: value => (value === passwordGetValue().confirmPassword) || "New password and confirm password should be same.",
-                        }
-                      })}
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowNewPassword}
-                            onMouseDown={handleMouseDownOldPassword}
-                            edge="end"
-                          >
-                            {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      }}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <FormLabel component="legend">Confirm Password</FormLabel>
-                    <TextField
-                      variant='outlined'
-                      fullWidth
-                      required
-                      error={passwordErrors.confirmPassword == undefined ? false : true}
-                      helperText={passwordErrors?.confirmPassword && passwordErrors['confirmPassword'][`message`] as ReactNode}
-                      id="confirmPassword"
-                      label="Confirm Password"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      {...passwordRegister("confirmPassword", {
-                        required: "This field is required",
-                        pattern: {
-                          value: paswordRegex,
-                          message: "Password should be at least 8 characters long and should contain one number,one character and one special character"
-                        },
-                        validate: {
-                          passwordMissMatch: value => (value === passwordGetValue().newPassword) || "New password and confirm password should be same.",
-                        }
-                      })}
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowConfirmPassword}
-                            onMouseDown={handleMouseDownOldPassword}
-                            edge="end"
-                          >
-                            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      }}
-                    />
+              <div >
+                <form className="col-md-12 col-lg-12" noValidate onSubmit={passwordSubmit(onPasswordSubmit)}>
+                  <div className='row'>
+                    <div className="col-md-4 col-lg-4">
+                      <div className="form-group">
+                        <FormLabel component="legend">Old Password</FormLabel>
+                        <TextField
+                          variant='outlined'
+                          size='small'
+                          fullWidth
+                          required
+                          error={passwordErrors.oldPassword == undefined ? false : true}
+                          helperText={passwordErrors?.oldPassword && passwordErrors['oldPassword'][`message`] as ReactNode}
+                          id="password"
+                          label="Password"
+                          type={showOldPassword ? 'text' : 'password'}
+                          {...passwordRegister("oldPassword", {
+                            required: "This field is required",
+                            pattern: {
+                              value: paswordRegex,
+                              message: "Password should be at least 8 characters long and should contain one number,one character and one special character"
+                            }
+                          })}
+                          InputProps={{
+                            endAdornment: <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowOldPassword}
+                                onMouseDown={handleMouseDownOldPassword}
+                                edge="end"
+                              >
+                                {showOldPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4 col-lg-4">
+                      <div className="form-group">
+                        <FormLabel component="legend">New Password</FormLabel>
+                        <TextField
+                          variant='outlined'
+                          size='small'
+                          fullWidth
+                          required
+                          error={passwordErrors.newPassword == undefined ? false : true}
+                          helperText={passwordErrors?.newPassword && passwordErrors['newPassword'][`message`] as ReactNode}
+                          id="newPassword"
+                          label="New Password"
+                          type={showNewPassword ? 'text' : 'password'}
+                          {...passwordRegister("newPassword", {
+                            required: "This field is required",
+                            pattern: {
+                              value: paswordRegex,
+                              message: "Password should be at least 8 characters long and should contain one number,one character and one special character"
+                            },
+                            validate: {
+                              passwordMissMatch: value => (value === passwordGetValue().confirmPassword) || "New password and confirm password should be same.",
+                            }
+                          })}
+                          InputProps={{
+                            endAdornment: <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowNewPassword}
+                                onMouseDown={handleMouseDownOldPassword}
+                                edge="end"
+                              >
+                                {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4 col-lg-4">
+                      <div className="form-group">
+                        <FormLabel component="legend">Confirm Password</FormLabel>
+                        <TextField
+                          variant='outlined'
+                          size='small'
+                          fullWidth
+                          required
+                          error={passwordErrors.confirmPassword == undefined ? false : true}
+                          helperText={passwordErrors?.confirmPassword && passwordErrors['confirmPassword'][`message`] as ReactNode}
+                          id="confirmPassword"
+                          label="Confirm Password"
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          {...passwordRegister("confirmPassword", {
+                            required: "This field is required",
+                            pattern: {
+                              value: paswordRegex,
+                              message: "Password should be at least 8 characters long and should contain one number,one character and one special character"
+                            },
+                            validate: {
+                              passwordMissMatch: value => (value === passwordGetValue().newPassword) || "New password and confirm password should be same.",
+                            }
+                          })}
+                          InputProps={{
+                            endAdornment: <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowConfirmPassword}
+                                onMouseDown={handleMouseDownOldPassword}
+                                edge="end"
+                              >
+                                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          }}
+                        />
+                      </div>
+                    </div>
                   </div>
                   <button type="submit" className="btnLogin w-100">
                     Save Changes

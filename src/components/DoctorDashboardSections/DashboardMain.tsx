@@ -23,7 +23,11 @@ const DashboardMain: FC = (() => {
   const [isToday, setIsToday] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [total, setTotal] = useState(0);
-  const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
 
   return (
     <Fragment>
@@ -69,7 +73,7 @@ const DashboardMain: FC = (() => {
                         style={{ position: "relative", top: "-18px" }}
                       >
                         <h6>Total Patient</h6>
-                        <h3>{userProfile !== null && userProfile?.patients_id?.length}</h3>
+                        <h3>{userProfile !== null && userDoctorProfile?.patients_id?.length}</h3>
                         <p className="text-muted">Till Today</p>
                       </div>
                     </div>
