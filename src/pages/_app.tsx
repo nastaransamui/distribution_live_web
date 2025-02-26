@@ -78,15 +78,30 @@ const App = ({ Component, ...rest }: MyAppProps) => {
   }, []);
 
   return (
-    // <CacheProvider value={emotionCache}>
-    <Provider store={store}>
-      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
-        <AppWrapper>
-          <Component {...pageProps} key={router.route} router={router} />
-        </AppWrapper>
-      </GoogleOAuthProvider>
-    </Provider>
-    // </CacheProvider >
+    <>
+      {/* CacheProvider break in production */}
+      {
+        process.env.NODE_ENV == 'development' ?
+          <CacheProvider value={emotionCache}>
+            <Provider store={store}>
+              <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
+                <AppWrapper>
+                  <Component {...pageProps} key={router.route} router={router} />
+                </AppWrapper>
+              </GoogleOAuthProvider>
+            </Provider>
+          </CacheProvider > :
+
+          <Provider store={store}>
+            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
+              <AppWrapper>
+                <Component {...pageProps} key={router.route} router={router} />
+              </AppWrapper>
+            </GoogleOAuthProvider>
+          </Provider>
+
+      }
+    </>
   )
 }
 

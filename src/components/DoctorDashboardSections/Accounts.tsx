@@ -6,18 +6,9 @@ import Link from 'next/link';
 //Mui
 import { Transition, BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
 import DialogContent from '@mui/material/DialogContent'
-import { DataGrid, GridColDef, GridValueFormatterParams, GridRenderCellParams, GridRowId } from '@mui/x-data-grid';
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import dayjs from 'dayjs';
-import Chip from '@mui/material/Chip';
-import Sort from '@mui/icons-material/Sort';
-import Stack from '@mui/material/Stack';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
@@ -25,39 +16,16 @@ import { toast } from 'react-toastify';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import { AppointmentReservationType } from '../DoctorsSections/CheckOut/PaymentSuccess';
 import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
-import { formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor, StyledBadge } from './ScheduleTiming';
-import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
-import CustomPagination from '../shared/CustomPagination';
-import { patient_profile } from '@/public/assets/imagepath';
-import Avatar from '@mui/material/Avatar';
+import { formatNumberWithCommas, LoadingComponent } from './ScheduleTiming';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container'
-import Tooltip from '@mui/material/Tooltip';
+import Box from '@mui/material/Box';
+import dataGridStyle from '../shared/dataGridStyle';
 import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import Popover from '@mui/material/Popover';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
 
 
-type InputProps = {
-  justifycontent: string
-}
-export const StyledBox = styled(Container)<InputProps>(({ theme, justifycontent }) => ({
-  border: '2px solid ',
-  // marginTop: -10,
-  borderColor: theme.palette.secondary.main,
-  borderRadius: 5,
-  marginBottom: 5,
-  minHeight: `60px`,
-  minWidth: '100%',
-  display: 'flex',
-  justifyContent: justifycontent,
-  alignItems: 'center',
-  '--animate-duration': '1s',
-  '--animate-delay': '1s'
-}));
 
 export interface BankType {
   _id?: string;
@@ -84,38 +52,38 @@ const initialState: BankType = {
 }
 
 
-export interface TotalsType {
-  AwaitingRequest?: {
-    totalAmount: number;
-    totalPrice: number;
-    totalBookingsFeePrice: number;
-    totalBookings: number;
-  };
-  Pending?: {
-    totalAmount: number;
-    totalPrice: number;
-    totalBookingsFeePrice: number;
-    totalBookings: number;
-  };
-  Paid?: {
-    totalAmount: number;
-    totalPrice: number;
-    totalBookingsFeePrice: number;
-    totalBookings: number;
-  };
+export interface ReservationsValueInners {
+  totalAmount: number;
+  totalPrice: number;
+  totalBookingsFeePrice: number;
+  totalBookings: number;
+}
+export interface BillingsValueInners {
+  totalAmount: number;
+  totalPrice: number;
+  totalBookingsFeePrice: number;
+  totalBillings: number;
+}
+export interface ReservationTotalsType {
+  AwaitingRequest?: ReservationsValueInners;
+  Pending?: ReservationsValueInners;
+  Paid?: ReservationsValueInners;
+  totalReservations: number;
 }
 
-interface AnchorType {
-  0: null | HTMLButtonElement;
-  field: string;
+export interface BillingsTotalsType {
+  Pending?: BillingsValueInners;
+  Paid?: BillingsValueInners;
+  totalBillings: number;
 }
+
+
 const Accounts: FC = (() => {
   const { muiVar, bounce } = useScssVar();
-  const [value, setValue] = useState('1');
-  const theme = useTheme();
-  const grdiRef = useRef<any>(null)
+  const { classes, theme } = dataGridStyle({});
+
   const [edit, setEdit] = useState(false);
-  const [req, setReq] = useState(false);
+
   const [bankData, setBankData] = useState<BankType>()
   const dispatch = useDispatch();
   // const userProfile = useSelector((state: AppState) => state.userProfile.value)
@@ -127,205 +95,9 @@ const Accounts: FC = (() => {
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false)
-  const [rows, setRows] = useState<AppointmentReservationType[] | []>([])
-  const [rowCount, setRowCount] = useState<number>(0)
-  const [totals, setTotals] = useState<TotalsType>();
-  const perPage = 5;
-  const [dataGridFilters, setDataGridFilters] = useState({
-    limit: perPage,
-    skip: 0,
-    filter: "All"
-  });
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [updateStatusArray, setUpdateStatusArray] = useState<GridRowId[]>([])
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const [paginationModel, setPaginationModel] = useState({
-    pageSize: perPage,
-    page: 0,
-  });
-  const columns: GridColDef[] = [
-    {
-      field: "id",
-      headerName: "ID",
-      width: 20,
-      align: 'center',
-      headerAlign: 'center'
-    },
-    {
-      field: 'startDate',
-      headerName: 'From - To Period',
-      width: 250,
-      align: 'center',
-      headerAlign: 'center',
-      valueFormatter(params: GridValueFormatterParams) {
-        const { id, api } = params
-        return `From: ${api.getCellValue(id as string, 'startDate')} To: ${api.getCellValue(id as string, 'finishDate')}`
-      },
-    },
-    {
-      field: 'dayPeriod',
-      headerName: 'Day time',
-      width: 90,
-      align: 'center',
-      headerAlign: 'center',
-      valueGetter(params: GridRenderCellParams) {
-        const { value } = params
-        return value.charAt(0).toUpperCase() + value.slice(1)
-      }
-    },
-    {
-      field: 'price',
-      headerName: 'Price',
-      width: 90,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params) => {
-        return (
-          <Stack >
-            <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(params?.row?.timeSlot?.price)}</span>
-            <span className="d-block">
-              <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.timeSlot?.currencySymbol || 'THB'}</span>
-            </span>
-          </Stack>
-        )
-      }
-    },
-    {
-      field: 'bookingsFee',
-      headerName: 'Bookings Fee',
-      width: 120,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params) => {
-        return (
-          <Stack >
-            <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
-              params?.row?.timeSlot?.bookingsFeePrice
-            )}</span>
-            <span className="d-block">
-              <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.timeSlot?.currencySymbol || 'THB'}</span>
-            </span>
-          </Stack>
-        )
-      }
-    },
-    {
-      field: 'total',
-      headerName: 'Total',
-      width: 90,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params) => {
-        return (
-          <Stack >
-            <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
-              params?.row?.timeSlot?.total
-            )}</span>
-            <span className="d-block">
-              <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.timeSlot?.currencySymbol || 'THB'}</span>
-            </span>
-          </Stack>
-        )
-      }
-    },
-    {
-      field: 'selectedDate',
-      headerName: `Apointment Time`,
-      align: 'center',
-      width: 150,
-      headerAlign: 'center',
-      renderCell: (params) => {
-        return (
-          <Stack >
-            <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.selectedDate}</span>
-            <span className="d-block" >{params?.row?.timeSlot?.period}</span>
-          </Stack>
-        )
-      }
-
-    },
-    {
-      field: 'patientProfile',
-      headerName: `Patient Name`,
-      width: 200,
-      align: 'left',
-      headerAlign: 'center',
-      valueFormatter(params: GridValueFormatterParams) {
-        const { value } = params
-        return `${value.gender} ${value?.firstName} ${value?.lastName}`
-      },
-      renderCell: (params: GridRenderCellParams) => {
-        const { row, formattedValue } = params;
-        const profileImage = row?.patientProfile?.profileImage == '' ? patient_profile : row?.patientProfile?.profileImage
-        const online = row?.patientProfile?.online || false;
-        return (
-          <>
-            <Link aria-label='link' className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`} target='_blank'>
-              <StyledBadge
-                overlap="circular"
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                variant="dot"
-                online={online}
-              >
-                <Avatar alt="" src={`${profileImage}?random=${new Date().getTime()}`} >
-                  <img src={patient_profile} alt="" className="avatar avatar-in-schedule-table" />
-                </Avatar>
-              </StyledBadge>
-            </Link>
-            <Stack>
-              <Link aria-label='link' href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}
-                target='_blank'
-                style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
-                {formattedValue}
-              </Link>
-              <Link href={`/doctors/invoice-view/${btoa(row?._id!)}`} target='_blank'>{row.invoiceId}</Link>
-            </Stack>
-          </>
-        )
-      }
-    },
-    {
-      field: 'paymentDate',
-      headerName: `Payment Date`,
-      align: 'center',
-      width: 150,
-      headerAlign: 'center',
-      valueGetter(params: GridRenderCellParams) {
-        const { value } = params
-        return value == '' ? '====' : dayjs(value).format('DD MMM YYYY  HH:mm')
-      }
-    },
-    {
-      field: 'paymentType',
-      headerName: `Payment status`,
-      width: 180,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (data: any) => {
-        const { row } = data;
-        return (
-          <>
-            <Chip
-              color={
-                row.doctorPaymentStatus == 'Paid' ? 'success' :
-                  row.doctorPaymentStatus == 'Awaiting Request' ? 'error' :
-                    'primary'}
-              label={`${row.doctorPaymentStatus}`}
-              size="small"
-              sx={{ color: theme.palette.primary.contrastText }} />
-          </>
-        )
-      }
-    },
-  ]
+  const [showBankName, setShowBankName] = useState<boolean>(false);
+  const [reservationsAndTotals, setReservationsAndTotals] = useState<ReservationTotalsType>();
+  const [billingsAndTotals, setBillingsAndTotals] = useState<BillingsTotalsType>();
 
 
 
@@ -347,22 +119,30 @@ const Accounts: FC = (() => {
     if (isActive) {
       let userId = userProfile?._id
       if (homeSocket.current !== undefined) {
-        homeSocket.current.emit('getUserBankDataWithReservation', { userId: userId, ...dataGridFilters })
+        homeSocket.current.emit('getUserBankDataWithReservation', { userId: userId })
         homeSocket.current.once('getUserBankDataWithReservationReturn', (msg: {
           status: number,
           message?: string,
           bankWithReservations: {
-            status: number,
-            message?: string,
-            bankData: BankType[],
+            bankData: BankType,
             reservationsAndTotals: {
-              reservations: AppointmentReservationType[],
               totalReservations: number,
-              totals: TotalsType
+              totals: {
+                AwaitingRequest: ReservationsValueInners,
+                Paid: ReservationsValueInners,
+                Pending: ReservationsValueInners
+              }
+            }[],
+            billingsAndTotals: {
+              totalBillings: number,
+              totals: {
+                Paid: BillingsValueInners,
+                Pending: BillingsValueInners,
+              }
             }[]
           }
         }) => {
-          const { status, message, bankWithReservations } = msg;
+          const { status, message } = msg;
           if (status !== 200) {
             toast.error(message || `Error ${status} find Reservation`, {
               position: "bottom-center",
@@ -376,36 +156,25 @@ const Accounts: FC = (() => {
               onClose: () => { }
             });
           } else {
-            if (bankWithReservations.status !== 200) {
-              toast.error(bankWithReservations.message || `Error ${bankWithReservations.status} find Doctor`, {
-                position: "bottom-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                transition: bounce,
-                onClose: () => { }
-              });
-            } else {
-              const { bankData, reservationsAndTotals } = bankWithReservations;
-              if (bankData && bankData?.length !== 0) {
-                setBankData({ ...bankData[0] })
-              }
-              if (reservationsAndTotals && reservationsAndTotals?.length !== 0) {
-                const { reservations, totalReservations, totals } = reservationsAndTotals[0];
-                setRowCount(totalReservations);
-                setTotals(totals)
-                setRows(() => {
-                  let newState: AppointmentReservationType[] = []
-                  if (reservations && reservations.length > 0) {
-                    newState = [...reservations];
-                  }
-                  return newState
-                })
-              }
-
+            const { bankWithReservations } = msg;
+            const { reservationsAndTotals, bankData, billingsAndTotals } = bankWithReservations;
+            if (bankData) {
+              setBankData({ ...bankData })
+            }
+            if (reservationsAndTotals && reservationsAndTotals?.length !== 0) {
+              setReservationsAndTotals({
+                totalReservations: reservationsAndTotals[0]?.totalReservations,
+                AwaitingRequest: reservationsAndTotals[0]?.totals?.AwaitingRequest,
+                Pending: reservationsAndTotals[0]?.totals?.Pending,
+                Paid: reservationsAndTotals[0]?.totals?.Paid
+              })
+            }
+            if (billingsAndTotals && billingsAndTotals?.length !== 0) {
+              setBillingsAndTotals({
+                totalBillings: billingsAndTotals[0]?.totalBillings,
+                Paid: billingsAndTotals[0]?.totals?.Paid,
+                Pending: billingsAndTotals[0]?.totals?.Pending
+              })
             }
             homeSocket.current.once(`updateGetUserBankDataWithReservation`, () => {
               setReload(!reload)
@@ -420,7 +189,7 @@ const Accounts: FC = (() => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, userProfile?._id, reload, dataGridFilters])
+  }, [homeSocket, userProfile?._id, reload,])
 
   const onSubmitEditBank = (data: BankType) => {
     dispatch(updateHomeFormSubmit(true))
@@ -458,115 +227,40 @@ const Accounts: FC = (() => {
     }
   }
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setPaginationModel((prevState) => {
-      var maximuPage: number = prevState.page;
-      if (rowCount !== 0) {
-        if ((maximuPage + 1) >= (Math.floor(rowCount / parseInt(event.target.value, 10)))) {
-          maximuPage = (Math.floor(rowCount / parseInt(event.target.value, 10))) - 1
-        }
-      }
-      return {
-        pageSize: parseInt(event.target.value, 10),
-        page: maximuPage <= 0 ? 0 : maximuPage,
-      }
-    })
-    setDataGridFilters((prevState) => {
-      var maximuPage: number = prevState.skip;
-      if (rowCount !== 0) {
-        if ((maximuPage + 1) >= (Math.floor(rowCount / parseInt(event.target.value, 10)))) {
-          maximuPage = (Math.floor(rowCount / parseInt(event.target.value, 10))) - 1
-        }
-      }
-      return {
-        limit: parseInt(event.target.value, 10),
-        skip: maximuPage <= 0 ? 0 : maximuPage,
-        filter: prevState.filter
-      }
-    })
-  }
-
-  const handleChangePage = (_event: React.ChangeEvent<unknown>, value: number) => {
-
-    setDataGridFilters((prevState) => {
-      return {
-        limit: paginationModel.pageSize !== paginationModel.pageSize ? paginationModel.pageSize : paginationModel.pageSize * value,
-        skip: (value - 1) * paginationModel.pageSize,
-        filter: prevState.filter
-      }
-    })
-    setPaginationModel((prevState) => {
-      return {
-        ...prevState,
-        page: value - 1
-      }
-    })
-  }
-
-  const updateAppointmentRequestSubmit = () => {
-    if (homeSocket.current) {
-      let userId = userProfile?._id
-      homeSocket.current.emit(`updateReservationAndTimsSlotStatus`, { userId: userId, updateStatusArray, newStatus: 'Pending' })
-      homeSocket.current.once('updateReservationAndTimsSlotStatusReturn', (msg: { status: number, message: string }) => {
-        const { status, message } = msg;
-        if (status !== 200) {
-          toast.error(message || `Error ${status} find Doctor`, {
-            position: "bottom-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: bounce,
-            onClose: () => { }
-          });
-        } else {
-          document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-          setTimeout(() => {
-            setReq(false)
-          }, 500);
-          setUpdateStatusArray([])
-          setReload(!reload)
-          toast.info(message, {
-            position: "bottom-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: bounce,
-            onClose: () => { }
-          });
-        }
-      })
-    }
-
-  }
 
 
   return (
     <Fragment>
 
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp" style={muiVar}>
         {isLoading ?
-          <CircleToBlockLoading color={theme.palette.primary.main} size="small"
-            style={{
-              minWidth: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-            }} />
+          <div className="card">
+            <div className="card-body">
+              <div className="table-responsive">
+                <Box sx={{ minHeight: "500px" }} className={classes.dataGridOuterBox}>
+                  <LoadingComponent boxMinHeight="500px" />
+                </Box>
+              </div>
+            </div>
+          </div>
           : <>
             <div className="row">
-              <div className="col-lg-5 d-flex">
+              <div className="col-lg-12 d-flex">
                 <div className="card flex-fill">
                   <div className="card-header">
                     <div className="row">
                       <div className="col-sm-6">
-                        <h3 className="card-title">Account</h3>
+                        <h3 className="card-title">Bank Account</h3>
+                        <small style={{ color: theme.palette.secondary.main }}>We Encrypt these sensative data.</small>
+                        {
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={() => setShowBankName(!showBankName)}
+
+                          >
+                            {showBankName ? <Visibility color='primary' /> : <VisibilityOff color='secondary' />}
+                          </IconButton>
+                        }
                       </div>
                       <div className="col-sm-6">
                         <div className="text-end">
@@ -601,7 +295,7 @@ const Accounts: FC = (() => {
                           <div className="info-list">
                             <div className="title">Bank Name</div>
                             <div className="text" id="bank_name">
-                              {bankData?.bankName || '---'}
+                              {bankData?.bankName ? showBankName ? bankData?.bankName : "*".repeat(bankData.bankName.length) : '---'}
                             </div>
                           </div>
                         </div>
@@ -609,7 +303,7 @@ const Accounts: FC = (() => {
                           <div className="info-list">
                             <div className="title">Branch Name</div>
                             <div className="text" id="branch_name">
-                              {bankData?.branchName || '---'}
+                              {bankData?.branchName ? showBankName ? bankData?.branchName : "*".repeat(bankData.branchName.length) : '---'}
                             </div>
                           </div>
                         </div>
@@ -617,7 +311,7 @@ const Accounts: FC = (() => {
                           <div className="info-list">
                             <div className="title">Account Number</div>
                             <div className="text" id="account_no">
-                              {bankData?.accountNumber || '---'}
+                              {bankData?.accountNumber ? showBankName ? bankData?.accountNumber : "*".repeat(bankData.accountNumber.length) : '---'}
                             </div>
                           </div>
                         </div>
@@ -625,7 +319,7 @@ const Accounts: FC = (() => {
                           <div className="info-list">
                             <div className="title">Account Name</div>
                             <div className="text" id="account_name">
-                              {bankData?.accountName || '---'}
+                              {bankData?.accountName ? showBankName ? bankData?.accountName : "*".repeat(bankData.accountName.length) : '---'}
                             </div>
                           </div>
                         </div>
@@ -633,7 +327,7 @@ const Accounts: FC = (() => {
                           <div className="info-list">
                             <div className="title">Swift Code</div>
                             <div className="text" id="account_name">
-                              {bankData?.swiftCode || '---'}
+                              {bankData?.swiftCode ? showBankName ? bankData?.swiftCode : "*".repeat(bankData.swiftCode.length) : '---'}
                             </div>
                           </div>
                         </div>
@@ -641,7 +335,7 @@ const Accounts: FC = (() => {
                           <div className="info-list">
                             <div className="title">Bank Identifier Codes</div>
                             <div className="text" id="account_name">
-                              {bankData?.BICcode || '---'}
+                              {bankData?.BICcode ? showBankName ? bankData?.BICcode : "*".repeat(bankData.BICcode.length) : '---'}
                             </div>
                           </div>
                         </div>
@@ -666,16 +360,31 @@ const Accounts: FC = (() => {
                   </div>
                 </div>
               </div>
-              <div className="col-lg-7 d-flex">
+              <div className="col-lg-12 d-flex">
                 <div className="card flex-fill">
+                  <div className="card-header" style={{ padding: '1.2rem 1.5rem' }}>
+                    <div className="row">
+                      <div className="col-sm-12">
+                        <h3 className="card-title">
+                          {
+                            reservationsAndTotals?.totalReservations !== 0 ?
+                              `Total Reservations ${reservationsAndTotals?.totalReservations}` :
+                              'No Reservations Yet'
+                          }
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
                   <div className="card-body">
                     <div className="row">
                       <Divider variant="middle" sx={{ m: 2 }}>
                         <Typography variant="body1">
                           Awaiting Request
                           {
-                            `(${!!totals?.AwaitingRequest ?
-                              formatNumberWithCommas(String(totals?.AwaitingRequest?.totalBookings)) : `0`} booking${totals?.AwaitingRequest?.totalBookings == 1 ? '' : 's'})`
+                            `(${!!reservationsAndTotals?.AwaitingRequest ?
+                              formatNumberWithCommas(
+                                String(reservationsAndTotals?.AwaitingRequest?.totalBookings))
+                              : `0`} booking${reservationsAndTotals?.AwaitingRequest?.totalBookings == 1 ? '' : 's'})`
                           }
                         </Typography>
                       </Divider>
@@ -683,8 +392,8 @@ const Accounts: FC = (() => {
                         <div className="account-card bg-success-light">
                           <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
-                              !!totals?.AwaitingRequest ?
-                                formatNumberWithCommas(String(totals?.AwaitingRequest?.totalAmount)) : `0.00`
+                              !!reservationsAndTotals?.AwaitingRequest ?
+                                formatNumberWithCommas(String(reservationsAndTotals?.AwaitingRequest?.totalAmount)) : `0.00`
                             }
                           </span> Total Sale
                         </div>
@@ -693,8 +402,8 @@ const Accounts: FC = (() => {
                         <div className="account-card bg-warning-light">
                           <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
-                              !!totals?.AwaitingRequest ?
-                                formatNumberWithCommas(String(totals?.AwaitingRequest?.totalPrice)) : `0.00`
+                              !!reservationsAndTotals?.AwaitingRequest ?
+                                formatNumberWithCommas(String(reservationsAndTotals?.AwaitingRequest?.totalPrice)) : `0.00`
                             }
                           </span> Total Doctor Fee
                         </div>
@@ -703,8 +412,8 @@ const Accounts: FC = (() => {
                         <div className="account-card bg-purple-light">
                           <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
-                              !!totals?.AwaitingRequest ?
-                                formatNumberWithCommas(String(totals?.AwaitingRequest?.totalBookingsFeePrice)) : `0.00`
+                              !!reservationsAndTotals?.AwaitingRequest ?
+                                formatNumberWithCommas(String(reservationsAndTotals?.AwaitingRequest?.totalBookingsFeePrice)) : `0.00`
                             }
                           </span> Total Bookings Fee Price
                         </div>
@@ -713,8 +422,8 @@ const Accounts: FC = (() => {
                         <Typography variant="body1">
                           Pending
                           {
-                            `(${!!totals?.Pending ?
-                              formatNumberWithCommas(String(totals?.Pending?.totalBookings)) : `0`} booking${totals?.Pending?.totalBookings == 1 ? '' : 's'})`
+                            `(${!!reservationsAndTotals?.Pending ?
+                              formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalBookings)) : `0`} booking${reservationsAndTotals?.Pending?.totalBookings == 1 ? '' : 's'})`
                           }
                         </Typography>
                       </Divider>
@@ -722,8 +431,8 @@ const Accounts: FC = (() => {
                         <div className="account-card bg-success-light">
                           <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
-                              !!totals?.Pending ?
-                                formatNumberWithCommas(String(totals?.Pending?.totalAmount)) : `0.00`
+                              !!reservationsAndTotals?.Pending ?
+                                formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalAmount)) : `0.00`
                             }
                           </span> Total Sale
                         </div>
@@ -732,8 +441,8 @@ const Accounts: FC = (() => {
                         <div className="account-card bg-warning-light">
                           <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
-                              !!totals?.Pending ?
-                                formatNumberWithCommas(String(totals?.Pending?.totalPrice)) : `0.00`
+                              !!reservationsAndTotals?.Pending ?
+                                formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalPrice)) : `0.00`
                             }
                           </span> Total Doctor Fee
                         </div>
@@ -742,8 +451,8 @@ const Accounts: FC = (() => {
                         <div className="account-card bg-purple-light">
                           <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
-                              !!totals?.Pending ?
-                                formatNumberWithCommas(String(totals?.Pending?.totalBookingsFeePrice)) : `0.00`
+                              !!reservationsAndTotals?.Pending ?
+                                formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalBookingsFeePrice)) : `0.00`
                             }
                           </span> Total Bookings Fee Price
                         </div>
@@ -752,8 +461,8 @@ const Accounts: FC = (() => {
                         <Typography variant="body1">
                           Paid
                           {
-                            `(${!!totals?.Paid ?
-                              formatNumberWithCommas(String(totals?.Paid?.totalBookings)) : `0`} booking${totals?.Paid?.totalBookings == 1 ? '' : 's'})`
+                            `(${!!reservationsAndTotals?.Paid ?
+                              formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalBookings)) : `0`} booking${reservationsAndTotals?.Paid?.totalBookings == 1 ? '' : 's'})`
                           }
                         </Typography>
                       </Divider>
@@ -761,8 +470,8 @@ const Accounts: FC = (() => {
                         <div className="account-card bg-success-light">
                           <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
-                              !!totals?.Paid ?
-                                formatNumberWithCommas(String(totals?.Paid?.totalAmount)) : `0.00`
+                              !!reservationsAndTotals?.Paid ?
+                                formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalAmount)) : `0.00`
                             }
                           </span> Total Sale
                         </div>
@@ -771,8 +480,8 @@ const Accounts: FC = (() => {
                         <div className="account-card bg-warning-light">
                           <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
-                              !!totals?.Paid ?
-                                formatNumberWithCommas(String(totals?.Paid?.totalPrice)) : `0.00`
+                              !!reservationsAndTotals?.Paid ?
+                                formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalPrice)) : `0.00`
                             }
                           </span> Total Doctor Fee
                         </div>
@@ -781,8 +490,8 @@ const Accounts: FC = (() => {
                         <div className="account-card bg-purple-light">
                           <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
                             {
-                              !!totals?.Paid ?
-                                formatNumberWithCommas(String(totals?.Paid?.totalBookingsFeePrice)) : `0.00`
+                              !!reservationsAndTotals?.Paid ?
+                                formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalBookingsFeePrice)) : `0.00`
                             }
                           </span> Total Bookings Fee Price
                         </div>
@@ -792,171 +501,109 @@ const Accounts: FC = (() => {
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="row" >
-              <div className="col-sm-12">
-                <div className="card">
-                  <Box sx={{ width: '100%', typography: 'body1' }}>
-                    <TabContext value={value}>
-                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <TabList aria-label="lab API tabs example" textColor="secondary"
-                          indicatorColor="secondary" >
-                          <Tab label={`Accounts Total: ${rowCount}`} value="1" sx={{ minWidth: '100%' }} />
-                          {/* <Tab label="Patients Refund Request" value="2" sx={{ minWidth: '50%' }} /> */}
-                        </TabList>
-                      </Box>
-                      <TabPanel value="1">
-                        <StyledBox justifycontent={'space-between'}>
 
-                          <div className="text-center" >
-                            {updateStatusArray.length !== 0 ? <Link
-                              href=""
-                              className="btn btn-primary request_btn"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setReq(true)
-                              }}
-                            >
-                              Payment Request
-                            </Link> : `Select passed appointments to send payment request.`}
-                          </div>
-                          <Tooltip title="Sort by" arrow placement="bottom">
-                            <IconButton onClick={handleClick}>
-                              <Sort fontSize="small" sx={{ ':hover': { color: theme.palette.primary.main } }} />
-                            </IconButton>
-                          </Tooltip>
+              <div className="col-lg-12 d-flex">
+                <div className="card flex-fill">
+                  <div className="card-header" style={{ padding: '1.2rem 1.5rem' }}>
+                    <div className="row">
+                      <div className="col-sm-12">
+                        <h3 className="card-title">
+                          {
+                            billingsAndTotals?.totalBillings !== 0 ?
+                              `Total: Bills ${billingsAndTotals?.totalBillings}` :
+                              "No Bill Yet"
+                          }
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="card-body">
+                    <div className="row">
+                      <Divider variant="middle" sx={{ m: 2 }}>
+                        <Typography variant="body1">
+                          Pending
+                          {
+                            !!billingsAndTotals?.Pending && `( ${billingsAndTotals?.Pending?.totalBillings} Bills)`
+                          }
 
-                          {/* Popover with List */}
-                          <Popover
-                            open={open}
-                            anchorEl={anchorEl}
-                            onClose={handleClose}
-                            anchorOrigin={{
-                              vertical: 'bottom',
-                              horizontal: 'right',
-                            }}
-                            transformOrigin={{
-                              vertical: 'top', // Align the popover above the anchor
-                              horizontal: 'right',
-                            }}
-                          >
-                            <List>
-                              {['All', 'Awaiting Request', 'Paid', 'Pending'].map((status, index) => (
-                                <div key={index}>
-                                  <ListItemButton
-                                    selected={status == dataGridFilters.filter}
-                                    onClick={() => {
-                                      setDataGridFilters((prevState) => {
-                                        return {
-                                          ...prevState,
-                                          filter: status
-                                        }
-                                      })
-                                      handleClose()
-                                    }}>
-                                    <ListItemText primary={status} />
-                                  </ListItemButton>
-                                  <Divider />
-                                </div>
-                              ))}
-                            </List>
-                          </Popover>
-                        </StyledBox>
-                        <div className="card card-table mb-0">
-                          <div className="card-body" >
-                            <div className="table-responsive" style={{ height: 480, width: '100%' }}>
-
-                              <DataGrid
-                                paginationMode='server'
-                                experimentalFeatures={{ ariaV7: true }}
-                                slots={{
-                                  noResultsOverlay: CustomNoRowsOverlay,
-                                  noRowsOverlay: CustomNoRowsOverlay,
-                                  pagination: CustomPagination,
-                                }}
-                                slotProps={{
-                                  baseCheckbox: {
-                                    name: 'row-checkbox',
-                                  },
-                                  pagination: { //@ts-ignore
-                                    handleChangePage: handleChangePage,
-                                    handleChangeRowsPerPage: handleChangeRowsPerPage,
-                                    count: rowCount,
-                                    SelectProps: {
-                                      inputProps: {
-                                        id: 'pagination-select',
-                                        name: 'pagination-select',
-                                      },
-                                    },
-                                  },
-                                }}
-                                getRowId={(params) => params._id}
-                                rowHeight={screen.height / 15.2}
-                                rows={rows}
-                                rowCount={rowCount}
-                                ref={grdiRef}
-                                columns={columns}
-                                paginationModel={paginationModel}
-                                checkboxSelection
-                                isRowSelectable={(params) => {
-                                  const selectedDate = params.row.selectedDate;
-                                  const timeSlot = params.row.timeSlot.period;
-                                  if (params.row.doctorPaymentStatus !== "Awaiting Request") {
-                                    return false;
-                                  } else {
-                                    return !disablePastTime(selectedDate, timeSlot);
-                                    return true;
-                                  }
-                                }}
-                                onRowSelectionModelChange={(newRowSelectionModel) => {
-                                  const { page, pageSize } = paginationModel
-                                  let start = page == 0 ? page : page * pageSize
-                                  let end = pageSize * (1 + page)
-                                  let currrenPageId = newRowSelectionModel.slice(start, end)
-                                  setUpdateStatusArray(() => {
-                                    let newState = currrenPageId.length > 0 ? [...currrenPageId] : [...newRowSelectionModel]
-                                    return newState
-                                  });
-                                }}
-                                rowSelectionModel={updateStatusArray}
-                                pageSizeOptions={[5, 10]}
-                                showCellVerticalBorder
-                                showColumnVerticalBorder
-                                sx={{
-                                  ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
-                                    "marginTop": "1em",
-                                    "marginBottom": "1em"
-                                  },
-                                  "&.MuiDataGrid-root .MuiDataGrid-row": {
-                                    backgroundColor:
-                                      false ? getSelectedBackgroundColor(
-                                        theme.palette.primary.dark,
-                                        theme.palette.mode,
-                                      ) : '',
-                                    '&:hover': {
-                                      backgroundColor: getSelectedHoverBackgroundColor(
-                                        theme.palette.primary.light,
-                                        theme.palette.mode,
-                                      ),
-                                    }
-                                  },
-                                  "& .MuiDataGrid-footerContainer": {
-                                    [theme.breakpoints.only("xs")]: {
-                                      justifyContent: 'center',
-                                      mb: 2
-                                    }
-                                  }
-                                }}
-                              />
-                            </div>
-                          </div>
+                        </Typography>
+                      </Divider>
+                      <div className="col-lg-4">
+                        <div className="account-card bg-success-light">
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                            {
+                              !!billingsAndTotals?.Pending ?
+                                formatNumberWithCommas(String(billingsAndTotals?.Pending?.totalAmount)) : `0.00`
+                            }
+                          </span> Total Sale
                         </div>
-                      </TabPanel>
-                    </TabContext>
-                  </Box>
+                      </div>
+                      <div className="col-lg-4">
+                        <div className="account-card bg-warning-light">
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                            {
+                              !!billingsAndTotals?.Pending ?
+                                formatNumberWithCommas(String(billingsAndTotals?.Pending?.totalPrice)) : `0.00`
+                            }
+                          </span>Total Doctor Fee
+                        </div>
+                      </div>
+                      <div className="col-lg-4">
+                        <div className="account-card bg-purple-light">
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                            {
+                              !!billingsAndTotals?.Pending ?
+                                formatNumberWithCommas(String(billingsAndTotals?.Pending?.totalBookingsFeePrice)) : `0.00`
+                            }
+                          </span>Total Bookings Fee Price
+                        </div>
+                      </div>
+                      <Divider variant="middle" sx={{ m: 2 }}>
+                        <Typography variant="body1">
+                          Paid
+                          {
+                            !!billingsAndTotals?.Paid && `(${billingsAndTotals?.Paid?.totalBillings} Bookings)`
+                          }
+                        </Typography>
+                      </Divider>
+                      <div className="col-lg-4">
+                        <div className="account-card bg-success-light">
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                            {
+                              !!billingsAndTotals?.Paid ?
+                                formatNumberWithCommas(String(billingsAndTotals?.Paid?.totalAmount)) : `0.00`
+                            }
+                          </span>Total Sale
+                        </div>
+                      </div>
+                      <div className="col-lg-4">
+                        <div className="account-card bg-warning-light">
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                            {
+                              !!billingsAndTotals?.Paid ?
+                                formatNumberWithCommas(String(billingsAndTotals?.Paid?.totalPrice)) : `0.00`
+                            }
+                          </span> Total Doctor Fee
+                        </div>
+                      </div>
+                      <div className="col-lg-4">
+                        <div className="account-card bg-purple-light">
+                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                            {
+                              !!billingsAndTotals?.Paid ?
+                                formatNumberWithCommas(String(billingsAndTotals?.Paid?.totalBookingsFeePrice)) : `0.00`
+                            }
+                          </span> Total Bookings Fee Price
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
                 </div>
               </div>
+
             </div>
+
           </>}
       </div>
 
@@ -1113,96 +760,11 @@ const Accounts: FC = (() => {
           </form>
         </DialogContent>
       </BootstrapDialog>}
-      {req && <BootstrapDialog
-        TransitionComponent={Transition}
-        onClose={() => {
-          document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-          setTimeout(() => {
-            setReq(false)
-          }, 500);
-        }}
-        aria-labelledby="edit_invoice_details"
-        open={req}
-      >
-        <BootstrapDialogTitle
-          id="edit_invoice_details" onClose={() => {
-            document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-            setTimeout(() => {
-              setReq(false)
-            }, 500);
-          }}>
-          Payment Request
-        </BootstrapDialogTitle>
-        <DialogContent dividers sx={{ width: { lg: 450 } }}>
-          <form noValidate>
-            {/* <div className="row form-row">
-              <div className="col-12 col-sm-12 col-lg-12 col-xl-12">
-                <div className="form-group">
-                  <TextField
-                    variant='outlined'
-                    size="small"
-                    fullWidth
-                    required
-                    id="requestAmount"
-                    inputProps={{
-                      autoComplete: 'off'
-                    }}
-                    label={`Request Amount`}
-                  />
-                </div>
-              </div>
-              <div className="col-12 col-sm-12 col-lg-12 col-xl-12">
-                <div className="form-group">
-                  <TextField
-                    variant='outlined'
-                    size="small"
-                    fullWidth
-                    required
-                    id="description"
-                    inputProps={{
-                      autoComplete: 'off'
-                    }}
-                    label={`Description (Optional)`}
-                    multiline
-                    minRows={3}
-                  />
-                </div>
-              </div>
-            </div> */}
-            <p>{`Send ${updateStatusArray.length} appointment${updateStatusArray.length == 1 ? '' : 's'} for Payment request.`}</p>
-            <button type="submit" className="submitButton w-100" style={{ marginTop: 25 }} onClick={(e) => {
-              e.preventDefault();
-              updateAppointmentRequestSubmit()
-            }}>
-              Submit
-            </button>
-          </form>
-        </DialogContent>
-      </BootstrapDialog>}
+
     </Fragment>
   )
 });
 
-export const disablePastTime = (date: string, time: string) => {
-
-  // Extract the start time from the timeSlot
-  const startTime = time.split(' - ')[0]; // e.g., "10:30"
-
-  // Merge the date and time into a single string
-  const dateTimeString = `${date} ${startTime}`; // e.g., "24 Jan 2025 10:30"
-
-  // Parse the merged string into a Date object
-  const dateTime = new Date(dateTimeString);
-
-  // Get the current date and time
-  const now = new Date();
-
-  // Compare the merged date-time with the current date-time
-  const isFuture = dateTime > now;
-
-  // Return whether the row is selectable (true if the date-time is in the future)
-  return isFuture;
-}
 
 
 export default Accounts;

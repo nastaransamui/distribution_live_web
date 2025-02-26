@@ -7,7 +7,7 @@ import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 export interface EducationProps {
   errors: any;
@@ -96,21 +96,22 @@ const Education: FC<EducationProps> = ((props: EducationProps) => {
                               name={`educations.${index}.yearOfCompletion`}
                               control={control}
                               render={(props: any) => {
-                                const { field, fieldState, formState } = props;
-                                const { ref, onChange, value } = field;
-                                const { defaultValues } = formState;
+                                const { field, } = props;
+                                const { onChange, value } = field;
                                 return (
                                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <MobileDatePicker
+                                      value={value ? dayjs(value) : null}
                                       closeOnSelect
                                       disableFuture
-                                      format="DD MMM YYYY"
-                                      onChange={(event: any) => {
-                                        onChange(dayjs(event).format(`YYYY-MM-DDTHH:mm:ss`));
+                                      format="YYYY"
+                                      views={["year"]}
+                                      onChange={(event: Dayjs | null) => {
+                                        onChange(dayjs(event).format(`YYYY`));
                                       }}
                                       slotProps={{
                                         textField: {
-                                          inputProps: { value: value == '' ? 'Year of Completion' : dayjs(value).format('DD MMM YYYY') },
+                                          inputProps: { value: value == '' ? 'Year of Completion' : dayjs(value).format('YYYY') },
                                           fullWidth: true,
                                           required: true,
                                           label: 'Year of Completion',
@@ -119,8 +120,6 @@ const Education: FC<EducationProps> = ((props: EducationProps) => {
                                           size: 'small'
                                         },
                                       }}
-
-                                    // value={dayjs(defaultValues?.[`educations.${index}.yearOfCompletion`])}
                                     />
                                   </LocalizationProvider>
                                 )

@@ -15,7 +15,7 @@ import duration from 'dayjs/plugin/duration'
 import { toast } from 'react-toastify';
 import { DoctorPatientInitialLimitsAndSkipsTypes, DoctorPatientProfileTypes, PatientProfileExtendType, doctorPatientInitialLimitsAndSkips } from '../DoctorPatientProfile/DoctorPatientProfile';
 export interface VitalTypeObject {
-  value: string;
+  value: number;
   date: Date;
 }
 
@@ -51,7 +51,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
     const { name, value } = e.target;
     let userId = userProfile?._id
     if (value !== '') {
-      homeSocket.current.emit('vitalSignsUpdate', { name, value, userId })
+      homeSocket.current.emit('vitalSignsUpdate', { name, value: +value, userId })
     }
   }
 
@@ -74,7 +74,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
       let newState: any[] = [...prevState]
       //create object for value and date
       let m = {
-        value: value,
+        value: parseFloat(value),
         date: new Date(),
       };
       //if not any vital available push to new state
@@ -171,7 +171,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
       <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
         <div>
           <div className="row">
-            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top">
+            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   animate__animated animate__backInDown">
               <div className="card">
                 <div className="card-body text-center">
                   <div className="mb-3">
@@ -193,7 +193,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                           e.preventDefault()
                         }
                       }}
-                      placeholder={values?.heartRate == undefined || values?.heartRate == '' ? '--' : ''}
+                      placeholder={values?.heartRate == undefined || values?.heartRate == 0 ? '--' : ''}
                       InputProps={{
                         disableUnderline: true,
                       }}
@@ -207,7 +207,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                 </div>
               </div>
             </div>
-            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top">
+            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   animate__animated animate__backInDown">
               <div className="card">
                 <div className="card-body text-center">
                   <div className="mb-3">
@@ -228,7 +228,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                       }}
                       size='small'
                       variant="standard"
-                      placeholder={values?.bodyTemp == undefined || values?.bodyTemp == '' ? '--' : ''}
+                      placeholder={values?.bodyTemp == undefined || values?.bodyTemp == 0 ? '--' : ''}
                       InputProps={{
                         disableUnderline: true,
                       }}
@@ -236,7 +236,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                 </div>
               </div>
             </div>
-            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top">
+            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   animate__animated animate__backInDown">
               <div className="card">
                 <div className="card-body text-center">
                   <div className="mb-3">
@@ -257,7 +257,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                       }}
                       size='small'
                       variant="standard"
-                      placeholder={values?.weight == undefined || values?.weight == '' ? '--' : ''}
+                      placeholder={values?.weight == undefined || values?.weight == 0 ? '--' : ''}
                       InputProps={{
                         disableUnderline: true,
                       }}
@@ -267,7 +267,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                 </div>
               </div>
             </div>
-            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top">
+            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   animate__animated animate__backInDown">
               <div className="card">
                 <div className="card-body text-center">
                   <div className="mb-3">
@@ -288,7 +288,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                       }}
                       size='small'
                       variant="standard"
-                      placeholder={values?.height == undefined || values?.height == '' ? '--' : ''}
+                      placeholder={values?.height == undefined || values?.height == 0 ? '--' : ''}
                       InputProps={{
                         disableUnderline: true,
                       }}
@@ -299,7 +299,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
               </div>
             </div>
           </div>
-          <div className="row patient-graph-col">
+          <div className="row patient-graph-col   animate__animated animate__backInUp">
             <div className="col-12">
               <div className="card">
                 <div className="card-header">
@@ -361,7 +361,9 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
             </div>
           </div>
         </div>
-        <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='patient' dataGridFilters={dataGridFilters} setDataGridFilters={setDataGridFilters} />
+        <div className="col-md-12 col-lg-12 col-xl-12 dct-appoinment    animate__animated animate__backInUp" >
+          <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='patient' />
+        </div>
       </div>
     </Fragment>
   )

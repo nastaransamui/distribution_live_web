@@ -32,11 +32,16 @@ import Rating from '@mui/material/Rating';
 
 import GooglePayButton from '@google-pay/button-react'
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
-import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { formatNumberWithCommas, LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { BillingTypeWithDoctorProfile } from '@/components/DoctorDashboardSections/EditBilling';
-import { base64regex } from '@/components/DoctorsSections/Profile/ProfilePage';
+import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import { BillingDetailsArrayType, BillingType } from '@/components/DoctorDashboardSections/AddBilling';
 import { Terms } from '@/components/TermsSections/TermsDetails';
+import { FiThumbsUp } from 'react-icons/fi';
+import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
+import { UserPatientProfileType } from '@/redux/userPatientProfile';
+import Box from '@mui/material/Box';
+import dataGridStyle from '@/components/shared/dataGridStyle';
 
 export interface GoogleInfoType {
   totalPriceStatus: string;
@@ -45,10 +50,15 @@ export interface GoogleInfoType {
   currencyCode: string;
   countryCode: string;
 }
+
+export interface BillingTypeWithDoctorPatientProfile extends BillingType {
+  doctorProfile?: DoctorProfileType;
+  patientProfile?: UserPatientProfileType;
+}
 const BillCheckOut: FC = (() => {
 
   const router = useRouter()
-  const theme = useTheme();
+  const { classes, theme } = dataGridStyle({});
   const [reload, setReload] = useState<boolean>(false)
   const [termsDialog, setTermsDialog] = useState<boolean>(false)
   const [paymentInfo, setPaymentInfo] = useState<any>({
@@ -58,8 +68,7 @@ const BillCheckOut: FC = (() => {
     currencyCode: '',
     countryCode: '',
   })
-  const [singleBill, setSingleBill] = useState<BillingTypeWithDoctorProfile>();
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const [singleBill, setSingleBill] = useState<BillingTypeWithDoctorPatientProfile>();
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -113,7 +122,7 @@ const BillCheckOut: FC = (() => {
                   totalPriceLabel: 'Total',
                   totalPrice: Number(singleBill[0].total).toFixed(2),
                   currencyCode: singleBill[0]?.currencySymbol || 'THB',
-                  countryCode: 'TH',
+                  countryCode: singleBill[0]?.doctorProfile?.currency[0]?.iso2,
                 })
               }
 
@@ -182,6 +191,8 @@ const BillCheckOut: FC = (() => {
 
   const submitPaymentOnly = (paymentToken: string, paymentType: string,) => {
     dispatch(updateHomeFormSubmit(true))
+    delete singleBill?.doctorProfile;
+    delete singleBill?.patientProfile;
     if (homeSocket?.current) {
       homeSocket.current.emit(`updateBillingPayment`, {
         ...singleBill,
@@ -233,8 +244,10 @@ const BillCheckOut: FC = (() => {
     } else {
       dispatch(updateHomeFormSubmit(true))
       if (singleBill?.status == 'Paid') {
-        router.push(`/patient/payment-success/${btoa(singleBill?._id)}`)
+        router.push(`/patient/payment-success/${btoa(singleBill?._id!)}`)
       } else {
+        delete data?.patientProfile;
+        delete data?.doctorProfile;
         if (homeSocket?.current) {
           homeSocket.current.emit(`updateBillingPayment`, {
             ...singleBill,
@@ -272,7 +285,7 @@ const BillCheckOut: FC = (() => {
                 transition: bounce,
                 onClose: () => {
                   dispatch(updateHomeFormSubmit(false))
-                  router.push(`/patient/payment-success/${btoa(newBilling?._id)}`)
+                  router.push(`/patient/payment-success/${btoa(newBilling?._id!)}`)
                 }
               });
             }
@@ -284,53 +297,25 @@ const BillCheckOut: FC = (() => {
 
   return (
     <Fragment>
-      <Dialog
-        open={termsDialog}
-        onClose={() => setTermsDialog(false)}
-        scroll='paper'
-        aria-labelledby="terms"
-        aria-describedby="terms&condition"
-      >
-        <DialogTitle id="terms">Terms &amp; Conditions</DialogTitle>
-        <DialogContent dividers>
-          <section className="terms-section" style={muiVar}>
-            <div className="terms-content" style={{ marginLeft: '-2rem' }}>
-              <Terms />
-            </div>
-          </section>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => {
-            setValue('terms', false)
-            setError('terms', { type: 'required', message: `Please accept terms and condition first.` })
-            setTermsDialog(false)
-          }}>Cancel</Button>
-          <Button onClick={() => {
-            setValue('terms', true)
-            clearErrors('terms')
-            setTermsDialog(false)
-          }
-          }>Accept</Button>
-        </DialogActions>
-      </Dialog>
-      {
-        !singleBill || userProfile == null ?
-          <CircleToBlockLoading color={theme.palette.primary.main} size="small" style={{
-            minWidth: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-          }} />
-          :
-          <Fragment>
-
-
-            <div className="col-md-6 col-lg-7" style={muiVar}>
+      <div className="col-md-6 col-lg-7 animate__animated animate__backInUp">
+        {
+          !singleBill || userProfile == null ?
+            <>
+              <div className="card">
+                <div className="card-body">
+                  <div className="table-responsive">
+                    <Box sx={{ minHeight: '500px' }} className={classes.dataGridOuterBox}>
+                      <LoadingComponent boxMinHeight='500px' />
+                    </Box>
+                  </div>
+                </div>
+              </div>
+            </> :
+            <>
               <div className="card">
                 <div className="card-header">
                   <h3 className="card-title" style={{ textAlign: 'center' }}>Due Date: {dayjs(singleBill?.dueDate).format(`MMM D, YYYY`)}</h3>
                 </div>
-              </div>
-              <div className="card">
                 <div className="card-header">
                   <h3 className="card-title">Billing details</h3>
                 </div>
@@ -451,12 +436,16 @@ const BillCheckOut: FC = (() => {
 
                       <div className="filter-grid">
                         <h4>
-                          <Link data-bs-toggle="collapse" href="/doctors/check-out#collapseone">
-                            {watch('paymentConfirm') ? `Paid already` : `Payment Method`}
+                          <Link
+                            data-bs-toggle="collapse"
+                            href="/doctors/check-out#collapseone"
+                          >
+                            {watch('paymentConfirm') ? `Paid already` : watch('terms') ? `Payment Method ` : `Accept Terms for payment`}
                           </Link>
                         </h4>
                         {!watch('paymentConfirm') &&
-                          <div id="collapseone" className={`collapse ${watch('paymentConfirm') ? 'hide' : 'show'}`}>
+                          <div id="collapseone"
+                            className={`collapse ${watch('paymentConfirm') ? 'hide' : watch('terms') ? 'show' : 'hide'}`}>
                             <div className="filter-collapse">
                               <GooglePayButton
                                 environment="TEST"
@@ -535,7 +524,7 @@ const BillCheckOut: FC = (() => {
                           className="btn btn-primary submit-btn">
                           {
                             getValues('paymentToken') == '' || !getValues('paymentConfirm') || getValues('paymentType') == '' ?
-                              `Make payment first`
+                              watch('terms') ? `Make payment first` : `Accept Terms`
                               : `View details`}
                         </button>
                         {errors.paymentConfirm && errors.paymentConfirm && (
@@ -546,8 +535,24 @@ const BillCheckOut: FC = (() => {
                   </form>
                 </div>
               </div>
-            </div>
-            <div className="col-md-5 col-lg-4 theiaStickySidebar" style={muiVar}>
+            </>
+        }
+      </div>
+      <div className="col-md-5 col-lg-4 theiaStickySidebar animate__animated animate__backInUp" >
+        {
+          !singleBill || userProfile == null ?
+            <>
+              <div className="card">
+                <div className="card-body">
+                  <div className="table-responsive">
+                    <Box sx={{ minHeight: '500px' }} className={classes.dataGridOuterBox}>
+                      <LoadingComponent boxMinHeight='500px' />
+                    </Box>
+                  </div>
+                </div>
+              </div>
+            </> :
+            <>
               <StickyBox offsetTop={20} offsetBottom={20}>
 
                 <div className="card booking-card">
@@ -578,9 +583,28 @@ const BillCheckOut: FC = (() => {
                             Dr. {singleBill?.doctorProfile?.firstName} {" "} {singleBill?.doctorProfile?.lastName}
                           </Link>
                         </h4>
-                        <Rating name="read-only" value={4} readOnly size='small' />
+                        <li style={{ marginBottom: 10, display: 'flex', alignItems: "center" }}>
+                          <FiThumbsUp />&nbsp;
+                          {
+                            `${singleBill?.doctorProfile?.recommendArray && singleBill?.doctorProfile?.recommendArray.length !== 0 ?
+                              ((singleBill?.doctorProfile?.recommendArray.filter(vote => vote === 1).length
+                                / singleBill?.doctorProfile?.recommendArray?.length) * 100).toFixed(0) : `0`}%`
+                          }
+                          <span className="votes">
+                            (
+                            {singleBill?.doctorProfile?.recommendArray ? singleBill?.doctorProfile?.recommendArray?.length : 0}
+                            Votes)
+                          </span>
+                        </li>
+                        <Rating
+                          name="read-only"
+                          precision={0.5}
+                          value={singleBill?.doctorProfile?.rate_array.length == 0 ?
+                            0 :
+                            (singleBill?.doctorProfile && singleBill?.doctorProfile?.rate_array.reduce((acc, num) => acc + num, 0) / singleBill?.doctorProfile?.rate_array.length)}
+                          readOnly
+                          size='small' />
 
-                        <span className="d-inline-block average-rating">35</span>
                         <p className="text-muted mb-0">
                           <i className="fas fa-map-marker-alt"></i> &nbsp;
                           {singleBill?.doctorProfile?.city}  {singleBill?.doctorProfile?.country}
@@ -591,24 +615,24 @@ const BillCheckOut: FC = (() => {
                       <div className="booking-item-wrap">
                         <ul className="booking-fee booking-total">
                           <li>Invoice Id &nbsp; <span>{singleBill?.invoiceId}</span></li>
-                          <li>Title &nbsp; <span>Price</span></li>
+                          <li>Title &nbsp; <span style={{ color: theme.palette.secondary.light, marginRight: 25 }}>Price</span></li>
                           {
                             singleBill?.billDetailsArray.map((bill: BillingDetailsArrayType, index: number) => {
                               let singleBillObj: any = Object.entries(bill)
 
                               return (
-                                <li key={index}>
+                                <li key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                   {
                                     singleBillObj.map(([key, value]: [string, any], index: number) => {
                                       if (key !== 'doctorProfile') {
                                         if (key === 'title' || key === 'total') {
                                           return (
-                                            <div key={key}>
+                                            <div key={key} style={{ color: theme.palette.text.color }} >
                                               {
                                                 singleBillObj[index][0] == 'title'
                                                 && singleBillObj[index][1]
-                                              } &nbsp;
-                                              <span>
+                                              }
+                                              <span >
                                                 {
                                                   singleBillObj[index][0] == 'total'
                                                   && `${singleBill?.currencySymbol} ${formatNumberWithCommas(singleBillObj[index][1])}`
@@ -633,7 +657,7 @@ const BillCheckOut: FC = (() => {
                               <span className="total-cost">
                                 {singleBill?.currencySymbol || 'THB'}
                                 {" "}
-                                {formatNumberWithCommas(singleBill?.total)}
+                                {formatNumberWithCommas(singleBill?.total.toString())}
                               </span>
                             </li>
                           </ul>
@@ -643,9 +667,38 @@ const BillCheckOut: FC = (() => {
                   </div>
                 </div>
               </StickyBox>
+            </>
+        }
+      </div>
+      <Dialog
+        open={termsDialog}
+        onClose={() => setTermsDialog(false)}
+        scroll='paper'
+        aria-labelledby="terms"
+        aria-describedby="terms&condition"
+      >
+        <DialogTitle id="terms">Terms &amp; Conditions</DialogTitle>
+        <DialogContent dividers>
+          <section className="terms-section" style={muiVar}>
+            <div className="terms-content" style={{ marginLeft: '-2rem' }}>
+              <Terms />
             </div>
-          </Fragment >
-      }
+          </section>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {
+            setValue('terms', false)
+            setError('terms', { type: 'required', message: `Please accept terms and condition first.` })
+            setTermsDialog(false)
+          }}>Cancel</Button>
+          <Button onClick={() => {
+            setValue('terms', true)
+            clearErrors('terms')
+            setTermsDialog(false)
+          }
+          }>Accept</Button>
+        </DialogActions>
+      </Dialog>
     </Fragment>
   )
 });

@@ -242,23 +242,25 @@ const SearchDoctorSection: FC = (() => {
           <div className="row">
             <div className="col-xl-12 col-lg-12 map-view">
               <div className="row">
-                <div className="col-lg-3  theiaStickySidebar">
+                <div className="col-lg-3  theiaStickySidebar  animate__animated animate__backInUp">
                   <StickyBox offsetTop={100} offsetBottom={20}>
                     <SearchFilter setPage={setPage} />
                   </StickyBox>
                 </div>
                 <div className="col-lg-9" ref={componentRef}>
-                  <DoctorSearchResults
-                    doctorResults={doctorResults}
-                    totalDoctors={totalDoctors}
-                    page={page}
-                    setPage={setPage}
-                    perPage={perPage}
-                    setPerPage={setPerPage}
-                    setSortBy={setSortBy}
-                    sortBy={sortBy}
-                    isLoading={isLoading}
-                  />
+                  <div className='card   animate__animated animate__backInUp' style={{ padding: '30px 10px' }}>
+                    <DoctorSearchResults
+                      doctorResults={doctorResults}
+                      totalDoctors={totalDoctors}
+                      page={page}
+                      setPage={setPage}
+                      perPage={perPage}
+                      setPerPage={setPerPage}
+                      setSortBy={setSortBy}
+                      sortBy={sortBy}
+                      isLoading={isLoading}
+                    />
+                  </div>
                   <ScrollToTop />
                 </div>
               </div>

@@ -7,20 +7,22 @@ const PrivacyDetails: FC = (() => {
 
   return (
     <Fragment>
-      <section className="terms-section" style={muiVar}>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <div className="privacy-content">
-                <h3>Privacy Policy</h3>
-                <h3>Last Updated: January 14, 2025</h3>
-                <p>The Health Care (&quot;Health Care,&quot; &quot;we,&quot; &quot;us,&quot; &quot;our&quot;)
-                  is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your information,
-                  in compliance with the Law, and also provides transparency
-                  about our practices, especially in relation to data collected
-                  through sign-up forms for webinars, offline events, and other interactions through advertising platforms.
-                </p>
-                <Privacy />
+      <section className="terms-section   animate__animated animate__backInUp" style={muiVar}>
+        <div className="card" style={{ padding: "20px 10px" }}>
+          <div className="container">
+            <div className="row">
+              <div className="col-md-12">
+                <div className="privacy-content">
+                  <h3>Privacy Policy</h3>
+                  <h3>Last Updated: January 14, 2025</h3>
+                  <p>The Health Care (&quot;Health Care,&quot; &quot;we,&quot; &quot;us,&quot; &quot;our&quot;)
+                    is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your information,
+                    in compliance with the Law, and also provides transparency
+                    about our practices, especially in relation to data collected
+                    through sign-up forms for webinars, offline events, and other interactions through advertising platforms.
+                  </p>
+                  <Privacy />
+                </div>
               </div>
             </div>
           </div>

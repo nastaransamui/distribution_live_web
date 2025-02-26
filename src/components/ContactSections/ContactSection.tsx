@@ -90,7 +90,7 @@ const ContactSection: FC = (() => {
       <section className="contact-section" style={{ ...muiVar, backgroundColor: theme.palette.background.default }}>
         <div className="container">
           <div className="row">
-            <div className="col-lg-5 col-md-12">
+            <div className="col-lg-5 col-md-12 card   animate__animated animate__backInUp" style={{ padding: '20px 30px' }}>
               <div className="section-inner-header contact-inner-header">
                 <h1>Get in touch</h1>
                 <h2>Have Any Question?</h2>
@@ -135,8 +135,8 @@ const ContactSection: FC = (() => {
                 </div>
               </div>
             </div>
-            <div className="col-lg-7 col-md-12 d-flex">
-              <div className="card contact-form-card w-100">
+            <div className="col-lg-7 col-md-12 d-flex   animate__animated animate__backInUp">
+              <div className="card contact-form-card w-100" style={{ border: `1px solid ${theme.palette.secondary.light}` }}>
                 <div className="card-body">
                   <form noValidate onSubmit={handleSubmit(onRegisterSubmit)}>
                     <div className="row">

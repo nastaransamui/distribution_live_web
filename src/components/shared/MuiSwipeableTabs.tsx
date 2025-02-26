@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as React from 'react';
 import SwipeableViews from 'react-swipeable-views';
 import { useTheme } from '@mui/material/styles';

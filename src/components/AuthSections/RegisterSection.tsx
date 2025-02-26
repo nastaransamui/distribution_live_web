@@ -353,7 +353,6 @@ const RegisterSection: FC = (() => {
           }
         })
       } catch (error: any) {
-        console.log(error)
         toast.error(error.toString(), {
           position: "bottom-center",
           autoClose: 5000,

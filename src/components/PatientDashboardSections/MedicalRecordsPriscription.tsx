@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { FC, forwardRef, Fragment, useEffect, useRef, useState } from 'react';
-import { useTheme } from '@mui/material/styles';
+import React, { FC, forwardRef, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import { doctors_profile, logo, patient_profile } from '@/public/assets/imagepath';
 import { useRouter } from 'next/router';
 import useScssVar from '@/hooks/useScssVar';
-import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridRenderCellParams, GridColumnVisibilityModel, GridAlignment, GridFilterModel, GridSortModel, GridValueFormatterParams } from '@mui/x-data-grid';
 import Stack from '@mui/material/Stack';
 import Link from 'next/link';
 import { PrescriptionsArrayType, PrescriptionsType } from '../DoctorDashboardSections/AddPrescription';
@@ -15,19 +15,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { useReactToPrint } from 'react-to-print';
 import { toast } from 'react-toastify';
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 import CustomPagination from '../shared/CustomPagination';
-import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
+import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
 
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteForever from '@mui/icons-material/DeleteForever';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
-import { DialogContent } from '@mui/material';
+import DialogContent from '@mui/material/DialogContent';
 
 import { BootstrapDialog, Transition, BootstrapDialogTitle } from '../shared/Dialog';
 import { PatientProfile } from '../DoctorDashboardSections/MyPtients';
+import dataGridStyle from '../shared/dataGridStyle';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 export interface MedicalRecordsPriscriptionType {
   patientProfile: PatientProfile;
@@ -42,7 +45,7 @@ export const PrintComponent = forwardRef<HTMLDivElement, Props>((props, ref) => 
   const { muiVar } = useScssVar();
   const { printProps } = props
   const {
-    _id,
+    id,
     issueDay,
     drName,
     drAddress,
@@ -80,7 +83,7 @@ export const PrintComponent = forwardRef<HTMLDivElement, Props>((props, ref) => 
                       <div className="col-md-4"></div>
                       <div className="col-md-4">
                         <p className="invoice-details" style={{ color: '#000' }}>
-                          <strong>Order:</strong> #{_id} <br />
+                          <strong>Order:</strong> #{id} <br />
                           <strong>Issued:</strong> {issueDay}
                         </p>
                       </div>
@@ -158,7 +161,7 @@ export const PrintComponent = forwardRef<HTMLDivElement, Props>((props, ref) => 
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 col-xl-4 ms-auto" style={{ minHeight: '350px' }}></div>
+                  <div className="col-md-6 col-xl-4 ms-auto" style={{ minHeight: '200px' }}></div>
                   <div className="other-info">
                     <h4>Other information</h4>
                     <p className=" mb-0" style={{ color: '#000' }}>
@@ -187,10 +190,13 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
   dayjs.extend(timezone)
   const { muiVar, bounce } = useScssVar();
   const router = useRouter();
-  const theme = useTheme()
-  const presRef = useRef<any>(null)
-  const [prisRecords, setPrisRecords] = useState<PrescriptionsType[] | []>([])
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const { classes, theme } = dataGridStyle({});
+  const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
+  const dataGridRef = useRef<any>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [reload, setReload] = useState<boolean>(false)
+  const [rows, setRow] = useState<PrescriptionsType[] | []>([])
+  const [rowCount, setRowCount] = useState<number>(0)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -198,18 +204,6 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
 
   const dispatch = useDispatch();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [reload, setReload] = useState<boolean>(false)
-  const [rowPrisCount, setRowPrisCount] = useState<number>(0)
-  const perPage = 5;
-  const [dataGridPrisFilters, setDataGridPrisFilters] = useState({
-    limit: perPage,
-    skip: 0,
-  });
-  const [prisPaginationModel, setPrisPaginationModel] = useState({
-    pageSize: 5,
-    page: 0,
-  });
   const [printProps, setPrintProps] = useState<any>({})
   const printRef = useRef(null);
 
@@ -240,210 +234,6 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
     }
   });
 
-  const prisColumns: GridColDef[] = [
-    {
-      field: 'id',
-      headerName: "ID",
-      width: 50,
-      headerAlign: 'center',
-      align: 'center',
-    },
-    {
-      field: 'doctorProfile',
-      headerName: "Doctor Name",
-      width: 290,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (params: GridRenderCellParams) => {
-        const { row } = params;
-        const profileImage = row?.doctorProfile?.profileImage == '' ? doctors_profile : row?.doctorProfile?.profileImage
-        const online = row?.doctorProfile?.online || false;
-
-        return (
-          <>
-            <Link aria-label='link' className="avatar mx-2" href={`/doctors/profile/${btoa(row?.doctorId)}`} target='_blank'>
-              <StyledBadge
-                overlap="circular"
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                variant="dot"
-                online={online}
-              >
-                <Avatar alt="" src={`${profileImage}?random=${new Date().getTime()}`} >
-                  <img src={patient_profile} alt="" className="avatar avatar-in-schedule-table" />
-                </Avatar>
-              </StyledBadge>
-            </Link>
-            <Stack>
-              <Link href={`/doctors/profile/${btoa(row?.doctorId)}`}
-                style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }} target='_blank'>
-                {`Dr.${row?.doctorProfile?.fullName}`}
-              </Link>
-              <small>{row?.doctorProfile?.specialities[0]?.specialities}</small>
-            </Stack>
-          </>
-        )
-      }
-    }, {
-      field: 'patientProfile',
-      headerName: "Patient Name",
-      width: 290,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (params: GridRenderCellParams) => {
-        const { row } = params;
-        const profileImage = row?.patientProfile?.profileImage == '' ? doctors_profile : row?.patientProfile?.profileImage
-        const online = row?.patientProfile?.online || false;
-
-        return (
-          <>
-
-            <StyledBadge
-              overlap="circular"
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              variant="dot"
-              online={online}
-            >
-              <Avatar alt="" src={`${profileImage}?random=${new Date().getTime()}`} >
-                <img src={patient_profile} alt="" className="avatar avatar-in-schedule-table" />
-              </Avatar>
-            </StyledBadge> &nbsp; &nbsp;
-            <span
-              style={{ color: theme.palette.primary.main, maxWidth: '70%', minWidth: '70%' }} >
-              {`${row?.patientProfile?.gender !== '' ? `${row?.patientProfile?.gender}.` : ""}${row?.patientProfile?.fullName}`}
-            </span>
-          </>
-        )
-      }
-    },
-    {
-      field: 'createdAt',
-      headerName: "Create",
-      width: 200,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (data: any) => {
-        const { row } = data;
-        return (
-          <>
-            <Stack >
-              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`MMM D, YYYY`)}</span>
-              <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(` h:mm A`)}</span>
-            </Stack>
-          </>
-        )
-      }
-    },
-    {
-      field: 'updateAt',
-      headerName: "Update",
-      width: 200,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (data: any) => {
-        const { row } = data;
-        return (
-          <>
-            <Stack >
-              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.updateAt).format(`MMM D, YYYY`)}</span>
-              <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.updateAt).format(` h:mm A`)}</span>
-            </Stack>
-          </>
-        )
-      }
-    },
-    {
-      field: 'prescriptionsArray',
-      headerName: "Medicine",
-      width: 200,
-      headerAlign: 'center',
-      align: 'center',
-      valueGetter: (params) => {
-        const prescriptionsArray = params?.row?.prescriptionsArray;
-        return prescriptionsArray.length;
-      },
-      sortComparator: (v1: any, v2: any) => {
-        return v1 > v2 ? -1 : 1
-      },
-      renderCell: (params: GridRenderCellParams) => {
-        const { prescriptionsArray: value } = params?.row;
-        const tooltipText = value.map((obj: any) => {
-          // Map over each key-value pair in the object
-          const formattedEntries = Object.entries(obj)
-            .map(([key, val]) => `${key}: ${val}`)
-            .join("\n"); // Join each key-value pair with a newline
-
-          // Add a separator after each object
-          return `${formattedEntries}\n------------------------------------`;
-        }).join("\n\n"); // Separate each object's result with double newlines
-
-        return (
-          <>
-            {value &&
-              value.length > 0 ?
-              <>
-                <Tooltip arrow title={tooltipText} followCursor>
-                  <span
-                    style={{
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {`${value.length} medicine ${value.length <= 1 ? '' : "s"}`}
-                  </span>
-                </Tooltip>
-              </> :
-              <>
-                <span style={{ display: 'flex', justifyContent: 'center', minWidth: '100%' }}>
-                  --
-                </span></>
-            }
-          </>
-        )
-      },
-    },
-
-    {
-      field: "actions",
-      type: 'actions',
-      headerName: "Action",
-      headerAlign: 'center',
-      align: 'center',
-      width: 200,
-      getActions: (params: GridRowParams) => [
-        <GridActionsCellItem
-          key="print-action"
-          onClick={() => {
-            printButtonClicked(params.row)
-          }}
-          icon={
-            <i className="fas fa-print"
-              style={{ color: theme.palette.primary.main }}>
-
-            </i>} label="Print" />,
-        router.asPath.startsWith('/doctors') ? (
-          <GridActionsCellItem
-            key="view-action"
-            onClick={() => {
-              deleteClicked(params);
-            }}
-            icon={
-              <DeleteForever sx={{ color: 'crimson' }} />
-            }
-            label="View"
-          />
-        ) : <></>,
-        <GridActionsCellItem
-          key="view-action"
-          onClick={() => {
-            let isPatientPanel = router.asPath.startsWith('/patient')
-            const encodedId = btoa(params.row?._id);
-            window.open(isPatientPanel ? `/patient/dashboard/see-prescription/${encodedId}` : `/doctors/dashboard/editprescription/${encodedId}`, '_blank');
-          }}
-          icon={<i className="far fa-eye" style={{ color: theme.palette.secondary.main }}></i>} label="View" />,
-      ]
-    }
-  ]
 
   const printButtonClicked = (row: any) => {
 
@@ -454,8 +244,8 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
     setPrintProps(() => {
       let newState = {}
       newState = {
-        _id: row?._id,
-        issueDay: dayjs(row.createdAt).format('DD/MMM/YYYY'),
+        id: row?.id,
+        issueDay: dayjs(row.createdAt).format('DD MMM YYYY'),
         drName: `Dr. ${firstName} ${lastName}`,
         drAddress: `${address1} ${address1 !== '' ? ', ' : ''} ${address2}`,
         drCity: city,
@@ -474,54 +264,382 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
     handlePrint(null, () => printRef.current);
   }
 
-  const handleChangePrisRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setPrisPaginationModel((prevState) => {
-      var maximuPage: number = prevState.page;
-      if (rowPrisCount !== 0) {
-        if ((maximuPage + 1) >= (Math.floor(rowPrisCount / parseInt(event.target.value, 10)))) {
-          maximuPage = (Math.floor(rowPrisCount / parseInt(event.target.value, 10))) - 1
-        }
-      }
-      return {
-        pageSize: parseInt(event.target.value, 10),
-        page: maximuPage <= 0 ? 0 : maximuPage,
-      }
-    })
-    setDataGridPrisFilters((prevState) => {
-      var maximuPage: number = prevState.skip;
-      if (rowPrisCount !== 0) {
-        if ((maximuPage + 1) >= (Math.floor(rowPrisCount / parseInt(event.target.value, 10)))) {
-          maximuPage = (Math.floor(rowPrisCount / parseInt(event.target.value, 10))) - 1
-        }
-      }
-      return {
-        limit: parseInt(event.target.value, 10),
-        skip: maximuPage <= 0 ? 0 : maximuPage
-      }
-    })
-  };
+  const [deleteId, setDeleteId] = useState<string>()
+  const [showDelete, setShowDelete] = useState<boolean>(false);
+  const deleteClicked = (params: GridRowParams) => {
+    setDeleteId(() => (params.row._id))
+    setShowDelete(true)
 
-  const handleChangePrisPage = (_event: React.ChangeEvent<unknown>, value: number) => {
-    setDataGridPrisFilters((prevState) => {
-      return {
-        limit: perPage !== prisPaginationModel.pageSize ? prisPaginationModel.pageSize : perPage * value,
-        skip: (value - 1) * perPage,
+  }
+  const perPage = 5;
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: perPage,
+    page: 0,
+  });
+
+  const [sortModel, setSortModel] = useState<any>([
+    {
+      field: 'id',
+      sort: 'asc',
+    },
+  ]);
+
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
+  const [mongoFilterModel, setMongoFilterModel] = useState<DataGridMongoDBQuery>({});
+
+
+
+  const columns: GridColDef[] = useMemo(() => {
+    return [
+      {
+        field: "id",
+        headerName: "ID",
+        width: 100,
+        align: 'center' as GridAlignment,
+        headerAlign: 'center' as GridAlignment,
+        type: 'number',
+        sortable: true,
+        searchAble: true,
+        filterable: true,
+        filterOperators: createCustomOperators().number,
+        valueGetter: (params: GridRenderCellParams) => {
+          return params?.row?.id
+        },
+      },
+
+      {
+        field: 'doctorProfile.fullName',
+        headerName: `Doctor Name`,
+        width: 250,
+        minWidth: 250,
+        align: 'center' as GridAlignment,
+        headerAlign: 'center' as GridAlignment,
+        searchAble: false,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().string,
+        valueFormatter(params: GridValueFormatterParams) {
+          const { api, id } = params;
+          let fullName = api.getCellValue(id as string, 'doctorProfile')?.fullName
+          return ` Dr. ${fullName}`
+        },
+        renderCell: (params: GridRenderCellParams) => {
+          const { row, formattedValue } = params;
+          const profileImage = row?.doctorProfile?.profileImage == '' ? doctors_profile : row?.doctorProfile?.profileImage
+          const online = row?.doctorProfile?.online || false
+          return (
+            <>
+              <Link aria-label='profile' className=" mx-2" target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`} >
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  variant="dot"
+                  online={online}
+                >
+                  <Avatar alt="" src={`${profileImage}`} >
+                    <img src={doctors_profile} alt="" className="avatar" />
+                  </Avatar>
+                </StyledBadge>
+              </Link>
+              <Stack>
+                <Link aria-label='profile' target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`}
+                  style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
+                  {formattedValue}
+                </Link>
+                <small>{row?.doctorProfile?.specialities[0]?.specialities}</small>
+              </Stack>
+            </>
+          )
+        }
+      },
+      {
+        field: 'patientProfile.fullName',
+        headerName: `Patient Name`,
+        width: 200,
+        headerAlign: 'center',
+        searchAble: false,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().string,
+        valueGetter(params: GridRenderCellParams) {
+          const { row } = params;
+          return row?.patientProfile?.fullName
+        },
+        sortComparator: (v1: any, v2: any) => v1.toLowerCase() > v2.toLowerCase() ? 1 : -1,
+        renderCell: (params: GridRenderCellParams) => {
+          const { row } = params;
+          const profileImage = row?.patientProfile?.profileImage == '' ? patient_profile : row?.patientProfile?.profileImage
+          const online = row?.patientProfile?.online || false
+          return (
+            <>
+              <Link className="avatar mx-2" target='_blank' href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}>
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  variant="dot"
+                  online={online}
+                >
+                  <Avatar alt="" src={profileImage} />
+                </StyledBadge></Link>
+              <Link target='_blank' href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`} >{`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}</Link></>
+          )
+        }
+      },
+      {
+        field: 'createdAt',
+        headerName: "Create",
+        width: 200,
+        headerAlign: 'center' as GridAlignment,
+        align: 'center' as GridAlignment,
+        type: 'dateTime',
+        searchAble: true,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().date,
+        valueGetter(params: GridRenderCellParams) {
+          const { row } = params;
+          return row.createdAt ? dayjs(row.createdAt).toDate() : null;
+        },
+        renderCell: (params: GridRenderCellParams) => {
+          const { row } = params;
+          return (
+            <Stack >
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`DD MMM YYYY`)}</span>
+              <span className="d-block">
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`HH:mm`)}</span>
+              </span>
+            </Stack>
+          )
+        }
+      },
+      {
+        field: 'updateAt',
+        headerName: "Update",
+        width: 200,
+        headerAlign: 'center' as GridAlignment,
+        align: 'center' as GridAlignment,
+        type: 'dateTime',
+        searchAble: true,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().date,
+        valueGetter(params: GridRenderCellParams) {
+          const { row } = params;
+          return row.updateAt ? dayjs(row.updateAt).toDate() : null;
+        },
+        renderCell: (params: GridRenderCellParams) => {
+          const { row } = params;
+          return (
+            <Stack >
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`DD MMM YYYY`)}</span>
+              <span className="d-block">
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`HH:mm`)}</span>
+              </span>
+            </Stack>
+          )
+        }
+      },
+      {
+        field: 'prescriptionsArray',
+        headerName: "Medicine",
+        width: 200,
+        headerAlign: 'center' as GridAlignment,
+        align: 'center' as GridAlignment,
+        searchAble: false,
+        sortable: false,
+        filterable: false,
+        valueGetter: (params) => {
+          const prescriptionsArray = params?.row?.prescriptionsArray;
+          return prescriptionsArray.length;
+        },
+        sortComparator: (v1: any, v2: any) => {
+          return v1 > v2 ? -1 : 1
+        },
+        renderCell: (params: GridRenderCellParams) => {
+          const { prescriptionsArray: value } = params?.row;
+          const tooltipText = value.map((obj: any) => {
+            // Map over each key-value pair in the object
+            const formattedEntries = Object.entries(obj)
+              .map(([key, val]) => `${key}: ${val}`)
+              .join("\n"); // Join each key-value pair with a newline
+
+            // Add a separator after each object
+            return `${formattedEntries}\n------------------------------------`;
+          }).join("\n\n"); // Separate each object's result with double newlines
+
+          return (
+            <>
+              {value &&
+                value.length > 0 ?
+                <>
+                  <Tooltip arrow title={tooltipText} followCursor>
+                    <span
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {`${value.length} medicine${value.length <= 1 ? '' : "s"}`}
+                    </span>
+                  </Tooltip>
+                </> :
+                <>
+                  <span style={{ display: 'flex', justifyContent: 'center', minWidth: '100%' }}>
+                    --
+                  </span></>
+              }
+            </>
+          )
+        },
+      },
+      {
+        field: "actions",
+        type: 'actions',
+        headerName: "Action",
+        headerAlign: 'center',
+        align: 'center',
+        width: 200,
+        getActions: (params: GridRowParams) => [
+          <GridActionsCellItem
+            key="print-action"
+            onClick={() => {
+              printButtonClicked(params.row)
+            }}
+            icon={
+              <i className="fas fa-print"
+                style={{ color: theme.palette.primary.main }}>
+
+              </i>} label="Print" />,
+          router.asPath.startsWith('/doctors') ? (
+            <GridActionsCellItem
+              key="view-action"
+              onClick={() => {
+                if (params.row?._id == patientProfile?._id) {
+                  deleteClicked(params);
+                }
+              }}
+              icon={
+                <DeleteForever sx={{ color: 'crimson' }} />
+              }
+              disabled={params.row?._id !== patientProfile?._id}
+              label="View"
+            />
+          ) : <></>,
+          <GridActionsCellItem
+            key="view-action"
+            onClick={() => {
+              let isPatientPanel = router.asPath.startsWith('/patient')
+              const encodedId = btoa(params.row?._id);
+              router.push(isPatientPanel
+                ? `/patient/dashboard/see-prescription/${encodedId}` :
+                `/doctors/dashboard/editprescription/${encodedId}`)
+            }}
+            icon={<i className="far fa-eye" style={{ color: theme.palette.secondary.main }}></i>} label="View" />,
+        ]
       }
-    })
-    setPrisPaginationModel((prevState) => {
+    ]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+  const handleChangePage = (
+    _event: any | null,
+    newPage: number) => {
+    setPaginationModel((prevState) => {
       return {
         ...prevState,
-        page: value - 1
+        page: newPage - 1
       }
     })
   }
+
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setPaginationModel((prevState) => {
+      var maximuPage: number = prevState.page;
+      if (rowCount !== 0) {
+        if ((maximuPage + 1) >= (Math.ceil(rowCount / parseInt(event.target.value, 10)))) {
+          maximuPage = (Math.ceil(rowCount / parseInt(event.target.value, 10))) - 1
+        }
+      }
+      return {
+        page: maximuPage <= 0 ? 0 : maximuPage,
+        pageSize: parseInt(event.target.value, 10)
+      }
+    })
+  }
+
+  const { filterModel, onFilterChange, } = useDataGridServerFilter();
+
+  const handelFilterModelChange = useCallback((newFilterModel: GridFilterModel) => {
+    onFilterChange(newFilterModel);
+  }, [onFilterChange])
+
+
+  const removeMongoFilter = (filterModel: GridFilterModel) => {
+    if (filterModel.items.length == 0) { setMongoFilterModel({}) }
+    const value = filterModel.items[0]?.value;
+    if (!value && value == 0 && value == '') {
+      setMongoFilterModel({})
+    }
+  }
+
+  useEffect(() => {
+    const updateDbFilter = (filterModel: GridFilterModel) => {
+      const value = filterModel.items[0]?.value;
+      if (value && value !== '0' && value !== '') {
+        const mongoQuery = convertFilterToMongoDB(filterModel, columns);
+        setMongoFilterModel(mongoQuery);
+      } else {
+        setMongoFilterModel({})
+      }
+    }
+    globalFilterFunctions.applyFilters = updateDbFilter;
+    removeMongoFilter(filterModel)
+  }, [columns, filterModel])
+
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (dataGridRef?.current) {
+        setBoxMinHeight(`${dataGridRef.current.clientHeight}px`);
+      }
+    }, 100);
+  }, [paginationModel.pageSize, isLoading]);
+
+
+  //Update page for pagination model in case last page delete or result less than page
+  useEffect(() => {
+    const totalCount = rowCount;
+    const totalPages = Math.ceil(totalCount / paginationModel.pageSize);
+    const isOutOfRange = paginationModel.page >= totalPages;
+
+    if (rowCount !== 0) {
+      if (isOutOfRange) {
+        setPaginationModel((prevState: { page: number, pageSize: number }) => ({
+          ...prevState,
+          page: Math.max(0, totalPages - 1), // Ensures page never goes below 0
+        }));
+      }
+    } else {
+      setPaginationModel((prevState: { page: number, pageSize: number }) => ({
+        ...prevState,
+        page: 0, // Ensures page never goes below 0
+      }));
+    }
+  }, [paginationModel.page, paginationModel.pageSize, rowCount])
+
+
 
   useEffect(() => {
     let isActive = true;
     if (isActive) {
       let userId = patientProfile?._id
       if (homeSocket.current !== undefined) {
-        homeSocket?.current.emit('getPrescriptionRecord', { userId: userId, ...dataGridPrisFilters });
+        homeSocket?.current.emit('getPrescriptionRecord', { userId: userId, paginationModel, sortModel, mongoFilterModel });
         homeSocket.current.once('getPrescriptionRecordReturn', (msg: {
           status: number,
           message?: string,
@@ -539,11 +657,15 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
               draggable: true,
               progress: undefined,
               transition: bounce,
-              onClose: () => { }
+              toastId: "prescription-toast",
+              onClose: () => {
+                setIsLoading(false)
+                toast.dismiss('prescription-toast')
+              }
             });
           } else {
-            setPrisRecords(priscriptionRecords)
-            setRowPrisCount(totalPrescriptions)
+            setRow(priscriptionRecords)
+            setRowCount(totalPrescriptions)
             homeSocket.current.once(`updateGetPrescriptionRecord`, () => {
               setReload(!reload)
             })
@@ -557,15 +679,8 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, patientProfile?._id, dataGridPrisFilters, reload])
+  }, [homeSocket, patientProfile?._id, paginationModel, sortModel, mongoFilterModel, reload])
 
-  const [deleteId, setDeleteId] = useState<string>()
-  const [showDelete, setShowDelete] = useState<boolean>(false);
-  const deleteClicked = (params: GridRowParams) => {
-    setDeleteId(() => (params.row._id))
-    setShowDelete(true)
-
-  }
   const deleteSubmited = () => {
     if (homeSocket.current !== undefined) {
       homeSocket.current.emit('deletePriscriptionRecord', { doctorId: userProfile?._id, deleteId })
@@ -606,90 +721,121 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
       </iframe>
       {
         isLoading ?
-          <CircleToBlockLoading color={theme.palette.primary.main} size="small"
-            style={{
-              minWidth: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-            }} /> :
-          <>
-            <div className="col-sm-12">
-              <div className="card">
-                <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h4 className="card-title float-start">Prescription Records</h4>
-                </div>
-                <div className="card-body ">
-                  <div className="card card-table mb-0">
-                    <div className="card-body">
-                      <div className="table-responsive" style={{ height: 580, width: '100%' }}>
-                        <DataGrid
-                          experimentalFeatures={{ ariaV7: true }}
-                          slots={{
-                            noResultsOverlay: CustomNoRowsOverlay,
-                            noRowsOverlay: CustomNoRowsOverlay,
-                            pagination: CustomPagination,
-                          }}
-                          slotProps={{
-                            baseCheckbox: {
-                              name: 'row-checkbox',
-                            },
-                            pagination: { //@ts-ignore
-                              handleChangePage: handleChangePrisPage,
-                              handleChangeRowsPerPage: handleChangePrisRowsPerPage,
-                              count: rowPrisCount,
-                              SelectProps: {
-                                inputProps: {
-                                  id: 'pagination-select',
-                                  name: 'pagination-select',
-                                },
-                              },
-                            },
-                          }}
-                          rowHeight={screen.height / 15.2}
-                          rows={prisRecords}
-                          getRowId={(params) => params._id}
-                          rowCount={rowPrisCount}
-                          ref={presRef}
-                          columns={prisColumns}
-                          paginationModel={prisPaginationModel}
-                          pageSizeOptions={[5, 10]}
-                          disableRowSelectionOnClick
-                          onPaginationModelChange={setPrisPaginationModel}
-                          showCellVerticalBorder
-                          showColumnVerticalBorder
-                          sx={{
-                            ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
-                              "marginTop": "1em",
-                              "marginBottom": "1em"
-                            },
-                            "&.MuiDataGrid-root .MuiDataGrid-row": {
-                              backgroundColor:
-                                false ? getSelectedBackgroundColor(
-                                  theme.palette.primary.dark,
-                                  theme.palette.mode,
-                                ) : '',
-                              '&:hover': {
-                                backgroundColor: getSelectedHoverBackgroundColor(
-                                  theme.palette.primary.light,
-                                  theme.palette.mode,
-                                ),
-                              }
-                            },
-                            "& .MuiDataGrid-footerContainer": {
-                              [theme.breakpoints.only("xs")]: {
-                                justifyContent: 'center',
-                                mb: 2
-                              }
-                            }
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div className="card">
+            <div className="card-body">
+              <div className="table-responsive">
+                <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                  <LoadingComponent boxMinHeight={boxMinHeight} />
+                </Box>
               </div>
             </div>
-          </>
+          </div> :
+          <div className="card">
+            <div ref={dataGridRef} className="tab-content schedule-cont">
+              <Box className={classes.dataGridOuterBox} >
+                <Typography className={classes.totalTypo}
+                  variant='h5' align='center' gutterBottom >
+                  {
+                    rowCount !== 0 ?
+                      `Total Priscription: ${rowCount}` :
+                      `Not any Priscription yet`
+                  }
+                </Typography>
+                <div className="table-responsive" style={{ height: paginationModel?.pageSize == 5 ? 600 : 1000, width: '100%' }}>
+
+
+                  <DataGrid
+                    rowHeight={80}
+                    paginationMode='server'
+                    filterMode="server"
+
+                    // dont mode server and handle in client side sorting toosortingMode="server"
+                    sortModel={sortModel}
+                    onSortModelChange={(model: GridSortModel) => {
+                      if (model.length > 0) {
+                        setSortModel((_prev: GridSortModel) => [...model]);
+                      }
+                    }}
+                    sortingOrder={['desc', 'asc']}
+                    filterModel={filterModel}
+                    onFilterModelChange={handelFilterModelChange}
+                    columnVisibilityModel={columnVisibilityModel}
+                    onColumnVisibilityModelChange={(newModel) => {
+                      setColumnVisibilityModel(newModel)
+                    }}
+                    loading={isLoading}
+                    experimentalFeatures={{ ariaV7: true }}
+                    slots={{
+                      toolbar: CustomToolbar,
+                      pagination: CustomPagination,
+                      noResultsOverlay: CustomNoRowsOverlay,
+                      noRowsOverlay: CustomNoRowsOverlay
+                    }}
+                    slotProps={{
+                      toolbar: {
+                        printOptions: { disableToolbarButton: true },
+                        deleteId: [],
+                        deleteClicked: () => { },
+                        columnVisibilityModel: columnVisibilityModel,
+                      },
+                      pagination: {
+                        onRowsPerPageChange: handleChangeRowsPerPage,
+                        page: paginationModel.page,
+                        rowsPerPage: paginationModel.pageSize,
+                        onPageChange: handleChangePage,
+                        count: rowCount,
+                        SelectProps: {
+                          inputProps: {
+                            id: 'pagination-select',
+                            name: 'pagination-select',
+                          },
+                        },
+                      },
+                      filterPanel: {
+                        filterFormProps: {
+                          deleteIconProps: {
+                            sx: {
+                              justifyContent: 'flex-start'
+                            },
+                          },
+                        },
+                      },
+                      baseCheckbox: {
+                        inputProps: {
+                          name: "select-checkbox"
+                        }
+                      }
+                    }}
+                    getRowId={(params) => params._id}
+                    rows={rows}
+                    rowCount={rowCount}
+                    columns={columns}
+                    isRowSelectable={(params) => false}
+                    paginationModel={paginationModel}
+                    pageSizeOptions={[5, 10]}
+                    showCellVerticalBorder
+                    showColumnVerticalBorder
+                    className={classes.dataGrid}
+                    sx={{
+                      "&.MuiDataGrid-root .MuiDataGrid-row": {
+                        backgroundColor:
+                          false ? getSelectedBackgroundColor(
+                            theme.palette.primary.dark,
+                            theme.palette.mode,
+                          ) : '',
+                        '&:hover': {
+                          backgroundColor: getSelectedHoverBackgroundColor(
+                            theme.palette.primary.light,
+                            theme.palette.mode,
+                          ),
+                        }
+                      },
+                    }}
+                  />
+                </div>
+              </Box>
+            </div>
+          </div>
       }
       {showDelete && <BootstrapDialog
         TransitionComponent={Transition}

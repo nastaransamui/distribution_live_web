@@ -7,31 +7,23 @@ import MuiPagination from '@mui/material/Pagination';
 import TablePagination from '@mui/material/TablePagination';
 
 
-type PaginationPropsType = {
-  handleChangePage: any;
-  handleChangeRowsPerPage: any;
-  count: number
+interface PaginationPropsType {
+  onRowsPerPageChange: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>;
+  page: number;
+  rowsPerPage: number;
+  onPageChange: (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => void;
+  count: number;
 }
-
 const CustomPagination: FC<PaginationPropsType> = (props) => {
   const {
-    handleChangeRowsPerPage,
-    handleChangePage,
-    count } = props
-  const apiRef = useGridApiContext();
-  const paginationModel = useGridSelector(apiRef, gridPaginationModelSelector);
-
-  const updatePageNumber = () => {
-    let m = paginationModel.page
-    if (count !== 0) {
-      if (paginationModel.page >= (Math.floor(count / paginationModel.pageSize))) {
-        if (Math.ceil(count / paginationModel.pageSize) == paginationModel.page) {
-          m = Math.floor(count / paginationModel.pageSize) - 1
-        }
-      }
-    }
-    return m
-  }
+    onRowsPerPageChange,
+    page,
+    rowsPerPage,
+    onPageChange,
+    count,
+  } = props
+  const totalPages = Math.ceil(count / rowsPerPage)
+  const isOutOfRange = page >= totalPages;
 
   return (
     <GridFooterContainer>
@@ -45,10 +37,10 @@ const CustomPagination: FC<PaginationPropsType> = (props) => {
           },
         })}
         count={count}
-        page={updatePageNumber()}
-        onPageChange={handleChangePage}
-        rowsPerPage={paginationModel.pageSize}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        page={isOutOfRange ? Math.max(0, totalPages - 1) : page}
+        onPageChange={onPageChange}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={onRowsPerPageChange}
         rowsPerPageOptions={[5, 10]}
         showFirstButton
         showLastButton
@@ -61,13 +53,15 @@ const CustomPagination: FC<PaginationPropsType> = (props) => {
         ActionsComponent={() => {
           return (
             <MuiPagination
-              count={Math.ceil(count / paginationModel.pageSize)}
-              page={updatePageNumber() + 1}
+              count={totalPages}
+              page={page + 1}
               showLastButton
               showFirstButton
               boundaryCount={2}
               color='secondary'
-              onChange={handleChangePage}
+              onChange={(_event, page) => {
+                onPageChange(null, page)
+              }}
               siblingCount={1}
               sx={{
                 '.MuiPaginationItem-page.Mui-selected': {

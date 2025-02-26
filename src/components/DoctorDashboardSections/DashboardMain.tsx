@@ -34,7 +34,7 @@ const DashboardMain: FC = (() => {
       <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
         <div className="row">
           <div className="col-md-12">
-            <div className="card dash-card">
+            <div className="card dash-card   animate__animated animate__backInDown">
               <div className="card-body">
                 <div className="row">
                   <div className="col-md-12 col-lg-4">
@@ -171,7 +171,7 @@ const DashboardMain: FC = (() => {
           </div>
         </div>
         <div className="row">
-          <div className="col-md-12">
+          <div className="col-md-12   animate__animated animate__backInUp">
             <h1 className="mb-4" style={{ color: theme.palette.secondary.main, fontSize: '18px' }}>{isToday ? `Today Patients` : `This week Patients`}</h1>
             <TabContext value={value}>
               <div className="appointment-tab">
@@ -209,20 +209,12 @@ const DashboardMain: FC = (() => {
                 </ul>
                 <div className="card card-table mb-0">
                   <div className="card-body">
-                    <SwipeableViews
-                      axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                      index={index}
-                      onChangeIndex={(index: number) => {
-                        setIndex(index);
-                        setValue(index.toString())
-                      }}>
-                      <TabPanel value="1">
-                        <DashboardAppoinment isLoading={isLoading} setIsLoading={setIsLoading} total={total} setTotal={setTotal} isToday={isToday} />
-                      </TabPanel>
-                      <TabPanel value="2">
-                        <DashboardAppoinment isLoading={isLoading} setIsLoading={setIsLoading} total={total} setTotal={setTotal} isToday={isToday} />
-                      </TabPanel>
-                    </SwipeableViews>
+                    <TabPanel value="1" className={`${!isToday && value == "1" ? "animate__animated animate__backInLeft" : ""}`}>
+                      <DashboardAppoinment isLoading={isLoading} setIsLoading={setIsLoading} total={total} setTotal={setTotal} isToday={isToday} />
+                    </TabPanel>
+                    <TabPanel value="2" className={`${isToday && value == "2" ? "animate__animated animate__backInRight" : ""}`}>
+                      <DashboardAppoinment isLoading={isLoading} setIsLoading={setIsLoading} total={total} setTotal={setTotal} isToday={isToday} />
+                    </TabPanel>
                   </div>
                 </div>
               </div>

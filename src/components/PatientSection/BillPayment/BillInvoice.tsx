@@ -7,20 +7,20 @@ import html2canvas from 'html2canvas';
 import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
-import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { formatNumberWithCommas, LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { toast } from 'react-toastify';
 
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 
 import dayjs from 'dayjs'
-import { useTheme } from '@mui/material/styles';
 
 import Tooltip from '@mui/material/Tooltip';
 import { useRouter } from 'next/router';
 import { BillingTypeWithDoctorProfile } from '@/components/DoctorDashboardSections/EditBilling';
-import { base64regex } from '@/components/DoctorsSections/Profile/ProfilePage';
+import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import { PatientProfile } from '@/components/DoctorDashboardSections/MyPtients';
 import { BillingDetailsArrayType } from '@/components/DoctorDashboardSections/AddBilling';
+import Box from '@mui/material/Box';
+import dataGridStyle from '@/components/shared/dataGridStyle';
 export interface BillingTypeWithDoctorProfileAndPatientProfile extends BillingTypeWithDoctorProfile {
   patientProfile: PatientProfile
 }
@@ -37,7 +37,7 @@ const BillInvoice: FC = (() => {
   const invoiceFooterRef = useRef<HTMLDivElement>(null);
   const { muiVar, bounce } = useScssVar();
   const router = useRouter()
-  const theme = useTheme();
+  const { classes } = dataGridStyle({});
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
@@ -171,13 +171,19 @@ const BillInvoice: FC = (() => {
           <div className="row">
             {
               !singleBill || userProfile == null ?
-                <CircleToBlockLoading color={theme.palette.primary.main} size="small" style={{
-                  minWidth: '90%',
-                  display: 'flex',
-                  justifyContent: 'center',
-                }} />
+                <div className="col-lg-8 offset-lg-2   animate__animated animate__backInUp">
+                  <div className="card">
+                    <div className="card-body">
+                      <div className="table-responsive">
+                        <Box sx={{ minHeight: '500px' }} className={classes.dataGridOuterBox}>
+                          <LoadingComponent boxMinHeight='500px' />
+                        </Box>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 :
-                <div className="col-lg-8 offset-lg-2">
+                <div className="col-lg-8 offset-lg-2   animate__animated animate__backInUp">
                   <button onClick={handleExport} style={{ width: '100%', marginBottom: 30 }} className='btn btn-primary'>Export as PDF</button>
                   <div className="invoice-content" ref={exportRef} id="pdf-content">
                     <span ref={invoiceHeaderRef}>
@@ -281,11 +287,11 @@ const BillInvoice: FC = (() => {
                                           <>
                                             <td className="text-center">{formatNumberWithCommas(a.price?.toString()!)}</td>
                                             <td className="text-center">{`${a.bookingsFee} %`}</td>
-                                            <td className="text-center">{`${singleBill?.currencySymbol} ${formatNumberWithCommas(a.bookingsFeePrice)}`}</td>
+                                            <td className="text-center">{`${singleBill?.currencySymbol} ${formatNumberWithCommas(a.bookingsFeePrice.toString())}`}</td>
                                           </>
                                         }
                                         <td style={{ display: 'block', whiteSpace: 'pre' }} className="text-end">
-                                          {`${singleBill?.currencySymbol} ${formatNumberWithCommas(a.total)}`}
+                                          {`${singleBill?.currencySymbol} ${formatNumberWithCommas(a.total.toString())}`}
                                         </td>
                                       </tr>
                                     )
@@ -318,7 +324,7 @@ const BillInvoice: FC = (() => {
                                       <td style={{ padding: '10px 0px' }}>
                                         <span style={{ paddingRight: '18px' }}>
                                           {singleBill?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                            singleBill?.price
+                                            singleBill?.price.toString()
                                           )}
                                         </span>
                                       </td>
@@ -332,7 +338,7 @@ const BillInvoice: FC = (() => {
                                       <td style={{ padding: '10px 0px' }}>
                                         <span style={{ paddingRight: '18px' }}>
                                           {singleBill?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                            singleBill?.bookingsFeePrice
+                                            singleBill?.bookingsFeePrice.toString()
                                           )}
                                         </span>
                                       </td>
@@ -342,7 +348,7 @@ const BillInvoice: FC = (() => {
                                         <td style={{ padding: '10px 0px' }}>
                                           <span style={{ paddingRight: '18px' }}>{singleBill?.currencySymbol || 'THB'}&nbsp;
                                             {formatNumberWithCommas(
-                                              singleBill?.total
+                                              singleBill?.total.toString()
                                             )}</span>
                                         </td>
                                       </>
@@ -354,7 +360,7 @@ const BillInvoice: FC = (() => {
                                       <th>Total:</th>
                                       <td style={{ padding: '10px 0px' }}>
                                         <span style={{ paddingRight: '18px' }}>{singleBill?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                          singleBill?.total
+                                          singleBill?.total.toString()
                                         )}</span>
                                       </td>
                                     </>

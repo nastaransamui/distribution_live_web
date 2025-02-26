@@ -27,7 +27,7 @@ const BlogDetails: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-lg-8 col-md-12" style={muiVar}>
+      <div className="col-lg-8 col-md-12  animate__animated animate__backInUp" style={muiVar}>
         <div className="blog-view">
           <div className="blog blog-single-post">
             <div className="blog-image">

@@ -90,6 +90,7 @@ const Registrations: FC<RegistrationsProps> = ((props: RegistrationsProps) => {
                               return (
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                   <MobileDatePicker
+                                    value={value ? dayjs(value) : null}
                                     closeOnSelect
                                     disableFuture
                                     format="YYYY"
@@ -111,8 +112,6 @@ const Registrations: FC<RegistrationsProps> = ((props: RegistrationsProps) => {
                                         size: 'small'
                                       },
                                     }}
-
-                                    value={dayjs(data?.[index]?.[`registrations.${index}.year`])}
                                   />
                                 </LocalizationProvider>
                               )

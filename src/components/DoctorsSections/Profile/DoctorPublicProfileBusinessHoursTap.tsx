@@ -63,9 +63,9 @@ const DoctorPublicProfileBusinessHoursTap: FC<DoctorPublicProfileBusinessHoursTy
                                           return allPeriods.map((time: TimeType, j: number) => {
                                             let isTodayReserved = false
                                             if (time.isReserved) {
-                                              const reservationsDaysArray = time?.reservations.map((a) => a.selectedDate)
+                                              const reservationsDaysArray = time?.reservations?.map((a) => a.selectedDate)
                                               const formatToday = dayjs().format('DD MMM YYYY');
-                                              isTodayReserved = reservationsDaysArray.some(date => dayjs(date, 'DD MMM YYYY').isSame(formatToday, 'day'));
+                                              isTodayReserved = reservationsDaysArray?.some(date => dayjs(date, 'DD MMM YYYY').isSame(formatToday, 'day'))!;
 
                                             }
                                             return (
@@ -80,7 +80,7 @@ const DoctorPublicProfileBusinessHoursTap: FC<DoctorPublicProfileBusinessHoursTy
                                                       </>
                                                     }
                                                   </span>
-                                                  <span className="time">{formatNumberWithCommas(time?.total)}{" "} {time?.currencySymbol}</span>
+                                                  <span className="time">{formatNumberWithCommas(time?.total.toString())}{" "} {time?.currencySymbol}</span>
                                                 </div>
                                               </Fragment>
                                             )
@@ -138,9 +138,11 @@ const DoctorPublicProfileBusinessHoursTap: FC<DoctorPublicProfileBusinessHoursTy
                                           return allPeriods.map((time: TimeType, j: number) => {
                                             let isTommorowReserved = false
                                             if (time.isReserved) {
-                                              const reservationsDaysArray = time?.reservations.map((a) => a.selectedDate)
+                                              const reservationsDaysArray = time?.reservations?.map((a) => a.selectedDate)
                                               const formatTomorrow = dayjs().add(1, 'day').format('DD MMM YYYY');
-                                              isTommorowReserved = reservationsDaysArray.some(date => dayjs(date, 'DD MMM YYYY').isSame(formatTomorrow, 'day'));
+                                              if (reservationsDaysArray) {
+                                                isTommorowReserved = reservationsDaysArray.some(date => dayjs(date, 'DD MMM YYYY').isSame(formatTomorrow, 'day'));
+                                              }
 
                                             }
                                             return (
@@ -155,7 +157,7 @@ const DoctorPublicProfileBusinessHoursTap: FC<DoctorPublicProfileBusinessHoursTy
                                                       </>
                                                     }
                                                   </span>
-                                                  <span className="time">{formatNumberWithCommas(time?.total)}{" "} {time?.currencySymbol}</span>
+                                                  <span className="time">{formatNumberWithCommas(time?.total.toString())}{" "} {time?.currencySymbol}</span>
                                                 </div>
                                               </Fragment>
                                             )

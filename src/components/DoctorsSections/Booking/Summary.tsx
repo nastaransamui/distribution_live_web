@@ -6,9 +6,12 @@ import { doctors_profile } from '@/public/assets/imagepath';
 import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
 import Rating from '@mui/material/Rating';
 import Avatar from '@mui/material/Avatar';
+import { BookingDoctorProfile } from './BookingPage';
+import { ProfileImageStyledBadge } from '@/components/DoctorDashboardSections/MyPtients';
+import { FiThumbsUp } from 'react-icons/fi';
 
 
-const Summary: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
+const Summary: FC<{ profile: BookingDoctorProfile }> = (({ profile }) => {
   const { muiVar } = useScssVar();
 
   return (
@@ -17,35 +20,48 @@ const Summary: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
         <div className="card">
           <div className="card-body">
             <div className="booking-doc-info">
-              <Link href={`/doctors/search/${btoa(profile?._id)}`} className="booking-doc-img" aria-label='search'>
+              <ProfileImageStyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                variant="dot"
+                online={profile.online as boolean}
+              >
                 <Avatar sx={{
-                  width: 'auto',
-                  height: 'auto',
+                  width: '70px',
+                  height: '70px',
+                  borderRadius: '5px',
+                  marginRight: '18px',
                   transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
                   "&:hover": {
                     boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
                     transform: "scale(1.15)",
                   },
-
                 }} variant="square" alt="" src={profile?.profileImage}
                   key={profile?.profileImage}
                 >
                   <img className="img-fluid" src={doctors_profile} alt="" />
                 </Avatar>
-              </Link>
+              </ProfileImageStyledBadge>
               <div className="booking-info">
                 <h1 style={{ fontSize: '18px' }}>
-                  <Link href={`/doctors/search/${btoa(profile?._id)}`}>
-                    Dr. {profile?.firstName} {" "} {profile?.lastName}
+                  <Link href={`/doctors/profile/${btoa(profile?._id)}`} target='_blank'>
+                    Dr. {profile?.fullName}
                   </Link>
                 </h1>
                 <p className="doc-speciality">
                   {profile?.specialities?.[0]?.specialities}
                 </p>
-                <Rating name="read-only" value={4} readOnly size='small' />
+                <span style={{ display: 'flex', alignItems: 'center', marginBottom: '6px' }}>
+                  <Rating name="read-only" precision={0.5} value={profile?.rate_array.length == 0 ? 0 : (profile?.rate_array.reduce((acc, num) => acc + num, 0) / profile?.rate_array.length)} readOnly size='small' />
+                  <span className="d-inline-block average-rating" style={{ marginLeft: '6px' }}>({profile?.rate_array.length})</span>
+                </span>
+                <span className="d-inline-block average-rating" >
+                  <FiThumbsUp style={{ marginBottom: 5 }} />&nbsp; {`${profile?.recommendArray && profile?.recommendArray.length !== 0
+                    ? ((profile?.recommendArray.filter(vote => vote === 1).length / profile?.recommendArray?.length) * 100).toFixed(0)
+                    : `0`}%`}{" "}
 
-                <span className="d-inline-block average-rating">35</span>
-
+                  <span className="votes">({profile?.recommendArray ? profile?.recommendArray?.length : 0} Votes)</span>
+                </span>
                 <p className="text-muted mb-0">
                   <i className="fas fa-map-marker-alt"></i> &nbsp;
                   {profile?.city}  {profile?.country}

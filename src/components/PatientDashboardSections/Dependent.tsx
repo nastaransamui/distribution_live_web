@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-key */
 
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useState, useRef, useEffect, ReactNode, useMemo } from 'react'
+import { FC, Fragment, useState, useRef, useEffect, ReactNode, useMemo, useCallback } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { patient_profile } from '@/public/assets/imagepath';
 
@@ -12,10 +12,10 @@ import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { Transition, BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
 import DialogContent from '@mui/material/DialogContent'
-import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridRowId, GridValueFormatterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridRowId, GridValueFormatterParams, GridColumnVisibilityModel, GridRenderCellParams, GridFilterModel, GridSortModel } from '@mui/x-data-grid';
 
 import { useTheme } from '@mui/material/styles';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import Avatar from '@mui/material/Avatar';
@@ -39,11 +39,17 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 import CustomPagination from '../shared/CustomPagination';
-import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor } from '../DoctorDashboardSections/ScheduleTiming';
+import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent } from '../DoctorDashboardSections/ScheduleTiming';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
+import { invoicesStyles } from '../DoctorDashboardSections/Invoices';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import Link from 'next/link';
 
 
 
@@ -52,7 +58,7 @@ export interface DependentsTypes {
   createdAt: Date;
   firstName: string;
   lastName: string;
-  dob: string;
+  dob: Date | "";
   bloodG: string;
   profileImage: string;
   gender: string;
@@ -80,32 +86,27 @@ const initialState: DependentsTypes = {
 const Dependent: FC = (() => {
   dayjs.extend(utc)
   dayjs.extend(timezone)
-  const { muiVar, bounce } = useScssVar();
-  const [edit, setEdit] = useState(false);
-  const theme = useTheme()
-  const grdiRef = useRef<any>(null)
-  const [dependents, setDependents] = useState<DependentsTypes[] | []>([])
-  const dispatch = useDispatch();
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const { bounce, muiVar } = useScssVar();
+  const { classes, theme } = invoicesStyles({});
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
 
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [reload, setReload] = useState<boolean>(false)
+  const [rows, setRows] = useState<DependentsTypes[] | []>([])
   const [rowCount, setRowCount] = useState<number>(0)
-  const perPage = 5;
+  const [reload, setReload] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const perPage = 5
+  const [edit, setEdit] = useState(false);
+  const dataGridRef = useRef<any>(null)
+  const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
+
+  const dispatch = useDispatch();
+
   const [uploadImage, setUploadImage] = useState(patient_profile)
-  const [dataGridFilters, setDataGridFilters] = useState({
-    limit: perPage,
-    skip: 0,
-  });
-  const [paginationModel, setPaginationModel] = useState({
-    pageSize: 5,
-    page: 0,
-  });
+
 
   const [imageName, setImageName] = useState("")
   const inputFileRef = useRef<any>(null)
@@ -142,12 +143,27 @@ const Dependent: FC = (() => {
 
   }
 
-  const [deleteId, setDeleteId] = useState<string>()
-  const deleteClicked = (params: GridRowParams) => {
-    setDeleteId(() => (params.row._id))
+  const [deleteId, setDeleteId] = useState<GridRowId[]>([])
+  const deleteClicked = () => {
+
     document.getElementById('delete_modal')?.classList.replace('animate__backOutDown', 'animate__backInDown')
     window.$('#delete_modal').modal('toggle')
   }
+
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: perPage,
+    page: 0,
+  });
+
+  const [sortModel, setSortModel] = useState<any>([
+    {
+      field: 'id',
+      sort: 'asc',
+    },
+  ]);
+
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
+  const [mongoFilterModel, setMongoFilterModel] = useState<DataGridMongoDBQuery>({});
 
   const columns: GridColDef[] = useMemo(() => {
     const editClicked = (params: GridRowParams) => {
@@ -157,7 +173,7 @@ const Dependent: FC = (() => {
         setImageName('')
       } else {
         const url = params?.row?.profileImage
-        const fileName = url.split('/').pop();
+        const fileName = url.split('/').pop()?.split('?')[0];
         setImageName(fileName)
         setUploadImage(url);
       }
@@ -172,77 +188,157 @@ const Dependent: FC = (() => {
       {
         field: "id",
         headerName: "ID",
-        width: 20,
+        width: 100,
         align: 'center',
-        headerAlign: 'center'
+        headerAlign: 'center',
+        type: 'number',
+        sortable: true,
+        searchAble: true,
+        filterable: true,
+        filterOperators: createCustomOperators().number,
+        valueGetter: (params: GridRenderCellParams) => {
+          return params?.row?.id
+        },
       },
       {
-        field: 'name',
+        field: 'fullName',
         headerName: "Dependent",
         width: 210,
         headerAlign: 'center',
+        align: 'center',
+        filterable: true,
+        searchAble: true,
+        sortable: true,
+        type: 'string',
+        filterOperators: createCustomOperators().string,
         renderCell: (data: any) => {
           const { row } = data;
           const { profileImage } = row;
-          const src = profileImage == '' ? patient_profile : `${row.profileImage}?random=${new Date().getTime()}`
+          const src = profileImage == '' ? patient_profile : `${row.profileImage}`
           return (
-            <>
+            <span style={{ minWidth: '100%', display: 'flex', alignItems: 'center' }}>
               <Avatar alt="" src={src} >
                 <img src={patient_profile} alt="" className="avatar avatar-in-schedule-table" />
               </Avatar>&nbsp; &nbsp;
-              {row.firstName} {" "} {row.lastName}
-            </>
+              {row.fullName}
+            </span>
           )
         },
       },
       {
         field: 'gender',
         headerName: 'Gender',
-        width: 100,
-        headerAlign: 'center',
+        width: 150,
         align: 'center',
+        headerAlign: 'center',
+        type: 'string',
+        sortable: true,
+        searchAble: true,
+        filterable: true,
+        filterOperators: createCustomOperators().string,
+        valueGetter(params: GridRenderCellParams) {
+          const { row } = params;
+          return row?.gender == '' ? '===' : row?.gender
+        },
       },
       {
         field: 'relationShip',
         headerName: 'Relation ',
-        width: 100,
-        headerAlign: 'center',
+        width: 200,
         align: 'center',
+        headerAlign: 'center',
+        type: 'string',
+        sortable: true,
+        searchAble: true,
+        filterable: true,
+        filterOperators: createCustomOperators().string,
+        valueGetter(params: GridRenderCellParams) {
+          const { row } = params;
+          return row?.relationShip == '' ? '===' : row?.relationShip
+        },
       },
       {
         field: 'dob',
         headerName: "Date of Birth",
-        width: 200,
-        headerAlign: 'center',
+        width: 190,
         align: 'center',
-        renderCell: (data: any) => {
-          const { row } = data;
+        type: 'dateTime',
+        searchAble: true,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().date,
+        headerAlign: 'center',
+        valueGetter: (params) => {
+          const { row } = params;
+          return row?.dob ? dayjs(row?.dob).toDate() : null;
+        },
+        sortComparator: (v1, v2) => {
+          if (typeof v1 !== 'string' && typeof v2 !== 'string') {
+            return dayjs(v1).isAfter(dayjs(v2)) ? 1 : -1
+          }
+          return 1
+        },
+        renderCell: (params: GridRenderCellParams) => {
+          const { row } = params;
+          const { dob } = row;
+          //@ts-ignore
+          let { years, months, days } = dayjs.preciseDiff(dob, dayjs(), true)
           return (
-            <>{row.dob == "" ? "MMMM D, YYYY" : dayjs(row.dob).format(`MMMM D, YYYY`)}</>
+            <Stack direction="column"
+              justifyContent="center"
+              alignItems="center"
+              spacing={0}>
+              <Link href="#" onClick={(e) => e.preventDefault()} >
+                {dob !== '' ? dayjs(dob).format('DD MMM YYYY') : '---- -- --'}
+              </Link>
+              {dob !== '' && <Link href="#" onClick={(e) => e.preventDefault()} >
+                <i className="fas fa-birthday-cake"></i>{"  "}
+                {`${isNaN(years) ? '--' : years} years`}
+              </Link>}
+            </Stack>
           )
         }
       },
       {
         field: 'bloodG',
-        headerName: "Blood Group",
-        width: 100,
-        headerAlign: 'center',
+        headerName: `Blood Group`,
         align: 'center',
-        valueFormatter: (params: GridValueFormatterParams<string>) => {
-          return params.value == '' ? '--' : `🩸${params.value}`
+        width: 140,
+        type: 'string',
+        searchAble: true,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().string,
+        headerAlign: 'center',
+        valueGetter: (params) => {
+          const { row } = params;
+          return row?.bloodG == '' ? '===' : `🩸${row?.bloodG}`
         },
       },
-
       {
         field: 'createdAt',
         headerName: "Created",
         width: 200,
         headerAlign: 'center',
         align: 'center',
+        type: 'dateTime',
+        searchAble: true,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().date,
+        valueGetter: (params) => {
+          const { row } = params;
+          return row?.createdAt ? dayjs(row?.createdAt).toDate() : null;
+        },
         renderCell: (data: any) => {
           const { row } = data;
           return (
-            <>{dayjs(row.createdAt).tz(process.env.NEXT_PUBLIC_TZ).format('YYYY MMM DD HH:mm')}</>
+            <Stack >
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`DD MMM YYYY`)}</span>
+              <span className="d-block">
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`HH:mm`)}</span>
+              </span>
+            </Stack>
           )
         }
       },
@@ -252,10 +348,24 @@ const Dependent: FC = (() => {
         width: 200,
         headerAlign: 'center',
         align: 'center',
+        type: 'dateTime',
+        searchAble: true,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().date,
+        valueGetter: (params) => {
+          const { row } = params;
+          return row?.updateAt ? dayjs(row?.updateAt).toDate() : null;
+        },
         renderCell: (data: any) => {
           const { row } = data;
           return (
-            <>{dayjs(row.updateAt).tz(process.env.NEXT_PUBLIC_TZ).format('YYYY MMM DD HH:mm')}</>
+            <Stack >
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.updateAt).format(`DD MMM YYYY`)}</span>
+              <span className="d-block">
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.updateAt).format(`HH:mm`)}</span>
+              </span>
+            </Stack>
           )
         }
       },
@@ -265,8 +375,18 @@ const Dependent: FC = (() => {
         width: 200,
         headerAlign: 'center',
         align: 'center',
-        valueFormatter: (params: GridValueFormatterParams<string>) => {
-          return `${params?.value?.length} record${params?.value?.length <= 1 ? "" : 's'}`
+        filterable: false,
+        sortable: true,
+        searchAble: false,
+        valueGetter: (params) => {
+          const medicalRecordsArray = params?.row?.medicalRecordsArray;
+          return medicalRecordsArray.length;
+        },
+        sortComparator: (v1: any, v2: any) => {
+          return v1 > v2 ? 1 : -1
+        },
+        valueFormatter: (params: GridValueFormatterParams<number>) => {
+          return `${params?.value} record${params?.value <= 1 ? "" : 's'}`
         },
       },
       {
@@ -286,38 +406,128 @@ const Dependent: FC = (() => {
                 <ToggleOnIcon sx={{ color: 'crimson' }} fontSize='small' />
               </Tooltip>} label="Deactive" />,
           <GridActionsCellItem icon={<Edit color="secondary" />} onClick={() => { editClicked(params) }} label="Edit" />,
-          <GridActionsCellItem icon={<DeleteForever color="error" />} onClick={() => { deleteClicked(params) }} label="Edit" />
+          <GridActionsCellItem
+            disabled={params.row?.medicalRecordsArray?.length !== 0}
+            icon={
+              <DeleteForever
+                sx={{
+                  color: params.row?.medicalRecordsArray?.length == 0 ?
+                    'crimson' :
+                    theme.palette.text.disabled
+                }} />}
+            onClick={() => {
+              if (params.row?.medicalRecordsArray?.length == 0) {
+                setDeleteId(() => [params?.row._id])
+                deleteClicked()
+              }
+            }} label="Edit" />
         ]
       }
     ]
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dependents, reload])
-  const {
-    handleSubmit,
-    clearErrors,
-    formState: { errors },
-    reset,
-    control,
-    register,
-    setValue: setFormValue,
-    getValues: getFormValues,
-    watch,
-  } = useForm({
-    defaultValues: {
-      ...initialState,
-      userId: userProfile?._id
+  }, [])
+
+
+  const handleChangePage = (
+    _event: any | null,
+    newPage: number) => {
+    setPaginationModel((prevState) => {
+      return {
+        ...prevState,
+        page: newPage - 1
+      }
+    })
+  }
+
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setPaginationModel((prevState) => {
+      var maximuPage: number = prevState.page;
+      if (rowCount !== 0) {
+        if ((maximuPage + 1) >= (Math.ceil(rowCount / parseInt(event.target.value, 10)))) {
+          maximuPage = (Math.ceil(rowCount / parseInt(event.target.value, 10))) - 1
+        }
+      }
+      return {
+        page: maximuPage <= 0 ? 0 : maximuPage,
+        pageSize: parseInt(event.target.value, 10)
+      }
+    })
+  }
+
+  const { filterModel, onFilterChange, } = useDataGridServerFilter();
+
+  const handelFilterModelChange = useCallback((newFilterModel: GridFilterModel) => {
+    onFilterChange(newFilterModel);
+  }, [onFilterChange])
+
+
+  const removeMongoFilter = (filterModel: GridFilterModel) => {
+    if (filterModel.items.length == 0) { setMongoFilterModel({}) }
+    const value = filterModel.items[0]?.value;
+    if (!value && value == 0 && value == '') {
+      setMongoFilterModel({})
     }
-  })
+  }
+
+  useEffect(() => {
+    const updateDbFilter = (filterModel: GridFilterModel) => {
+      const value = filterModel.items[0]?.value;
+      if (value && value !== '0' && value !== '') {
+        const mongoQuery = convertFilterToMongoDB(filterModel, columns);
+        setMongoFilterModel(mongoQuery);
+      } else {
+        setMongoFilterModel({})
+      }
+    }
+    globalFilterFunctions.applyFilters = updateDbFilter;
+    removeMongoFilter(filterModel)
+  }, [columns, filterModel])
+
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (dataGridRef?.current) {
+        setBoxMinHeight(`${dataGridRef.current.clientHeight}px`);
+      }
+    }, 100);
+  }, [paginationModel.pageSize, isLoading]);
+
+
+  //Update page for pagination model in case last page delete or result less than page
+  useEffect(() => {
+    const totalCount = rowCount;
+    const totalPages = Math.ceil(totalCount / paginationModel.pageSize);
+    const isOutOfRange = paginationModel.page >= totalPages;
+
+    if (rowCount !== 0) {
+      if (isOutOfRange) {
+        setPaginationModel((prevState: { page: number, pageSize: number }) => ({
+          ...prevState,
+          page: Math.max(0, totalPages - 1), // Ensures page never goes below 0
+        }));
+      }
+    } else {
+      setPaginationModel((prevState: { page: number, pageSize: number }) => ({
+        ...prevState,
+        page: 0, // Ensures page never goes below 0
+      }));
+    }
+  }, [paginationModel.page, paginationModel.pageSize, rowCount])
+
+
   useEffect(() => {
     let isActive = true;
     if (isActive) {
       let userId = userProfile?._id
       if (homeSocket.current !== undefined) {
-        homeSocket.current.emit('getPatientDependent', { userId: userId, ...dataGridFilters })
+        homeSocket.current.emit('getPatientDependent', { userId: userId, paginationModel, sortModel, mongoFilterModel, })
         homeSocket.current.once('getPatientDependentReturn', (msg: { status: number, message?: string, dependents: DependentsTypes[], totalDepends: number }) => {
-          const { status, message, dependents, totalDepends } = msg;
+          const { status, message } = msg;
           if (status !== 200) {
-            toast.error(message || `Error ${status} find Reservation`, {
+            toast.error(message || `Error ${status} find Dependent`, {
               position: "bottom-center",
               autoClose: 5000,
               hideProgressBar: false,
@@ -326,10 +536,15 @@ const Dependent: FC = (() => {
               draggable: true,
               progress: undefined,
               transition: bounce,
-              onClose: () => { }
+              toastId: "dependent",
+              onClose: () => {
+                setIsLoading(false)
+                toast.dismiss("dependent")
+              }
             });
           } else {
-            setDependents(dependents)
+            const { dependents, totalDepends } = msg;
+            setRows(dependents)
             setUploadImage(patient_profile)
             setRowCount(totalDepends)
             setImageName('')
@@ -346,7 +561,7 @@ const Dependent: FC = (() => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, userProfile?._id, reload, dataGridFilters])
+  }, [homeSocket, paginationModel, sortModel, mongoFilterModel, reload])
 
 
   const onSubmitCreateDependents = (data: any) => {
@@ -396,51 +611,23 @@ const Dependent: FC = (() => {
 
     }
   }
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setPaginationModel((prevState) => {
-      var maximuPage: number = prevState.page;
-      if (rowCount !== 0) {
-        if ((maximuPage + 1) >= (Math.floor(rowCount / parseInt(event.target.value, 10)))) {
-          maximuPage = (Math.floor(rowCount / parseInt(event.target.value, 10))) - 1
-        }
-      }
-      return {
-        pageSize: parseInt(event.target.value, 10),
-        page: maximuPage <= 0 ? 0 : maximuPage,
-      }
-    })
-    setDataGridFilters((prevState) => {
-      var maximuPage: number = prevState.skip;
-      if (rowCount !== 0) {
-        if ((maximuPage + 1) >= (Math.floor(rowCount / parseInt(event.target.value, 10)))) {
-          maximuPage = (Math.floor(rowCount / parseInt(event.target.value, 10))) - 1
-        }
-      }
-      return {
-        limit: parseInt(event.target.value, 10),
-        skip: maximuPage <= 0 ? 0 : maximuPage
-      }
-    })
-  }
 
-  const handleChangePage = (_event: React.ChangeEvent<unknown>, value: number) => {
-
-    setDataGridFilters((prevState) => {
-      return {
-        limit: perPage !== paginationModel.pageSize ? paginationModel.pageSize : perPage * value,
-        skip: (value - 1) * perPage,
-      }
-    })
-    setPaginationModel((prevState) => {
-      return {
-        ...prevState,
-        page: value - 1
-      }
-    })
-  }
-
+  const {
+    handleSubmit,
+    clearErrors,
+    formState: { errors },
+    reset,
+    control,
+    register,
+    setValue: setFormValue,
+    getValues: getFormValues,
+    watch,
+  } = useForm({
+    defaultValues: {
+      ...initialState,
+      userId: userProfile?._id
+    }
+  })
   const deleteSubmited = () => {
     dispatch(updateHomeFormSubmit(true))
     if (homeSocket.current !== undefined) {
@@ -464,7 +651,7 @@ const Dependent: FC = (() => {
         } else {
           dispatch(updateHomeFormSubmit(false))
           document.getElementById('delete_modal')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-          setDeleteId('')
+          setDeleteId([])
           setTimeout(() => {
             window.$('#delete_modal').modal("hide")
           }, 500);
@@ -476,101 +663,150 @@ const Dependent: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
-        <div className="card">
-          <div className="card-header">
-            <div className="row">
-              <div className="col-sm-6" style={{ display: "flex", alignItems: 'center' }}>
-                <h3 className="card-title">Dependent</h3>
+      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp">
+        {
+          isLoading ?
+            <div className="card">
+              <div className="card-body">
+                <div className="table-responsive">
+                  <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                    <LoadingComponent boxMinHeight={boxMinHeight} />
+                  </Box>
+                </div>
               </div>
-              <div className="col-sm-6">
-                <button type="button"
-                  className="btnLogin  float-end mt-2" style={muiVar}
-                  onClick={() => {
-                    setEdit(true)
-                  }}
-                >Add Dependent</button>
-              </div>
-            </div>
-          </div>
-          {isLoading ?
-            <CircleToBlockLoading color={theme.palette.primary.main} size="small"
-              style={{
-                minWidth: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-              }} />
-            :
-            <div className="table-responsive" style={{ height: 480, width: '100%' }}>
-              <DataGrid
-                paginationMode='server'
-                experimentalFeatures={{ ariaV7: true }}
-                slots={{
-                  noResultsOverlay: CustomNoRowsOverlay,
-                  noRowsOverlay: CustomNoRowsOverlay,
-                  pagination: CustomPagination,
-                }}
-                slotProps={{
-                  baseCheckbox: {
-                    name: 'row-checkbox',
-                  },
-                  pagination: { //@ts-ignore
-                    handleChangePage: handleChangePage,
-                    handleChangeRowsPerPage: handleChangeRowsPerPage,
-                    count: rowCount,
-                    SelectProps: {
-                      inputProps: {
-                        id: 'pagination-select',
-                        name: 'pagination-select',
-                      },
-                    },
-                  },
-                }}
-                getRowId={(params) => params._id}
-                rowHeight={screen.height / 15.2}
-                rows={dependents}
-                rowCount={rowCount}
-                ref={grdiRef}
-                columns={columns}
-                paginationModel={paginationModel}
-                pageSizeOptions={[5, 10]}
-                showCellVerticalBorder
-                showColumnVerticalBorder
-                isRowSelectable={(params) => false}
-                sx={{
-                  ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
-                    "marginTop": "1em",
-                    "marginBottom": "1em"
-                  },
-                  "&.MuiDataGrid-root .MuiDataGrid-row": {
-                    backgroundColor:
-                      false ? getSelectedBackgroundColor(
-                        theme.palette.primary.dark,
-                        theme.palette.mode,
-                      ) : '',
-                    '&:hover': {
-                      backgroundColor: getSelectedHoverBackgroundColor(
-                        theme.palette.primary.light,
-                        theme.palette.mode,
-                      ),
-                    }
-                  },
-                  "& .MuiDataGrid-footerContainer": {
-                    [theme.breakpoints.only("xs")]: {
-                      justifyContent: 'center',
-                      mb: 2
-                    }
-                  }
-                }}
-              />
-            </div>
-          }
+            </div> :
+            <div className="card">
+              <div ref={dataGridRef} className="tab-content schedule-cont">
+                <Box className={classes.dataGridOuterBox} >
+                  <span style={{ position: "relative", display: 'block', marginBottom: '25px' }}>
+                    <Typography className={classes.totalTypo}
+                      variant='h5' align='center' gutterBottom >
+                      {
+                        rowCount !== 0 ?
+                          `Total Dependents: ${rowCount}` :
+                          `Not any Dependents yet`
+                      }
+                    </Typography>
+                    {rowCount <= 20 &&
+                      <button type="button"
+                        style={{ lineHeight: `25px`, margin: 0, position: 'absolute', top: 0, right: 0 }}
+                        className="add-new-btn float-end" onClick={(e) => {
+                          setEdit(true)
+                        }} >Add Dependent</button>}
+                  </span>
+                  <div className="table-responsive" style={{ height: paginationModel?.pageSize == 5 ? 600 : 1000, width: '100%' }}>
 
-        </div>
+
+                    <DataGrid
+                      rowHeight={80}
+                      paginationMode='server'
+                      filterMode="server"
+                      // dont mode server and handle in client side sorting toosortingMode="server"
+                      sortModel={sortModel}
+                      onSortModelChange={(model: GridSortModel) => {
+                        if (model.length > 0) {
+                          setSortModel((_prev: GridSortModel) => [...model]);
+                        }
+                      }}
+                      sortingOrder={['desc', 'asc']}
+                      filterModel={filterModel}
+                      onFilterModelChange={handelFilterModelChange}
+                      columnVisibilityModel={columnVisibilityModel}
+                      onColumnVisibilityModelChange={(newModel) => {
+                        setColumnVisibilityModel(newModel)
+                      }}
+                      loading={isLoading}
+                      experimentalFeatures={{ ariaV7: true }}
+                      slots={{
+                        toolbar: CustomToolbar,
+                        pagination: CustomPagination,
+                        noResultsOverlay: CustomNoRowsOverlay,
+                        noRowsOverlay: CustomNoRowsOverlay
+                      }}
+                      slotProps={{
+                        toolbar: {
+                          printOptions: { disableToolbarButton: true },
+                          deleteId: deleteId,
+                          deleteClicked: deleteClicked,
+                          columnVisibilityModel: columnVisibilityModel,
+                        },
+                        pagination: {
+                          onRowsPerPageChange: handleChangeRowsPerPage,
+                          page: paginationModel.page,
+                          rowsPerPage: paginationModel.pageSize,
+                          onPageChange: handleChangePage,
+                          count: rowCount,
+                          SelectProps: {
+                            inputProps: {
+                              id: 'pagination-select',
+                              name: 'pagination-select',
+                            },
+                          },
+                        },
+                        filterPanel: {
+                          filterFormProps: {
+                            deleteIconProps: {
+                              sx: {
+                                justifyContent: 'flex-start'
+                              },
+                            },
+                          },
+                        },
+                        baseCheckbox: {
+                          inputProps: {
+                            name: "select-checkbox"
+                          }
+                        }
+                      }}
+                      getRowId={(params) => params._id}
+                      rows={rows}
+                      rowCount={rowCount}
+                      columns={columns}
+                      checkboxSelection
+                      isRowSelectable={(params) => {
+                        return params?.row?.medicalRecordsArray?.length == 0;
+                      }}
+                      onRowSelectionModelChange={(newRowSelectionModel) => {
+                        const { page, pageSize } = paginationModel
+                        let start = page == 0 ? page : page * pageSize
+                        let end = pageSize * (1 + page)
+                        let currrenPageId = newRowSelectionModel.slice(start, end)
+                        setDeleteId(() => {
+                          let newState = currrenPageId.length > 0 ? [...currrenPageId] : [...newRowSelectionModel]
+                          return newState
+                        });
+                      }}
+                      rowSelectionModel={deleteId}
+                      paginationModel={paginationModel}
+                      pageSizeOptions={[5, 10]}
+                      showCellVerticalBorder
+                      showColumnVerticalBorder
+                      className={classes.dataGrid}
+                      sx={{
+                        "&.MuiDataGrid-root .MuiDataGrid-row": {
+                          backgroundColor:
+                            false ? getSelectedBackgroundColor(
+                              theme.palette.primary.dark,
+                              theme.palette.mode,
+                            ) : '',
+                          '&:hover': {
+                            backgroundColor: getSelectedHoverBackgroundColor(
+                              theme.palette.primary.light,
+                              theme.palette.mode,
+                            ),
+                          }
+                        },
+                      }}
+                    />
+                  </div>
+                </Box>
+              </div>
+            </div>
+        }
       </div>
       {edit && <BootstrapDialog
         TransitionComponent={Transition}
-        onClose={(event, reason) => {
+        onClose={(_event, reason) => {
           if (reason == 'backdropClick') return false;
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
 
@@ -671,21 +907,19 @@ const Dependent: FC = (() => {
               <div className="col-12 col-sm-6">
                 <div className="form-group" style={{ marginBottom: "10px" }}>
                   <Controller
-                    // rules={{ required: 'This field is required' }}
                     name='dob'
                     control={control}
                     render={(props: any) => {
-                      const { field, fieldState, formState } = props;
-                      const { ref, onChange, value } = field;
-                      const { defaultValues } = formState;
+                      const { field } = props;
+                      const { onChange, value } = field;
                       return (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <MobileDatePicker
                             closeOnSelect
                             disableFuture
                             format="DD MMM YYYY"
-                            onChange={(event) => {
-                              onChange(dayjs(event).format(`YYYY-MM-DDTHH:mm:ss`));
+                            onChange={(event: Dayjs | null) => {
+                              onChange(new Date(dayjs(event).format(`YYYY-MM-DD`)));
                             }}
                             slotProps={{
                               textField: {
@@ -698,8 +932,6 @@ const Dependent: FC = (() => {
                                 size: 'small'
                               },
                             }}
-
-                            value={dayjs(defaultValues.dob)}
                           />
                         </LocalizationProvider>
                       )
@@ -713,9 +945,8 @@ const Dependent: FC = (() => {
                     name='gender'
                     control={control}
                     render={(props: any) => {
-                      const { field, fieldState, formState } = props;
-                      const { ref, onChange, value } = field;
-                      const { defaultValues } = formState;
+                      const { field } = props;
+                      const { onChange, value } = field;
                       return (
                         <FormControl fullWidth >
                           <InputLabel size='small' id="gender-label" htmlFor="gender">
@@ -753,13 +984,11 @@ const Dependent: FC = (() => {
               <div className="col-12 col-sm-6">
                 <div className="form-group" style={{ marginBottom: "10px" }}>
                   <Controller
-                    // rules={{ required: 'This field is required' }}
                     name='bloodG'
                     control={control}
                     render={(props: any) => {
-                      const { field, fieldState, formState } = props;
-                      const { ref, onChange, value } = field;
-                      const { defaultValues } = formState;
+                      const { field } = props;
+                      const { onChange, value } = field;
                       return (
                         <FormControl fullWidth >
                           <InputLabel size='small' id="bloodGLable" htmlFor="blood">
@@ -829,7 +1058,7 @@ const Dependent: FC = (() => {
                     control={control}
                     render={(props: any) => {
                       const { field } = props;
-                      const { onChange, value: formValue } = field;
+                      const { value: formValue } = field;
                       window.mobileCheck = function () {
                         let check = false;
                         (function (a) { if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true; })(navigator.userAgent || navigator.vendor || window.opera);
@@ -914,7 +1143,7 @@ const Dependent: FC = (() => {
                 <h4 className="modal-title" style={{ display: 'flex', justifyContent: 'center' }}>
                   Delete Dependent
                 </h4>
-                <p className="mb-4" style={{ display: 'flex', justifyContent: 'center' }}>Are you sure to delete {dependents[dependents.findIndex((a) => a._id == deleteId)]?.['firstName']}  from your dependents?</p>
+                <p className="mb-4" style={{ display: 'flex', justifyContent: 'center' }}>Are you sure to delete {deleteId.length} {`dependent${deleteId.length == 1 ? '' : 's'}`}  from your dependents?</p>
                 <span style={{ display: 'flex', justifyContent: 'center' }}>
                   <button type="button" className="btnLogin mx-1"
                     onClick={() => {

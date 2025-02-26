@@ -27,11 +27,7 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
 
   //@ts-ignore
   let { years, months, days } = dayjs.preciseDiff(doctorPatientProfile?.dob, dayjs(), true)
-  const [isClient, setIsClient] = useState(false)
 
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
 
   return (
     <Fragment>
@@ -52,23 +48,33 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                     <div className="pro-widget-content">
                       <div className="profile-info-widget">
                         <Link aria-label='patient' href="" className="booking-doc-img" onClick={(e) => e.preventDefault()}>
-                          <Avatar alt="" src={`${doctorPatientProfile?.profileImage}${isClient ? `?random=${new Date().getTime()}` : ''}`} sx={{ width: "120px", height: '120px' }} key={doctorPatientProfile?.profileImage}>
+                          <Avatar alt="" src={`${doctorPatientProfile?.profileImage}`} sx={{ width: "120px", height: '120px' }} key={doctorPatientProfile?.profileImage}>
                             <img src={patient_profile} alt="" />
                           </Avatar>
                         </Link>
                         <div className="profile-det-info">
-                          <h3>{doctorPatientProfile?.gender} {doctorPatientProfile?.firstName} {doctorPatientProfile?.lastName}</h3>
+                          <h3>
+                            {doctorPatientProfile?.gender == "" ? "" : `${doctorPatientProfile?.gender}. `}
+                            {doctorPatientProfile?.fullName}
+                          </h3>
 
                           <div className="patient-details">
                             <h4>
-                              <b>Patient ID :</b> #{doctorPatientProfile?._id}
+                              <b>Patient ID :</b> #{doctorPatientProfile?.id}
                             </h4>
                             <h5>
                               <i className="fas fa-birthday-cake"></i>
                               {doctorPatientProfile?.dob !== '' ? dayjs(doctorPatientProfile?.dob).format('DD MMM YYYY') : '---- -- --'}
                             </h5>
-                            <h6>{`${isNaN(years) ? '--' : years} years ${isNaN(months) ? '--' : months} months ${isNaN(days) ? '--' : days} days`}</h6>
-                            <h6 className="mb-0"><i className="fas fa-map-marker-alt"></i>{doctorPatientProfile?.city} <br />{doctorPatientProfile?.state} <br />{doctorPatientProfile?.country}</h6>
+                            <h5>{`${isNaN(years) ? '--' : years} years ${isNaN(months) ? '--' : months} months ${isNaN(days) ? '--' : days} days`}</h5>
+                            <h6 className="mb-0" style={{ display: 'flex', justifyContent: 'center', gap: 20, alignItems: 'center' }}>
+                              <i className="fas fa-map-marker-alt"></i>
+                              <span style={{ textAlign: 'left' }}>
+                                {doctorPatientProfile?.city !== "" ? `City: ${doctorPatientProfile?.city}` : `City: -----`} <br />
+                                {doctorPatientProfile?.state !== "" ? `State: ${doctorPatientProfile?.state}` : `State: -----`} <br />
+                                {doctorPatientProfile?.country !== "" ? `Country: ${doctorPatientProfile?.country}` : `Country: -----`}
+                              </span>
+                            </h6>
                           </div>
                         </div>
                       </div>
@@ -111,7 +117,7 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                                         online={online}
                                       >
                                         <Avatar sx={{ width: `3rem`, height: `3rem` }} alt=""
-                                          src={`${profileImage}${isClient ? `?random=${new Date().getTime()}` : ''}`} key={profileImage}
+                                          src={`${profileImage}`} key={profileImage}
                                         >
                                           <img src={patient_profile} alt="" className="avatar" />
                                         </Avatar>
@@ -130,10 +136,11 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                                       {specialities?.[0]?.specialities}
                                     </span>
                                     <span className="d-block text-sm text-muted">
-                                      {appointment?.selectedDate} {' '} {appointment?.timeSlot?.period}
+                                      {dayjs(appointment?.selectedDate).format('DD MMM YYYY')} {' '} {appointment?.timeSlot?.period}
                                     </span>
                                     <span className="d-block text-sm text-muted">
-                                      {appointment?.invoiceId}
+
+                                      <Link href={`/doctors/invoice-view/${btoa(appointment?._id!)}`} target='_blank'>{appointment?.invoiceId}</Link>
                                     </span>
                                   </div>
                                 </div>

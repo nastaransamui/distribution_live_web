@@ -98,11 +98,28 @@ const AddPrescription: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile 
   }
 
   const addInputField = () => {
-    appendPrescription(initialState)
+    if (prescriptionsFields.length < 5) {
+      appendPrescription([{ ...initialState }])
+    }
 
   }
   const removeInputFields = (index: number) => {
-    removePrescription(index)
+    if (prescriptionsFields.length > 1) {
+      removePrescription(index)
+    } else {
+      toast.error("Prescription should at least has 1 field", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        transition: bounce,
+        onClose: () => { }
+      });
+
+    }
   }
 
 
@@ -110,7 +127,7 @@ const AddPrescription: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile 
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9 animate__animated animate__backInUp">
         <div className="card">
           <div className="card-header" style={{ display: 'flex' }}>
             <h4 className="card-title mb-0">Add Prescription</h4>
@@ -139,9 +156,11 @@ const AddPrescription: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile 
               </div>
             </div>
 
-            <div className="add-more text-end" onClick={addInputField} style={{ marginBottom: 8 }}>
+
+            {prescriptionsFields.length < 5 && <div className="add-more text-end" onClick={addInputField} style={{ marginBottom: 8 }}>
               <Link href="" onClick={(e) => { e.preventDefault() }} className="add-education"><i className="fa fa-plus-circle"></i> Add More</Link>
-            </div>
+            </div>}
+
 
 
 

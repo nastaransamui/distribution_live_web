@@ -19,7 +19,7 @@ const DoctorPublicProfilePageTab: FC<{ profile: DoctorProfileType }> = (({ profi
 
   return (
     <Fragment>
-      <div className="card" style={muiVar}>
+      <div className="card animate__animated animate__backInUp" style={muiVar}>
         <MuiSwipeableTabs
           steps={
             [

@@ -13,7 +13,8 @@ import { updateHomeAccessToken } from '@/redux/homeAccessToken'
 import dayjs from 'dayjs'
 import preciseDiff from 'dayjs-precise-range'
 import Avatar from '@mui/material/Avatar';
-
+import isJsonString from '@/helpers/isJson';
+import { deleteCookie, getCookie } from 'cookies-next';
 
 const DoctorDashboardSidebar: FC = (() => {
   const { muiVar, bounce } = useScssVar();
@@ -31,9 +32,6 @@ const DoctorDashboardSidebar: FC = (() => {
 
   dayjs.extend(preciseDiff)
   const logOut = () => {
-    dispatch(updateHomeFormSubmit(true))
-    dispatch(updateHomeAccessToken(null))
-
     homeSocket.current.emit('logOutSubmit', userProfile?._id, userProfile?.services)
     homeSocket.current.once('logOutReturn', (msg: any) => {
       if (msg?.status !== 200) {
@@ -51,9 +49,31 @@ const DoctorDashboardSidebar: FC = (() => {
           }
         });
       } else {
-        // dispatch(updateHomeAccessToken(null))
+        if (isJsonString(getCookie('homeAccessToken') as string)) {
+          const { length } = JSON.parse(getCookie('homeAccessToken') as string)
+          for (var i = 0; i < parseInt(length); i++) {
+            deleteCookie(`${i}`);
+          }
+        }
+        deleteCookie('homeAccessToken')
+        dispatch(updateHomeAccessToken(null))
+        toast.info('Logout successfully', {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          transition: bounce,
+          onClose: () => {
+            dispatch(updateHomeFormSubmit(false))
+            router.reload();
+          }
+        });
       }
     })
+
   }
   //@ts-ignore
   let { years, months, days } = dayjs.preciseDiff(userProfile?.dob, dayjs(), true)
@@ -163,7 +183,7 @@ const DoctorDashboardSidebar: FC = (() => {
                       <span>Reviews</span>
                     </Link>
                   </li>
-                  <li className={router.pathname == "/doctors/dashboard/rate" ? "active" : ""}>
+                  <li className={router.pathname == "/doctors/dashboard/rates" ? "active" : ""}>
                     <Link href="/doctors/dashboard/rates">
                       <i className="fas fa-star" />
                       <span>Rates</span>

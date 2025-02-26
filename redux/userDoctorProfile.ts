@@ -19,7 +19,7 @@ export interface UserDoctorProfileTypeValue {
   awards: AwardType[];
   bankId: string;
   billingsIds: string[];
-  bookingsFee: string;
+  bookingsFee: number;
   city: string;
   clinicAddress: string;
   clinicImages: string[];
@@ -27,7 +27,7 @@ export interface UserDoctorProfileTypeValue {
   country: string;
   createdAt: Date;
   currency: CurrenciesType[];
-  dob: string;
+  dob: Date | "";
   educations: EducationType[];
   experinces: ExperienceType[];
   favs_id: string[];
@@ -36,7 +36,7 @@ export interface UserDoctorProfileTypeValue {
   idle?: boolean;
   invoice_ids: string[];
   isActive: boolean;
-  isVerified?: boolean;
+  isVerified?: boolean | "google";
   lastLogin?: {
     date: Date;
     ipAddr: string;
@@ -57,7 +57,7 @@ export interface UserDoctorProfileTypeValue {
   reservations_id: string[];
   roleName: "doctors";
   services: "google" | "password";
-  socialMedia: string[];
+  socialMedia: [] | { platform: string; link: string }[];
   specialities: SpecialitiesType[];
   specialitiesServices: string[];
   state: string;
@@ -76,7 +76,7 @@ export interface UserDoctorProfileType {
     awards: AwardType[];
     bankId: string;
     billingsIds: string[];
-    bookingsFee: string;
+    bookingsFee: number;
     city: string;
     clinicAddress: string;
     clinicImages: string[];
@@ -84,7 +84,7 @@ export interface UserDoctorProfileType {
     country: string;
     createdAt: Date;
     currency: CurrenciesType[];
-    dob: string;
+    dob: Date | "";
     educations: EducationType[];
     experinces: ExperienceType[];
     favs_id: string[];
@@ -93,7 +93,7 @@ export interface UserDoctorProfileType {
     idle?: boolean;
     invoice_ids: string[];
     isActive: boolean;
-    isVerified?: boolean;
+    isVerified?: boolean | "google";
     lastLogin?: {
       date: Date;
       ipAddr: string;
@@ -114,7 +114,7 @@ export interface UserDoctorProfileType {
     reservations_id: string[];
     roleName: "doctors";
     services: "google" | "password";
-    socialMedia: string[];
+    socialMedia: [] | { platform: string; link: string }[];
     specialities: SpecialitiesType[];
     specialitiesServices: string[];
     state: string;

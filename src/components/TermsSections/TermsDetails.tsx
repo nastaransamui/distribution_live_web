@@ -7,20 +7,22 @@ const TermsDetails: FC = (() => {
 
   return (
     <Fragment>
-      <section className="terms-section" style={muiVar}>
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <div className="terms-content">
-                <h2>Health Care</h2>
-                <h3>Terms & Conditions</h3>
-                <h3>Last Updated: January 14, 2025</h3>
-                <p>By accessing or using the website owned and operated by
-                  Health Care, you, as the &quot;User,&quot;
-                  agree to be bound by these Terms and Conditions (&quot;Terms&quot;).
-                  If you do not agree to these Terms in full, you must immediately cease using this website.
-                </p>
-                <Terms />
+      <section className="terms-section   animate__animated animate__backInUp" style={muiVar}>
+        <div className="card" style={{ padding: "20px 10px" }}>
+          <div className="container">
+            <div className="row">
+              <div className="col-md-12">
+                <div className="terms-content">
+                  <h2>Health Care</h2>
+                  <h3>Terms & Conditions</h3>
+                  <h3>Last Updated: January 14, 2025</h3>
+                  <p>By accessing or using the website owned and operated by
+                    Health Care, you, as the &quot;User,&quot;
+                    agree to be bound by these Terms and Conditions (&quot;Terms&quot;).
+                    If you do not agree to these Terms in full, you must immediately cease using this website.
+                  </p>
+                  <Terms />
+                </div>
               </div>
             </div>
           </div>

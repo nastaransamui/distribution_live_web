@@ -40,7 +40,7 @@ const AddBillingPage: NextPage = (props: any) => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
-      <BreadCrumb subtitle='Add Billing' title='Add Billing' />
+      <BreadCrumb subtitle='Add Bill' title='Add Bill' />
       <div className="content" style={muiVar}>
         <div className="container-fluid">
           <div className="row">

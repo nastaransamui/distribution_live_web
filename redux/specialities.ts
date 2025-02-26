@@ -1,9 +1,10 @@
-import { createSlice, AnyAction } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { HYDRATE } from 'next-redux-wrapper';
+import { createSlice, AnyAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
 
 export interface SpecialitiesType {
   _id: string;
+  id?: number;
   specialities: string;
   description: string;
   image: string;
@@ -18,7 +19,7 @@ const initialState = {
 };
 
 export const specialitiesSlice = createSlice({
-  name: 'specialities',
+  name: "specialities",
   initialState,
   reducers: {
     updateSpecialities: (state, action: PayloadAction<any>) => {

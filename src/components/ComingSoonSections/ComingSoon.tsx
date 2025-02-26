@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { FC, Fragment, use } from 'react'
+import { FC, Fragment } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { useTheme } from '@mui/material';
 

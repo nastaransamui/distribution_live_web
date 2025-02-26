@@ -25,12 +25,24 @@ import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import { toast } from 'react-toastify';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 import dayjs from 'dayjs';
-import { formatNumberWithCommas, StyledBadge } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { formatNumberWithCommas, LoadingComponent, StyledBadge } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import Chip from '@mui/material/Chip';
 import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection';
 import Grid from '@mui/material/Grid';
+import dataGridStyle from '../shared/dataGridStyle';
 
-
+export interface EditValueType {
+  start: Date;
+  end: Date;
+  title: string;
+  doctorProfile: DoctorProfileType;
+  id: number;
+  createdDate: string;
+  doctorId: string;
+  currencySymbol: string;
+  total: string;
+  invoiceId: string;
+}
 
 export interface AppointmentReservationExtendType extends AppointmentReservationType {
   doctorProfile: DoctorProfileType;
@@ -40,7 +52,7 @@ const perPage = 10
 const Appointment: FC = (() => {
   const { muiVar, bounce } = useScssVar();
   const [show, setShow] = useState(false);
-  const [editValues, setEditValues] = useState<AppointmentReservationExtendType>();
+  const [editValues, setEditValues] = useState<EditValueType>();
 
 
 
@@ -112,198 +124,107 @@ const Appointment: FC = (() => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeSocket, page, reload])
-  const LoadingCompoenent = () => (
-    <CircleToBlockLoading color={theme.palette.primary.main} size="small"
-      style={{
-        minWidth: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-      }} />
-  )
 
-  const appointmentComponents = () => {
 
-    return (
-      <>
-        {
-          myAppointmentData.map((appointment: AppointmentReservationExtendType, index: number) => {
-            const { doctorProfile, selectedDate, timeSlot, doctorId } = appointment;
-            const { period } = timeSlot
-            const { profileImage, address1, address2, online } = doctorProfile
-            const doctorName = `Dr. ${doctorProfile?.firstName} ${doctorProfile?.lastName}`;
-            return (
-              <div className="appointment-list" key={index}>
-                <div className="profile-info-widget" >
-                  <ProfileImageStyledBadge
-                    overlap="circular"
-                    anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                    variant="dot"
-                    online={online as boolean}
-                  >
-                    <Link aria-label="patient"
-                      href={`/doctors/profile/${btoa(doctorId)}`}
-                      className="booking-doc-img"
-                      target='_blank'
-                    >
-                      <Avatar sx={{
-                        width: 'auto',
-                        height: 'auto',
-                        borderRadius: `5px 5px 5px 5px`,
-                        transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
-                        "&:hover": {
-                          transform: "scale(1.15)",
-
-                        },
-                        background: theme.palette.background.default
-                      }}
-                        variant="circular"
-                        alt=""
-                        src={`${profileImage}?random=${new Date().getTime()}`}
-                        key={profileImage}
-                      >
-                        <img className="img-fluid" src={doctors_profile} alt="" />
-                      </Avatar>
-                    </Link>
-                  </ProfileImageStyledBadge>
-                  <div className="profile-det-info">
-                    <h3>
-                      <Link aria-label="patient" style={{ color: theme.palette.secondary.main }} href={`/doctors/profile/${btoa(doctorId)}`} target='_blank'>{doctorName}</Link>
-                    </h3>
-                    <div className="patient-details">
-                      <h4>
-                        <i className="far fa-clock"></i> {selectedDate} {' '} {period}
-                      </h4>
-                      <h4>
-                        <i className="fas fa-map-marker-alt"></i> {address1} {' '} {address2}
-                      </h4>
-                      <h4>
-                        <img src={doctorProfile?.specialities[0]?.image} width="20" height="20" alt={doctorProfile?.specialities[0]?.specialities} />
-                        {' '}
-                        {doctorProfile?.specialities[0]?.specialities}
-                      </h4>
-                      <h4 className="mb-0">
-                        <Grid container rowGap={1} columnGap={1} sx={{ paddingRight: 1, paddingLeft: 1 }} className="clinic-services"
-                          key={doctorProfile?.specialitiesServices?.toString()}>
-                          {doctorProfile?.specialitiesServices &&
-                            doctorProfile?.specialitiesServices.map((s: string, i: number) => {
-                              return (
-                                <Grid key={s + i} item component="span" aria-label='key specilaities'>{s}</Grid>
-                              )
-                            })
-                          }
-                        </Grid>
-                      </h4>
-                      <br />
-                      <h4 className="mb-0">
-                        {appointment.invoiceId}
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-                <div className="appointment-action" style={{ paddingTop: 30 }}>
-                  <Link
-                    href=""
-                    className="btnLogin"
-                    style={{ lineHeight: '38px', }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleShow(appointment)
-                    }}
-                  >
-                    <i className="far fa-eye"></i> View
-                  </Link>
-                  <Link href="" className="btnLogout"
-                    style={{ lineHeight: '38px', }} onClick={(e) => {
-                      e.preventDefault();
-                    }}>
-                    <i className="fas fa-check" style={{ color: 'green' }}></i> Accept
-                  </Link>
-                  <Link href="" className="btnLogin" onClick={(e) => {
-                    e.preventDefault();
-                  }}
-                    style={{ lineHeight: '38px', }}>
-                    <i className="fas fa-times" style={{ color: 'crimson' }}></i> Cancel
-                  </Link>
-                </div>
-              </div>
-            )
-          })
-        }
-      </>
-    )
-  }
 
 
   const handleShow = (data: AppointmentReservationExtendType) => {
-    setShow(true);
-    setEditValues(data)
+    const startTime = data.timeSlot?.period.split(' - ')[0]
+    const endTime = data.timeSlot?.period.split(' - ')[1]
+    // create a date object with a specific date
+    const date = dayjs(data.selectedDate);
+    // create a time object with a specific time
+    const timeStarted = dayjs(startTime, 'HH:mm');
+
+    const timeFinished = dayjs(endTime, 'HH:mm');
+    // combine the date and time objects
+    const startDateTime = date.set('hour', timeStarted.hour()).set('minute', timeStarted.minute()).set('second', timeStarted.second());
+    const s = dayjs(startDateTime).toDate()
+
+    // combine the date and time objects
+    const finishDateTime = date.set('hour', timeFinished.hour()).set('minute', timeFinished.minute()).set('second', timeFinished.second());
+    const e = dayjs(finishDateTime).toDate()
+    const title = `${data.doctorProfile?.fullName}`
+    const total = data.timeSlot.total;
+    const currencySymbol = data.timeSlot.currencySymbol
+    setShow(true)
+    setEditValues({
+      start: s,
+      end: e,
+      title: title,
+      doctorProfile: data.doctorProfile,
+      id: data.id,
+      createdDate: data.createdDate,
+      doctorId: data.doctorId,
+      total: total.toString(),
+      currencySymbol: currencySymbol,
+      invoiceId: data.invoiceId,
+    })
   }
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9 doctors-appointment-wrapper" style={muiVar}>
-        <div style={{ position: 'relative' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', top: '-50px' }}>
-
-            {!isLoading &&
-              myAppointmentData.length !== 0 &&
-              <Stack spacing={2}>
-                <Pagination
-                  showFirstButton
-                  showLastButton
-                  hideNextButton
-                  hidePrevButton
-                  boundaryCount={1}
-                  variant="outlined"
-                  color="secondary"
-                  count={userProfile ? Math.ceil(userProfile?.reservations_id.length / perPage) : 0}
-                  page={page}
-                  onChange={handlePageChange}
-                  sx={{
-                    marginLeft: 'auto',
-                    marginRight: 'auto'
-                  }}
-                />
-                <Typography variant='h5' align='center' gutterBottom>Total: {userProfile?.reservations_id.length} reservations</Typography>
-              </Stack>
-            }
-          </div>
-
-          {isLoading ?
-            <LoadingCompoenent /> :
-            myAppointmentData.length !== 0 ?
-              <div className="appointments">{appointmentComponents()}</div> :
-              <div className='card' style={{ minHeight: '90vh', justifyContent: 'center' }}>
-                <CustomNoRowsOverlay text='No Favarite doctors' />
-              </div>}
-
-
-
-        </div>
-        <div className='d-flex align-items-center justify-content-center'>
-
-          {!isLoading &&
-            myAppointmentData.length !== 0 &&
-            <Pagination
-              showFirstButton
-              showLastButton
-              hideNextButton
-              hidePrevButton
-              boundaryCount={1}
-              variant="outlined"
-              color="secondary"
-              count={userProfile ? Math.ceil(userProfile?.reservations_id.length / perPage) : 0}
-              page={page}
-              onChange={handlePageChange}
-              sx={{
-                mb: 3,
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                justifyContent: "center",
-                display: 'flex'
-              }}
-            />}
-        </div>
-
+      <div className="col-md-7 col-lg-8 col-xl-9 animate__animated animate__backInUp">
+        {
+          isLoading ?
+            <>
+              <div className="card">
+                <LoadingComponent boxMinHeight="500px" />
+              </div>
+            </> :
+            <>
+              {
+                myAppointmentData.length == 0 ?
+                  <div className="card" style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', minHeight: 700 }}>
+                    <CustomNoRowsOverlay text='No Appointments' />
+                  </div> :
+                  <div className="card" style={{ padding: 10 }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
+                      <Stack spacing={3} sx={{ mt: 3 }}>
+                        <Pagination
+                          showFirstButton
+                          showLastButton
+                          hideNextButton
+                          hidePrevButton
+                          boundaryCount={1}
+                          variant="outlined"
+                          color="secondary"
+                          count={userProfile ? Math.ceil(userProfile?.reservations_id.length / perPage) : 0}
+                          page={page}
+                          onChange={handlePageChange}
+                          sx={{
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
+                          }}
+                        />
+                        <Typography variant='h5' align='center' gutterBottom sx={{ pb: 2 }}>Total: {userProfile?.reservations_id.length} reservations</Typography>
+                      </Stack>
+                    </div>
+                    <div className="appointments">
+                      <PatientAppointmentShowBox handleShow={handleShow} myAppointmentData={myAppointmentData} />
+                    </div>
+                    <Pagination
+                      showFirstButton
+                      showLastButton
+                      hideNextButton
+                      hidePrevButton
+                      boundaryCount={1}
+                      variant="outlined"
+                      color="secondary"
+                      count={userProfile ? Math.ceil(userProfile?.reservations_id.length / perPage) : 0}
+                      page={page}
+                      onChange={handlePageChange}
+                      sx={{
+                        mb: 3,
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                        justifyContent: "center",
+                        display: 'flex'
+                      }}
+                    />
+                  </div>
+              }
+            </>
+        }
       </div>
 
       {
@@ -325,14 +246,14 @@ const Appointment: FC = (() => {
                 setShow(false)
               }, 500);
             }}>
-            <Link target='_blank' className="avatar mx-2" href={`/doctors/profile/${btoa(editValues?.patientId as string)}`}>
+            <Link target='_blank' className="avatar mx-2" href={`/doctors/profile/${btoa(editValues?.doctorId as string)}`}>
               <StyledBadge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant="dot"
                 online={editValues?.doctorProfile?.online as boolean}
               >
-                <Avatar alt="" src={`${editValues?.doctorProfile?.profileImage}?random=${new Date().getTime()}`} >
+                <Avatar alt="" src={`${editValues?.doctorProfile?.profileImage}`} >
                   <img src={doctors_profile} alt="" className="avatar" />
                 </Avatar>
               </StyledBadge>
@@ -347,17 +268,17 @@ const Appointment: FC = (() => {
                   color: theme.palette.secondary.light
                 }
               }} href={`/doctors/profile/${btoa(editValues?.doctorId as string)}`}>
-              {`Dr. ${editValues?.doctorProfile?.firstName} ${editValues?.doctorProfile?.lastName}`}
+              {`Dr. ${editValues?.doctorProfile?.fullName}`}
             </Typography>
           </BootstrapDialogTitle>
           <DialogContent dividers>
             <ul className="info-details" style={muiVar}>
               <li>
                 <div className="details-header">
-                  <div className="row">
+                  <div className="row" style={{ minWidth: 350 }}>
                     <div className="col-md-6">
-                      <span className="title">{editValues?.invoiceId}</span>
-                      <span className="text">{editValues?.selectedDate}</span>
+                      <span className="title">#{editValues?.id}</span>
+                      <span className="text">{dayjs(editValues?.start).format('DD MMM YYYY')}</span>
                     </div>
                     <div className="col-md-6">
                       <div className="text-end">
@@ -374,12 +295,25 @@ const Appointment: FC = (() => {
                 </div>
               </li>
               <li>
+                <span className="title">Start:</span>
+                <span className="text">{dayjs(editValues?.start).format('HH:mm')}</span>
+              </li>
+              <li>
+                <span className="title">Finish</span>
+                <span className="text">{dayjs(editValues?.end).format('HH:mm')}</span>
+              </li>
+              <li>
                 <span className="title">Confirm Date:</span>
                 <span className="text">{dayjs(editValues?.createdDate).format('DD MMM YYYY - HH:mm')}</span>
               </li>
+
               <li>
-                <span className="title">Paid Amount</span>
-                <span className="text">{formatNumberWithCommas(editValues?.timeSlot?.total!)} {" "} {editValues?.timeSlot?.currencySymbol || "THB"}</span>
+                <span className="title">Invoice:</span>
+                <span className="text">{editValues?.invoiceId}</span>
+              </li>
+              <li>
+                <span className="title">Price:</span>
+                <span className="text">{formatNumberWithCommas(editValues?.total!)} {" "} {editValues?.currencySymbol || "THB"}</span>
               </li>
             </ul>
           </DialogContent>
@@ -388,5 +322,114 @@ const Appointment: FC = (() => {
     </Fragment >
   )
 });
+
+interface PatientAppointmentShowBoxType {
+  myAppointmentData: AppointmentReservationExtendType[];
+  handleShow: (data: AppointmentReservationExtendType) => void;
+}
+const PatientAppointmentShowBox: FC<PatientAppointmentShowBoxType> = (({ myAppointmentData, handleShow }) => {
+  const { theme } = dataGridStyle({});
+  return (
+    <>
+      {
+        myAppointmentData.map((appointment: AppointmentReservationExtendType, index: number) => {
+          const { doctorProfile, selectedDate, timeSlot, doctorId } = appointment;
+          const { period } = timeSlot
+          const { profileImage, address1, address2, online } = doctorProfile
+          const doctorName = `Dr. ${doctorProfile?.firstName} ${doctorProfile?.lastName}`;
+          return (
+            <div className="appointment-list" key={index}>
+              <div className="profile-info-widget" >
+                <ProfileImageStyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                  variant="dot"
+                  online={online as boolean}
+                >
+                  <Link aria-label="patient"
+                    href={`/doctors/profile/${btoa(doctorId)}`}
+                    className="booking-doc-img"
+                    target='_blank'
+                  >
+                    <Avatar sx={{
+                      width: 'auto',
+                      height: 'auto',
+                      borderRadius: `5px 5px 5px 5px`,
+                      transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
+                      "&:hover": {
+                        transform: "scale(1.15)",
+
+                      },
+                      background: theme.palette.background.default
+                    }}
+                      variant="circular"
+                      alt=""
+                      src={`${profileImage}`}
+                      key={profileImage}
+                    >
+                      <img className="img-fluid" src={doctors_profile} alt="" />
+                    </Avatar>
+                  </Link>
+                </ProfileImageStyledBadge>
+                <div className="profile-det-info">
+                  <h3>
+                    <Link aria-label="patient" style={{ color: theme.palette.secondary.main }} href={`/doctors/profile/${btoa(doctorId)}`} target='_blank'>{doctorName}</Link>
+                  </h3>
+                  <div className="patient-details">
+                    <h4>
+                      <i className="far fa-clock"></i> {dayjs(selectedDate).format("DD MMM YYYY")} {' '} {period}
+                    </h4>
+                    <h4>
+                      <i className="fas fa-map-marker-alt"></i> {address1} {' '} {address2}
+                    </h4>
+                    <h4>
+                      <img src={doctorProfile?.specialities[0]?.image} width="20" height="20" alt={doctorProfile?.specialities[0]?.specialities} />
+                      {' '}
+                      {doctorProfile?.specialities[0]?.specialities}
+                    </h4>
+                    <br />
+                    <h4 className="mb-0">
+                      <Link href={`/patient/dashboard/invoice-view/${btoa(appointment?._id as string)}`} target='_blank'>
+                        {appointment.invoiceId}
+                      </Link>
+                    </h4>
+                  </div>
+                </div>
+              </div>
+              <div className="appointment-action">
+                <Link
+                  href=""
+                  className="doctorAppointmentView"
+                  style={{ lineHeight: '28px', }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleShow(appointment)
+                  }}
+                >
+                  <i className="far fa-eye"></i> View
+                </Link>
+
+              </div>
+              <div style={{ paddingTop: 30 }}>
+                <h4 className="mb-0">
+                  <Grid container rowGap={1} columnGap={1} sx={{ paddingRight: 1, paddingLeft: 1 }} className="clinic-services"
+                    key={doctorProfile?.specialitiesServices?.toString()}>
+                    {doctorProfile?.specialitiesServices &&
+                      doctorProfile?.specialitiesServices.map((s: string, i: number) => {
+                        return (
+                          <Grid key={s + i} item component="span" aria-label='key specilaities'>{s}</Grid>
+                        )
+                      })
+                    }
+                  </Grid>
+                </h4>
+              </div>
+            </div>
+          )
+        })
+      }
+    </>
+  )
+})
 
 export default Appointment;

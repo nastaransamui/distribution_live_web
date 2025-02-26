@@ -15,7 +15,7 @@ import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import dayjs from 'dayjs'
 import { useTheme } from '@mui/material/styles';
 import { AppointmentReservationExtendType } from './PaymentSuccess';
-import { base64regex } from '../Profile/ProfilePage';
+import { base64regex } from '../Profile/PublicProfilePage';
 import Tooltip from '@mui/material/Tooltip';
 import { useRouter } from 'next/router';
 
@@ -185,7 +185,7 @@ const Invoice: FC = (() => {
                           <div className="col-md-4">
                             <p className="invoice-details">
                               <strong>Order:</strong> {reservation.invoiceId} <br />
-                              <strong>Issued:</strong> {dayjs(reservation?.createdDate).format(`D MMM YYYY`)}
+                              <strong>Issued:</strong> {dayjs(reservation?.createdDate).format(`D MMM YYYY HH:mm`)}
                             </p>
                           </div>
                         </div>
@@ -243,19 +243,19 @@ const Invoice: FC = (() => {
                               </thead>
                               <tbody style={{ borderTop: "none" }}>
                                 <tr>
-                                  <td style={{ padding: '10px 0px' }}>{reservation.selectedDate} - {reservation.timeSlot?.period}</td>
+                                  <td style={{ padding: '10px 0px' }}>{dayjs(reservation.selectedDate).format('DD MMM YYYY')} - {reservation.timeSlot?.period}</td>
                                   <td className="text-center">1</td>
-                                  <td className="text-center">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price)}</td>
-                                  <td className="text-end">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price)}</td>
+                                  <td className="text-center">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price.toString())}</td>
+                                  <td className="text-end">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price.toString())}</td>
                                 </tr>
                                 <tr>
                                   <td style={{ padding: '10px 0px' }}>Booking Fee</td>
                                   <td className="text-center">1</td>
                                   <td className="text-center">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                    reservation?.timeSlot?.bookingsFeePrice
+                                    reservation?.timeSlot?.bookingsFeePrice.toString()
                                   )}</td>
                                   <td className="text-end">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                    reservation?.timeSlot?.bookingsFeePrice
+                                    reservation?.timeSlot?.bookingsFeePrice.toString()
                                   )}</td>
                                 </tr>
 
@@ -282,7 +282,7 @@ const Invoice: FC = (() => {
                                   <th >Subtotal:</th>
                                   <td style={{ padding: '10px 18px', width: '100%' }}>
                                     <span>{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                      reservation?.timeSlot?.total
+                                      reservation?.timeSlot?.total.toString()
                                     )}</span>
                                   </td>
                                 </tr>
@@ -296,7 +296,7 @@ const Invoice: FC = (() => {
                                   <th style={{ width: '40%', }}>Total Amount:</th>
                                   <td style={{ padding: '10px 18px', width: '100%' }}>
                                     <span>{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                      reservation?.timeSlot?.total
+                                      reservation?.timeSlot?.total.toString()
                                     )}</span>
                                   </td>
                                 </tr>

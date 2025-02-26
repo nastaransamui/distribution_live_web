@@ -13,10 +13,7 @@ import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import Footer from '@/components/sections/Footer';
 import Checkout from '@/components/DoctorsSections/CheckOut/CheckOut';
-import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import isJsonString from '@/helpers/isJson';
 import useScssVar from '@/hooks/useScssVar';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import { updateHomeExp } from '@/redux/homeExp';
@@ -72,7 +69,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           'Accept': 'application/json',
         }
       })
-
 
       let props: any = {}
       const userData = await result.json();

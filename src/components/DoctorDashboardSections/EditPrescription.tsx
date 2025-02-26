@@ -1,11 +1,10 @@
-import { FC, Fragment, useEffect, ReactNode } from 'react'
+import { FC, Fragment, ReactNode } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
 
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import { useRouter } from 'next/router';
-import { DoctorPatientProfileTypes } from '../DoctorPatientProfile/DoctorPatientProfile';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import dayjs from 'dayjs';
@@ -29,6 +28,7 @@ export interface PrescriptionsType {
   prescriptionsArray: PrescriptionsArrayType[];
   createdAt: Date;
   updatedAt: Date;
+  id: number;
 }
 
 const initialState: PrescriptionsArrayType = {
@@ -39,11 +39,15 @@ const initialState: PrescriptionsArrayType = {
 }
 
 const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProfile }> = (({ singlePrescription }) => {
-  const { muiVar, bounce, threeOptionMain } = useScssVar();
+  const { bounce, threeOptionMain } = useScssVar();
   const router = useRouter();
   const dispatch = useDispatch();
   const { doctorProfile } = singlePrescription;
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
   const {
     formState: { errors },
     control,
@@ -57,6 +61,7 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
       patientId: singlePrescription?.patientId,
       prescriptionsArray: [...singlePrescription.prescriptionsArray],
       createdAt: singlePrescription.createdAt,
+      id: singlePrescription.id,
     } as PrescriptionsType
   })
 
@@ -108,11 +113,26 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
   }
 
   const addInputField = () => {
-    appendPrescription(initialState)
+    appendPrescription({ ...initialState })
 
   }
   const removeInputFields = (index: number) => {
-    removePrescription(index)
+    if (prescriptionsFields.length > 1) {
+      removePrescription(index)
+    } else {
+      toast.error("Prescription should at least has 1 field", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        transition: bounce,
+        onClose: () => { }
+      });
+
+    }
   }
 
 
@@ -120,7 +140,7 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9 animate__animated animate__backInUp">
         <div className="card">
           <div className="card-header" style={{ display: 'flex' }}>
             <h4 className="card-title mb-0">Edit Prescription</h4>
@@ -149,9 +169,11 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
               </div>
             </div>
 
-            <div className="add-more text-end" onClick={addInputField} style={{ marginBottom: 8 }}>
+
+            {prescriptionsFields.length < 5 && <div className="add-more text-end" onClick={addInputField} style={{ marginBottom: 8 }}>
               <Link href="" onClick={(e) => { e.preventDefault() }} className="add-education"><i className="fa fa-plus-circle"></i> Add More</Link>
-            </div>
+            </div>}
+
 
 
 
@@ -188,7 +210,7 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
                                     label="Medicine"
                                     size='small'
                                     fullWidth
-                                    disabled={router.asPath.endsWith('see-prescription')}
+                                    disabled={router.asPath.endsWith('see-prescription') || singlePrescription.doctorId !== userProfile?._id}
                                   />
                                 </FormControl>
                               </td>
@@ -215,7 +237,7 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
                                     label="Quantity"
                                     size='small'
                                     fullWidth
-                                    disabled={router.asPath.endsWith('see-prescription')}
+                                    disabled={router.asPath.endsWith('see-prescription') || singlePrescription.doctorId !== userProfile?._id}
                                   />
                                 </FormControl>
                               </td>
@@ -236,12 +258,12 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
                                     label="Description"
                                     size='small'
                                     fullWidth
-                                    disabled={router.asPath.endsWith('see-prescription')}
+                                    disabled={router.asPath.endsWith('see-prescription') || singlePrescription.doctorId !== userProfile?._id}
                                   />
                                 </FormControl>
                               </td>
                               <td>
-                                <Link href="" onClick={(e) => {
+                                <Link href="" style={{ pointerEvents: singlePrescription.doctorId !== userProfile?._id ? 'none' : 'auto' }} onClick={(e) => {
                                   e.preventDefault();
                                   removeInputFields(index)
                                 }} className="btn bg-danger-light trash">
@@ -271,7 +293,7 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
               </div>
             </div>
 
-            <div className="row">
+            {singlePrescription.doctorId == userProfile?._id && <div className="row">
               <div className="col-md-12">
                 <div className="submit-section">
                   <button type="submit" className="btn btn-primary submit-btn">Save</button>
@@ -289,7 +311,7 @@ const EditPrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProf
                     }}>Original</button>
                 </div>
               </div>
-            </div>
+            </div>}
 
 
           </form>

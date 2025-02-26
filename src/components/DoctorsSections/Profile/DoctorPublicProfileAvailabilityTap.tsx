@@ -90,7 +90,7 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
                         return (
                           <div key={timeIndex}>
                             <p className="timings-days">
-                              <span> {time.startDate} to {time.finishDate} </span>
+                              <span> {dayjs(time.startDate).format('DD MMM YYYY')} to {dayjs(time.finishDate).format('DD MMM YYYY')} </span>
                             </p>
                             {
                               time.morning.length > 0 &&
@@ -106,7 +106,7 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
                                   "&:hover .MuiFormControlLabel-label": {
                                     color: `${theme.palette.secondary.main}`,
                                   },
-                                }} control={<Checkbox defaultChecked name={dayjs(morningStart).minute(0).format('HH:mm')} />}
+                                }} control={<Checkbox checked={time.morning.some((time) => time.active)} name={dayjs(morningStart).minute(0).format('HH:mm')} />}
                                   onClick={(e) => {
                                     e.preventDefault();
                                     setShowPrice((prevState) => {
@@ -116,7 +116,7 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
                                         morning: true
                                       }
                                     })
-                                    setShowPricePeriod(`${time.startDate} to ${time.finishDate}`)
+                                    setShowPricePeriod(`${dayjs(time.startDate).format('DD MMM YYYY')} to ${dayjs(time.finishDate).format('DD MMM YYYY')}`)
                                   }}
                                   label="Morning" />
                                 <small >
@@ -140,7 +140,7 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
                                   "&:hover .MuiFormControlLabel-label": {
                                     color: `${theme.palette.secondary.main}`,
                                   },
-                                }} control={<Checkbox defaultChecked />} name={dayjs(afterNoonStart).minute(0).format('HH:mm')}
+                                }} control={<Checkbox checked={time.afternoon.some((time) => time.active)} />} name={dayjs(afterNoonStart).minute(0).format('HH:mm')}
                                   onClick={(e) => {
                                     e.preventDefault();
                                     setShowPrice((prevState) => {
@@ -150,7 +150,7 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
                                         afternoon: true
                                       }
                                     })
-                                    setShowPricePeriod(`${time.startDate} to ${time.finishDate}`)
+                                    setShowPricePeriod(`${dayjs(time.startDate).format('DD MMM YYYY')} to ${dayjs(time.finishDate).format('DD MMM YYYY')}`)
                                   }}
                                   label="Afternoon" />
                                 <small >
@@ -174,7 +174,7 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
                                   "&:hover .MuiFormControlLabel-label": {
                                     color: `${theme.palette.secondary.main}`,
                                   },
-                                }} control={<Checkbox defaultChecked />}
+                                }} control={<Checkbox checked={time.evening.some((time) => time.active)} />}
                                   onClick={(e) => {
                                     e.preventDefault();
                                     setShowPrice((prevState) => {
@@ -184,7 +184,7 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
                                         evening: true
                                       }
                                     })
-                                    setShowPricePeriod(`${time.startDate} to ${time.finishDate}`)
+                                    setShowPricePeriod(`${dayjs(time.startDate).format('DD MMM YYYY')} to ${dayjs(time.finishDate).format('DD MMM YYYY')}`)
                                   }}
                                   name={dayjs(eveningStart).minute(0).format('HH:mm')} label="Evening" />
                                 <small>
@@ -215,13 +215,14 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
                               {profile?.timeslots.map((slot: DoctorsTimeSlotType, i: number) => {
                                 return slot.availableSlots.map((available: AvailableType, j: number) => {
                                   const periodTimeArray = available[key as keyof AvailableType] as TimeType[];
-                                  if (`${available.startDate} to ${available.finishDate}` == showPricePriod) {
+
+                                  if (`${dayjs(available.startDate).format('DD MMM YYYY')} to ${dayjs(available.finishDate).format('DD MMM YYYY')}` == showPricePriod) {
                                     return periodTimeArray.map((time: TimeType, h: number) => {
                                       return (
                                         time?.active && (
                                           <Fragment key={`${i}-${j}-${h}`}>
                                             <span style={{ color: theme.palette.text.color }}>
-                                              <p>{time?.period} : {formatNumberWithCommas(time?.total)} {time?.currencySymbol} <br /></p>
+                                              <p>{time?.period} : {formatNumberWithCommas(time?.total.toString())} {time?.currencySymbol} <br /></p>
                                             </span>
                                           </Fragment>
                                         )

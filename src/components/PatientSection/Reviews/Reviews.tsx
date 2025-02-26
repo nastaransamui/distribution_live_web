@@ -9,6 +9,7 @@ import { AppState } from '@/redux/store';
 import { useTheme } from '@mui/material/styles';
 import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import PatientReviews from './PatientReviews';
+import { LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
 const Reviews: FC = (() => {
   const { muiVar } = useScssVar();
 
@@ -22,18 +23,20 @@ const Reviews: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp">
         <div className="doc-review review-listing" >
           {
             userProfile == null ?
-              <CircleToBlockLoading color={theme.palette.primary.main} size="small" style={{
-                minWidth: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-              }} />
+              <div className="card">
+                <LoadingComponent boxMinHeight="100vh" />
+              </div>
               :
               <>
-                <PatientReviews profile={userProfile} />
+                <div className="card" style={{ padding: 10 }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
+                    <PatientReviews profile={userProfile} />
+                  </div>
+                </div>
               </>
           }
         </div>

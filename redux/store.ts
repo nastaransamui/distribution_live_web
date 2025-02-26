@@ -3,30 +3,27 @@ import { Store } from "redux";
 
 import { createWrapper } from "next-redux-wrapper";
 
-import homeAccessTokenReducer, {
-  HomeAccessTokenState,
-} from "./homeAccessToken";
+import homeAccessTokenReducer from "./homeAccessToken";
 import homeRoleNameReducer, { HomeRoleNameState } from "./homeRoleName";
-import homeExpReducer, { HomeExpState } from "./homeExp";
-import homeIATReducer, { HomeIATState } from "./homeIAT";
-import homeServicesReducer, { HomeServicesState } from "./homeServices";
-import homeUserIdReducer, { HomeUserIdState } from "./homeUserId";
-import homeThemeNameReducer, { HomeThemeNameState } from "./homeThemeName";
-import homeThemeTypeReducer, { HomeThemeTypeState } from "./homeThemeType";
-import homeLoadingBarReducer, { HomeLoadingBarState } from "./homeLoadingBar";
-import homeFormSubmitReducer, { HomeFormSubmitState } from "./homeFormSubmit";
-import userDataReducer, { HomeUserData } from "./userData";
-import clinicStatusReducer, { ClinicStatusType } from "./clinicStatus";
+import homeExpReducer from "./homeExp";
+import homeIATReducer from "./homeIAT";
+import homeServicesReducer from "./homeServices";
+import homeUserIdReducer from "./homeUserId";
+import homeThemeNameReducer from "./homeThemeName";
+import homeThemeTypeReducer from "./homeThemeType";
+import homeLoadingBarReducer from "./homeLoadingBar";
+import homeFormSubmitReducer from "./homeFormSubmit";
+import userDataReducer from "./userData";
+import clinicStatusReducer from "./clinicStatus";
 import homeSocketReducer from "./homeSocket";
-import userProfileReducer, { UserProfileType } from "./userProfile";
+
 import userPatientProfileReducer, {
   UserPatientProfileType,
 } from "./userPatientProfile";
 import userDoctorProfileReducer, {
   UserDoctorProfileType,
 } from "./userDoctorProfile";
-import specialitiesReducer, { SpecialitiesType } from "./specialities";
-import { getCookie } from "cookies-next";
+import specialitiesReducer from "./specialities";
 
 export interface AppState {
   homeAccessToken: ReturnType<typeof homeAccessTokenReducer>;

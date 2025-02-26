@@ -14,7 +14,7 @@ import BreadCrumb from '@/components/shared/BreadCrumb';
 import Footer from '@/components/sections/Footer';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import { Params } from '../patient-profile/[_id]';
-import { base64regex } from '@/components/DoctorsSections/Profile/ProfilePage';
+import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import { doctorPatientInitialLimitsAndSkips } from '@/components/DoctorPatientProfile/DoctorPatientProfile';
 import PrescriptionPage from '@/components/PrescriptionsPage/PrescriptionPage';
 import useScssVar from '@/hooks/useScssVar';

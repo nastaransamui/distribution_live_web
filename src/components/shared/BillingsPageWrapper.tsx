@@ -18,7 +18,7 @@ const BillingsPageWrapper: FC = () => {
   }
 
   return (
-    <div className="col-md-7 col-lg-8 col-xl-9 " style={{ minHeight: '100vh' }}>
+    <div className="col-md-7 col-lg-8 col-xl-9   animate__animated animate__backInUp" style={{ minHeight: '100vh' }}>
 
       <PatientBillingRecords
         userType={router.asPath.startsWith('/doctors') ? 'doctor' : 'patient'}

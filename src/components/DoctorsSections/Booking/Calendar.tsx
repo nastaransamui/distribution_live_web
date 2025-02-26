@@ -13,11 +13,12 @@ import type { Dayjs, ManipulateType } from 'dayjs';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import Tooltip from '@mui/material/Tooltip'
 import Button from '@mui/material/Button'
 //utilites
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -26,12 +27,16 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { LoginBox } from '@/components/AuthSections/LoginSection';
 import { useRouter } from 'next/router';
 import { useSearchParams } from 'next/navigation';
-import { base64regex } from '@/components/DoctorsSections/Profile/ProfilePage';
+import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import _ from 'lodash'
 import { Transition } from '@/components/shared/Dialog';
 import isJsonString from '@/helpers/isJson';
 import { loadStylesheet } from '@/pages/_app';
-import { disablePastTime } from '@/components/DoctorDashboardSections/Accounts';
+import { disablePastTime } from '@/components/DoctorDashboardSections/Invoices';
+import { BookingTimeSlotType } from './BookingPage';
+import { toast } from 'react-toastify';
+import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
+import CountdownTimer from '@/components/shared/CountdownTimer';
 export function dayjsRange(start: Dayjs, end: Dayjs, unit: ManipulateType) {
   const range = [];
   let current = start;
@@ -44,13 +49,16 @@ export function dayjsRange(start: Dayjs, end: Dayjs, unit: ManipulateType) {
 
 
 export interface OccupyTimeType {
+  _id?: string;
   timeSlot: TimeType;
   selectedDate: Date;
   dayPeriod: string;
   doctorId: string;
+  patientId: string;
   startDate: Date;
   finishDate: Date,
-  slotId: String,
+  slotId: string,
+  expireAt: Date,
 }
 export interface AppointmentReservationType {
   _id?: string;
@@ -66,20 +74,30 @@ export interface AppointmentReservationType {
   paymentType: string;
 }
 
-const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
+
+const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSlot }) => {
   // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
-
-
+  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  const dispatch = useDispatch();
   dayjs.extend(isBetween)
-  const { muiVar } = useScssVar();
+  const { muiVar, bounce } = useScssVar();
   const theme = useTheme();
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const encryptReservation = searchParams.get('reservation')
+  const router = useRouter();
+  const [remainingTime, setRemainingTime] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (remainingTime !== null) {
+      const interval = setInterval(() => {
+        setRemainingTime((prev) => (prev && prev > 1000 ? prev - 1000 : 0));
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [remainingTime]);
   const [calendarValue, setCalendarValue] = useState<any>()
   const widthOnlyXl = useMediaQuery(theme.breakpoints.only('xl'));
   const widthOnlyLg = useMediaQuery(theme.breakpoints.only('lg'));
@@ -92,21 +110,18 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
   }, [])
   const availableDates = useMemo(() => {
     let days: any = []
-
-    profile.timeslots[0]?.availableSlots.forEach((a: AvailableType, i: number) => {
+    bookingTimeSlot?.availableSlots.forEach((available: AvailableType, i: number) => {
       let availableDates = dayjsRange(
-        dayjs(dayjs(a.startDate)),
-        dayjs(a.finishDate),
+        dayjs(available.startDate),
+        dayjs(available.finishDate),
         'day'
       ).map((a) =>
-        dayjs(a).format('DD MMM YYYY')
+        dayjs(a).format()
       )
       days.push(...availableDates)
     })
     return days
-  }, [profile])
-
-
+  }, [bookingTimeSlot])
   const [occupyTime, setOccupyTime] = useState<OccupyTimeType>()
   const calendarMapDays = (params: any) => {
     const { date, isSameDate }: { date: any, selectedDate: any[], isSameDate: Function } = params;
@@ -150,44 +165,6 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
     }
   }
 
-  useEffect(() => {
-    let active = true;
-
-    if (encryptReservation && active) {
-      if (base64regex.test(encryptReservation)) {
-        let reservation = atob(encryptReservation as string)
-        if (isJsonString(reservation)) {
-          let resData = JSON.parse(reservation)
-          let { startDate, dayPeriod, period, selectedDate, finishDate, doctorId, slotId } = resData;
-          let avaliab = profile.timeslots[0]?.availableSlots.filter((a: AvailableType) =>
-            dayjs(a.startDate).isSame(dayjs(startDate), 'day') &&
-            dayjs(a.finishDate).isSame(dayjs(finishDate), 'day'))[0]
-          let arrayOfslotOfDay = avaliab?.[`${dayPeriod}` as keyof typeof avaliab] as TimeType[]
-          let occupied: TimeType | undefined
-          if (arrayOfslotOfDay) {
-            occupied = arrayOfslotOfDay.filter((b: TimeType) => b.period == period)[0]
-          }
-          if (occupied) {
-            setOccupyTime({
-              timeSlot: { ...occupied },
-              selectedDate: selectedDate,
-              dayPeriod: dayPeriod,
-              doctorId: doctorId,
-              startDate: startDate,
-              finishDate: finishDate,
-              slotId: slotId,
-            })
-          }
-        }
-      }
-    }
-    if (encryptReservation == null) {
-      setOccupyTime(undefined)
-    }
-    return () => {
-      active = false;
-    }
-  }, [encryptReservation, profile, calendarValue])
 
   useEffect(() => {
     if (occupyTime && !calendarValue) {
@@ -196,39 +173,28 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [occupyTime])
 
-  const periodButtonClick = (e: any, s: TimeType, isSelect: boolean, slot: AvailableType, dayPeriod: string) => {
+  const periodButtonClick = (e: any, timeSlot: TimeType, isSelect: boolean, slot: AvailableType, dayPeriod: string) => {
 
     e.preventDefault();
-    let url;
+
     if (isSelect) {
-      delete router.query?.reservation;
-      url = {
-        pathname: router.pathname,
-        query: {
-          ...router.query,
-        }
-      }
+      setOccupyTime(undefined);
     } else {
-      url = {
-        pathname: router.pathname,
-        query: {
-          ...router.query,
-          reservation: window.btoa(JSON.stringify({
-            ...s,
-            doctorId: profile?.timeslots[0]?.doctorId,
-            slotId: profile?.timeSlotId,
-            index: slot?.index,
-            startDate: slot?.startDate,
-            finishDate: slot?.finishDate,
-            selectedDate: calendarValue.format(''),
-            dayPeriod: dayPeriod
-          }))
-        }
-      }
+      setOccupyTime(() => ({
+        timeSlot,
+        selectedDate: dayjs.tz(calendarValue, process.env.NEXT_PUBLIC_TZ).startOf('day').toDate(),
+        dayPeriod: dayPeriod,
+        doctorId: bookingTimeSlot?.doctorId,
+        patientId: userProfile?._id!,
+        startDate: dayjs(slot?.startDate).toDate(),
+        finishDate: dayjs(slot?.finishDate).toDate(),
+        slotId: bookingTimeSlot?._id!,
+        expireAt: bookingTimeSlot.occupyTime[0]?.expireAt
+      }))
     }
-    router.push(url, undefined, { shallow: true, scroll: false })
 
   }
+
   useEffect(() => {
     const fixAccessibility = () => {
       const dialog = document.querySelector('[role="dialog"]');
@@ -255,37 +221,91 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
     return () => observer.disconnect();
   }, []);
 
+  const nextButtonClick = () => {
+    dispatch(updateHomeFormSubmit(true))
+    if (homeSocket?.current && occupyTime) {
+      occupyTime.timeSlot.reservations = []
+      homeSocket.current.emit(`createOccupyTime`, occupyTime)
+      homeSocket.current.once(`createOccupyTimeReturn`, (msg: { status: number, newOccupy: OccupyTimeType, reason?: string, message?: string }) => {
+
+        const { status, reason, message } = msg;
+        if (status == 409) {
+          toast.error(message, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            toastId: "409-toast",
+            onClose: () => {
+              toast.dismiss('409-toast')
+              dispatch(updateHomeFormSubmit(false))
+            }
+          });
+        } else
+          if (status !== 200) {
+            toast.error(reason || `Error ${status} find Doctor`, {
+              position: "bottom-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              transition: bounce,
+              toastId: "booking-toast",
+              onClose: () => {
+                router.back();
+                toast.dismiss('booking-toast')
+                dispatch(updateHomeFormSubmit(false))
+              }
+            });
+          } else {
+            dispatch(updateHomeFormSubmit(false))
+            const { newOccupy } = msg;
+            router.push(`/doctors/check-out/${btoa(newOccupy._id!)}`)
+          }
+      })
+    }
+  }
+
+  const deleteOccupationFromDb = (deleteIds: string[]) => {
+    dispatch(updateHomeFormSubmit(true))
+    if (homeSocket?.current) {
+      homeSocket.current.emit(`deleteOccupyTime`, { deleteIds: deleteIds })
+      homeSocket.current.once(`deleteOccupyTimeReturn`, (msg: { status: number, reason?: string, message?: string }) => {
+
+        const { status, reason, message } = msg;
+        if (status !== 200) {
+          toast.error(reason || message || `Error ${status} find Doctor`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            toastId: "delete-toast",
+            onClose: () => {
+              router.back();
+              toast.dismiss('delete-toast')
+              dispatch(updateHomeFormSubmit(false))
+            }
+          });
+        } else {
+          dispatch(updateHomeFormSubmit(false))
+
+        }
+      })
+    }
+  }
+
   return (
     <Fragment>
-      <Dialog
-        TransitionComponent={Transition}
-        open={loginDialog}
-        onClose={() => {
-          document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-          setTimeout(() => {
-            setLoginDialog(false)
-          }, 500);
-        }}
-        scroll='body'
-        aria-labelledby="login"
-        aria-describedby="login"
-      >
-        <DialogTitle id="login">Login</DialogTitle>
-        <DialogContent dividers>
-          <div style={muiVar}>
-            <div className="col-md-12">
-              <div className="account-content">
-                <div className="col-md-12 col-lg-12 login-right">
-                  <LoginBox closeDialog={setLoginDialog} />
-                </div>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-        <DialogActions>
-
-        </DialogActions>
-      </Dialog>
       <div className="col-lg-12 col-md-12" style={muiVar}>
         <div className="booking-header">
           <h1 className="booking-title">Select Available Slots</h1>
@@ -331,7 +351,7 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                     </div>
 
                     {calendarValue &&
-                      profile.timeslots?.[0]?.availableSlots.map((slot: AvailableType, slotIndex: number) => {
+                      bookingTimeSlot?.availableSlots.map((slot: AvailableType, slotIndex: number) => {
                         if (dayjs(calendarValue.format('')).isBetween(dayjs(slot.startDate).format(''), dayjs(slot.finishDate).format(''), 'day', "[]")) {
                           return (
                             <Grid key={slotIndex} container direction="column">
@@ -361,36 +381,94 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                                           <div className="time-slot-list">
                                             <ul style={{ display: 'flex', flexWrap: 'wrap' }}>
                                               {
-                                                entrie[1].map((s: TimeType, i: number) => {
-                                                  if (s.active) {
-                                                    let isSelect = _.isEqual(s, occupyTime?.timeSlot) && occupyTime?.selectedDate == calendarValue.format('')
-                                                    const selectedDate = dayjs(calendarValue).format(`D MMM YYYY`);
-                                                    const timeSlot = s.period;
-                                                    let isDisabled: boolean = !disablePastTime(selectedDate, timeSlot);
+                                                entrie[1].map((newTimeslot: TimeType, i: number) => {
+                                                  if (newTimeslot.active) {
+                                                    let isSelect = _.isEqual(newTimeslot, occupyTime?.timeSlot)
+                                                      &&
+                                                      dayjs(occupyTime?.selectedDate).isSame(dayjs(calendarValue), 'day')
+                                                    const selectedDate = dayjs(calendarValue).format(`DD MMM YYYY`);
+                                                    const period = newTimeslot.period;
+                                                    let isPassed: boolean = !disablePastTime(selectedDate, period);
                                                     let isBooked: boolean = false;
-                                                    if (s.reservations.length > 0) {
-                                                      s.reservations.forEach((elem) => {
-                                                        if (elem.selectedDate == calendarValue.format('')) {
-                                                          if (elem.timeSlot.period == s.period) {
+                                                    if (newTimeslot.reservations && newTimeslot.reservations.length > 0) {
+                                                      newTimeslot.reservations.forEach((elem) => {
+                                                        if (dayjs(elem.selectedDate).format('DD MMM YYYY') == calendarValue.format('')) {
+                                                          if (elem.timeSlot.period == period) {
                                                             isBooked = true
                                                           }
                                                         }
 
                                                       })
                                                     }
+                                                    const isOccupied = bookingTimeSlot.occupyTime.some(
+                                                      (occupy) => occupy.timeSlot.id === newTimeslot.id && dayjs(occupy.selectedDate).isSame(dayjs(calendarValue), 'day')
+                                                    );
+                                                    const patientHasOccupiedTime = bookingTimeSlot?.occupyTime?.filter((a) => `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}` == `${selectedDate} ${period}`).some(
+                                                      (occupy) => occupy.patientId === userProfile?._id
+                                                    )
+                                                    const occupyTimeDeleteArrayOfIds = bookingTimeSlot.occupyTime
+                                                      .filter((a) => a.patientId == userProfile?._id)
+                                                      .map((a) => a._id)
+                                                      .filter(Boolean) as string[]
+                                                    const occupiedPeriod = bookingTimeSlot.occupyTime.filter((a) => a.patientId == userProfile?._id).map((a) => `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}`).join(', ')
+
+                                                    const disabled = isPassed
+                                                      ? true
+                                                      : isBooked
+                                                        ? true
+                                                        : patientHasOccupiedTime
+                                                          ? false // Allow action for the user's occupied time
+                                                          : bookingTimeSlot.occupyTime.some((a) => a.patientId === userProfile?._id)
+                                                            ? true // If the user has any occupied time, disable all other buttons
+                                                            : false; // Otherwise, allow selection
                                                     return (
                                                       <li style={{ width: 'inherit' }} key={slotIndex.toString() + " " + j.toString() + i.toString()}>
-                                                        <Button
-                                                          disabled={isDisabled || isBooked}
-                                                          className={`timing ${isSelect ? 'active' : ' '}`}
-                                                          sx={{
-                                                            bgcolor: isBooked ? `${theme.palette.primary.main} !Important` : '',
-                                                            display: 'flex', flexDirection: 'column'
-                                                          }}
-                                                          onClick={(e) => { periodButtonClick(e, s, isSelect, slot, entrie[0]) }}>
-                                                          <span><i className={isDisabled ? "feather-x-circle" : "feather-clock"} />{s.period}</span>
-                                                          <span>{formatNumberWithCommas(s.total)} {" "} {s.currencySymbol || 'THB'}</span>
-                                                        </Button>
+                                                        <Tooltip placement='top' arrow title={
+                                                          isPassed ?
+                                                            'This time is Passed' :
+                                                            isBooked ? "This period is reserved." :
+                                                              isOccupied ?
+                                                                patientHasOccupiedTime ? `You need to finish or remove this in process booking first.` :
+                                                                  "There is booking in process." :
+                                                                bookingTimeSlot.occupyTime.some((a) => a.patientId === userProfile?._id) ? `You have appointment that in process on ${occupiedPeriod} and not finish yet first remove that.` :
+                                                                  ""}>
+                                                          <span>
+                                                            <Button
+                                                              disabled={disabled}
+                                                              className={`timing ${isSelect ? 'active' : ' '}`}
+                                                              sx={{
+                                                                bgcolor: isBooked ? `${theme.palette.primary.main} !Important` : isOccupied ? '#ffa500 !important' : '',
+                                                                color: theme.palette.text.color,
+                                                                display: 'flex', flexDirection: 'column'
+                                                              }}
+                                                              onClick={(e) => {
+                                                                if (isOccupied) {
+                                                                  deleteOccupationFromDb(occupyTimeDeleteArrayOfIds)
+                                                                } else {
+                                                                  periodButtonClick(e, newTimeslot, isSelect, slot, entrie[0])
+                                                                }
+                                                              }}>
+                                                              <span><i className={isPassed ? "feather-x-circle" : "feather-clock"} />{period}</span>
+                                                              <span>{formatNumberWithCommas(newTimeslot.total.toString())} {" "} {newTimeslot.currencySymbol || 'THB'}</span>
+
+                                                            </Button>
+                                                            {isOccupied &&
+                                                              <>
+                                                                {
+                                                                  bookingTimeSlot?.occupyTime
+                                                                    .filter((a) => {
+                                                                      return `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}` == `${selectedDate} ${period}`
+                                                                    })
+                                                                    .map((a) => {
+                                                                      return (
+                                                                        <CountdownTimer key={a._id} expireAt={a?.expireAt} />
+                                                                      )
+                                                                    })
+                                                                }
+                                                              </>
+                                                            }
+                                                          </span>
+                                                        </Tooltip>
                                                       </li>
                                                     )
                                                   }
@@ -415,27 +493,59 @@ const Calendar: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
           </div>
         </div>
         <div className="submit-section proceed-btn text-end" style={{ marginTop: 40 }}>
-          {occupyTime && <Button
-            href={`/doctors/check-out/${btoa(`${JSON.stringify(occupyTime)}`)}`}
-            disabled={profile?._id === userProfile?._id || userProfile?.roleName == 'doctors'}
-            onClick={(e) => {
-              if (!userProfile || profile?._id === userProfile?._id) {
+          {occupyTime &&
+            <Button
+              // href={`/doctors/check-out/${btoa(`${JSON.stringify(occupyTime)}`)}`}
+              disabled={bookingTimeSlot?.doctorProfile?._id === userProfile?._id || userProfile?.roleName == 'doctors'}
+              onClick={(e) => {
                 e.preventDefault()
-                setLoginDialog(true)
-              }
-            }}
-            className="btn btn-primary prime-btn justify-content-center align-items-center">
-            {!userProfile ? `Login to reserve` :
-              profile?._id === userProfile?._id ?
-                `You can't reserve to your own account.` :
-                userProfile?.roleName == 'doctors' ?
-                  `You can't reserve with doctor user please create patient user.` :
-                  <>Next <i className="feather-arrow-right-circle" />
-                  </>}
-          </Button>}
+                if (!userProfile || bookingTimeSlot?.doctorProfile?._id === userProfile?._id) {
+                  setLoginDialog(true)
+                } else {
+                  nextButtonClick()
+                }
+              }}
+              className="btn btn-primary prime-btn justify-content-center align-items-center">
+              {!userProfile ? `Login to reserve` :
+                bookingTimeSlot?.doctorProfile?._id === userProfile?._id ?
+                  `You can't reserve to your own account.` :
+                  userProfile?.roleName == 'doctors' ?
+                    `You can't reserve with doctor user please create patient user.` :
+                    <>Next <i className="feather-arrow-right-circle" />
+                    </>}
+            </Button>}
         </div>
       </div>
 
+      <Dialog
+        TransitionComponent={Transition}
+        open={loginDialog}
+        onClose={() => {
+          document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+          setTimeout(() => {
+            setLoginDialog(false)
+          }, 500);
+        }}
+        scroll='body'
+        aria-labelledby="login"
+        aria-describedby="login"
+      >
+        <DialogTitle id="login">Login</DialogTitle>
+        <DialogContent dividers>
+          <div style={muiVar}>
+            <div className="col-md-12">
+              <div className="account-content">
+                <div className="col-md-12 col-lg-12 login-right">
+                  <LoginBox closeDialog={setLoginDialog} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+
+        </DialogActions>
+      </Dialog>
     </Fragment>
   )
 });

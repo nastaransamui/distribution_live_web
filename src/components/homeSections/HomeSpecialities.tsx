@@ -1,3 +1,4 @@
+//@ts-nocheck
 /* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useEffect } from "react";
 import Slider from "react-slick";
@@ -81,9 +82,9 @@ const HomeSpecialities: FC = (() => {
                       {
                         specialities.map((spec) => {
                           let img = document.getElementById(spec.imageId) as any
-                          let src = `${spec.image}?random=${new Date().getTime()}`
+                          let src = `${spec.image}`
                           if (img !== null) {
-                            src = `${spec.image}?random=${new Date().getTime()}`
+                            src = `${spec.image}`
                             img.src = src
                           }
                           return (

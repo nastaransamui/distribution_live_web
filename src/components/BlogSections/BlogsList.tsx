@@ -34,7 +34,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
       <Head>
         <link rel="preload" href={BlogIMG01} as="image" />
       </Head>
-      {blogView == 'gridView' ? <div className="col-lg-8 col-md-12" style={muiVar}>
+      {blogView == 'gridView' ? <div className="col-lg-8 col-md-12  animate__animated animate__backInUp" style={muiVar}>
         <div className="row blog-grid-row">
           <div className="col-md-6 col-sm-12">
             <div className="blog grid-blog">
@@ -237,7 +237,7 @@ const BlogsList: FC<BlogPropsType> = (({ blogView }) => {
           </div>
         </div>
       </div> :
-        <div className="col-lg-8 col-md-12" style={muiVar}>
+        <div className="col-lg-8 col-md-12  animate__animated animate__backInUp" style={muiVar}>
           <div className="blog">
             <div className="blog-image">
               <Link href="/blog/blog-details" aria-label='blog details'>

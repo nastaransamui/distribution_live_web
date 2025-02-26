@@ -15,7 +15,23 @@ import { updateUserProfile } from '@/redux/userProfile';
 import InputAdornment from '@mui/material/InputAdornment';
 
 export let urlRegex = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/)
-
+const socialPlatforms = ["facebook", "x", "instagram", "pinterest", "linkedin", "youtube"];
+const getSocialIcon = (platform: string) => {
+  switch (platform) {
+    case "facebook":
+      return <i className="fa-brands fa-facebook"></i>;
+    case "x":
+      return <i className="fab fa-twitter"></i>;
+    case "instagram":
+      return <i className="fa-brands fa-instagram"></i>;
+    case "pinterest":
+      return <i className="fa-brands fa-pinterest"></i>;
+    case "linkedin":
+      return <i className="fa-brands fa-linkedin"></i>;
+    default:
+      return <i className="fa-brands fa-youtube"></i>;
+  }
+};
 const SocialMedia: FC = (() => {
   const { muiVar, bounce } = useScssVar();
 
@@ -87,45 +103,32 @@ const SocialMedia: FC = (() => {
     })
   }
   useEffect(() => {
-    if (fields.length == 0) {
-      append({ facebook: userDoctorProfile?.socialMedia?.[0] == undefined ? '' : userDoctorProfile?.socialMedia?.[0] })
-      append({ x: userDoctorProfile?.socialMedia?.[1] == undefined ? '' : userDoctorProfile?.socialMedia?.[1] })
-      append({ instagram: userDoctorProfile?.socialMedia?.[2] == undefined ? '' : userDoctorProfile?.socialMedia?.[2] })
-      append({ pinterest: userDoctorProfile?.socialMedia?.[3] == undefined ? '' : userDoctorProfile?.socialMedia?.[3] })
-      append({ linkedin: userDoctorProfile?.socialMedia?.[4] == undefined ? '' : userDoctorProfile?.socialMedia?.[4] })
-      append({ youtube: userDoctorProfile?.socialMedia?.[5] == undefined ? '' : userDoctorProfile?.socialMedia?.[5] })
+    if (!userDoctorProfile?.socialMedia) return;
 
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [append, userDoctorProfile])
+    const updatedFields: { platform: string; link: string }[] | any = socialPlatforms.map((platform, index) => ({
+      platform,
+      link: userDoctorProfile?.socialMedia?.[index] == undefined ? '' :
+        userDoctorProfile?.socialMedia?.[index]?.['link']
+    }));
 
+    reset({ socialMedia: updatedFields });
+  }, [userDoctorProfile?.socialMedia, reset]);
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9   animate__animated animate__backInUp" style={muiVar}>
         <div className="card">
           <div className="card-body">
             <form noValidate onSubmit={handleSubmit(onSocialMediaSubmit)} >
               {
                 fields.map((field: any, index: number) => {
-                  let socialName = Object.keys(field)[0]
+                  let socialName = field.platform
                   let socialError = errors?.socialMedia;
                   let socialErrorIndex: any;
                   if (socialError !== undefined) {
                     socialErrorIndex = socialError[index]
                   }
-                  let registerName: any = `socialMedia.${index}.${socialName}`
-                  let Icon =
-                    socialName == "facebook" ?
-                      <i className="fa-brands fa-facebook"></i> :
-                      socialName == 'x' ?
-                        <i className="fab fa-twitter"></i> :
-                        socialName == 'instagram' ?
-                          <i className="fa-brands fa-instagram"></i> :
-                          socialName == "pinterest" ?
-                            <i className="fa-brands fa-pinterest"></i> :
-                            socialName == 'linkedin' ?
-                              <i className="fa-brands fa-linkedin"></i> :
-                              <i className="fa-brands fa-youtube"></i>
+                  let registerName: any = `socialMedia.${index}.link`
+
                   return (
                     <div className="row" key={field.id}>
                       <div className="col-md-12 col-lg-12">
@@ -154,7 +157,7 @@ const SocialMedia: FC = (() => {
                               InputProps={{
                                 endAdornment:
                                   <InputAdornment position="end" >
-                                    {Icon}
+                                    {getSocialIcon(field.platform)}
                                   </InputAdornment>,
                               }}
                             />

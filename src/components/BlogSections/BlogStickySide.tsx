@@ -26,7 +26,7 @@ const BlogStickySide: FC<SlideProps> = (({ blogView, setBlogView }) => {
 
   return (
     <Fragment>
-      <div className="col-lg-4 col-md-12 sidebar-right theiaStickySidebar" style={muiVar}>
+      <div className="col-lg-4 col-md-12 sidebar-right theiaStickySidebar  animate__animated animate__backInUp" style={muiVar}>
         <StickyBox offsetTop={20} offsetBottom={20}>
           {!router.pathname.endsWith('/blog-details') && <BlogViewType blogView={blogView} setBlogView={setBlogView} />}
           <BlogListSearch />

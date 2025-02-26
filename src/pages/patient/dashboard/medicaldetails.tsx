@@ -13,7 +13,7 @@ import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import PatientDashboardSidebar from '@/components/shared/PatientDashboardSidebar';
 import Footer from '@/components/sections/Footer';
-import MedicalDetails from '@/components/PatientDashboardSections/MedicalDetails';
+import MedicalDetailsPrepage from '@/components/PatientDashboardSections/MedicalDetailsPrepage';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 
 import useScssVar from '@/hooks/useScssVar';
@@ -47,7 +47,7 @@ const MedialDetailPage: NextPage = (props: any) => {
         <div className="container-fluid">
           <div className="row">
             <PatientDashboardSidebar />
-            <MedicalDetails />
+            <MedicalDetailsPrepage />
           </div>
         </div>
       </div>

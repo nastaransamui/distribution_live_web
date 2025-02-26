@@ -19,6 +19,7 @@ export const Transition = React.forwardRef(function Transition(
 export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
+    borderTop: `1px solid ${theme.palette.secondary.main}`
   },
   '& .MuiDialogActions-root': {
     padding: theme.spacing(1),

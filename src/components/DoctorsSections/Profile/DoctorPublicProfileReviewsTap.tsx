@@ -395,7 +395,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                           </Stack>
                         }
                       </div>
-                    </div> : <CustomNoRowsOverlay text="No Reviews yet" />}
+                    </div> : <div style={{ minHeight: 500, display: 'flex', justifyContent: 'center', alignItems: "center" }}><CustomNoRowsOverlay text="No Reviews yet" /></div>}
                   <div className="doc-review review-listing">
 
                     <ul className="comments-list">
@@ -419,7 +419,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                                   online={online!}
                                   style={{ width: 58, height: 58 }}
                                 >
-                                  <Avatar style={{ width: 58, height: 58 }} alt="" src={`${profileImage}?random=${new Date().getTime()}`} >
+                                  <Avatar style={{ width: 58, height: 58 }} alt="" src={`${profileImage}`} >
                                     <img src={reviews?.role == 'doctors' ? doctors_profile : patient_profile} alt="" />
                                   </Avatar>
                                 </StyledBadge>
@@ -615,7 +615,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                                               online={repliesOnline!}
                                               style={{ width: 58, height: 58 }}
                                             >
-                                              <Avatar style={{ width: 58, height: 58 }} alt="" src={`${repliesProfileImage}?random=${new Date().getTime()}`} >
+                                              <Avatar style={{ width: 58, height: 58 }} alt="" src={`${repliesProfileImage}`} >
                                                 <img src={replies?.role == 'doctors' ? doctors_profile : patient_profile} alt="" />
                                               </Avatar>
                                             </StyledBadge>
@@ -705,7 +705,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                       !doctorReviews.map((review: ReviewTypes) => review.authorId)?.includes(userProfile?._id) ?
                       <>
                         {
-                          true ?
+                          profile.patients_id.includes(userProfile._id) ?
                             <>Write a review for <strong>Dr. {profile?.firstName} {' '} {profile?.lastName}</strong></> :
                             <p style={{ color: theme.palette.secondary.main }}>You Can&apos;t write review for <strong>Dr. {profile?.firstName} {' '} {profile?.lastName}</strong> without any reservation.  </p>}
                       </> :
@@ -716,7 +716,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                 {
                   doctorReviews &&
                   !doctorReviews.map((review: ReviewTypes) => review.authorId)?.includes(userProfile?._id) &&
-                  true &&
+                  profile.patients_id.includes(userProfile._id) &&
                   <form noValidate onSubmit={handleSubmit(onSubmitReview)}>
                     <div className='form-group'>
                       <Controller
@@ -880,6 +880,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                       <div className="terms-accept">
                         <div className="custom-checkbox">
                           <FormControlLabel
+                            //@ts-ignore
                             checked={getValues('terms')}
                             {
                             ...register('terms', { required: 'Please accept terms and condition first.' })

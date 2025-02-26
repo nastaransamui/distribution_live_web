@@ -138,10 +138,14 @@ const AppWrapper = ({ children }: ChildrenProps) => {
         dispatch(updateSpecialities(msg))
         const specialitiesBrowserTable = await browserDb.specialitiesBrowserTable.toArray();
         if (specialitiesBrowserTable.length == 0) {
-          await browserDb.specialitiesBrowserTable.bulkAdd(msg)
+          // Remove 'id' from all items before adding
+          const specialitiesWithoutId = msg.map(({ id, ...rest }) => rest);
+          await browserDb.specialitiesBrowserTable.bulkAdd(specialitiesWithoutId);
         } else {
           await browserDb.specialitiesBrowserTable.clear();
-          await browserDb.specialitiesBrowserTable.bulkAdd(msg)
+          // Again, remove 'id' from all items before adding
+          const specialitiesWithoutId = msg.map(({ id, ...rest }) => rest);
+          await browserDb.specialitiesBrowserTable.bulkAdd(specialitiesWithoutId);
         }
       })
       socket.current.on('getUserProfileFromAdmin', async (msg: string) => {

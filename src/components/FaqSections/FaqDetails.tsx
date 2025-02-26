@@ -7,7 +7,7 @@ const FaqDetails: FC = (() => {
 
   return (
     <Fragment>
-      <section className="faq-inner-page" style={muiVar}>
+      <section className="faq-inner-page   animate__animated animate__backInUp card" style={{ padding: "20px 10px", }}>
         <div className="container">
           <div className="row">
             <div className="col-md-12">

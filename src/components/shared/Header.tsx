@@ -136,13 +136,8 @@ const Header: FC = () => {
       setAllClinicsDeactivate(() => true)
     }
   }, [clinicStatus])
-  // remove blinking image 
-  const [imageTimestamp, setImageTimestamp] = useState(new Date().getTime());
 
-  // Update the timestamp only when the profile image URL changes
-  // useEffect(() => {
-  //   setImageTimestamp(new Date().getTime());
-  // }, [userProfile]);
+
 
   const PatientHeaderUL = () => {
     return (
@@ -153,7 +148,7 @@ const Header: FC = () => {
           <li className="nav-item dropdown has-arrow logged-item">
             <Link href="#" className="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-label='dropdown'>
               <span className="user-img">
-                <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${imageTimestamp}` : ''}`} key={userProfile?.profileImage}>
+                <Avatar alt="" src={`${userProfile?.profileImage}`} key={userProfile?.profileImage}>
                   <img src={patient_profile} alt="" className="rounded-circle" />
                 </Avatar>
               </span>
@@ -161,7 +156,7 @@ const Header: FC = () => {
             <div className="dropdown-menu dropdown-menu-end">
               <div className="user-header">
                 <div className="avatar avatar-sm">
-                  <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${imageTimestamp}` : ''}`} >
+                  <Avatar alt="" src={`${userProfile?.profileImage}`} >
                     <img src={patient_profile} alt="" className="avatar-img rounded-circle" />
                   </Avatar>
                 </div>
@@ -640,7 +635,6 @@ const Header: FC = () => {
     )
   }
   const logOut = () => {
-    // dispatch(updateHomeFormSubmit(true))
     homeSocket.current.emit('logOutSubmit', userProfile?._id, userProfile?.services)
     homeSocket.current.once('logOutReturn', (msg: any) => {
       if (msg?.status !== 200) {
@@ -683,14 +677,13 @@ const Header: FC = () => {
       }
     })
 
-    // onhandleCloseMenu()
   }
 
-  const [isClient, setIsClient] = useState(false)
+  // const [isClient, setIsClient] = useState(false)
 
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+  // useEffect(() => {
+  //   setIsClient(true)
+  // }, [])
   const getHeaderClass = () => {
     if (router.pathname === "/cosmeticshome") return "header-fixed header-fourteen header-sixteen";
     if (router.pathname === "/enthome") return "header-fixed header-fourteen header-fifteen";

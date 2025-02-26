@@ -11,15 +11,16 @@ export interface UserPatientProfileTypeValue {
   country: string;
   createdAt: Date;
   dependentsArray: string[];
-  dob: string;
+  dob: Date | "";
   doctors_id: string[];
   favs_id: string[];
   firstName: string;
+  fullName?: string;
   gender: string;
   idle?: boolean;
   invoice_ids: string[];
   isActive: boolean;
-  isVerified?: boolean;
+  isVerified?: boolean | "google";
   lastLogin?: {
     date: Date;
     ipAddr: string;
@@ -53,7 +54,7 @@ export interface UserPatientProfileType {
     country: string;
     createdAt: Date;
     dependentsArray: string[];
-    dob: string;
+    dob: Date | "";
     doctors_id: string[];
     favs_id: string[];
     firstName: string;
@@ -61,7 +62,7 @@ export interface UserPatientProfileType {
     idle?: boolean;
     invoice_ids: string[];
     isActive: boolean;
-    isVerified?: boolean;
+    isVerified?: boolean | "google";
     lastLogin?: {
       date: Date;
       ipAddr: string;

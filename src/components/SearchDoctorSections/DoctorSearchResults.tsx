@@ -84,7 +84,7 @@ import { toast } from 'react-toastify';
 import { ProfileImageStyledBadge } from '../DoctorDashboardSections/MyPtients';
 import { loadStylesheet } from '@/pages/_app';
 import { getCookies, setCookie } from 'cookies-next';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 
 export interface DoctorSearchResultsPropsType {
   doctorResults: DoctorProfileType[];
@@ -113,13 +113,13 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
-const useStyles = makeStyles((theme: Theme) => {
+const useStyles = makeStyles<{}>()((theme) => {
   return {
     noResult: {
       height: '50vh',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
     },
     topFilterLeftGrid: {
       display: 'flex',
@@ -147,6 +147,9 @@ const useStyles = makeStyles((theme: Theme) => {
     topPagination: {
       marginLeft: 'auto',
       marginRight: 'auto',
+    },
+    stackTop: {
+      alignItems: 'center'
     },
     bottomPagination: {
       marginLeft: 'auto',
@@ -215,6 +218,31 @@ const useStyles = makeStyles((theme: Theme) => {
       height: 'auto',
       borderRadius: '5px',
       transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
+      // "& img": {
+      //   width: '100%',
+      //   height: 'auto',
+      //   objectFit: 'contain',
+      //   minWidth: '300px',
+      //   [theme.breakpoints.down('xl')]: {
+      //     minWidth: '266px',
+      //   },
+      //   [theme.breakpoints.down('lg')]: {
+      //     minWidth: '250px',
+      //     maxWidth: '450px',
+      //   },
+      //   [theme.breakpoints.down('md')]: {
+      //     minWidth: '200px',
+      //     maxWidth: '350px',
+      //   },
+      //   [theme.breakpoints.down('sm')]: {
+      //     minWidth: '150px',
+      //     maxWidth: '300px',
+      //   },
+      //   [theme.breakpoints.down('xs')]: {
+      //     minWidth: '120px',
+      //     maxWidth: '250px',
+      //   },
+      // },
       "&:hover": {
         boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
         transform: "scale(1.15)",
@@ -246,6 +274,9 @@ const useStyles = makeStyles((theme: Theme) => {
     gridVoteUL: {
       display: 'flex',
       justifyContent: 'space-between',
+      '& li': {
+        marginBottom: '0px !important'
+      }
     },
     gridClinicImageWrapper: {
       display: 'inline-block',
@@ -269,7 +300,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
     isLoading,
   }) => {
   const [displayType, setDisplayType] = useState<'list' | 'grid' | null>(null); // Default to null to defer rendering.
-  const classes = useStyles();
+  const { classes, theme } = useStyles({});
 
   useEffect(() => {
     // Get display type from cookies once the component mounts (client-side).
@@ -364,9 +395,13 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
                           </Grid>
                         )
                       }) :
-                      <div className={classes.noResult}>
-                        <CustomNoRowsOverlay text="No Doctors for this search" />
+
+                      <div className='card'>
+                        <div className="card-body" style={{ minHeight: '100vh', alignItems: 'center', display: 'flex', justifyContent: 'center' }}>
+                          <CustomNoRowsOverlay text="No Doctors for this search" />
+                        </div>
                       </div>
+
                   }
                 </> :
                 <>
@@ -389,8 +424,10 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
                             </Grid>
                           )
                         }) :
-                        <div className={classes.noResult}>
-                          <CustomNoRowsOverlay text="No Doctors for this search" />
+                        <div className='card' style={{ marginTop: 40, minHeight: '100vh', minWidth: '90%', }}>
+                          <div className="card-body" style={{ alignItems: 'center', display: 'flex', justifyContent: 'center' }}>
+                            <CustomNoRowsOverlay text="No Doctors for this search" />
+                          </div>
                         </div>
                     }
                   </Grid>
@@ -440,7 +477,7 @@ export const TopFilter: FC<TopFilterType> = (({
   const country = searchParams.get('country')
   const state = searchParams.get('state')
   const city = searchParams.get('city')
-  const classes = useStyles();
+  const { classes } = useStyles({});
   const dispatch = useDispatch();
   var nextTenDays = new Date();
   nextTenDays.setDate(nextTenDays.getDate() + 10)
@@ -530,7 +567,7 @@ export const TopPagination: FC<TopPaginationType> = (({
   placement,
 }) => {
   const dispatch = useDispatch();
-  const classes = useStyles();
+  const { classes } = useStyles({});
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     dispatch(updateHomeFormSubmit(true))
     setPage(value);
@@ -549,7 +586,7 @@ export const TopPagination: FC<TopPaginationType> = (({
     <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
       {
         placement == 'top' ?
-          <Stack spacing={2}>
+          <Stack spacing={2} className={classes.stackTop}>
             <Pagination
               showFirstButton
               showLastButton
@@ -628,7 +665,7 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
   expanded,
   doctor }) => {
   dayjs.extend(preciseDiff)
-  const classes = useStyles();
+  const { classes } = useStyles({});
   const [imageTimestamp, setImageTimestamp] = useState(new Date().getTime());
   useEffect(() => {
     setImageTimestamp(new Date().getTime());
@@ -707,11 +744,11 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
             return (
               <Fragment key={j}>
                 <Typography component='span' className={classes.responsiveFontSize}>
-                  From: {time.startDate}
+                  From: {dayjs(time.startDate).format("DD MMM YYYY")}
                 </Typography>
                 {" "}
                 <Typography component='span' className={classes.responsiveFontSize}>
-                  to: {time.finishDate}
+                  to: {dayjs(time.finishDate).format("DD MMM YYYY")}
                 </Typography><br />
 
               </Fragment>
@@ -725,8 +762,8 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
   return (
     <Fragment>
       <ListStyledCard ref={elRefs[index]} id={`${index}_card`} aria-label="card" expanded={expanded} index={index}>
-        <Grid container >
-          <Grid item xl={3} lg={2.87} md={2.87} sm={2} xs={12} >
+        <Grid container spacing={0}>
+          <Grid item xl={3} lg={2} md={2.87} sm={2} xs={12} >
             <CardMedia className={classes.ListCard}>
               <Link href={`/doctors/profile/${btoa(doctor?._id)}`} aria-label='doctor single'>
                 <ProfileImageStyledBadge
@@ -739,7 +776,7 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
                     className={classes.ListAvatar}
                     variant="square"
                     alt=""
-                    src={`${doctor?.profileImage}?random=${imageTimestamp}`}
+                    src={`${doctor?.profileImage}`}
                     key={doctor?.profileImage}
                   >
                     <img className="img-fluid" src={doctors_profile} alt="" />
@@ -763,7 +800,7 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
               </ul>
             </CardMedia>
           </Grid>
-          <Grid item xl={3} lg={2.5} md={2.5} sm={3} xs={12} >
+          <Grid item xl={3} lg={3} md={2.5} sm={3} xs={12} >
             <CardContent className={classes.ListContent}>
               <Typography component="div" variant="h5" className={classes.ListDoctorName}>
                 <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
@@ -815,11 +852,11 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
               </Typography>
             </CardContent>
           </Grid>
-          <Grid item xl={3} lg={3.63} md={4.03} sm={4} xs={12}>
+          <Grid item xl={3} lg={4} md={4.03} sm={4} xs={12}>
             <CardContent id={`${index}_context`}>
               <ul >
                 <li style={{ marginBottom: 10 }}>
-                  {doctor?.timeslots.length > 0 ?
+                  {doctor?.timeslots?.length > 0 ?
                     <ClickAwayListener onClickAway={() => handleTooltipClose(index)}>
                       <span>
                         <Tooltip
@@ -845,10 +882,10 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
                     </ClickAwayListener> :
                     <Button variant='contained' disabled className="available-date">Not Available</Button>}
                 </li>
-                <li style={{ marginBottom: 10 }}>
+                <li style={{ marginBottom: 10, display: 'flex', alignItems: 'center' }}>
                   <FiThumbsUp />&nbsp;
                   {
-                    `${doctor?.recommendArray ?
+                    `${doctor?.recommendArray && doctor?.recommendArray.length !== 0 ?
                       ((doctor?.recommendArray.filter(vote => vote === 1).length
                         / doctor?.recommendArray?.length) * 100).toFixed(0) : `0`}%`
                   }
@@ -856,8 +893,7 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
                   <span className="votes">
                     (
                     {doctor?.recommendArray ? doctor?.recommendArray?.length : 0}
-                    Votes
-                    )
+                    Votes)
                   </span>
                 </li>
                 <li>
@@ -880,16 +916,16 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
               </ul>
               <div className="clinic-booking book-appoint">
                 <Button
-                  className={doctor?.timeslots.length > 0 ? "btn btn-primary-light" : 'btn-primary-light-disabled'}
+                  className={doctor?.timeslots?.length > 0 ? "btn btn-primary-light" : 'btn-primary-light-disabled'}
                   href={`/doctors/profile/${btoa(doctor?._id)}`}
-                  disabled={doctor?.timeslots.length == 0}
+                  disabled={doctor?.timeslots?.length == 0}
                 >
                   Book Appointment
                 </Button>
                 <Button
-                  className={doctor?.timeslots.length > 0 ? "btn btn-primary-light" : 'btn-primary-light-disabled'}
+                  className={doctor?.timeslots?.length > 0 ? "btn btn-primary-light" : 'btn-primary-light-disabled'}
                   href={`/doctors/profile/${btoa(doctor?._id)}`}
-                  disabled={doctor?.timeslots.length == 0}>
+                  disabled={doctor?.timeslots?.length == 0}>
                   Online Consultation
                 </Button>
               </div>
@@ -972,8 +1008,8 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
   expanded,
   doctor,
   setExpanded }) => {
-  const [imageTimestamp, setImageTimestamp] = useState(new Date().getTime());
-  const classes = useStyles();
+
+  const { classes } = useStyles({});
   const theme = useTheme();
   const doctorName = `Dr. ${doctor?.firstName} ${doctor?.lastName}`
   const [openImage, setOpenImage] = useState(false);
@@ -981,6 +1017,7 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
   const [Images, setImages] = useState<ClinicImagesType[]>([]);
   const [openAvailabilityTooltip, setOpenAvailabilityTooltip] = useState<{ [key: string]: boolean }>({ 0: false });
   const [open, setOpen] = useState(false);
+  const [avatarMinWidth, setAvatarMinWidth] = useState<string>('260px')
   const doctorStarRate =
     doctor?.rate_array.length == 0 ?
       0 :
@@ -1042,11 +1079,11 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
             return (
               <Fragment key={j}>
                 <Typography component='span' className={classes.responsiveFontSize}>
-                  From: {time.startDate}
+                  From: {dayjs(time.startDate).format("DD MMM YYYY")}
                 </Typography>
                 {" "}
                 <Typography component='span' className={classes.responsiveFontSize}>
-                  to: {time.finishDate}
+                  to: {dayjs(time.finishDate).format("DD MMM YYYY")}
                 </Typography><br />
 
               </Fragment>
@@ -1064,6 +1101,12 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
       maxWidth: elRefs[index]?.current?.offsetWidth,
     }
   }
+
+  useEffect(() => {
+    if (elRefs[index]?.current) {
+      setAvatarMinWidth(`${elRefs[index]?.current?.clientWidth}px`)
+    }
+  }, [elRefs, index])
   return (
     <Fragment>
       <GridStyledCard style={setCardStyle(index, expanded)} ref={elRefs[index]} id={`${index}_card`} aria-label="card" expanded={expanded} index={index}>
@@ -1101,8 +1144,9 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
               className={classes.gridMainAvatar}
               variant="square"
               alt=""
-              src={`${doctor?.profileImage}?random=${imageTimestamp}`}
+              src={`${doctor?.profileImage}`}
               key={doctor?.profileImage}
+              sx={{ '& img': { minWidth: avatarMinWidth } }}
             >
               <img className="img-fluid" src={doctors_profile} alt="" />
             </Avatar>
@@ -1145,17 +1189,20 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
               <MuiList disablePadding dense >
                 <Divider sx={dividerSx()} />
                 <ListItem >
-                  <ListItemIcon>
+                  <ListItemIcon sx={{ paddingRight: 1 }}>
                     Speciality:
                   </ListItemIcon>
-                  <ListItemAvatar >
-                    <Link className="avatar mx-2" href="" onClick={(e) => e.preventDefault()}>
-                      <img src={doctor?.specialities?.[0]?.image} alt='' />
-                    </Link>
-                  </ListItemAvatar>
+                  <Avatar alt=""
+                    src={doctor?.specialities?.[0]?.image}
+                    variant="square"
+                    className={classes.gridSpecialityAvatar}
+                    key={doctor?.specialities?.[0]?.image}
+                  >
+                    <img className="img-fluid" src={doctors_profile} alt="" />
+                  </Avatar>
                   <ListItemText
                     primary={
-                      <h5 className="doc-department">
+                      <h5 className="doc-department text-end">
                         {doctor?.specialities?.[0]?.specialities}
                       </h5>
                     }
@@ -1282,7 +1329,7 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
                               <li>
                                 <FiThumbsUp />&nbsp;
                                 {
-                                  `${doctor?.recommendArray ?
+                                  `${doctor?.recommendArray && doctor?.recommendArray.length !== 0 ?
                                     ((doctor?.recommendArray.filter(vote => vote === 1).length /
                                       doctor?.recommendArray?.length) * 100).toFixed(0) : `0`}%`}
                                 {" "}

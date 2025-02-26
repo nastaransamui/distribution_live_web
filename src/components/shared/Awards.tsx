@@ -9,7 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 
 export interface AwardsProps {
@@ -83,17 +83,19 @@ const Awards: FC<AwardsProps> = ((props: AwardsProps) => {
                             name={`awards.${index}.year`}
                             control={control}
                             render={(props: any) => {
-                              const { field, fieldState, formState } = props;
-                              const { ref, onChange, value } = field;
-                              const { defaultValues } = formState;
+                              const { field, } = props;
+                              const { onChange, value } = field;
                               return (
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                   <MobileDatePicker
+                                    value={value ? dayjs(value) : null}
                                     closeOnSelect
                                     disableFuture
                                     format="YYYY"
                                     views={["year"]}
-                                    onChange={(event) => { onChange(dayjs(event).format(`YYYY-MM-DDTHH:mm:ss`)); }}
+                                    onChange={(event: Dayjs | null) => {
+                                      onChange(dayjs(event).format(`YYYY`));
+                                    }}
                                     slotProps={{
                                       textField: {
                                         inputProps: { value: value == '' ? 'Year' : dayjs(value).format('YYYY') },
@@ -110,8 +112,6 @@ const Awards: FC<AwardsProps> = ((props: AwardsProps) => {
                                         size: "small"
                                       },
                                     }}
-
-                                    value={dayjs(data?.[index]?.[`awards.${index}.year`])}
                                   />
                                 </LocalizationProvider>
                               )

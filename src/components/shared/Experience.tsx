@@ -96,10 +96,11 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
                                 return (
                                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <MobileDatePicker
+                                      value={value ? dayjs(value) : null}
                                       closeOnSelect
                                       disableFuture
                                       format="DD MMM YYYY"
-                                      onChange={(event: any) => { onChange(dayjs(event).format(`YYYY-MM-DDTHH:mm:ss`)); }}
+                                      onChange={(event: any) => { onChange(dayjs(event).format(`YYYY-MM-DD`)); }}
                                       slotProps={{
                                         textField: {
                                           inputProps: { value: value == '' ? 'From' : dayjs(value).format('DD MMM YYYY') },
@@ -117,7 +118,6 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
                                         },
                                       }}
 
-                                    // value={dayjs(data?.[index]?.[`experinces.${index}.from`])}
                                     />
                                   </LocalizationProvider>
                                 )
@@ -138,11 +138,12 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
                                 return (
                                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <MobileDatePicker
+                                      value={value ? dayjs(value) : null}
                                       closeOnSelect
                                       disableFuture
                                       format="DD MMM YYYY"
                                       minDate={dayjs(experincesValues?.[index]?.['from'])}
-                                      onChange={(event) => { onChange(dayjs(event).format(`YYYY-MM-DDTHH:mm:ss`)); }}
+                                      onChange={(event) => { onChange(dayjs(event).format(`YYYY-MM-DD`)); }}
                                       slotProps={{
                                         textField: {
                                           inputProps: { value: value == '' ? 'To' : dayjs(value).format('DD MMM YYYY') },
@@ -159,8 +160,6 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
                                           size: 'small'
                                         },
                                       }}
-
-                                    // value={dayjs(data?.[index]?.[`experinces.${index}.to`])}
                                     />
                                   </LocalizationProvider>
                                 )

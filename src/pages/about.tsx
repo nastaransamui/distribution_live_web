@@ -28,10 +28,11 @@ import { updateHomeServices } from '@/redux/homeServices';
 import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
+import useScssVar from '@/hooks/useScssVar';
 
 const AboutPage: NextPage = () => {
 
-
+  const { muiVar } = useScssVar();
   return (
     <>
       <Head>
@@ -45,15 +46,21 @@ const AboutPage: NextPage = () => {
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb title='About Us' subtitle='About Us' />
-      <AboutSection />
+      <div className="content" style={muiVar}>
+        <div className="container">
+          <div className="row">
+            <AboutSection />
+          </div>
+        </div>
+      </div>
       <WhyChooseUs />
-      <LazyLoadWrapper>
-        <WaySection />
-        <BestDoctors />
-        <Testimonial />
-        <FaqSection />
-        <Footer />
-      </LazyLoadWrapper>
+      {/* <LazyLoadWrapper> */}
+      <WaySection />
+      <BestDoctors />
+      <Testimonial />
+      <FaqSection />
+      <Footer />
+      {/* </LazyLoadWrapper> */}
       <CookieConsentComponent />
     </>
   )

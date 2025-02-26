@@ -6,14 +6,41 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
-import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
-import { base64regex } from '@/components/DoctorsSections/Profile/ProfilePage';
+import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import { toast } from 'react-toastify';
 import Summary from './Summary';
-import Calendar from './Calendar';
-import { useTheme } from '@mui/material/styles';
+import Calendar, { OccupyTimeType } from './Calendar';
+import { AvailableType, LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { SpecialitiesType } from '@/redux/specialities';
+import { CurrenciesType } from '@/components/shared/CurrencyAutocomplete';
 
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
+export interface BookingDoctorProfile {
+  address1: string;
+  address2: string;
+  city: string;
+  country: string;
+  fullName: string;
+  online: boolean;
+  profileImage: string;
+  rate_array: number[];
+  recommendArray: number[];
+  specialities: SpecialitiesType[];
+  currency: CurrenciesType[]
+  state: string;
+  _id: string;
+}
+export interface BookingTimeSlotType {
+  availableSlots: AvailableType[];
+  createDate: Date;
+  doctorId: string;
+  doctorProfile: BookingDoctorProfile;
+  occupyTime: OccupyTimeType[];
+  updateDate: Date;
+  _id?: string;
+  patientId: string;
+  expireAt: Date;
+}
+
 
 
 
@@ -22,10 +49,12 @@ const BookingPage: FC = (() => {
   const encryptID = searchParams.get('_id')
   const { bounce, muiVar } = useScssVar();
   const router = useRouter()
-  const theme = useTheme();
-  const [profile, setProfile] = useState<DoctorProfileType | null>(null);
+
+  const [profile, setProfile] = useState<BookingDoctorProfile>();
+  const [bookingTimeSlot, setBookingTimeSlot] = useState<BookingTimeSlotType>();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [reload, setReload] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
     let active = true;
@@ -33,9 +62,13 @@ const BookingPage: FC = (() => {
       if (base64regex.test(encryptID)) {
         let _id = atob(encryptID as string)
         if (active && homeSocket?.current) {
-          homeSocket.current.emit(`findUserById`, { _id })
-          homeSocket.current.once(`findUserByIdReturn`, (msg: { status: number, user: DoctorProfileType, reason?: string }) => {
-            const { status, user, reason } = msg;
+          homeSocket.current.emit(`getBookingPageInformation`, { doctorId: _id })
+          homeSocket.current.once(`getBookingPageInformationReturn`, (msg: {
+            status: number,
+            bookingInformation: BookingTimeSlotType[],
+            reason?: string
+          }) => {
+            const { status, reason } = msg;
             if (status !== 200) {
               toast.error(reason || `Error ${status} find Doctor`, {
                 position: "bottom-center",
@@ -46,16 +79,25 @@ const BookingPage: FC = (() => {
                 draggable: true,
                 progress: undefined,
                 transition: bounce,
+                toastId: "booking-toast",
                 onClose: () => {
-                  router.back()
+                  router.back();
+                  toast.dismiss('booking-toast')
                 }
               });
             } else {
-              homeSocket.current.once(`updateFindUserById`, () => {
-                setReload(!reload)
-              })
-              setProfile(user)
+              const { bookingInformation } = msg;
+              if (bookingInformation.length > 0) {
+
+                const { doctorProfile } = bookingInformation[0]
+                setProfile(doctorProfile);
+                setBookingTimeSlot(bookingInformation[0])
+              }
             }
+            setIsLoading(false);
+            homeSocket.current.once(`updateGetBookingPageInformation`, () => {
+              setReload(!reload)
+            })
           })
         }
       } else {
@@ -67,35 +109,52 @@ const BookingPage: FC = (() => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encryptID, homeSocket, router, reload])
-
   return (
     <Fragment>
+
       {
-        profile == null ?
-          <CircleToBlockLoading color={theme.palette.primary.main} size="small" style={{
-            minWidth: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-          }} />
+        isLoading ?
+          <div className="col-lg-12 col-md-12 animate__animated animate__backInUp" style={muiVar}>
+            <div className="card">
+              <div className="card-body">
+                <LoadingComponent boxMinHeight='300px' />
+              </div>
+            </div>
+          </div>
           :
           <>
-            <Summary profile={profile} />
-            {
-              profile.timeslots.length > 0 ?
-                <Calendar profile={profile} /> :
-                <div className="col-lg-12 col-md-12" style={muiVar}>
-                  <div className="card booking-card" >
-                    <div className="card-body time-slot-card-body">
-                      <p>Not Available</p>
+            {profile && <Summary profile={profile} />}
+          </>
+      }
+
+      {
+        isLoading ?
+          <div className="col-lg-12 col-md-12 animate__animated animate__backInUp" style={muiVar}>
+            <div className="card">
+              <div className="card-body">
+                <LoadingComponent boxMinHeight='500px' />
+              </div>
+            </div>
+          </div>
+          :
+          <>
+            {bookingTimeSlot &&
+              <>
+                {bookingTimeSlot?.availableSlots.length > 0 ?
+                  <Calendar bookingTimeSlot={bookingTimeSlot} /> :
+                  <div className="col-lg-12 col-md-12" style={muiVar}>
+                    <div className="card booking-card" >
+                      <div className="card-body time-slot-card-body">
+                        <p>Not Available</p>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </div>}
+              </>
             }
           </>
       }
     </Fragment>
   )
 })
-
 
 export default BookingPage

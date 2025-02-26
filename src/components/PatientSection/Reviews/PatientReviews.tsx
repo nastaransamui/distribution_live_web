@@ -289,7 +289,7 @@ const PatientReviews: FC<PatientReviewsType> = (({ profile }) => {
                                   online={online!}
                                   style={{ width: 58, height: 58 }}
                                 >
-                                  <Avatar style={{ width: 58, height: 58 }} alt="" src={`${profileImage}?random=${new Date().getTime()}`} >
+                                  <Avatar style={{ width: 58, height: 58 }} alt="" src={`${profileImage}`} >
                                     <img src={doctors_profile} alt="" />
                                   </Avatar>
                                 </StyledBadge>
@@ -557,7 +557,7 @@ const PatientReviews: FC<PatientReviewsType> = (({ profile }) => {
                                               online={repliesOnline!}
                                               style={{ width: 58, height: 58 }}
                                             >
-                                              <Avatar style={{ width: 58, height: 58 }} alt="" src={`${repliesProfileImage}?random=${new Date().getTime()}`} >
+                                              <Avatar style={{ width: 58, height: 58 }} alt="" src={`${repliesProfileImage}`} >
                                                 <img src={replies?.role == 'doctors' ? doctors_profile : patient_profile} alt="" />
                                               </Avatar>
                                             </StyledBadge>

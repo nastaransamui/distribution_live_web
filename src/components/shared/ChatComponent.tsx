@@ -508,18 +508,7 @@ const ChatComponent: FC = (() => {
     }
   }
 
-  // remove blinking image 
-  const [imageTimestamp, setImageTimestamp] = useState(new Date().getTime());
 
-  // Update the timestamp only when the profile image URL changes
-  useEffect(() => {
-    setImageTimestamp(new Date().getTime());
-  }, [userProfile]);
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
   return (
     <Fragment>
       <div className="content top-space" style={muiVar}>
@@ -808,7 +797,7 @@ const ChatComponent: FC = (() => {
                           variant="dot"
                           online={userProfile!.online}
                         >
-                          <Avatar alt="" src={`${userProfile?.profileImage}${isClient ? `?random=${imageTimestamp}` : ''}`} />
+                          <Avatar alt="" src={`${userProfile?.profileImage}`} />
                         </StyledBadge>
                       </div>
                       <div className="media-body flex-grow-1">

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
-import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { formatNumberWithCommas, LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { toast } from 'react-toastify';
 
 
@@ -14,18 +14,20 @@ import { useTheme } from '@mui/material/styles';
 import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 
 import { BillingTypeWithDoctorProfile } from '@/components/DoctorDashboardSections/EditBilling';
-import { base64regex } from '@/components/DoctorsSections/Profile/ProfilePage';
+import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import StickyBox from 'react-sticky-box';
 import { BillingDetailsArrayType } from '@/components/DoctorDashboardSections/AddBilling';
 import { doctors_profile } from '@/public/assets/imagepath';
 import Avatar from '@mui/material/Avatar';
 import Rating from '@mui/material/Rating';
+import dataGridStyle from '@/components/shared/dataGridStyle';
+import Box from '@mui/material/Box';
 
 
 const BillPaymentSuccess: FC = (() => {
   const { muiVar, bounce } = useScssVar();
   const router = useRouter()
-  const theme = useTheme();
+  const { classes, theme } = dataGridStyle({});
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
@@ -87,15 +89,19 @@ const BillPaymentSuccess: FC = (() => {
         <div className="container-fluid" style={{ marginTop: '10vh' }}>
           <div className="row justify-content-center">
             <div className="col-lg-6">
-              <div className="card success-card">
+              <div className="card success-card   animate__animated animate__backInUp">
                 <div className="card-body">
                   {
                     !singleBill || userProfile == null ?
-                      <CircleToBlockLoading color={theme.palette.primary.main} size="small" style={{
-                        minWidth: '90%',
-                        display: 'flex',
-                        justifyContent: 'center',
-                      }} />
+                      <div className="card">
+                        <div className="card-body">
+                          <div className="table-responsive">
+                            <Box sx={{ minHeight: '500px' }} className={classes.dataGridOuterBox}>
+                              <LoadingComponent boxMinHeight='500px' />
+                            </Box>
+                          </div>
+                        </div>
+                      </div>
                       :
                       <div className="success-cont">
                         <i className="fas fa-check" />
@@ -214,7 +220,7 @@ const BillPaymentSuccess: FC = (() => {
                                         <span className="total-cost">
                                           {singleBill?.currencySymbol || 'THB'}
                                           {" "}
-                                          {formatNumberWithCommas(singleBill?.total)}
+                                          {formatNumberWithCommas(singleBill?.total.toString())}
                                         </span>
                                       </li>
                                     </ul>

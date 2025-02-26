@@ -9,7 +9,7 @@ const AboutSection: FC = (() => {
 
   return (
     <Fragment>
-      <section className="about-section" style={muiVar}>
+      <section className="about-section   animate__animated animate__backInUp card" style={muiVar}>
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6 col-md-12">

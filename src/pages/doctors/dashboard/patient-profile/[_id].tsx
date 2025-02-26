@@ -14,7 +14,7 @@ import BreadCrumb from '@/components/shared/BreadCrumb';
 import Footer from '@/components/sections/Footer';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import { ParsedUrlQuery } from "querystring";
-import { base64regex } from '@/components/DoctorsSections/Profile/ProfilePage';
+import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import DoctorPatientProfile, { doctorPatientInitialLimitsAndSkips } from '@/components/DoctorPatientProfile/DoctorPatientProfile';
 export interface Params extends ParsedUrlQuery {
   _id: string;

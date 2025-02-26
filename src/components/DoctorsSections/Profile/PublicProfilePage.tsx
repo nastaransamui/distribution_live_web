@@ -10,17 +10,20 @@ import { toast } from 'react-toastify';
 import useScssVar from '@/hooks/useScssVar';
 import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
 import DoctorPublicProfilePageTab from './DoctorPublicProfilePageTab';
+import Box from '@mui/material/Box';
+import { LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import dataGridStyle from '@/components/shared/dataGridStyle';
 
 
 export const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 
 
-const ProfilePage: FC = (() => {
+const PublicProfilePage: FC = (() => {
   const searchParams = useSearchParams();
   const { bounce, muiVar } = useScssVar();
   const encryptID = searchParams.get('_id')
   const router = useRouter()
-  const theme = useTheme();
+  const { classes } = dataGridStyle({})
   const [profile, setProfile] = useState<DoctorProfileType | null>(null);
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [reload, setReload] = useState<boolean>(false)
@@ -72,11 +75,15 @@ const ProfilePage: FC = (() => {
           <Fragment>
             {
               profile == null ?
-                <CircleToBlockLoading color={theme.palette.primary.main} size="small" style={{
-                  minWidth: '100%',
-                  display: 'flex',
-                  justifyContent: 'center',
-                }} />
+                <div className="card  animate__animated animate__backInUp">
+                  <div className="card-body">
+                    <div className="table-responsive">
+                      <Box sx={{ minHeight: "500px" }} className={classes.dataGridOuterBox}>
+                        <LoadingComponent boxMinHeight="500px" />
+                      </Box>
+                    </div>
+                  </div>
+                </div>
                 :
                 <>
                   <PageContent profile={profile} />
@@ -92,4 +99,4 @@ const ProfilePage: FC = (() => {
 })
 
 
-export default ProfilePage;
+export default PublicProfilePage;

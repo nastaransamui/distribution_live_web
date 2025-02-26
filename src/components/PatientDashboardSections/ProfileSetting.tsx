@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, ReactNode, useEffect, useMemo, useState } from 'react'
+import { FC, Fragment, ReactNode, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { patient_profile } from '@/public/assets/imagepath'
 
@@ -23,10 +23,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
 
 //utilites
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { useForm, Controller } from 'react-hook-form';
 import FormHelperText from '@mui/material/FormHelperText';
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
@@ -42,8 +41,7 @@ import { useTheme } from '@mui/material';
 import GeoLocationAutocomplete from '@/shared/GeoLocationAutocomplete';
 import { toast } from 'react-toastify';
 import isJsonString from '@/helpers/isJson';
-import chunkString from '@/helpers/chunkString';
-import { updateUserPatientProfile, UserPatientProfileType, UserPatientProfileTypeValue } from '@/redux/userPatientProfile';
+import { updateUserPatientProfile, UserPatientProfileTypeValue } from '@/redux/userPatientProfile';
 import { updateHomeExp } from '@/redux/homeExp';
 import { updateHomeIAT } from '@/redux/homeIAT';
 import { updateHomeRoleName } from '@/redux/homeRoleName';
@@ -301,7 +299,7 @@ const ProfileSetting: FC = (() => {
   }
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp" style={muiVar}>
         <div className="card">
           <div className="card-body">
             {
@@ -326,7 +324,7 @@ const ProfileSetting: FC = (() => {
                               userPatientProfile?.profileImage == "" ?
                                 uploadImage : uploadImage.startsWith('blob') ?
                                   uploadImage :
-                                  `${userPatientProfile?.profileImage}?random=${new Date().getTime()}`}
+                                  `${userPatientProfile?.profileImage}`}
                               key={userPatientProfile?.profileImage}
                             >
                               <img src={patient_profile} alt="" />
@@ -394,8 +392,8 @@ const ProfileSetting: FC = (() => {
                                   closeOnSelect
                                   disableFuture
                                   format="DD MMM YYYY"
-                                  onChange={(event) => {
-                                    onChange(dayjs(event).format(`YYYY-MM-DDTHH:mm:ss`));
+                                  onChange={(event: Dayjs | null) => {
+                                    onChange(dayjs(event).format(`YYYY-MM-DD`));
                                   }}
                                   slotProps={{
                                     textField: {
@@ -408,8 +406,6 @@ const ProfileSetting: FC = (() => {
                                       size: 'small'
                                     },
                                   }}
-
-                                  value={dayjs(defaultValues.dob)}
                                 />
                               </LocalizationProvider>
                             )

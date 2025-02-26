@@ -6,6 +6,7 @@ const bundleAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 const nextConfig = {
+  transpilePackages: ["mui-tel-input"],
   productionBrowserSourceMaps: true,
   async headers() {
     return [

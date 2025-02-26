@@ -1,15 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, forwardRef, Fragment, useEffect, useRef, useState } from 'react'
+import { FC, forwardRef, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import { DataGrid, GridColDef, GridActionsCellItem, GridRenderCellParams, GridRowParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridActionsCellItem, GridRenderCellParams, GridRowParams, GridColumnVisibilityModel, GridFilterModel, GridSortModel } from '@mui/x-data-grid';
 import { doctors_profile, logo } from '@/public/assets/imagepath';
 import dayjs from 'dayjs';
 import Stack from '@mui/material/Stack';
 import Link from 'next/link';
-import { useTheme } from '@mui/material/styles';
 
 //liberies
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import { toast } from 'react-toastify';
 
 //redux
@@ -22,7 +20,12 @@ import Avatar from '@mui/material/Avatar';
 import CustomPagination from '../shared/CustomPagination';
 import { useReactToPrint } from 'react-to-print';
 import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection';
-import { formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
+import { formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
+import { invoicesStyles } from '../DoctorDashboardSections/Invoices';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import RenderExpandableCell from '../shared/RenderExpandableCell';
 export interface AppointmentReservationExtendType extends AppointmentReservationType {
   doctorProfile: DoctorProfileType;
   patientStatus: {
@@ -255,8 +258,8 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
 PrintInvoiceComponent.displayName = "PrintInvoiceComponent"
 
 const Invoices: FC = (() => {
-  const { muiVar, bounce } = useScssVar();
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const { bounce } = useScssVar();
+  const { classes, theme } = invoicesStyles({});
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -268,55 +271,8 @@ const Invoices: FC = (() => {
   const [reload, setReload] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const perPage = 10
-  const [dataGridFilters, setDataGridFilters] = useState({
-    limit: perPage,
-    skip: 0
-  });
-
-
-  const handleChangePage = (_event: React.ChangeEvent<unknown>, value: number) => {
-    setDataGridFilters({
-      limit: perPage !== paginationModel.pageSize ? paginationModel.pageSize : perPage,
-      skip: (value - 1) * perPage
-    })
-    setPaginationModel((prevState) => {
-      return {
-        ...prevState,
-        page: value - 1
-      }
-    })
-  }
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setPaginationModel((prevState) => {
-      var maximuPage: number = prevState.page;
-      if (rowCount !== 0) {
-        if ((maximuPage + 1) >= (Math.floor(rowCount / parseInt(event.target.value, 10)))) {
-          maximuPage = (Math.floor(rowCount / parseInt(event.target.value, 10))) - 1
-        }
-      }
-      return {
-        pageSize: parseInt(event.target.value, 10),
-        page: maximuPage <= 0 ? 0 : maximuPage,
-      }
-    })
-    setDataGridFilters((prevState) => {
-      var maximuPage: number = prevState.skip;
-      if (rowCount !== 0) {
-        if ((maximuPage + 1) >= (Math.floor(rowCount / parseInt(event.target.value, 10)))) {
-          maximuPage = (Math.floor(rowCount / parseInt(event.target.value, 10))) - 1
-        }
-      }
-      return {
-        limit: parseInt(event.target.value, 10),
-        skip: maximuPage <= 0 ? 0 : maximuPage,
-      }
-    })
-  }
-  const grdiRef = useRef<any>(null)
-  const theme = useTheme()
-
+  const dataGridRef = useRef<any>(null)
+  const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
   const [printProps, setPrintProps] = useState<any>({})
   const printRef = useRef(null);
 
@@ -378,168 +334,362 @@ const Invoices: FC = (() => {
     })
     handlePrint(null, () => printRef.current);
   }
-  const columns: GridColDef[] = [
-    {
-      field: "id",
-      headerName: "ID",
-      width: 20,
-      align: 'center',
-      headerAlign: 'center'
-    },
-    {
-      field: 'dayPeriod',
-      headerName: 'Day time',
-      width: 90,
-      sortable: true,
-      align: 'center',
-      headerAlign: 'center',
-      valueGetter(params: GridRenderCellParams) {
-        const { value } = params;
-        return value.charAt(0).toUpperCase() + value.slice(1)
-      }
-    },
-    {
-      field: 'invoiceId',
-      headerName: "Invoice No",
-      width: 200,
-      headerAlign: 'center',
-      align: 'center',
-      sortable: true,
-      renderCell: (data: any) => {
-        const { row } = data;
-        return (
-          <>
-            <Link href={`/doctors/invoice-view/${btoa(row?._id!)}`} target='_blank'>{row.invoiceId}</Link>
-          </>
-        )
-      },
-      sortComparator: (v1: string, v2: string) => {
-        // Compare the underlying values for sorting
-        return v1.localeCompare(v2);
-      },
-      valueGetter: (data: any) => data.row._id
-    },
-    {
-      field: 'doctorProfile',
-      headerName: "Doctor",
-      width: 300,
-      headerAlign: 'center',
-      align: 'left',
-      renderCell: (data: any) => {
-        const { row, } = data;
-        const { doctorProfile, doctorStatus, doctorId } = row;
-        const { profileImage, firstName, lastName, gender } = doctorProfile;
-        const { online } = doctorStatus;
-        const doctorName = `Dr.${gender !== '' ? `${gender}.` : ``} ${firstName} ${lastName}`
-        return (
-          <>
-            <Link aria-label='profile' className=" mx-2" target='_blank' href={`/doctors/profile/${btoa(doctorId)}`} >
-              <StyledBadge
-                overlap="circular"
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                variant="dot"
-                online={online}
-              >
-                <Avatar alt="" src={`${profileImage}?random=${new Date().getTime()}`} >
-                  <img src={doctors_profile} alt="" className="avatar" />
-                </Avatar>
-              </StyledBadge>
-            </Link>
-            <Stack >
-              <Link aria-label='profile' target='_blank' href={`/doctors/profile/${btoa(doctorId)}`}
-                style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
-                {doctorName}
-              </Link>
-              <small> {row?.doctorProfile?.specialities[0]?.specialities}</small>
-            </Stack>
-          </>
-        )
-      },
-    },
-    {
-      field: 'selectedDate',
-      headerName: `Appointment Time`,
-      align: 'center',
-      width: 150,
-      headerAlign: 'center',
-      renderCell: (params) => {
-        return (
-          <Stack >
-            <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.selectedDate}</span>
-            <span className="d-block" >{params?.row?.timeSlot?.period}</span>
-          </Stack>
-        )
-      }
-    },
-    {
-      field: 'paidAmount',
-      headerName: "Amount",
-      width: 100,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (data: any) => {
-        const { row } = data;
-        const { timeSlot } = row;
-        const { total, currencySymbol } = timeSlot;
-        return (
-          <>
-            {`${currencySymbol} ${formatNumberWithCommas(total)}`}
-          </>
-        )
-      }
-    },
-    {
-      field: 'paidOn',
-      headerName: "Paid On",
-      width: 250,
-      headerAlign: 'center',
-      align: 'center',
-      renderCell: (data: any) => {
-        const { row } = data;
-        return (
-          <>
-            <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdDate).format(`MMM D, YYYY H:mm A`)}</span>
-
-          </>
-        )
-      }
-    },
-    {
-      field: "actions",
-      type: 'actions',
-      headerName: "Action",
-      headerAlign: 'center',
-      align: 'center',
-      getActions: (params: GridRowParams) => [
-
-        <GridActionsCellItem
-          key={params.row.toString()}
-          disableFocusRipple
-          disableRipple
-          disableTouchRipple
-          onClick={() => {
-            printButtonClicked(params.row)
-          }}
-          icon={<i className="fas fa-print"
-            style={{ color: theme.palette.primary.main }}></i>} label="Print" />,
-      ]
-    }
-  ]
 
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 10,
+    pageSize: perPage,
     page: 0,
   });
+
+  const [sortModel, setSortModel] = useState<any>([
+    {
+      field: 'id',
+      sort: 'asc',
+    },
+  ]);
+
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({});
+  const [mongoFilterModel, setMongoFilterModel] = useState<DataGridMongoDBQuery>({});
+
+  const columns: GridColDef[] = useMemo(() => {
+    return [
+      {
+        field: "id",
+        headerName: "ID",
+        width: 100,
+        align: 'center',
+        headerAlign: 'center',
+        type: 'number',
+        sortable: true,
+        searchAble: true,
+        filterable: true,
+        filterOperators: createCustomOperators().number,
+        valueGetter: (params: GridRenderCellParams) => {
+          return params?.row?.id
+        },
+      },
+      {
+        field: "createdDate",
+        headerName: 'Reserved At',
+        width: 250,
+        headerAlign: 'center',
+        align: 'center',
+        type: 'date',
+        searchAble: true,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().date,
+        valueGetter(params: GridRenderCellParams) {
+          const { row } = params;
+          return row.createdDate ? dayjs(row.createdDate).toDate() : null;
+        },
+        renderCell: (data: any) => {
+          const { row } = data;
+          return (
+            <>
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdDate).format(`DD MMM YYYY H:mm`)}</span>
+
+            </>
+          )
+        }
+      },
+      {
+        field: 'dayPeriod',
+        headerName: 'Day time',
+        width: 120,
+        align: 'center',
+        headerAlign: 'center',
+        searchAble: true,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().string,
+        valueGetter(params: GridRenderCellParams) {
+          const { value } = params
+          return value?.charAt(0).toUpperCase() + value?.slice(1)
+        }
+      },
+      {
+        field: "selectedDate",
+        headerName: 'ApointmentTime',
+        align: 'center',
+        width: 200,
+        headerAlign: 'center',
+        type: 'dateTime',
+        searchAble: true,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().date,
+        valueGetter(params: GridRenderCellParams) {
+          const { row } = params;
+          return row.selectedDate ? dayjs(row.selectedDate).toDate() : null;
+        },
+        renderCell: (params) => {
+          return (
+            <Stack >
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(params?.row?.selectedDate).format(`DD MMM YYYY`)}</span>
+              <span style={{ color: theme.palette.primary.main }} >{params?.row?.timeSlot?.period}</span>
+            </Stack>
+          )
+        }
+
+      },
+      {
+        field: "invoiceId",
+        headerName: `Invoice Id`,
+        width: 200,
+        align: 'center',
+        headerAlign: 'center',
+        searchAble: true,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().string,
+        renderCell: (params: GridRenderCellParams) => {
+          const { row } = params;
+          return (
+            <Link href={`/patient/dashboard/invoice-view/${btoa(row?._id!)}`} target='_blank'>{row.invoiceId}</Link>
+          )
+        }
+      },
+      {
+        field: 'doctorProfile.fullName',
+        headerName: 'Patient Name',
+        width: 250,
+        headerAlign: 'center',
+        searchAble: false,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().string,
+        valueGetter(params: GridRenderCellParams) {
+          const { row } = params;
+          return row?.doctorProfile.fullName
+        },
+        sortComparator: (v1: any, v2: any) => v1 > v2 ? -1 : 1,
+        renderCell: (params: GridRenderCellParams) => {
+          const { row } = params;
+          const profileImage = row?.doctorProfile?.profileImage == '' ? doctors_profile : row?.doctorProfile?.profileImage
+          const online = row?.doctorProfile?.online || false
+          return (
+            <>
+              <Link aria-label='profile' className=" mx-2" target='_blank' href={`/doctors/profile/${btoa(row?.doctorId)}`} >
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  variant="dot"
+                  online={online}
+                >
+                  <Avatar alt="" src={profileImage} />
+                </StyledBadge>
+              </Link>
+              <Stack>
+                <Link target='_blank'
+                  href={`/doctors/profile/${btoa(row?.doctorId)}`}
+                  style={{ color: theme.palette.secondary.main, maxWidth: '100%', minWidth: '100%' }}>
+                  {`Dr. ${row?.doctorProfile?.fullName}`}
+                </Link>
+                <small> {row?.doctorProfile?.specialities[0]?.specialities}</small>
+              </Stack>
+            </>
+          )
+        }
+      },
+      {
+        field: 'timeSlot.total',
+        headerName: 'Amount',
+        width: 90,
+        align: 'center',
+        headerAlign: 'center',
+        type: 'number',
+        sortable: true,
+        searchAble: true,
+        filterable: true,
+        filterOperators: createCustomOperators().number,
+        renderCell: (params) => {
+          return (
+            <Stack >
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
+                params?.row?.timeSlot?.total
+              )}</span>
+              <span className="d-block">
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.timeSlot?.currencySymbol || 'THB'}</span>
+              </span>
+            </Stack>
+          )
+        }
+      },
+      {
+        field: "paymentType",
+        headerName: `Payment Type`,
+        align: 'center',
+        headerAlign: 'center',
+        width: 170,
+        sortable: true,
+        searchAble: true,
+        filterable: true,
+        filterOperators: createCustomOperators().string,
+        renderCell: (params: GridRenderCellParams) => {
+          return (
+            <RenderExpandableCell {...params} />
+          )
+        },
+      },
+      {
+        field: "paymentToken",
+        headerName: `Payment Token`,
+        align: 'center',
+        headerAlign: 'center',
+        width: 270,
+        sortable: true,
+        searchAble: true,
+        filterable: true,
+        filterOperators: createCustomOperators().string,
+        renderCell: (params: GridRenderCellParams) => {
+          return (
+            <RenderExpandableCell {...params} />
+          )
+        },
+      },
+      {
+        field: 'paymentDate',
+        headerName: 'Payment Date',
+        align: 'center',
+        width: 150,
+        headerAlign: 'center',
+        type: 'dateTime',
+        searchAble: true,
+        sortable: true,
+        filterable: true,
+        filterOperators: createCustomOperators().date,
+        valueGetter: (params: GridRenderCellParams) => {
+          // If the value is empty, you might want to return a default date or null
+          return params.value !== '' ? new Date(params.value) : params?.value;
+        },
+        // Render the cell with your desired format
+        renderCell: (params: GridRenderCellParams) => {
+          return params.value == "" ? "=====" : dayjs(params.value).format('DD MMM YYYY  HH:mm');
+        }
+      },
+      {
+        field: "actions",
+        type: 'actions',
+        headerName: "Action",
+        headerAlign: 'center',
+        align: 'center',
+        getActions: (params: GridRowParams) => [
+
+          <GridActionsCellItem
+            key={params.row.toString()}
+            disableFocusRipple
+            disableRipple
+            disableTouchRipple
+            onClick={() => {
+              printButtonClicked(params.row)
+            }}
+            icon={<i className="fas fa-print"
+              style={{ color: theme.palette.primary.main }}></i>} label="Print" />,
+        ]
+      }
+    ]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+  const handleChangePage = (
+    _event: any | null,
+    newPage: number) => {
+    setPaginationModel((prevState) => {
+      return {
+        ...prevState,
+        page: newPage - 1
+      }
+    })
+  }
+
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setPaginationModel((prevState) => {
+      var maximuPage: number = prevState.page;
+      if (rowCount !== 0) {
+        if ((maximuPage + 1) >= (Math.ceil(rowCount / parseInt(event.target.value, 10)))) {
+          maximuPage = (Math.ceil(rowCount / parseInt(event.target.value, 10))) - 1
+        }
+      }
+      return {
+        page: maximuPage <= 0 ? 0 : maximuPage,
+        pageSize: parseInt(event.target.value, 10)
+      }
+    })
+  }
+
+  const { filterModel, onFilterChange, } = useDataGridServerFilter();
+
+  const handelFilterModelChange = useCallback((newFilterModel: GridFilterModel) => {
+    onFilterChange(newFilterModel);
+  }, [onFilterChange])
+
+
+  const removeMongoFilter = (filterModel: GridFilterModel) => {
+    if (filterModel.items.length == 0) { setMongoFilterModel({}) }
+    const value = filterModel.items[0]?.value;
+    if (!value && value == 0 && value == '') {
+      setMongoFilterModel({})
+    }
+  }
+
+  useEffect(() => {
+    const updateDbFilter = (filterModel: GridFilterModel) => {
+      const value = filterModel.items[0]?.value;
+      if (value && value !== '0' && value !== '') {
+        const mongoQuery = convertFilterToMongoDB(filterModel, columns);
+        setMongoFilterModel(mongoQuery);
+      } else {
+        setMongoFilterModel({})
+      }
+    }
+    globalFilterFunctions.applyFilters = updateDbFilter;
+    removeMongoFilter(filterModel)
+  }, [columns, filterModel])
+
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (dataGridRef?.current) {
+        setBoxMinHeight(`${dataGridRef.current.clientHeight}px`);
+      }
+    }, 100);
+  }, [paginationModel.pageSize, isLoading]);
+
+
+  //Update page for pagination model in case last page delete or result less than page
+  useEffect(() => {
+    const totalCount = rowCount;
+    const totalPages = Math.ceil(totalCount / paginationModel.pageSize);
+    const isOutOfRange = paginationModel.page >= totalPages;
+
+    if (rowCount !== 0) {
+      if (isOutOfRange) {
+        setPaginationModel((prevState: { page: number, pageSize: number }) => ({
+          ...prevState,
+          page: Math.max(0, totalPages - 1), // Ensures page never goes below 0
+        }));
+      }
+    } else {
+      setPaginationModel((prevState: { page: number, pageSize: number }) => ({
+        ...prevState,
+        page: 0, // Ensures page never goes below 0
+      }));
+    }
+  }, [paginationModel.page, paginationModel.pageSize, rowCount])
 
   useEffect(() => {
     let isActive = true;
     let userId = userProfile?._id;
     if (isActive && homeSocket.current !== undefined) {
-      homeSocket.current.emit('getPatientInvoices', { userId: userId, ...dataGridFilters })
+      homeSocket.current.emit('getPatientInvoices', { userId: userId, paginationModel, sortModel, mongoFilterModel, })
       homeSocket.current.once('getPatientInvoicesReturn', (msg: { status: number, reservation: AppointmentReservationExtendType[], message?: string, totalCount: number }) => {
-        const { status, reservation, message, totalCount } = msg;
+        const { status, message, } = msg;
         if (status !== 200) {
-          toast.error(message || `${status} Error for Slots`, {
+          toast.error(message || `${status} Error for Reservations Invoices`, {
             position: "bottom-center",
             autoClose: 5000,
             hideProgressBar: false,
@@ -551,14 +701,19 @@ const Invoices: FC = (() => {
             transition: bounce,
             onClose: () => {
               setIsLoading(false)
+              toast.dismiss('schedule_error')
             }
           });
         } else {
+          const { reservation, totalCount } = msg;
           if (reservation.length !== 0) {
             setRows(() => {
               return reservation
             })
             setRowCount(totalCount)
+          } else {
+            setRowCount(0)
+            setRows([])
           }
           homeSocket.current.once(`updateGetPatientInvoices`, () => {
             setReload(!reload)
@@ -573,87 +728,130 @@ const Invoices: FC = (() => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataGridFilters, homeSocket, reload])
+  }, [homeSocket, paginationModel, sortModel, mongoFilterModel, reload])
 
   return (
     <Fragment>
       <iframe style={{ height: 0, width: 0, position: 'absolute' }}>
         {isPrinting && <PrintInvoiceComponent ref={printRef} printProps={printProps} />}
       </iframe>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
-        <div className="card card-table">
-          <div className="card-body">
-            <div className="table-responsive" style={{ height: 480, width: '100%' }}>
-              {isLoading ? <CircleToBlockLoading color={theme.palette.primary.main} size="small"
-                style={{
-                  minWidth: '100%',
-                  display: 'flex',
-                  justifyContent: 'center',
-                }} /> :
-                <>
-                  <DataGrid
-                    paginationMode='server'
-                    experimentalFeatures={{ ariaV7: true }}
-                    slots={{
-                      noResultsOverlay: CustomNoRowsOverlay,
-                      noRowsOverlay: CustomNoRowsOverlay,
-                      pagination: CustomPagination,
-                    }}
-                    slotProps={{
-                      pagination: { //@ts-ignore
-                        handleChangePage: handleChangePage,
-                        handleChangeRowsPerPage: handleChangeRowsPerPage,
-                        count: rowCount,
-                        SelectProps: {
-                          inputProps: {
-                            id: 'pagination-select',
-                            name: 'pagination-select',
+      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp">
+        {
+          isLoading ?
+            <div className="card">
+              <div className="card-body">
+                <div className="table-responsive">
+                  <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                    <LoadingComponent boxMinHeight={boxMinHeight} />
+                  </Box>
+                </div>
+              </div>
+            </div> :
+            <div className="card">
+              <div ref={dataGridRef} className="tab-content schedule-cont">
+                <Box className={classes.dataGridOuterBox} >
+                  <Typography className={classes.totalTypo}
+                    variant='h5' align='center' gutterBottom >
+                    {
+                      rowCount !== 0 ?
+                        `Total Invoices: ${rowCount}` :
+                        `Not any Invoices yet`
+                    }
+                  </Typography>
+                  <div className="table-responsive" style={{ height: paginationModel?.pageSize == 5 ? 600 : 1000, width: '100%' }}>
+
+
+                    <DataGrid
+                      rowHeight={80}
+                      paginationMode='server'
+                      filterMode="server"
+                      // dont mode server and handle in client side sorting toosortingMode="server"
+                      sortModel={sortModel}
+                      onSortModelChange={(model: GridSortModel) => {
+                        if (model.length > 0) {
+                          setSortModel((_prev: GridSortModel) => [...model]);
+                        }
+                      }}
+                      sortingOrder={['desc', 'asc']}
+                      filterModel={filterModel}
+                      onFilterModelChange={handelFilterModelChange}
+                      columnVisibilityModel={columnVisibilityModel}
+                      onColumnVisibilityModelChange={(newModel) => {
+                        setColumnVisibilityModel(newModel)
+                      }}
+                      loading={isLoading}
+                      experimentalFeatures={{ ariaV7: true }}
+                      slots={{
+                        toolbar: CustomToolbar,
+                        pagination: CustomPagination,
+                        noResultsOverlay: CustomNoRowsOverlay,
+                        noRowsOverlay: CustomNoRowsOverlay
+                      }}
+                      slotProps={{
+                        toolbar: {
+                          printOptions: { disableToolbarButton: true },
+                          deleteId: [],
+                          deleteClicked: () => { },
+                          columnVisibilityModel: columnVisibilityModel,
+                        },
+                        pagination: {
+                          onRowsPerPageChange: handleChangeRowsPerPage,
+                          page: paginationModel.page,
+                          rowsPerPage: paginationModel.pageSize,
+                          onPageChange: handleChangePage,
+                          count: rowCount,
+                          SelectProps: {
+                            inputProps: {
+                              id: 'pagination-select',
+                              name: 'pagination-select',
+                            },
                           },
                         },
-                      },
-                    }}
-                    getRowId={(params) => params._id}
-                    rowHeight={screen.height / 15.2}
-                    rows={rows}
-                    rowCount={rowCount}
-                    ref={grdiRef}
-                    columns={columns}
-                    paginationModel={paginationModel}
-                    isRowSelectable={() => false}
-                    pageSizeOptions={[5, 10]}
-                    showCellVerticalBorder
-                    showColumnVerticalBorder
-                    sx={{
-                      ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
-                        "marginTop": "1em",
-                        "marginBottom": "1em"
-                      },
-                      "&.MuiDataGrid-root .MuiDataGrid-row": {
-                        backgroundColor:
-                          false ? getSelectedBackgroundColor(
-                            theme.palette.primary.dark,
-                            theme.palette.mode,
-                          ) : '',
-                        '&:hover': {
-                          backgroundColor: getSelectedHoverBackgroundColor(
-                            theme.palette.primary.light,
-                            theme.palette.mode,
-                          ),
+                        filterPanel: {
+                          filterFormProps: {
+                            deleteIconProps: {
+                              sx: {
+                                justifyContent: 'flex-start'
+                              },
+                            },
+                          },
+                        },
+                        baseCheckbox: {
+                          inputProps: {
+                            name: "select-checkbox"
+                          }
                         }
-                      },
-                      "& .MuiDataGrid-footerContainer": {
-                        [theme.breakpoints.only("xs")]: {
-                          justifyContent: 'center',
-                          mb: 2
-                        }
-                      }
-                    }}
-                  />
-                </>
-              }
+                      }}
+                      getRowId={(params) => params._id}
+                      rows={rows}
+                      rowCount={rowCount}
+                      columns={columns}
+                      paginationModel={paginationModel}
+                      pageSizeOptions={[5, 10]}
+                      showCellVerticalBorder
+                      showColumnVerticalBorder
+                      className={classes.dataGrid}
+                      sx={{
+                        "&.MuiDataGrid-root .MuiDataGrid-row": {
+                          backgroundColor:
+                            false ? getSelectedBackgroundColor(
+                              theme.palette.primary.dark,
+                              theme.palette.mode,
+                            ) : '',
+                          '&:hover': {
+                            backgroundColor: getSelectedHoverBackgroundColor(
+                              theme.palette.primary.light,
+                              theme.palette.mode,
+                            ),
+                          }
+                        },
+                      }}
+                    />
+                  </div>
+                </Box>
+              </div>
             </div>
-          </div>
-        </div>
+        }
       </div>
     </Fragment>
   )

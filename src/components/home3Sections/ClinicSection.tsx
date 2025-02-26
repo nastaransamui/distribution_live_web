@@ -124,10 +124,10 @@ const ClinicSection: FC = (() => {
                     {
                       specialities.map((spec) => {
                         let img = document.getElementById(spec.imageId) as any
-                        let src = `${spec.image}?random=${new Date().getTime()}`
+                        let src = `${spec.image}`
                         // var areEqual = spec.imageId.toUpperCase() === spec.specialities.toUpperCase();
                         if (img !== null) {
-                          src = `${spec.image}?random=${new Date().getTime()}`
+                          src = `${spec.image}`
                           img.src = src
                         }
                         let bgImage =

@@ -12,7 +12,7 @@ import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import Footer from '@/components/sections/Footer';
-import ProfilePage from '@/components/DoctorsSections/Profile/ProfilePage';
+import PublicProfilePage from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import { updateHomeExp } from '@/redux/homeExp';
@@ -40,7 +40,7 @@ const ProfileHomePage: NextPage = () => {
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb title='Doctor Profile' subtitle='Doctor Profile' />
-      <ProfilePage />
+      <PublicProfilePage />
       <CookieConsentComponent />
       <Footer />
     </>

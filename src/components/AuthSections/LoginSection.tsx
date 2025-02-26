@@ -127,7 +127,7 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
       data.ipAddr = userData?.query;
       data.userAgent = navigator.userAgent;
       data.email = data.email.toLowerCase();
-      // dispatch(updateHomeFormSubmit(true))
+
       if (homeSocket?.current) {
         homeSocket.current.emit('loginFormSubmit', data)
         homeSocket.current.once('loginFormReturn', (msg: any) => {

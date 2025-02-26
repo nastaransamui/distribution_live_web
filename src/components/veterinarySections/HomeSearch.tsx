@@ -267,7 +267,7 @@ const HomeSearch: FC = (() => {
                                       onClick={() => {
                                         setSpecialitiesValue(() => (spec?.specialities))
                                       }}>
-                                      <img src={`${spec.image}?random=${new Date().getTime()}`} alt='' width='25' height='25' style={{ marginRight: 4 }} />
+                                      <img src={`${spec.image}`} alt='' width='25' height='25' style={{ marginRight: 4 }} />
 
                                       {spec.specialities}
                                     </MenuItem>

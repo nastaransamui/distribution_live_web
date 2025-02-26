@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { useSearchParams } from 'next/navigation'
 import { AppState } from '@/redux/store'
 import { useSelector } from 'react-redux'
-import { base64regex } from '../DoctorsSections/Profile/ProfilePage'
+import { base64regex } from '../DoctorsSections/Profile/PublicProfilePage'
 import { toast } from 'react-toastify'
 import useScssVar from '@/hooks/useScssVar'
 import _ from 'lodash'
@@ -107,8 +107,8 @@ const DoctorPatientProfile: FC<DoctorPatientProfileTypes> = (({ doctorPatientPro
     <Fragment>
       <PatientSidebarDoctorDashboard doctorPatientProfile={profile} />
 
-      <div className="col-md-7 col-lg-8 col-xl-9 dct-appoinment" >
-        <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='doctor' dataGridFilters={dataGridFilters} setDataGridFilters={setDataGridFilters} />
+      <div className="col-md-7 col-lg-8 col-xl-9 dct-appoinment    animate__animated animate__backInUp" >
+        <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='doctor' />
       </div>
     </Fragment>
   )

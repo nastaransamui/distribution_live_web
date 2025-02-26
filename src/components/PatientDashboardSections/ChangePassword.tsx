@@ -150,7 +150,7 @@ const ChangePassword: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp" style={muiVar}>
         <div className="card">
           <div className="card-body">
             <h5 className="card-title" style={{ marginBottom: 20 }}>Change Password</h5>

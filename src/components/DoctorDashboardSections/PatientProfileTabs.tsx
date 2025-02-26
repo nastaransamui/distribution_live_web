@@ -23,7 +23,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import InputAdornment from '@mui/material/InputAdornment';
 import UploadFile from '@mui/icons-material/UploadFile';
-import { DoctorPatientInitialLimitsAndSkipsTypes, PatientProfileExtendType } from '../DoctorPatientProfile/DoctorPatientProfile';
+import { PatientProfileExtendType } from '../DoctorPatientProfile/DoctorPatientProfile';
 import MedicalRecords from '../PatientDashboardSections/MedicalRecords';
 import MedicalRecordsPriscription from '../PatientDashboardSections/MedicalRecordsPriscription';
 import { AppState } from '@/redux/store';
@@ -47,34 +47,29 @@ export interface ValueType {
 }
 const initialState: ValueType = {
   id: 0,
-  name: "Richard Wilson",
+  name: "",
   date: '',
   description: "",
   attachment: "",
   orderBy: '',
-  doctorName: 'Dr. Darren Elder'
+  doctorName: ''
 }
 
 export interface PatientSidebarDoctorTypes {
   doctorPatientProfile: PatientProfileExtendType;
   userType: 'patient' | 'doctor'
-  dataGridFilters: DoctorPatientInitialLimitsAndSkipsTypes;
-  setDataGridFilters: Function;
   isMobile: boolean;
 }
-const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfile, userType, dataGridFilters, setDataGridFilters }) => {
+const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfile, userType }) => {
   const { muiVar } = useScssVar();
   const [value, setValue] = useState('0');
   const theme = useTheme();
-  const [index, setIndex] = useState(0);
+
   const [edit, setEdit] = useState(false);
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
-  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
   const handleChangeTab = (event: SyntheticEvent, newValue: string) => {
-    setIndex(Number(newValue))
     setValue(newValue);
   };
   const [editValues, setEditValues] = useState<ValueType>(initialState)
@@ -97,7 +92,15 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
     }
 
   }
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsFirstRender(false);
+    }, 1000); // Change 1000 to the delay in milliseconds
+
+    return () => clearTimeout(timeout); // Cleanup function to avoid memory leaks
+  }, []);
 
   const [isMobile, setIsmobile] = useState(false)
   useEffect(() => {
@@ -128,7 +131,7 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                     </TabPanel>
                     <TabPanel value="1">
                       {userType == 'doctor' && <div className="text-end">
-                        <Link href={`/doctors/dashboard/add-prescription/${btoa(doctorPatientProfile._id)}`} target='_blank' className="add-new-btn">
+                        <Link href={`/doctors/dashboard/add-prescription/${btoa(doctorPatientProfile._id)}`} className="add-new-btn">
                           Add Prescription
                         </Link>
                       </div>}
@@ -140,45 +143,44 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                     <TabPanel value="3">
                       {userDoctorProfile?.currency &&
                         <>{userDoctorProfile?.currency.length > 0 ? <div className="text-end">
-                          <Link href={`/doctors/dashboard/add-billing/${btoa(doctorPatientProfile._id)}`} target='_blank' className="add-new-btn">
-                            Add Billing
+                          <Link href={`/doctors/dashboard/add-billing/${btoa(doctorPatientProfile._id)}`} className="add-new-btn">
+                            Add Bill
                           </Link>
                         </div> : <div className="text-end" style={{ minHeight: "50px" }}>
-                          <span style={{ color: theme.palette.text.color }}>Add currency to your profile then can add Billing</span>
+                          <span style={{ color: theme.palette.text.color }}>Add currency to your profile then can add Bill</span>
                         </div>}</>
                       }
                       <PatientBillingRecords userType={userType} patientId={doctorPatientProfile?._id} />
                     </TabPanel>
-                  </> : <SwipeableViews
-                    axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                    index={index}>
-                    <TabPanel value="0">
-                      <PatientAppointment userType={userType} patientId={doctorPatientProfile?._id} />
-                    </TabPanel>
-                    <TabPanel value="1">
-                      {userType == 'doctor' && <div className="text-end">
-                        <Link href={`/doctors/dashboard/add-prescription/${btoa(doctorPatientProfile._id)}`} target='_blank' className="add-new-btn">
-                          Add Prescription
-                        </Link>
-                      </div>}
-                      <MedicalRecordsPriscription patientProfile={doctorPatientProfile} />
-                    </TabPanel>
-                    <TabPanel value="2">
-                      <MedicalRecords patientProfile={doctorPatientProfile} />
-                    </TabPanel>
-                    <TabPanel value="3">
-                      {userDoctorProfile?.currency &&
-                        <>{userDoctorProfile?.currency.length > 0 ? <div className="text-end">
-                          <Link href={`/doctors/dashboard/add-billing/${btoa(doctorPatientProfile._id)}`} target='_blank' className="add-new-btn">
-                            Add Billing
+                  </> :
+                    <TabContext value={value}>
+                      <TabPanel value="0" className={`${value == "0" && !isFirstRender ? "animate__animated animate__backInRight" : ""}`}>
+                        <PatientAppointment userType={userType} patientId={doctorPatientProfile?._id} />
+                      </TabPanel>
+                      <TabPanel value="1" className={`${value == "1" && !isFirstRender ? "animate__animated animate__backInRight" : ""}`}>
+                        {userType == 'doctor' && <div className="text-end">
+                          <Link href={`/doctors/dashboard/add-prescription/${btoa(doctorPatientProfile._id)}`} className="add-new-btn">
+                            Add Prescription
                           </Link>
-                        </div> : <div className="text-end" style={{ minHeight: "50px" }}>
-                          <span style={{ color: theme.palette.text.color }}>Add currency to your profile then can add Billing</span>
-                        </div>}</>
-                      }
-                      <PatientBillingRecords userType={userType} patientId={doctorPatientProfile?._id} />
-                    </TabPanel>
-                  </SwipeableViews>
+                        </div>}
+                        <MedicalRecordsPriscription patientProfile={doctorPatientProfile} />
+                      </TabPanel>
+                      <TabPanel value="2" className={`${value == "2" && !isFirstRender ? "animate__animated animate__backInRight" : ""}`}>
+                        <MedicalRecords patientProfile={doctorPatientProfile} />
+                      </TabPanel>
+                      <TabPanel value="3" className={`${value == "3" && !isFirstRender ? "animate__animated animate__backInRight" : ""}`}>
+                        {userDoctorProfile?.currency &&
+                          <>{userDoctorProfile?.currency.length > 0 ? <div className="text-end">
+                            <Link href={`/doctors/dashboard/add-billing/${btoa(doctorPatientProfile._id)}`} className="add-new-btn">
+                              Add Bill
+                            </Link>
+                          </div> : <div className="text-end" style={{ minHeight: "50px" }}>
+                            <span style={{ color: theme.palette.text.color }}>Add currency to your profile then can add Bills</span>
+                          </div>}</>
+                        }
+                        <PatientBillingRecords userType={userType} patientId={doctorPatientProfile?._id} />
+                      </TabPanel>
+                    </TabContext>
                 }
 
 

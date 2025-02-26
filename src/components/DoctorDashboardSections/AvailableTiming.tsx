@@ -1,35 +1,32 @@
 /* eslint-disable @next/next/no-img-element */
-import { cloneElement, FC, Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { FC, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import { Calendar as BigCalendar, dayjsLocalizer, Views } from 'react-big-calendar'
+import { Calendar as BigCalendar, DateRange, dayjsLocalizer, Formats, View, Views } from 'react-big-calendar'
 import dayjs from 'dayjs';
-import { DialogContent, useTheme } from '@mui/material';
-import InputAdornment from "@mui/material/InputAdornment";
-import FeatherIcon from "feather-icons-react";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import DialogContent from '@mui/material/DialogContent';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { AppointmentReservationExtendType } from './Appointment';
 import { toast } from 'react-toastify';
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
-import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
+import Box from '@mui/material/Box'
 import { BootstrapDialog, BootstrapDialogTitle, Transition } from '../shared/Dialog';
 import { PatientProfile } from './MyPtients';
 import Link from 'next/link';
-import { formatNumberWithCommas, StyledBadge } from './ScheduleTiming';
+import { formatNumberWithCommas, LoadingComponent, StyledBadge } from './ScheduleTiming';
 import Avatar from "@mui/material/Avatar";
 import { patient_profile } from '@/public/assets/imagepath';
 import Typography from '@mui/material/Typography';
 import { loadStylesheet } from '@/pages/_app';
 import Chip from '@mui/material/Chip';
+import dataGridStyle from '../shared/dataGridStyle';
+import _ from 'lodash'
 export interface EditValueType {
   start: Date;
   end: Date;
   title: string;
   patientProfile: PatientProfile;
   _id: string;
+  id: number;
   createdDate: Date;
   patientId: string;
   currencySymbol: string;
@@ -37,151 +34,32 @@ export interface EditValueType {
   invoiceId: string;
   doctorPaymentStatus: string;
 }
+//Number of days show in agenda
+const agendaDays = 3;
 const AvailableTiming: FC = (() => {
   const { muiVar, bounce } = useScssVar();
-  const theme = useTheme();
-  const [view, setView] = useState(Views.WEEK)
-  const [currentDay, setCurrentDay] = useState(new Date())
+  const { classes, theme } = dataGridStyle({});
+  const [currentDay, setCurrentDay] = useState(new Date());
+  const [currentView, setCurrentView] = useState<View>(Views.DAY);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false)
-
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const localizer = dayjsLocalizer(dayjs)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
-
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [myAppointmentData, setMyAppointmentData] = useState<AppointmentReservationExtendType[]>([])
-  const onView = useCallback((newView: any) => setView(newView), [setView])
   const [show, setShow] = useState(false);
   const [editValues, setEditValues] = useState<EditValueType>();
+
   useEffect(() => {
     loadStylesheet('/css/react-big-calendar.min.css')
   }, [])
-
-  useEffect(() => {
-    let isActive = true;
-    let userId = userProfile?._id
-    let reservationsIdArray = userProfile?.reservations_id
-    let limit = 200;
-    let skip = 0
-    if (isActive && homeSocket.current !== undefined && userProfile !== null) {
-      if (userProfile?.reservations_id && userProfile?.reservations_id.length !== 0) {
-        homeSocket.current.emit('getDoctorAppointments', { userId, reservationsIdArray, limit, skip })
-        homeSocket.current.once('getDoctorAppointmentsReturn', (msg: { status: number, myAppointment: AppointmentReservationExtendType[], message?: string }) => {
-          const { status, myAppointment, message } = msg;
-          if (status !== 200) {
-            toast.error(message || `${status}`, {
-              position: "bottom-center",
-              autoClose: 5000,
-              hideProgressBar: false,
-              toastId: 'socketEror',
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              transition: bounce,
-              onClose: () => {
-                setIsLoading(false)
-                toast.dismiss('socketEror')
-              }
-            });
-          } else {
-            if (myAppointment.length !== 0) {
-              setMyAppointmentData(() => {
-                let newState = []
-                newState = [...myAppointment]
-                return newState
-              })
-              if (show) {
-                let appointmentIndex = myAppointment.findIndex((a) => a?._id == editValues?._id)
-                if (appointmentIndex !== -1) {
-                  setEditValues((prevState: any) => {
-                    return {
-                      ...prevState,
-                      patientProfile: { ...myAppointment[appointmentIndex].patientProfile }
-                    }
-                  })
-                }
-              }
-            }
-            homeSocket.current.once(`updategetDoctorAppointments`, () => {
-              setReload(!reload)
-            })
-            setIsLoading(false)
-          }
-
-        })
-      } else {
-        isLoading && setIsLoading(false)
-
-      }
-    }
-    return () => {
-      isActive = false;
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, reload])
-
-  const LoadingCompoenent = () => (
-    <CircleToBlockLoading color={theme.palette.primary.main} size="small"
-      style={{
-        minWidth: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-      }} />
-  )
   const handleShow = (data: EditValueType) => {
     setShow(true);
     setEditValues(data)
   }
-
-
-  const localizer = dayjsLocalizer(dayjs)
-
-  const myEventsList = useMemo(() => {
-    let eventArray: any = []
-    if (myAppointmentData.length > 0) {
-      myAppointmentData.forEach((a: AppointmentReservationExtendType) => {
-        const startTime = a?.timeSlot?.period.split(' - ')[0]
-        const endTime = a?.timeSlot?.period.split(' - ')[1]
-        // create a date object with a specific date
-        const date = dayjs(a.selectedDate);
-        const total = a.timeSlot.total;
-        const currencySymbol = a.timeSlot.currencySymbol
-        // create a time object with a specific time
-        const timeStarted = dayjs(startTime, 'HH:mm');
-
-        const timeFinished = dayjs(endTime, 'HH:mm');
-
-        // combine the date and time objects
-        const startDateTime = date.set('hour', timeStarted.hour()).set('minute', timeStarted.minute()).set('second', timeStarted.second());
-        const s = dayjs(startDateTime).toDate()
-
-        // combine the date and time objects
-        const finishDateTime = date.set('hour', timeFinished.hour()).set('minute', timeFinished.minute()).set('second', timeFinished.second());
-        const e = dayjs(finishDateTime).toDate()
-        const title = `${a?.patientProfile?.firstName} ${a?.patientProfile?.lastName}`
-        eventArray.push({
-          start: s,
-          end: e,
-          title: title,
-          patientProfile: a?.patientProfile,
-          _id: a?._id,
-          createdDate: a?.createdDate,
-          patientId: a?.patientId,
-          total: total,
-          currencySymbol: currencySymbol,
-          invoiceId: a.invoiceId,
-          doctorPaymentStatus: a.doctorPaymentStatus
-        })
-      })
-    }
-
-    return [...eventArray]
-  }, [myAppointmentData])
 
   const eventPropGetter = useCallback(
     (event: any, start: Date, end: Date, isSelected: boolean) => {
@@ -202,125 +80,152 @@ const AvailableTiming: FC = (() => {
     [theme]
   )
 
-  // Correct role for react-big-calendar
+  const handleNavigate = useCallback((date: Date) => {
+    setCurrentDay(new Date(date));
+  }, []);
+  const handleViewChange = useCallback((newView: View) => {
+    setCurrentView(newView);
+  }, []);
+  const isActiveRef = useRef(true);
   useEffect(() => {
-    setTimeout(() => {
-      const monthHeader = document.querySelectorAll('.rbc-month-header');
-      monthHeader.forEach((button) => {
-        button.setAttribute('role', 'rowgroup');
-      });
-      const header = document.querySelectorAll('.rbc-header');
-      header.forEach((button) => {
-        button.setAttribute('role', 'row');
-      });
+    isActiveRef.current = true;
+    let userId = userProfile?._id;
+    if (isActiveRef.current) {
+      if (homeSocket.current !== undefined && userProfile !== null) {
+        const mongoFilterModel = buildMongoDBFilter(currentDay, currentView);
+        setIsLoading(true);
+        homeSocket.current.emit('getDoctorAvailableTime', { userId, mongoFilterModel })
+        homeSocket.current.once('getDoctorAvailableTimeReturn', (msg: { status: number, myAppointment: AppointmentReservationExtendType[], message?: string }) => {
+          const { status, myAppointment, message } = msg;
+          if (status !== 200) {
+            toast.error(message || `${status}`, {
+              position: "bottom-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              toastId: 'socketEror',
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              transition: bounce,
+              onClose: () => {
+                setIsLoading(false)
+                toast.dismiss('socketEror')
+              }
+            });
+          } else {
+            if (myAppointment.length !== 0) {
+              const areEqual = _.isEqual(myAppointment, myAppointmentData);
+              if (!areEqual) {
+                setMyAppointmentData(() => {
+                  let newState = []
+                  newState = [...myAppointment]
+                  return newState
+                })
+              }
+            }
+            homeSocket.current.once(`updateGetDoctorAvailableTime`, (msg: string) => {
+              setReload(!reload)
+            })
+            setIsLoading(false)
+          }
 
-      const m = document.querySelectorAll('.rbc-row .rbc-month-header');
-      m.forEach((button) => {
-        button.setAttribute('role', 'rowgroup');
-      });
-      const row = document.querySelectorAll('.rbc-row-content >.rbc-row');
-      row.forEach((button) => {
-        button.setAttribute('role', 'columnheader');
-      });
-      const date = document.querySelectorAll('.rbc-row >.rbc-date-cell');
-      date.forEach((button) => {
-        button.setAttribute('role', '');
-      });
-      const buttons = document.querySelectorAll('.rbc-date-cell button');
-      buttons.forEach((button) => {
-        button.setAttribute('role', '');
-      });
-    }, 500);
-  }, [myAppointmentData]);
-  const mainCalendar = () => {
-    return (
-      <BigCalendar
-        localizer={localizer}
-        events={myEventsList}
-        startAccessor="start"
-        endAccessor="end"
-        onSelectEvent={(e) => {
-          handleShow(e)
-        }}
-        onView={onView}
-        views={['month', 'week', 'work_week', 'day', 'agenda']}
-        defaultView={Views.MONTH}
-        style={{
-          height: `100vh`,
-          background: theme.palette.background.default,
-          color: theme.palette.text.color,
-          border: `1px solid ${theme.palette.primary.main}`,
-          borderRadius: 15,
-          padding: 20
-        }}
-        eventPropGetter={eventPropGetter}
-      />
-    )
-  }
+        })
+      }
+    }
+
+    return () => {
+      isActiveRef.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeSocket, reload, currentDay, currentView])
 
 
+  const myEventsList = useMemo(() => {
+    let eventArray: any = []
+    if (myAppointmentData.length > 0) {
+      myAppointmentData.forEach((a: AppointmentReservationExtendType) => {
+        const startTime = a?.timeSlot?.period.split(' - ')[0]
+        const endTime = a?.timeSlot?.period.split(' - ')[1]
+        // create a date object with a specific date
+        const date = dayjs.tz(a.selectedDate, process.env.NEXT_PUBLIC_TZ).startOf('day');
+        const total = a.timeSlot.total;
+        const currencySymbol = a.timeSlot.currencySymbol
+        // create a time object with a specific time
+        const timeStarted = dayjs(startTime, 'HH:mm');
+
+        const timeFinished = dayjs(endTime, 'HH:mm');
+
+        // combine the date and time objects
+        const startDateTime = date.hour(timeStarted.hour()).minute(timeStarted.minute()).second(0);
+        const finishDateTime = date.hour(timeFinished.hour()).minute(timeFinished.minute()).second(0);
+        const s = startDateTime.local().toDate();
+        const e = finishDateTime.local().toDate();
+        const title = `${a?.patientProfile?.firstName} ${a?.patientProfile?.lastName}`
+        eventArray.push({
+          start: s,
+          end: e,
+          title: title,
+          patientProfile: a?.patientProfile,
+          _id: a?._id,
+          id: a?.id,
+          createdDate: a?.createdDate,
+          patientId: a?.patientId,
+          total: total,
+          currencySymbol: currencySymbol,
+          invoiceId: a.invoiceId,
+          doctorPaymentStatus: a.doctorPaymentStatus
+        })
+      })
+    }
+
+    return [...eventArray]
+  }, [myAppointmentData])
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
-        <div className="row">
-          <div className="col-sm-12">
-            <div className="card">
-              <div className="card-body">
-                <h4 className="card-title">Schedule Timings</h4>
-                <div className="profile-box">
-                  <div className="row">
-                    <div className="col-sm-6 col-12 avail-time">
-                      <div className="mb-3">
-                        <div className="schedule-calendar-col justify-content-start">
-                          <form className="d-flex flex-wrap">
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                              <MobileDatePicker
-                                format="DD MMM YYYY"
-                                closeOnSelect
-                                defaultValue={dayjs(currentDay)}
-                                disablePast
-                                sx={{ width: { lg: 250, md: '100%', sm: '100%', xs: '100%' }, }}
-                                onChange={(value: any, context: any) => {
-                                  setCurrentDay(value)
-                                }}
-                                slotProps={{
-                                  textField: {
-                                    size: "small",
-                                    InputLabelProps: { shrink: true },
-                                    InputProps: {
-                                      startAdornment: <InputAdornment position="start">
-                                        <i ><FeatherIcon icon="calendar" style={{ width: "16px", color: theme.palette.secondary.main }} /></i>
-                                      </InputAdornment>,
-                                      classes: {
-                                        adornedStart: 'adornedStart',
-                                      }
-                                    },
-                                    placeholder: 'Date'
-                                  },
-                                }}
-                              />
-                            </LocalizationProvider>
-
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    {
-                      isLoading ?
-                        <LoadingCompoenent /> :
-                        myAppointmentData.length !== 0 ?
-                          mainCalendar() : <div className='card' style={{ minHeight: '100vh', justifyContent: 'center' }}>
-                            <CustomNoRowsOverlay text='No any schedule' />
-                          </div>
-                    }
+      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp" style={muiVar}>
+        {
+          isLoading ?
+            < div className="card">
+              <div className="card-body" style={{ height: '100vh' }}>
+                <Box sx={{ minHeight: "90vh", bgcolor: `${theme.palette.background.default} !important` }} className={classes.dataGridOuterBox}>
+                  <LoadingComponent boxMinHeight="500px" />
+                </Box>
+              </div>
+            </div> :
+            <>
+              {
+                <div className="card">
+                  <div className='card-body'>
+                    {/* @ts-ignore */}
+                    <BigCalendar
+                      localizer={localizer}
+                      onSelectEvent={(e) => handleShow(e)}
+                      onView={handleViewChange}
+                      events={myEventsList}
+                      startAccessor="start"
+                      endAccessor="end"
+                      views={['month', 'week', 'day', 'agenda']}
+                      length={agendaDays}
+                      date={currentDay}
+                      formats={formats}
+                      defaultView={currentView}
+                      onNavigate={handleNavigate}
+                      eventPropGetter={eventPropGetter}
+                      style={{
+                        height: `100vh`,
+                        background: theme.palette.background.default,
+                        color: theme.palette.text.color,
+                        border: `1px solid ${theme.palette.primary.main}`,
+                        borderRadius: 15,
+                        padding: 20
+                      }}
+                    />
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
+              }
+            </>
+        }
       </div>
       {
         show && <BootstrapDialog
@@ -351,7 +256,7 @@ const AvailableTiming: FC = (() => {
                 variant="dot"
                 online={editValues?.patientProfile?.online as boolean}
               >
-                <Avatar alt="" src={`${editValues?.patientProfile?.profileImage}?random=${new Date().getTime()}`} >
+                <Avatar alt="" src={`${editValues?.patientProfile?.profileImage}`} >
                   <img src={patient_profile} alt="" className="avatar" />
                 </Avatar>
               </StyledBadge>
@@ -364,7 +269,8 @@ const AvailableTiming: FC = (() => {
                 fontSize: '1rem',
                 "&:hover": {
                   color: theme.palette.secondary.light
-                }
+                },
+                minWidth: '200px'
               }} href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
               {`${editValues?.patientProfile?.gender} ${editValues?.patientProfile?.firstName} ${editValues?.patientProfile?.lastName}`}
             </Typography>
@@ -374,11 +280,11 @@ const AvailableTiming: FC = (() => {
               <li>
                 <div className="details-header">
                   <div className="row">
-                    <div className="col-md-6">
-                      <span className="title">#{editValues?._id}</span>
+                    <div className="col-md-12">
+                      <span className="title">#{editValues?.id}</span>
                       <span className="text">{dayjs(editValues?.start).format('DD MMM YYYY')}</span>
                     </div>
-                    <div className="col-md-6">
+                    {/* <div className="col-md-6">
                       <div className="text-end">
                         <button
                           type="button"
@@ -388,7 +294,7 @@ const AvailableTiming: FC = (() => {
                           Confirmed
                         </button>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </li>
@@ -429,8 +335,119 @@ const AvailableTiming: FC = (() => {
           </DialogContent>
         </BootstrapDialog>
       }
-    </Fragment>
+    </Fragment >
   )
 });
 
 export default AvailableTiming;
+
+
+// Function to get the correct date range for MongoDB
+const getDateRange = (date: Date, view: string) => {
+  if (view === Views.DAY) {
+    return {
+      start: dayjs(date).startOf('day').format('YYYY-MM-DD'),
+      end: dayjs(date).endOf('day').format('YYYY-MM-DD'),
+    };
+  } else if (view === Views.WEEK) {
+    return {
+      start: dayjs(date).startOf('week').format('YYYY-MM-DD'),
+      end: dayjs(date).endOf('week').format('YYYY-MM-DD'),
+    };
+  } else if (view === Views.MONTH) {
+    return {
+      start: dayjs(date).startOf('month').format('YYYY-MM-DD'),
+      end: dayjs(date).endOf('month').format('YYYY-MM-DD'),
+    };
+  } else if (view === Views.AGENDA) {
+    return {
+      start: dayjs(date).startOf('day').format('YYYY-MM-DD'),
+      end: dayjs(date).add(agendaDays, 'day').endOf('day').format('YYYY-MM-DD'),
+    };
+  }
+  return { start: dayjs(date).format('YYYY-MM-DD'), end: dayjs(date).format('YYYY-MM-DD') };
+};
+
+// Define custom formats
+const formats: Formats = {
+  timeGutterFormat: 'HH:mm',
+  agendaTimeFormat: 'HH:mm',
+  eventTimeRangeFormat: ({ start, end }) => `${dayjs(start).format('HH:mm')} - ${dayjs(end).format('HH:mm')}`,
+  agendaHeaderFormat: ({ start, end }: DateRange) =>
+    `${dayjs(start).format('DD MMM YYYY')} – ${dayjs(end).format('DD MMM YYYY')}`,
+};
+
+
+export const buildMongoDBFilter = (currentDay: Date, currentView: string): any => {
+  const { start, end } = getDateRange(currentDay, currentView);
+  const localStartDate = dayjs(start)
+    .tz(process.env.NEXT_PUBLIC_TZ)
+    .startOf('day')
+    .format('YYYY-MM-DDT00:00:00.000Z');
+  const utcStartDate = dayjs(localStartDate).tz('UTC', true).toISOString();
+  const localEndDate = dayjs(end)
+    .tz(process.env.NEXT_PUBLIC_TZ)
+    .startOf('day')
+    .format('YYYY-MM-DDT00:00:00.000Z');
+  const utcEndDate = dayjs(localEndDate).tz('UTC', true).toISOString();
+  return currentView === 'day'
+    ? {
+      $expr: {
+        $eq: [
+          {
+            $cond: {
+              if: { $ne: [{ $type: "$selectedDate" }, "string"] },
+              then: { $dateToString: { format: "%Y-%m-%d", date: "$selectedDate" } },
+              else: null,
+            }
+          },
+          {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: { $dateFromString: { dateString: utcStartDate }, }
+            }
+          }
+        ]
+      }
+    }
+    : {
+      $expr: {
+        $and: [
+          {
+            $gte: [
+              {
+                $cond: {
+                  if: { $ne: [{ $type: "$selectedDate" }, "string"] },
+                  then: { $dateToString: { format: "%Y-%m-%d", date: "$selectedDate" } },
+                  else: null,
+                }
+              },
+              {
+                $dateToString: {
+                  format: "%Y-%m-%d",
+                  date: { $dateFromString: { dateString: utcStartDate } }
+                }
+              }
+            ]
+          },
+          {
+            $lte: [
+              {
+                $cond: {
+                  if: { $ne: [{ $type: "$selectedDate" }, "string"] },
+                  then: { $dateToString: { format: "%Y-%m-%d", date: "$selectedDate" } },
+                  else: null,
+                }
+              },
+              {
+                $dateToString: {
+                  format: "%Y-%m-%d",
+                  date: { $dateFromString: { dateString: utcEndDate } }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+};

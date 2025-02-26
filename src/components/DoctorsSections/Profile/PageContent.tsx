@@ -148,59 +148,8 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
   }
   return (
     <Fragment>
-      <Lightbox
-        open={open}
-        close={() => setOpen(false)}
-        slides={profile?.clinicImages}
-        index={index}
-      />
-      <Dialog
-        TransitionComponent={Transition}
-        open={loginDialog}
-        onClose={() => {
-          document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-          setTimeout(() => {
-            setLoginDialog(false)
-          }, 500);
-        }}
-        scroll='body'
-        aria-labelledby="login"
-        aria-describedby="login"
-        maxWidth="xs"
-      >
-        <DialogTitle id="login">
-          Login
-          <IconButton
-            color="inherit"
-            onClick={() => {
-              document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-              setTimeout(() => {
-                setLoginDialog(false)
-              }, 500);
-            }}
-            aria-label="close"
-            sx={{ "&:hover": { color: 'primary.main' }, float: 'right' }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent dividers>
-          <div style={muiVar}>
-            <div className="col-md-12">
-              <div className="account-content">
-                <div className="col-md-12 col-lg-12 login-right">
-                  <LoginBox closeDialog={setLoginDialog} />
-                </div>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-        <DialogActions>
-
-        </DialogActions>
-      </Dialog>
       <div>
-        <div className="card" style={muiVar}>
+        <div className="card animate__animated animate__backInUp" style={muiVar}>
           <div className="card-body">
             <div className="doctor-widget">
               <div className="doc-info-left">
@@ -283,7 +232,9 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                 <div className="clini-infos">
                   <ul>
                     <li style={{ marginBottom: 10 }}>
-                      <FiThumbsUp />&nbsp; {`${profile?.recommendArray ? ((profile?.recommendArray.filter(vote => vote === 1).length / profile?.recommendArray?.length) * 100).toFixed(0) : `0`}%`}{" "}
+                      <FiThumbsUp />&nbsp; {`${profile?.recommendArray && profile?.recommendArray.length !== 0
+                        ? ((profile?.recommendArray.filter(vote => vote === 1).length / profile?.recommendArray?.length) * 100).toFixed(0)
+                        : `0`}%`}{" "}
                       <span className="votes">({profile?.recommendArray ? profile?.recommendArray?.length : 0} Votes)</span>
                     </li>
                     <li>
@@ -295,7 +246,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                         <span> A/H:</span>
                       </Tooltip>{" "}
                       {profile?.currency && profile?.currency.length > 0 && `${profile?.currency[0]?.currency_symbol}`}{" "}
-                      {profile?.timeslots && profile?.timeslots.length > 0 && formatNumberWithCommas(`${profile?.timeslots[0]?.averageHourlyPrice!.toFixed(0)}`)}{" "}
+                      {profile?.timeslots && profile?.timeslots.length > 0 && formatNumberWithCommas(`${profile?.timeslots[0]?.averageHourlyPrice?.toFixed(0)}`)}{" "}
                     </li>
                   </ul>
                 </div>
@@ -467,6 +418,58 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
           </div>
         </div>
       </div>
+
+      <Lightbox
+        open={open}
+        close={() => setOpen(false)}
+        slides={profile?.clinicImages}
+        index={index}
+      />
+      <Dialog
+        TransitionComponent={Transition}
+        open={loginDialog}
+        onClose={() => {
+          document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+          setTimeout(() => {
+            setLoginDialog(false)
+          }, 500);
+        }}
+        scroll='body'
+        aria-labelledby="login"
+        aria-describedby="login"
+        maxWidth="xs"
+      >
+        <DialogTitle id="login">
+          Login
+          <IconButton
+            color="inherit"
+            onClick={() => {
+              document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+              setTimeout(() => {
+                setLoginDialog(false)
+              }, 500);
+            }}
+            aria-label="close"
+            sx={{ "&:hover": { color: 'primary.main' }, float: 'right' }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          <div style={muiVar}>
+            <div className="col-md-12">
+              <div className="account-content">
+                <div className="col-md-12 col-lg-12 login-right">
+                  <LoginBox closeDialog={setLoginDialog} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+
+        </DialogActions>
+      </Dialog>
     </Fragment>
   )
 });

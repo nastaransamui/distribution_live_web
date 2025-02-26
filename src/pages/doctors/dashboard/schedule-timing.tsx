@@ -23,6 +23,7 @@ import { updateHomeServices } from '@/redux/homeServices';
 import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { ErrorComponent } from '@/pages/404';
+import { TimeSlotProvider } from '@/hooks/useTimeSlot';
 const ScheduleTimingPage: NextPage = (props: any) => {
 
   const { muiVar } = useScssVar();
@@ -46,7 +47,9 @@ const ScheduleTimingPage: NextPage = (props: any) => {
         <div className="container-fluid">
           <div className="row">
             <DoctorDashboardSidebar />
-            <ScheduleTiming />
+            <TimeSlotProvider>
+              <ScheduleTiming />
+            </TimeSlotProvider>
           </div>
         </div>
       </div>

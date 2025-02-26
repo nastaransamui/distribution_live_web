@@ -23,6 +23,7 @@ export interface PrescriptionsType {
   prescriptionsArray: PrescriptionsArrayType[];
   createdAt: Date;
   updateAt: Date;
+  id: number;
 }
 
 export interface PrescriptionsTypeWithDoctorProfile extends PrescriptionsType {
@@ -39,7 +40,7 @@ const SeePrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProfi
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-7 col-lg-8 col-xl-9 animate__animated animate__backInUp">
         <div className="card">
           <div className="card-header" style={{ display: 'flex' }}>
             <h4 className="card-title mb-0">Prescription</h4>

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable @next/next/no-img-element */
 import { Fragment, FC, useEffect } from "react";
 import Link from "next/link";

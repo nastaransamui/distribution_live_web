@@ -15,7 +15,7 @@ import Footer from '@/components/sections/Footer';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import useScssVar from '@/hooks/useScssVar';
 import BillingPage from '@/components/BillingPage/BilingPage';
-import { base64regex } from '@/components/DoctorsSections/Profile/ProfilePage';
+import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import { Params } from '../patient-profile/[_id]';
 import { updateHomeExp } from '@/redux/homeExp';
 import { updateHomeIAT } from '@/redux/homeIAT';
