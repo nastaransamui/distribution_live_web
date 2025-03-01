@@ -41,7 +41,7 @@ const OurBlog: FC = (() => {
   };
 
   return (
-    <section className="our-blog-fourteen" style={muiVar}>
+    <section className="our-blog-fourteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
       <div className="section-bg">
         <img src={blog_bg_14} alt="Img" />
       </div>

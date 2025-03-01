@@ -11,7 +11,7 @@ import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
-import Footer from '@/components/sections/Footer';
+import DashboardFooter from '@/components/sections/DashboardFooter';
 import Invoice from '@/components/DoctorsSections/CheckOut/Invoice';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import { updateHomeExp } from '@/redux/homeExp';
@@ -21,9 +21,11 @@ import { updateHomeServices } from '@/redux/homeServices';
 import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
 import { ErrorComponent } from '@/pages/404';
+import PatientDashboardSidebar from '@/components/shared/PatientDashboardSidebar';
+import useScssVar from '@/hooks/useScssVar';
 
 const InvoiceViewPage: NextPage = (props: any) => {
-
+  const { muiVar } = useScssVar();
   if (props.error) {
     return <ErrorComponent errorCode={props.errorCode} errorText={props.error} />;
   }
@@ -40,8 +42,11 @@ const InvoiceViewPage: NextPage = (props: any) => {
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb title='Patient Invoice' subtitle='Patient Invoice' />
+      <span style={muiVar}>
+        <PatientDashboardSidebar />
+      </span>
       <Invoice />
-      <Footer />
+      <DashboardFooter />
     </>
   )
 }

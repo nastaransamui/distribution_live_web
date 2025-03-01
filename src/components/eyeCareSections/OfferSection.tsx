@@ -3,13 +3,14 @@ import { FC, Fragment } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import { offer_01, offer_02 } from '@/public/assets/imagepath';
+import { useTheme } from '@mui/material';
 
 const OfferSection: FC = (() => {
   const { muiVar } = useScssVar();
-
+  const theme = useTheme()
   return (
     <Fragment>
-      <section className="offer-section" style={muiVar}>
+      <section className="offer-section" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="row">
             <div className="col-lg-6 d-flex">

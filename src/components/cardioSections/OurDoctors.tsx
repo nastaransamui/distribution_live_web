@@ -1,17 +1,23 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import { doctor_13, doctor_14, doctor_15, doctor_16, ecgwave, hexagon_group_1, hexagon_group_2 } from '../../../public/assets/imagepath';
 import { Typography, useTheme } from '@mui/material';
-
+import AOS from 'aos'
 const OurDoctors: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
 
+  }, []);
   return (
     <Fragment>
-      <section className="our-doctor-section" style={muiVar}>
+      <section className="our-doctor-section" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="section-floating-bg">
           <img src={hexagon_group_1} alt="" />
           <img src={hexagon_group_2} alt="" />

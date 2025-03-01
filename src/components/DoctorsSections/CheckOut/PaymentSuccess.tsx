@@ -117,7 +117,7 @@ const PaymentSuccess: FC = (() => {
                           <strong>{formatNumberWithCommas(reservation?.timeSlot?.total.toString())}&nbsp; {reservation?.timeSlot?.currencySymbol || 'THB'}</strong>
 
                         </p>
-                        <Link href={`/doctors/invoice-view/${btoa(reservation?._id!)}`} className="btn btn-primary view-inv-btn">View Invoice</Link>
+                        <Link href={`/doctors/dashboard/invoice-view/${btoa(reservation?._id!)}`} className="btn btn-primary view-inv-btn">View Invoice</Link>
                       </div>
                   }
                 </div>

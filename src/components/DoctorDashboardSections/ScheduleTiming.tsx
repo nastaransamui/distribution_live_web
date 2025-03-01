@@ -518,7 +518,7 @@ const ScheduleTiming: FC = (() => {
             </div>
           </> :
           <>
-            <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp">
+            <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp">
               {
                 isLoading ?
                   // true ?
@@ -2360,7 +2360,7 @@ const ReservationsComponent: FC = () => {
         filterOperators: createCustomOperators().string,
         renderCell(params: GridRenderCellParams) {
           const { value, row } = params
-          return <Link href={`/doctors/invoice-view/${btoa(row?._id!)}`} target='_blank'>{value}</Link>
+          return <Link href={`/doctors/dashboard/invoice-view/${btoa(row?._id!)}`}>{value}</Link>
         }
       },
       {
@@ -2408,7 +2408,7 @@ const ReservationsComponent: FC = () => {
           const online = row?.patientProfile?.online || false
           return (
             <span style={{ minWidth: "100%", display: 'flex', alignItems: 'center' }}>
-              <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row._id)}`}>
+              <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -2419,7 +2419,7 @@ const ReservationsComponent: FC = () => {
                     <img src={patient_profile} alt="" className="avatar avatar-in-schedule-table" />
                   </Avatar>
                 </StyledBadge></Link>
-              <Link href={`/doctors/dashboard/patient-profile/${btoa(row._id)}`} >{`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}</Link>
+              <Link href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`} >{`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}</Link>
             </span>
           )
         }

@@ -98,6 +98,7 @@ const HomeBanner: FC = (() => {
       <section className="banner-section-thirteen common-padding aos" data-aos="fade-down"
         style={{
           ...muiVar,
+          backgroundColor: theme.palette.background.paper,
           backgroundImage: `url('/assets/images/bg/home-13-banner_${theme.palette.primary.main.slice(1)}.webp')`
         }}>
         <div className="container">

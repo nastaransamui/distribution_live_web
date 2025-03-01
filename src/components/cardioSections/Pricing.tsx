@@ -1,13 +1,19 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import Link from 'next/link'
 import { heartplus } from '../../../public/assets/imagepath'
 import useScssVar from '@/hooks/useScssVar'
 
-
+import AOS from 'aos'
 const Pricing: FC = (() => {
   const { muiVar } = useScssVar();
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
 
+  }, []);
   return (
     <Fragment>
       <section className="pricing-section pricing-section-ten" style={muiVar}>

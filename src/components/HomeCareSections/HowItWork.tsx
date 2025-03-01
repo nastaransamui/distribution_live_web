@@ -3,12 +3,13 @@ import { FC } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { Chart_arrow_01, Chart_arrow_02, } from '@/public/assets/imagepath'
 import { Flow_chart_icon_01, Flow_chart_icon_02, Flow_chart_icon_03, Flow_chart_icon_04 } from "@/public/assets/images/icons/IconsSvgs";
+import { useTheme } from '@mui/material';
 
 const HowItWork: FC = (() => {
   const { muiVar } = useScssVar()
-
+  const theme = useTheme();
   return (
-    <div style={muiVar}>
+    <div style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
       <div className="how-it-work-fourteen">
         <div className="container">
           <div className="row align-items-center">

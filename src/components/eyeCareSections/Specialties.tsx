@@ -17,9 +17,10 @@ import {
 } from "../../../public/assets/imagepath";
 import { EyeIconOneSvg, EyeIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import $ from 'jquery'
-
+import AOS from 'aos'
 const Specialities: FC = (() => {
   const { muiVar } = useScssVar();
+  const theme = useTheme()
   const doctersettings = {
     items: 4,
     loop: true,
@@ -55,11 +56,17 @@ const Specialities: FC = (() => {
       }
     }
   }
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
 
+  }, []);
 
   return (
     <Fragment>
-      <section className="special-section" style={muiVar}>
+      <section className="special-section" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="ban-bg eyeSvg">
           <EyeIconOneSvg />
         </div>

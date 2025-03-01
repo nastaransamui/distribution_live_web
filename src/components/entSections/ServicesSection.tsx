@@ -20,7 +20,7 @@ const ServicesSection: FC = (() => {
   }, []);
   return (
     <Fragment>
-      <section className="services-section-fifteen" style={muiVar}>
+      <section className="services-section-fifteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="service-bg-icon">
           <img src={`/assets/images/serive-bg-icon_${theme.palette.secondary.light.slice(1)}.webp`} alt="" />
         </div>

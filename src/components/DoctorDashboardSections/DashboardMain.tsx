@@ -1,13 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useState } from 'react'
-import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import ProgressBar from "react-customizable-progressbar";
 import { Icon01, Icon02, Icon03 } from '@/public/assets/imagepath';
 import { useTheme } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
-import SwipeableViews from 'react-swipeable-views';
 import DashboardAppoinment from './AppointmentTab';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
@@ -16,10 +14,8 @@ import dayjs from 'dayjs';
 import CircleLoading from 'react-loadingg/lib/TouchBallLoading';
 
 const DashboardMain: FC = (() => {
-  const { muiVar } = useScssVar();
   const theme = useTheme();
   const [value, setValue] = useState('1');
-  const [index, setIndex] = useState(0);
   const [isToday, setIsToday] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [total, setTotal] = useState(0);
@@ -31,7 +27,8 @@ const DashboardMain: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-12 col-lg-12 col-xl-12">
+
         <div className="row">
           <div className="col-md-12">
             <div className="card dash-card   animate__animated animate__backInDown">
@@ -184,7 +181,6 @@ const DashboardMain: FC = (() => {
                       onClick={(e) => {
                         e.preventDefault();
                         setValue('1')
-                        setIndex(0)
                         setIsToday(false)
                       }}
                     >
@@ -199,7 +195,6 @@ const DashboardMain: FC = (() => {
                       onClick={(e) => {
                         e.preventDefault();
                         setValue('2')
-                        setIndex(1)
                         setIsToday(true)
                       }}
                     >

@@ -139,10 +139,11 @@ const ContactSection: FC = (() => {
               <div className="card contact-form-card w-100" style={{ border: `1px solid ${theme.palette.secondary.light}` }}>
                 <div className="card-body">
                   <form noValidate onSubmit={handleSubmit(onRegisterSubmit)}>
-                    <div className="row">
+                    <div className="row g-4">
                       <div className="col-md-6">
                         <TextField
                           required
+                          size='small'
                           id="firstName"
                           error={errors.firstName == undefined ? false : true}
                           helperText={errors.firstName && errors['firstName']['message'] as ReactNode}
@@ -153,12 +154,13 @@ const ContactSection: FC = (() => {
                           }
                           label="First Name"
                           fullWidth
-                          sx={{ mb: 4, mt: 5 }}
+                        // sx={{ mb: { xl: 4, lg: 4 }, mt: { xl: 5, lg: 5 } }}
                         />
                       </div>
                       <div className="col-md-6">
                         <TextField
                           required
+                          size='small'
                           id="lastName"
                           label="Last Name"
                           error={errors.lastName == undefined ? false : true}
@@ -169,7 +171,7 @@ const ContactSection: FC = (() => {
                           })
                           }
                           fullWidth
-                          sx={{ mb: 4, mt: 5 }}
+                        // sx={{ mb: { xl: 4, lg: 4 }, mt: { xl: 5, lg: 5 } }}
                         />
                       </div>
                       <div className="col-md-6">
@@ -184,6 +186,7 @@ const ContactSection: FC = (() => {
                               <MuiTelInput
                                 {...field}
                                 InputLabelProps={{ shrink: true }}
+                                size='small'
                                 defaultCountry={userData?.countryCode}
                                 helperText={fieldState.invalid ? "Tel is invalid" : ""}
                                 error={fieldState.invalid}
@@ -212,6 +215,7 @@ const ContactSection: FC = (() => {
                             return (
                               <TextField
                                 required
+                                size='small'
                                 id='email'
                                 label="Email"
                                 error={errors.email == undefined ? false : true}
@@ -223,7 +227,7 @@ const ContactSection: FC = (() => {
                                   e.target.value = e.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
                                   onChange(e)
                                 }}
-                                sx={{ mb: 4 }}
+                              // sx={{ mb: { xl: 4, lg: 4 } }}
                               />
                             )
                           }} />
@@ -231,6 +235,7 @@ const ContactSection: FC = (() => {
                       <div className="col-md-12">
                         <TextField
                           required
+                          size='small'
                           id="outlined-required"
                           label="Enter your comments"
                           defaultValue=""
@@ -245,7 +250,7 @@ const ContactSection: FC = (() => {
                           })
                           }
                           minRows={4}
-                          sx={{ mb: 4 }}
+                        // sx={{ mb: { xl: 4, lg: 4 } }}
                         />
                       </div>
                       <div className="col-md-12">

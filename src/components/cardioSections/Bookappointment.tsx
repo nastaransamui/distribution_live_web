@@ -1,15 +1,24 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import { heartplus, hand, hexagon_group_3 } from '../../../public/assets/imagepath';
-
+import AOS from 'aos'
+import { useTheme } from '@mui/material';
 
 const Bookappointment: FC = (() => {
   const { muiVar } = useScssVar();
+  const theme = useTheme();
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
+
+  }, []);
   return (
     <Fragment>
-      <section className="book-appointment-section aos" data-aos="fade-up" style={muiVar}>
+      <section className="book-appointment-section aos" data-aos="fade-up" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="book-appointment-ten text-center">
             <div className="book-section-bg">

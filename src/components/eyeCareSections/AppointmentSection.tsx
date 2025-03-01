@@ -264,23 +264,31 @@ const AppointmentSection: FC = (() => {
                         <MobileTimePicker
                           closeOnSelect
                           disablePast
-                          defaultValue={dayjs(new Date())}
-                          onChange={(event) => { }}
+                          format="HH:mm"
+                          views={['hours', 'minutes']}
+                          onChange={(value) => {
+                            if (value && dayjs.isDayjs(value)) {
+                              console.log("Selected Time:", value.format('HH:mm'));
+                            }
+                          }}
                           slotProps={{
                             textField: {
                               size: "small",
                               fullWidth: true,
                               InputLabelProps: { shrink: true },
                               required: true,
+                              error: false,
                               InputProps: {
-                                startAdornment: <InputAdornment position="start">
-                                  <i className="feather-clock" style={{ width: "16px", color: theme.palette.primary.main }} />
-                                </InputAdornment>,
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <i className="feather-clock" style={{ width: "16px", color: theme.palette.primary.main }} />
+                                  </InputAdornment>
+                                ),
                                 classes: {
                                   adornedStart: 'adornedStart',
-                                }
+                                },
                               },
-                              placeholder: 'Date',
+                              placeholder: 'Select Time',
                             },
                           }}
                         />
@@ -311,7 +319,7 @@ const AppointmentSection: FC = (() => {
                   </div>
                 </div>
                 <div className="col-md-12 text-center">
-                  <Link href="/doctors" className="btn btn-light-blue app-btn">
+                  <Link href="/doctors" className="btn btn-light-blue app-btn" style={{ lineHeight: `20px`, color: "#000" }}>
                     Book an Appointment
                   </Link>
                 </div>

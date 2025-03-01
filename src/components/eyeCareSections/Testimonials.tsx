@@ -5,6 +5,7 @@ import useScssVar from '@/hooks/useScssVar'
 import dynamic from 'next/dynamic'
 import { EyeIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import { client03, client04, client06_small, client07, eyeTestimonial } from '@/public/assets/imagepath'
+import { useTheme } from '@mui/material';
 const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
   ssr: false,
 })
@@ -12,6 +13,7 @@ const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
 
 const Testimonials: FC = (() => {
   const { muiVar } = useScssVar();
+  const theme = useTheme()
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -59,7 +61,7 @@ const Testimonials: FC = (() => {
   }
   return (
     <Fragment>
-      <section className="eye-testimonial-section" style={muiVar}>
+      <section className="eye-testimonial-section" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="row">
             <div className="col-md-12 aos" data-aos="fade-up">

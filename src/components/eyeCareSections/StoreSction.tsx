@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
@@ -25,7 +25,7 @@ import { EyeIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
 const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
   ssr: false,
 })
-
+import AOS from 'aos'
 const StoreSection: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme()
@@ -64,6 +64,13 @@ const StoreSection: FC = (() => {
       }
     }
   }
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
+
+  }, []);
   return (
     <Fragment>
       <section className="store-section" style={muiVar}>

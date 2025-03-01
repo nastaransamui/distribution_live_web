@@ -55,7 +55,7 @@ const OurDoctors: FC = (() => {
 
   return (
     <Fragment>
-      <div className="blog-section-fourteen our-doctor-twelve" style={muiVar}>
+      <div className="blog-section-fourteen our-doctor-twelve" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="floating-bg">
           <img src={small_paw} alt="" />
           <img src={big_paw} alt="" />

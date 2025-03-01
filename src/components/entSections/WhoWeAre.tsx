@@ -21,7 +21,7 @@ const WhoWeAre: FC = (() => {
 
   return (
     <Fragment>
-      <div className="Patients-section-fifteen" style={muiVar}>
+      <div className="Patients-section-fifteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="patient-fifteen-icon shapeFill">
           <img src={fifteen_bg_icon3} alt="" />
         </div>

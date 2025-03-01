@@ -1,14 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 import { Typography, useTheme } from '@mui/material';
 import { featureImg7, featureImg8, featureImg9, featureImg10, featureImg11, featureImg12, doctor_19, doctor_20, doctor_21, doctor_22, doctor_23, doctor_24 } from '@/public/assets/imagepath';
-
+import AOS from 'aos'
 const OurServices: FC = (() => {
   var { muiVar } = useScssVar();
   const theme = useTheme();
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
 
+  }, []);
   return (
     <Fragment>
       <section className="service-section" style={muiVar}>

@@ -1,16 +1,25 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 import { healthcare } from '../../../public/assets/imagepath';
 import { HeartPulseSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import Typography from '@mui/material/Typography';
-
+import AOS from 'aos'
+import { useTheme } from '@mui/material';
 const StepToFollow: FC = (() => {
   const { muiVar } = useScssVar();
+  const theme = useTheme();
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
+
+  }, []);
   return (
     <Fragment>
-      <section className="need-to-know-section steps-to-follow" style={muiVar}>
+      <section className="need-to-know-section steps-to-follow" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="floating-bg">
           <img src={healthcare} alt="#" />
         </div>

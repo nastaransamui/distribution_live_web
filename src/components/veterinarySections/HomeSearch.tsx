@@ -79,7 +79,7 @@ const HomeSearch: FC = (() => {
 
   return (
     <Fragment>
-      <section className="banner-section-fourteen banner-section-twelve" style={muiVar}>
+      <section className="banner-section-fourteen banner-section-twelve" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="banner-section-twelve-bg">
           <img src={home_12_banner_bg} alt="" className='img' />
           <img src={home_12_banner_bg2} alt="" />

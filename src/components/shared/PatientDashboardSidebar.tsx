@@ -1,206 +1,331 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect, useState } from 'react'
+import { FC, Fragment, useEffect, useMemo, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
-import StickyBox from 'react-sticky-box'
 import { patient_profile } from '@/public/assets/imagepath'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppState } from '@/redux/store'
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit'
 import { toast } from 'react-toastify'
-import { deleteCookie } from 'cookies-next'
+import { deleteCookie, getCookie, hasCookie, setCookie } from 'cookies-next'
 import { updateHomeAccessToken } from '@/redux/homeAccessToken'
 import dayjs from 'dayjs'
 import preciseDiff from 'dayjs-precise-range'
 import Avatar from '@mui/material/Avatar'
-
+import { DoctorDashboardSidebarType, Drawer, DrawerHeader, OverflowTooltip } from './DoctorDashboardSidebar'
+import { updateHomeSideBarOpen } from '@/redux/homeSideBarOpen'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { isNotNull } from './PatientBillingRecords'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText';
+import Tooltip from '@mui/material/Tooltip'
+import { useTheme } from '@mui/material'
+import { getSelectedBackgroundColor } from "@/components/DoctorDashboardSections/ScheduleTiming"
 
 
 const PatientDashboardSidebar: FC = (() => {
-  const { muiVar, bounce } = useScssVar();
+  const { bounce } = useScssVar();
   const router = useRouter()
   const dispatch = useDispatch();
+  const theme = useTheme()
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value);
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+  const homeSideBarOpen = useSelector((state: AppState) => state.homeSideBarOpen.value)
+  const isMobile = useMediaQuery('(max-width:991px)');
 
+
+  const doctorsSideBarChildrens: DoctorDashboardSidebarType[] = useMemo(() => {
+    const logOut = () => {
+      dispatch(updateHomeFormSubmit(true))
+      homeSocket.current.emit('logOutSubmit', userProfile?._id, userProfile?.services)
+      homeSocket.current.once('logOutReturn', (msg: any) => {
+        if (msg?.status !== 200) {
+          toast.error(msg?.reason, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+              dispatch(updateHomeFormSubmit(false))
+            }
+          });
+        } else {
+          deleteCookie('homeAccessToken')
+          dispatch(updateHomeAccessToken(null))
+          toast.info('Logout successfully', {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+              dispatch(updateHomeFormSubmit(false))
+              router.reload();
+            }
+          });
+        }
+      })
+
+    }
+    return [
+      {
+        href: "/patient/dashboard",
+        iconClass: "fas fa-columns",
+        title: "Dashboard",
+        hasFunction: false,
+        subUrlForActivation: ['/patient/dashboard/bmi-status', '/patient/dashboard/clinical-signs-history']
+      },
+      {
+        href: "/patient/dashboard/profile",
+        iconClass: "fas fa-user-cog",
+        title: "Profile Settings",
+        hasFunction: false,
+        subUrlForActivation: []
+      },
+      {
+        href: "/patient/dashboard/favourites",
+        iconClass: "fas fa-bookmark",
+        title: "Favourites",
+        hasFunction: false,
+        subUrlForActivation: []
+      },
+      {
+        href: "/patient/dashboard/appointments",
+        iconClass: "fas fa-calendar-check",
+        title: "Appointments",
+        hasFunction: false,
+        subUrlForActivation: []
+      },
+      {
+        href: "/patient/dashboard/invoice",
+        iconClass: "fas fa-file-invoice",
+        title: "Appointments / Invoices",
+        hasFunction: false,
+        subUrlForActivation: []
+      },
+      {
+        href: "/patient/dashboard/billings",
+        iconClass: "fas fa-file-invoice",
+        title: "Billings",
+        hasFunction: false,
+        subUrlForActivation: ['/patient/dashboard/see-billing/', '/patient/dashboard/bill-view']
+      },
+      {
+        href: "/patient/dashboard/dependent",
+        iconClass: "fas fa-users",
+        title: "Dependents",
+        hasFunction: false,
+        subUrlForActivation: []
+      },
+      {
+        href: "/patient/dashboard/review",
+        iconClass: "fa-solid fa-comments",
+        title: "Reviews",
+        hasFunction: false,
+        subUrlForActivation: []
+      },
+      {
+        href: "/patient/dashboard/rates",
+        iconClass: "fas fa-star",
+        title: "Rates",
+        hasFunction: false,
+        subUrlForActivation: []
+      },
+      {
+        href: "/patient/dashboard/patient-chat",
+        iconClass: "fas fa-comment-alt",
+        title: "Message",
+        hasFunction: false,
+        subUrlForActivation: []
+      },
+      {
+        href: "/patient/dashboard/orders",
+        iconClass: "fas fa-list-alt",
+        title: "Orders",
+        hasFunction: false,
+        subUrlForActivation: []
+      },
+      {
+        href: "/patient/dashboard/medicalrecords",
+        iconClass: "fas fa-clipboard",
+        title: "Medical Records / Prescriptions",
+        hasFunction: false,
+        subUrlForActivation: ['/patient/dashboard/see-prescription/']
+      },
+      {
+        href: "/patient/dashboard/medicaldetails",
+        iconClass: "fas fa-file-medical-alt",
+        title: "Medical Details",
+        hasFunction: false,
+        subUrlForActivation: []
+      },
+      userProfile?.services && userProfile?.services == 'password' ?
+        {
+          href: "/patient/dashboard/change-password",
+          iconClass: "fas fa-lock",
+          title: "Change Password",
+          hasFunction: false,
+          subUrlForActivation: []
+        } : null,
+      {
+        href: "",
+        iconClass: "fas fa-sign-out-alt",
+        title: "Logout",
+        hasFunction: true,
+        clickFunction: logOut,
+        subUrlForActivation: []
+      },
+    ].filter(isNotNull)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeSocket, router, userProfile?._id, userProfile?.services])
+
+  useEffect(() => {
+    if (hasCookie('homeMiniSidebarOpen')) {
+      dispatch(updateHomeSideBarOpen(getCookie('homeMiniSidebarOpen')))
+    } else {
+      setCookie('homeMiniSidebarOpen', homeSideBarOpen)
+    }
+  }, [isMobile, dispatch, homeSideBarOpen])
 
   dayjs.extend(preciseDiff)
 
-  const logOut = () => {
-    dispatch(updateHomeFormSubmit(true))
-    homeSocket.current.emit('logOutSubmit', userProfile?._id, userProfile?.services)
-    homeSocket.current.once('logOutReturn', (msg: any) => {
-      if (msg?.status !== 200) {
-        toast.error(msg?.reason, {
-          position: "bottom-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          transition: bounce,
-          onClose: () => {
-            dispatch(updateHomeFormSubmit(false))
-          }
-        });
-      } else {
-        dispatch(updateHomeAccessToken(null))
-      }
-    })
-  }
-
   //@ts-ignore
   let { years, months, days } = dayjs.preciseDiff(userProfile?.dob, dayjs(), true)
-
-
+  const handlesidebar = () => {
+    dispatch(updateHomeSideBarOpen(!homeSideBarOpen))
+    setCookie('homeMiniSidebarOpen', !homeSideBarOpen)
+  }
   return (
     <Fragment>
-      <div className="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar" style={muiVar}>
-        <StickyBox offsetTop={20} offsetBottom={20}>
-          <div className="profile-sidebar">
-            <div className="widget-profile pro-widget-content">
-              <div className="profile-info-widget">
-                <Link href="" className="booking-doc-img" onClick={(e) => e.preventDefault()} aria-label='not go any where'>
-                  <Avatar alt="" src={`${userProfile?.profileImage}`} sx={{ width: "120px", height: '120px' }} key={userProfile?.profileImage}>
-                    <img src={patient_profile} alt="" />
-                  </Avatar>
-                </Link>
-                <div className="profile-det-info">
-                  <h1>{userProfile?.firstName} {userProfile?.lastName}</h1>
-                  <h2>{userProfile?.userName}</h2>
-                  <h3>{`${userProfile?.roleName?.charAt(0).toUpperCase()}${userProfile?.roleName.slice(1)}`}</h3>
-                  <div className="patient-details">
-                    <h4>
-                      <i className="fas fa-birthday-cake" style={{ paddingRight: '10px' }}></i>
-                      {userProfile?.dob !== '' ? dayjs(userProfile?.dob).format('DD MMM YYYY') : '---- -- --'}
-                    </h4>
-                    <h5>{`${isNaN(years) ? '--' : years} years ${isNaN(months) ? '--' : months} months ${isNaN(days) ? '--' : days} days`}</h5>
-                    <h6 className="mb-0" style={{ display: 'flex', justifyContent: 'center', gap: 20, alignItems: 'center' }}>
-                      <i className="fas fa-map-marker-alt"></i>
-                      <span style={{ textAlign: 'left' }}>
-                        {userProfile?.city !== "" ? `City: ${userProfile?.city}` : `City: -----`} <br />
-                        {userProfile?.state !== "" ? `State: ${userProfile?.state}` : `State: -----`} <br />
-                        {userProfile?.country !== "" ? `Country: ${userProfile?.country}` : `Country: -----`}
-                      </span>
-                    </h6>
+      <Drawer
+        id="sidebar"
+        variant="permanent"
+        open={homeSideBarOpen}
+      >
+        <DrawerHeader open={homeSideBarOpen} />
+        <List sx={{ paddingTop: 0 }}>
+          <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
+            <div className="profile-sidebar">
+              <div className="widget-profile pro-widget-content">
+                <div className="profile-info-widget">
+                  <Link href="#" className={`booking-doc-img ${homeSideBarOpen ? "booking-doc-img-open" : 'booking-doc-img-close'}`} aria-label='book'>
+                    <Avatar alt="" src={`${userProfile?.profileImage}`} className={`sidebar-avatar ${homeSideBarOpen ? 'sidebar-avatar-open' : 'sidebar-avatar-close'}`}>
+                      <img src={patient_profile} alt="" />
+                    </Avatar>
+                  </Link>
+                  <div className={`${homeSideBarOpen ? 'profile-det-info-open' : "profile-det-info-close"}`}>
+                    <OverflowTooltip text={`${userProfile?.gender == "" ? "" : `${userProfile?.gender}. `} ${userProfile?.fullName}`} />
+                    <OverflowTooltip text={userProfile?.userName || ''} as="h3" />
+                    <OverflowTooltip text={`${userProfile?.roleName?.charAt(0).toUpperCase()}${userProfile?.roleName.slice(1)}`} as="h3" />
+
+                    <div className="patient-details-open">
+                      <h4>
+                        <i className="fas fa-birthday-cake"></i>&nbsp;&nbsp;
+                        {userProfile?.dob !== '' ? dayjs(userProfile?.dob).format('DD MMM YYYY') : '---- -- --'}
+                      </h4>
+                      <OverflowTooltip
+                        text={`${isNaN(years) ? '--' : years} years ${isNaN(months) ? '--' : months} months ${isNaN(days) ? '--' : days} days`}
+                        as="h5"
+                      />
+                      <OverflowTooltip
+                        text={`${`City: ${userProfile?.city}` || 'City: -----'}`}
+                        as="h6"
+                        className="mb-0 line-height-22"
+                      />
+                      <OverflowTooltip
+                        text={`${`State: ${userProfile?.state}` || 'State: -----'}`}
+                        as="h6"
+                        className="mb-0 line-height-22"
+                      />
+                      <OverflowTooltip
+                        text={`${`Country: ${userProfile?.country}` || 'Country: -----'}`}
+                        as="h6"
+                        className="mb-0 line-height-22"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="dashboard-widget">
-              <nav className="dashboard-menu">
-                <ul>
-                  <li className={router.pathname.endsWith("/dashboard") ||
-                    router.pathname.endsWith("/bmi-status") ||
-                    router.pathname.endsWith("/clinical-signs-history") ? "active" : ""}>
-                    <Link href="/patient/dashboard">
-                      <i className="fas fa-columns"></i>
-                      <span>Dashboard</span>
-                    </Link>
-                  </li>
-                  <li className={router.pathname.includes("/profile") ? "active" : ""}>
-                    <Link href="/patient/dashboard/profile">
-                      <i className="fas fa-user-cog"></i>
-                      <span>Profile Settings</span>
-                    </Link>
-                  </li>
-                  <li className={router.pathname.includes("/favourites") ? "active" : ""}>
-                    <Link href="/patient/dashboard/favourites">
-                      <i className="fas fa-bookmark"></i>
-                      <span>Favourites</span>
-                    </Link>
-                  </li>
-                  <li className={router.pathname == "/patient/dashboard/appointments" ? "active" : ""}>
-                    <Link href="/patient/dashboard/appointments">
-                      <i className="fas fa-calendar-check" />
-                      <span>Appointments</span>
-                    </Link>
-                  </li>
-                  <li className={router.pathname == "/patient/dashboard/billings" ? "active" : ""}>
-                    <Link href="/patient/dashboard/billings">
-                      <i className="fas fa-file-invoice" />
-                      <span>Billings</span>
-                    </Link>
-                  </li>
+          </ListItem>
+          {doctorsSideBarChildrens.map((item: DoctorDashboardSidebarType, index: number) => {
+            const isActiveLink = router.pathname == item.href || item.subUrlForActivation.some(pattern => new RegExp(pattern).test(router.pathname));
 
-                  <li className={router.pathname == "/patient/dashboard/invoice" ? "active" : ""}>
-                    <Link href="/patient/dashboard/invoice">
-                      <i className="fas fa-file-invoice" />
-                      <span>Appointments / Invoices</span>
-                    </Link>
-                  </li>
-                  <li className={router.pathname.includes("/dependent") ? "active" : ""}>
-                    <Link href="/patient/dashboard/dependent">
-                      <i className="fas fa-users"></i>
-                      <span>Dependent</span>
-                    </Link>
-                  </li>
-                  <li className={router.pathname == "/patient/dashboard/review" ? "active" : ""}>
-                    <Link href="/patient/dashboard/review">
-                      <i className="fa-solid fa-comments"></i>
-                      <span>Reviews</span>
-                    </Link>
-                  </li>
-                  <li className={router.pathname == "/patient/dashboard/rates" ? "active" : ""}>
-                    <Link href="/patient/dashboard/rates">
-                      <i className="fas fa-star" />
-                      <span>Rates</span>
-                    </Link>
-                  </li>
-                  <li className={router.pathname.includes("/chat-doctor") ? "active" : ""}>
-                    <Link href="/patient/dashboard/patient-chat">
-                      <i className="fas fa-comments"></i>
-                      <span>Message</span>
-                      <small className="unread-msg">23</small>
-                    </Link>
-                  </li>
-                  <li className={router.pathname.includes("/orders") ? "active" : ""}>
-                    <Link href="/patient/dashboard/orders">
-                      <i className="fas fa-list-alt"></i>
-                      <span>Orders</span>
-                      <small className="unread-msg">7</small>
-                    </Link>
-                  </li>
-                  <li className={router.pathname.includes("/medicalrecords") ? "active" : ""}>
-                    <Link href="/patient/dashboard/medicalrecords">
-                      <i className="fas fa-clipboard"></i>
-                      <span>Medical Records / Prescriptions</span>
-                    </Link>
-                  </li>
-                  <li className={router.pathname.includes("/medicaldetails") ? "active" : ""}>
-                    <Link href={`/patient/dashboard/medicaldetails${`?${btoa(JSON.stringify({ name: 'heartRate' }))}`}`}>
-                      <i className="fas fa-file-medical-alt"></i>
-                      <span>Medical Details</span>
-                    </Link>
-                  </li>
-                  <li className={router.pathname.includes("/change-password") ? "active" : ""}>
-                    <Link href="/patient/dashboard/change-password">
-                      <i className="fas fa-lock"></i>
-                      <span>Change Password</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="" onClick={(e) => {
-                      e.preventDefault();
-                      logOut();
-                    }}>
-                      <i className="fas fa-sign-out-alt"></i>
-                      <span>Logout</span>
-                    </Link>
-                  </li>
-                </ul>
-              </nav>
-            </div>
+            return (
+              <ListItem key={index} disablePadding sx={{
+                display: 'block',
+                transition: 'background-color 500ms ease-in-out',
+                backgroundColor: homeSideBarOpen ? isActiveLink ? theme.palette.primary.main : '' : ''
+              }}>
+                <Tooltip arrow followCursor placement='right' title={homeSideBarOpen ? '' : item.title}>
+                  <ListItemButton
+                    onClick={() => {
+                      if (!item.hasFunction) {
+                        router.push(item.href, undefined, { shallow: true })
+                      } else {
+                        if (item.clickFunction) {
+                          item.clickFunction();
+                        }
+                      }
+                    }}
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: homeSideBarOpen ? 'initial' : 'center',
+                      px: 2.5,
+                      ":hover": {
+                        background: getSelectedBackgroundColor(theme.palette.primary.main, theme.palette.mode)
+                      }
+                    }}
+                  >
 
-          </div>
-        </StickyBox>
-      </div >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        marginRight: homeSideBarOpen ? 3 : 'auto',
+                        justifyContent: 'center',
+                        transition: 'margin-right 500ms ease-in-out, color 500ms ease-in-out',
+                        color: homeSideBarOpen ? theme.palette.text.color : isActiveLink ? theme.palette.secondary.main : theme.palette.text.color
+                      }}
+                    >
+                      <i className={item.iconClass} style={{ fontSize: '1rem' }}></i>
+                    </ListItemIcon>
+                    <ListItemText primary={item.title} sx={{
+                      opacity: homeSideBarOpen ? 1 : 0,
+                      visibility: homeSideBarOpen ? 'visible' : 'hidden',
+                      transition: 'opacity 500ms ease-in-out, max-width 500ms ease-in-out, max-height 500ms ease-in-out',
+                      whiteSpace: homeSideBarOpen ? "normal" : 'nowrap',
+                      overflowWrap: 'break-word',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: 'block',
+                      maxHeight: homeSideBarOpen ? '50px' : '0px',
+                    }} />
+
+                  </ListItemButton>
+
+                </Tooltip>
+              </ListItem>
+            )
+          })
+          }
+          <button className={`${homeSideBarOpen ? 'side-bar-toggle-button-open' : 'side-bar-toggle-button-close'}`}
+            aria-label="side-bar-toggle-button" onClick={handlesidebar}></button>
+        </List>
+      </Drawer>
     </Fragment >
   )
 })

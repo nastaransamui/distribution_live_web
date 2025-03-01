@@ -503,7 +503,7 @@ const Checkout: FC = (() => {
                           Payment Method
                         </h4>
                         <div>
-                          <div className="filter-collapse">
+                          <div className="filter-collapse" style={{ paddingLeft: 5 }}>
                             <GooglePayButton
                               environment="TEST"
                               paymentRequest={{

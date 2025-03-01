@@ -1,16 +1,23 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import { featureImg13, featureImg14, featureImg15, featureImg16, healthcare } from '../../../public/assets/imagepath';
 import { useTheme } from '@mui/material';
-
+import AOS from 'aos'
 const NeedToKnow: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
+
+  }, []);
   return (
     <Fragment>
-      <section className="need-to-know-section" style={muiVar}>
+      <section className="need-to-know-section" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="floating-bg">
           <img src={healthcare} alt="#" />
         </div>

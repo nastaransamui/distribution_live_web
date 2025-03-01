@@ -16,10 +16,7 @@ import BreadCrumb from '@/components/shared/BreadCrumb';
 import BlogStickySide from '@/components/BlogSections/BlogStickySide';
 import Footer from '@/components/sections/Footer';
 import BlogDetails from '@/components/BlogSections/BlogDetails';
-import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import isJsonString from '@/helpers/isJson';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import { updateHomeExp } from '@/redux/homeExp';
 import { updateHomeIAT } from '@/redux/homeIAT';
@@ -51,11 +48,11 @@ const BlogDetailsPage: NextPage = () => {
           <div className="row">
             <BlogDetails />
             <BlogStickySide />
-            <Footer />
             <CookieConsentComponent />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

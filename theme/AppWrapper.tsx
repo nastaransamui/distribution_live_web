@@ -251,7 +251,7 @@ const AppWrapper = ({ children }: ChildrenProps) => {
         <StylesProvider jss={jss}>
           <CssBaseline />
           <Backdrop
-            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            sx={{ color: '#fff', zIndex: (theme) => 1205 }}
             open={homeFormSubmit}
           >
             <CircleToBlockLoading color={homeTheme.palette.primary.main} />
@@ -282,7 +282,8 @@ const AppWrapper = ({ children }: ChildrenProps) => {
             {router.route !== '/404' ?
               <Fragment>
                 {(!router.route.startsWith('/verify-email') && !router.route.startsWith('/reset-password')) && <Header />}
-                <div dir={homeTheme.direction} style={{ background: homeTheme.palette.background.paper, overflowX: 'hidden' }}>
+                <div dir={homeTheme.direction} className='app-wrapper-div' style={{ background: homeTheme.palette.background.paper, }}>
+                  {/* overflowX: 'hidden' */}
                   {children}
                 </div>
               </Fragment>

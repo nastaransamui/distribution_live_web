@@ -230,7 +230,7 @@ const BillPaymentSuccess: FC = (() => {
                             </div>
                           </div>
                         </div>
-                        <Link href={`/patient/invoice-view/${btoa(singleBill?._id!)}`} className="btn btn-primary view-inv-btn">View Invoice</Link>
+                        <Link href={`/patient/dashboard/bill-view/${btoa(singleBill?._id!)}`} className="btn btn-primary view-inv-btn">View Invoice</Link>
                       </div>
                   }
                 </div>

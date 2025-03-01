@@ -56,7 +56,7 @@ const MedicalDetailsPrepage: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9 animate__animated animate__backInUp">
+      <div className="col-md-12 col-lg-12 col-xl-12 animate__animated animate__backInUp">
         <div className="row">
           <div className="card">
             <div className="card-body">

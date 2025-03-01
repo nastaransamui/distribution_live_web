@@ -6,12 +6,11 @@ import { hasCookie, getCookie, deleteCookie } from 'cookies-next';
 //Redux
 import { wrapper } from '@/redux/store'
 import { AppState } from '@/redux/store'
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
-import Footer from '@/components/sections/Footer';
 import DoctorDashboardSidebar from '@/components/shared/DoctorDashboardSidebar';
 import ScheduleTiming from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
@@ -24,8 +23,10 @@ import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { ErrorComponent } from '@/pages/404';
 import { TimeSlotProvider } from '@/hooks/useTimeSlot';
+import { updateHomeSideBarOpen } from '@/redux/homeSideBarOpen';
+import DashboardFooter from '@/components/sections/DashboardFooter';
 const ScheduleTimingPage: NextPage = (props: any) => {
-
+  const homeSideBarOpen = useSelector((state: AppState) => state.homeSideBarOpen.value)
   const { muiVar } = useScssVar();
   if (props.error) {
     return <ErrorComponent errorCode={props.errorCode} errorText={props.error} />;
@@ -43,7 +44,7 @@ const ScheduleTimingPage: NextPage = (props: any) => {
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb subtitle='Schedule Timings' title='Schedule Timings' />
-      <div className="content" style={muiVar}>
+      <div className={`content ${homeSideBarOpen ? 'content-padding-open' : 'content-padding-close'}`} style={muiVar}>
         <div className="container-fluid">
           <div className="row">
             <DoctorDashboardSidebar />
@@ -53,8 +54,7 @@ const ScheduleTimingPage: NextPage = (props: any) => {
           </div>
         </div>
       </div>
-
-      <Footer />
+      <DashboardFooter />
     </>
   )
 }
@@ -78,6 +78,9 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       }
       if (hasCookie('homeThemeName', ctx)) {
         store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
+      }
+      if (hasCookie('homeMiniSidebarOpen', ctx)) {
+        store.dispatch(updateHomeSideBarOpen(getCookie('homeMiniSidebarOpen', ctx)))
       }
       if (hasCookie('homeAccessToken', ctx)) {
         const accessToken = getCookie('homeAccessToken', ctx);

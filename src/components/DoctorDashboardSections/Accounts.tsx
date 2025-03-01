@@ -232,7 +232,7 @@ const Accounts: FC = (() => {
   return (
     <Fragment>
 
-      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp" style={muiVar}>
+      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp" style={muiVar}>
         {isLoading ?
           <div className="card">
             <div className="card-body">
@@ -291,7 +291,7 @@ const Accounts: FC = (() => {
                   <div className="card-body">
                     <div className="profile-view-bottom">
                       <div className="row">
-                        <div className="col-lg-6">
+                        <div className="col-lg-4 col-md-4 col-sm-6">
                           <div className="info-list">
                             <div className="title">Bank Name</div>
                             <div className="text" id="bank_name">
@@ -299,7 +299,7 @@ const Accounts: FC = (() => {
                             </div>
                           </div>
                         </div>
-                        <div className="col-lg-6">
+                        <div className="col-lg-4 col-md-4 col-sm-6">
                           <div className="info-list">
                             <div className="title">Branch Name</div>
                             <div className="text" id="branch_name">
@@ -307,7 +307,7 @@ const Accounts: FC = (() => {
                             </div>
                           </div>
                         </div>
-                        <div className="col-lg-6">
+                        <div className="col-lg-4 col-md-4 col-sm-6">
                           <div className="info-list">
                             <div className="title">Account Number</div>
                             <div className="text" id="account_no">
@@ -315,7 +315,7 @@ const Accounts: FC = (() => {
                             </div>
                           </div>
                         </div>
-                        <div className="col-lg-6">
+                        <div className="col-lg-4 col-md-4 col-sm-6">
                           <div className="info-list">
                             <div className="title">Account Name</div>
                             <div className="text" id="account_name">
@@ -323,7 +323,7 @@ const Accounts: FC = (() => {
                             </div>
                           </div>
                         </div>
-                        <div className="col-lg-6">
+                        <div className="col-lg-4 col-md-4 col-sm-6">
                           <div className="info-list">
                             <div className="title">Swift Code</div>
                             <div className="text" id="account_name">
@@ -331,7 +331,7 @@ const Accounts: FC = (() => {
                             </div>
                           </div>
                         </div>
-                        <div className="col-lg-6">
+                        <div className="col-lg-4 col-md-4 col-sm-6">
                           <div className="info-list">
                             <div className="title">Bank Identifier Codes</div>
                             <div className="text" id="account_name">
@@ -339,7 +339,7 @@ const Accounts: FC = (() => {
                             </div>
                           </div>
                         </div>
-                        <div className="col-lg-6">
+                        <div className="col-lg-4 col-md-4 col-sm-6">
                           <div className="info-list">
                             <div className="title">Created Date</div>
                             <div className="text" id="account_name">
@@ -347,7 +347,7 @@ const Accounts: FC = (() => {
                             </div>
                           </div>
                         </div>
-                        <div className="col-lg-6">
+                        <div className="col-lg-4 col-md-4 col-sm-6">
                           <div className="info-list">
                             <div className="title">Last Update</div>
                             <div className="text" id="account_name">

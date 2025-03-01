@@ -84,7 +84,6 @@ const ChatComponent: FC = (() => {
   dayjs.extend(weekday)
   dayjs.extend(updateLocale)
   const theme = useTheme();
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -511,200 +510,197 @@ const ChatComponent: FC = (() => {
 
   return (
     <Fragment>
-      <div className="content top-space" style={muiVar}>
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col-xl-12">
-              <div className="chat-window">
+      <div className="col-md-12 col-lg-12 col-xl-12">
+        <div className="chat-window">
 
 
-                <div className="chat-cont-left" >
-                  <div className="chat-header">
-                    <span>Chats</span>
-                    <Link href="#" className="chat-compose">
-                      <i className="material-icons" >control_point</i>
-                    </Link>
-                  </div>
-                  <div className="chat-search">
-                    <div className="input-group">
-                      <Autocomplete
-                        fullWidth
-                        options={options}
-                        loading={loadingOption}
-                        autoComplete
-                        includeInputInList
-                        filterSelectedOptions
-                        loadingText='loadingField'
-                        noOptionsText='No result return'
-                        getOptionLabel={(option) => {
-                          return typeof option === 'string' ? option : option.userData?.name
-                        }}
-                        onOpen={() => {
-                          setOpenOption(true);
-                        }}
-                        onClose={() => {
-                          setOpenOption(false);
-                        }}
-                        filterOptions={(x) => {
-                          const searchRegex = new RegExp(escapeRegExp(inputValue), 'i');
-                          let m = x.filter((a: ChatDataType) => a.userData?.name.match(searchRegex))
-                          return m
-                        }}
-                        disableClearable={value !== null}
-                        inputValue={inputValue}
-                        value={value}
-                        onChange={(event: any, newValue: ChatDataType | null, reason: string) => {
-                          if (newValue?.userData !== undefined) {
-                            setInputValue(newValue?.userData?.name);
-                          }
+          <div className="chat-cont-left" >
+            <div className="chat-header">
+              <span>Chats</span>
+              <Link href="#" className="chat-compose">
+                <i className="material-icons" >control_point</i>
+              </Link>
+            </div>
+            <div className="chat-search">
+              <div className="input-group">
+                <Autocomplete
+                  fullWidth
+                  options={options}
+                  loading={loadingOption}
+                  autoComplete
+                  includeInputInList
+                  filterSelectedOptions
+                  loadingText='loadingField'
+                  noOptionsText='No result return'
+                  getOptionLabel={(option) => {
+                    return typeof option === 'string' ? option : option.userData?.name
+                  }}
+                  onOpen={() => {
+                    setOpenOption(true);
+                  }}
+                  onClose={() => {
+                    setOpenOption(false);
+                  }}
+                  filterOptions={(x) => {
+                    const searchRegex = new RegExp(escapeRegExp(inputValue), 'i');
+                    let m = x.filter((a: ChatDataType) => a.userData?.name.match(searchRegex))
+                    return m
+                  }}
+                  disableClearable={value !== null}
+                  inputValue={inputValue}
+                  value={value}
+                  onChange={(event: any, newValue: ChatDataType | null, reason: string) => {
+                    if (newValue?.userData !== undefined) {
+                      setInputValue(newValue?.userData?.name);
+                    }
+                    setLoadingOption(() => false)
+                  }}
+                  onInputChange={(event, newInputValue, reason) => {
+                    switch (reason) {
+                      case 'input':
+                        setInputValue(newInputValue);
+                        if (newInputValue !== '') {
+                          setLoadingOption(() => true)
+                        } else {
                           setLoadingOption(() => false)
-                        }}
-                        onInputChange={(event, newInputValue, reason) => {
-                          switch (reason) {
-                            case 'input':
-                              setInputValue(newInputValue);
-                              if (newInputValue !== '') {
-                                setLoadingOption(() => true)
-                              } else {
-                                setLoadingOption(() => false)
-                              }
-                              break;
-                            case 'reset':
-                              let selectedIndex = userChatData.findIndex((a) => a.userData.name == newInputValue)
-                              if (selectedIndex !== -1) {
-                                let hasChat = userChatData[selectedIndex]?.messages.filter((a) => a?.senderId == currentUserId || a?.reciverId == currentUserId).length > 0
+                        }
+                        break;
+                      case 'reset':
+                        let selectedIndex = userChatData.findIndex((a) => a.userData.name == newInputValue)
+                        if (selectedIndex !== -1) {
+                          let hasChat = userChatData[selectedIndex]?.messages.filter((a) => a?.senderId == currentUserId || a?.reciverId == currentUserId).length > 0
 
-                                if (hasChat) {
-                                  setActiveChat(() => selectedIndex)
-                                  let c = userChatData[selectedIndex]?.messages.filter((a) => a?.senderId == currentUserId || a?.reciverId == currentUserId)
-                                  setAllCurrentUserMessage((prevState) => {
-                                    let newState = [...c]
-                                    return newState.sort((a: MessageType, b: MessageType) => new Date(a?.time).valueOf() - new Date(b?.time).valueOf())
-                                  })
-                                } else {
-                                  setActiveChat(() => selectedIndex)
-                                  userChatData[selectedIndex]?.messages.push({
-                                    senderId: currentUserId,
-                                    reciverId: userChatData[selectedIndex]?.userData?.userId,
-                                    message: null,
-                                    time: new Date(),
-                                    read: true,
-                                    attachment: ''
-                                  })
-                                  setAllCurrentUserMessage((prevState) => {
-                                    return [{
-                                      senderId: currentUserId,
-                                      reciverId: userChatData[selectedIndex]?.userData?.userId,
-                                      message: null,
-                                      time: new Date(),
-                                      read: true,
-                                      attachment: ''
-                                    }]
-                                  })
-                                }
-
-                              }
-                              setInputValue(newInputValue);
-                              setLoadingOption(() => false)
-                              break;
-                            default:
-                              setInputValue(newInputValue);
-                              setLoadingOption(() => true)
-                              break;
+                          if (hasChat) {
+                            setActiveChat(() => selectedIndex)
+                            let c = userChatData[selectedIndex]?.messages.filter((a) => a?.senderId == currentUserId || a?.reciverId == currentUserId)
+                            setAllCurrentUserMessage((prevState) => {
+                              let newState = [...c]
+                              return newState.sort((a: MessageType, b: MessageType) => new Date(a?.time).valueOf() - new Date(b?.time).valueOf())
+                            })
+                          } else {
+                            setActiveChat(() => selectedIndex)
+                            userChatData[selectedIndex]?.messages.push({
+                              senderId: currentUserId,
+                              reciverId: userChatData[selectedIndex]?.userData?.userId,
+                              message: null,
+                              time: new Date(),
+                              read: true,
+                              attachment: ''
+                            })
+                            setAllCurrentUserMessage((prevState) => {
+                              return [{
+                                senderId: currentUserId,
+                                reciverId: userChatData[selectedIndex]?.userData?.userId,
+                                message: null,
+                                time: new Date(),
+                                read: true,
+                                attachment: ''
+                              }]
+                            })
                           }
-                        }}
-                        renderInput={(params) => {
-                          return (
-                            <Fragment >
-                              <div className="input-group-prepend">
-                                <i className="fas fa-search"></i>
-                              </div>
-                              <TextField
-                                {...params}
-                                size='small'
-                                variant="standard"
-                                type="text"
-                                InputProps={{
-                                  disableUnderline: true,
-                                  ...params.InputProps,
-                                  endAdornment: (
-                                    <Fragment>
-                                      {loadingOption ? (
-                                        <CircularProgress color='primary' size={20} />
-                                      ) :
-                                        inputValue !== '' &&
 
-                                        <IconButton
-                                          disableFocusRipple
-                                          disableRipple
-                                          disableTouchRipple
-                                          sx={{ padding: '1px' }}
-                                          onClick={() => {
-                                            setInputValue('')
-                                            setValue(null)
-                                            setOptions([])
-                                          }}
-                                        >
-                                          <Close color='secondary' />
-                                        </IconButton>
-                                      }
-                                      {params.InputProps.endAdornment}
-                                    </Fragment>
-                                  ),
-                                }}
-                                className="form-control rounded-pill"
-                                placeholder="Search"
-                                autoComplete='off' />
-                            </Fragment>
-                          )
-                        }}
-                        renderOption={(props, option) => {
-                          const matches = match(option?.userData?.name || '', inputValue, { insideWords: true, findAllOccurrences: true });
-                          const parts = parse(option?.userData?.name, matches);
-                          return (
-                            <li {...props} key={option.userData?.userId}>
-                              <Grid container alignItems="center">
-                                <Grid item>
-                                  <img
-                                    key={option.userData?.userId + option?.userData?.image}
-                                    height={30}
-                                    loading="lazy"
-                                    width={30}
-                                    style={{ borderRadius: '50%' }}
-                                    src={option?.userData?.image}
-                                    alt=''
-                                  /> &nbsp;&nbsp;&nbsp;
-                                </Grid>
-                                <Grid item xs>
-                                  {parts.map((part: PartType, index: number) => {
-                                    return (
-                                      <span
-                                        key={option.userData?.userId + index}
-                                        style={{
-                                          fontWeight: part.highlight ? 900 : 400,
-                                          color: part.highlight ? theme.palette.primary.main : '',
-                                        }}
-                                        dangerouslySetInnerHTML={{ __html: part.text }}
-                                      ></span>
-                                    )
-                                  })}
-                                  <Typography variant="body2" color="text.secondary">
-                                    {option.userType == "D" ? 'Dr' : 'Patient'}
-                                  </Typography>
-                                </Grid>
-                              </Grid>
-                            </li>
-                          )
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="chat-users-list">
-                    <div className="chat-scroll">
-                      {
-                        userChatData.length == 0 ? <div style={{ color: theme.palette.text.color, width: '100%', height: "calc(100vh - 324px)", display: "flex", justifyContent: "center", alignItems: "center" }}>Start chat</div> : "chat persons comehiere"
-                      }
-                      {/* {
+                        }
+                        setInputValue(newInputValue);
+                        setLoadingOption(() => false)
+                        break;
+                      default:
+                        setInputValue(newInputValue);
+                        setLoadingOption(() => true)
+                        break;
+                    }
+                  }}
+                  renderInput={(params) => {
+                    return (
+                      <Fragment >
+                        <div className="input-group-prepend">
+                          <i className="fas fa-search"></i>
+                        </div>
+                        <TextField
+                          {...params}
+                          size='small'
+                          variant="standard"
+                          type="text"
+                          InputProps={{
+                            disableUnderline: true,
+                            ...params.InputProps,
+                            endAdornment: (
+                              <Fragment>
+                                {loadingOption ? (
+                                  <CircularProgress color='primary' size={20} />
+                                ) :
+                                  inputValue !== '' &&
+
+                                  <IconButton
+                                    disableFocusRipple
+                                    disableRipple
+                                    disableTouchRipple
+                                    sx={{ padding: '1px' }}
+                                    onClick={() => {
+                                      setInputValue('')
+                                      setValue(null)
+                                      setOptions([])
+                                    }}
+                                  >
+                                    <Close color='secondary' />
+                                  </IconButton>
+                                }
+                                {params.InputProps.endAdornment}
+                              </Fragment>
+                            ),
+                          }}
+                          className="form-control rounded-pill"
+                          placeholder="Search"
+                          autoComplete='off' />
+                      </Fragment>
+                    )
+                  }}
+                  renderOption={(props, option) => {
+                    const matches = match(option?.userData?.name || '', inputValue, { insideWords: true, findAllOccurrences: true });
+                    const parts = parse(option?.userData?.name, matches);
+                    return (
+                      <li {...props} key={option.userData?.userId}>
+                        <Grid container alignItems="center">
+                          <Grid item>
+                            <img
+                              key={option.userData?.userId + option?.userData?.image}
+                              height={30}
+                              loading="lazy"
+                              width={30}
+                              style={{ borderRadius: '50%' }}
+                              src={option?.userData?.image}
+                              alt=''
+                            /> &nbsp;&nbsp;&nbsp;
+                          </Grid>
+                          <Grid item xs>
+                            {parts.map((part: PartType, index: number) => {
+                              return (
+                                <span
+                                  key={option.userData?.userId + index}
+                                  style={{
+                                    fontWeight: part.highlight ? 900 : 400,
+                                    color: part.highlight ? theme.palette.primary.main : '',
+                                  }}
+                                  dangerouslySetInnerHTML={{ __html: part.text }}
+                                ></span>
+                              )
+                            })}
+                            <Typography variant="body2" color="text.secondary">
+                              {option.userType == "D" ? 'Dr' : 'Patient'}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </li>
+                    )
+                  }}
+                />
+              </div>
+            </div>
+            <div className="chat-users-list">
+              <div className="chat-scroll">
+                {
+                  userChatData.length == 0 ? <div style={{ color: theme.palette.text.color, width: '100%', height: "calc(100vh - 324px)", display: "flex", justifyContent: "center", alignItems: "center" }}>Start chat</div> : "chat persons comehiere"
+                }
+                {/* {
                         userChatData
                           .sort((a, b) => new Date(b?.messages[0]?.time).valueOf() - new Date(a?.messages[0]?.time).valueOf())
                           .map((users, index) => {
@@ -780,209 +776,205 @@ const ChatComponent: FC = (() => {
                             }
                           })
                       } */}
-                    </div>
-                  </div>
-                </div>
+              </div>
+            </div>
+          </div>
 
-                <div className="chat-cont-right" >
-                  <div className="chat-header">
-                    <Link id="back_user_list" href="#" className="back-user-list">
-                      <i className="material-icons">chevron_left</i>
-                    </Link>
-                    <div className="media d-flex">
-                      <div className="media-img-wrap flex-shrink-0">
-                        <StyledBadge
-                          overlap="circular"
-                          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                          variant="dot"
-                          online={userProfile!.online}
-                        >
-                          <Avatar alt="" src={`${userProfile?.profileImage}`} />
-                        </StyledBadge>
-                      </div>
-                      <div className="media-body flex-grow-1">
-                        <div className="user-name">{`${userProfile?.firstName} ${userProfile?.lastName}`}</div>
-                        <div className="user-status">online</div>
-                      </div>
-                    </div>
-                    <div className="chat-options">
-                      <Link href="#" data-bs-toggle="modal" id="modal" data-bs-target="#voice_call">
-                        <i className="material-icons">local_phone</i>
-                      </Link>
-                      <Link href="#" data-bs-toggle="modal" id="modal" data-bs-target="#video_call">
-                        <i className="material-icons">videocam</i>
-                      </Link>
-                      <Link href="#" id="more_vert" onClick={(e) => {
-                        e.preventDefault();
-                        handleClick(e)
-                      }}>
-                        <i className="material-icons" >more_vert</i>
-                      </Link>
-                      <Menu
-                        id="long-menu"
-                        MenuListProps={{
-                          'aria-labelledby': 'long-button',
-                        }}
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        slotProps={{
-                          paper: {
-                            style: {
-                              maxHeight: ITEM_HEIGHT * 4.5,
-                              width: '20ch',
-                            }
-                          }
-                        }}
-                      >
-                        {menuOptions.map((option) => (
-                          <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
-                            {option}
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                    </div>
-                  </div>
-                  <div className="chat-body">
-                    <div className={`chat-scroll ${allCurrentUserMessage.length == 0 ? 'chat-scroll-empty' : ''}`}>
-                      <ul className={`list-unstyled ${allCurrentUserMessage.length == 0 ? 'chat-scroll-empty' : ''}`}>
+          <div className="chat-cont-right" >
+            <div className="chat-header">
+              <Link id="back_user_list" href="#" className="back-user-list">
+                <i className="material-icons">chevron_left</i>
+              </Link>
+              <div className="media d-flex">
+                <div className="media-img-wrap flex-shrink-0">
+                  <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    variant="dot"
+                    online={userProfile!.online}
+                  >
+                    <Avatar alt="" src={`${userProfile?.profileImage}`} />
+                  </StyledBadge>
+                </div>
+                <div className="media-body flex-grow-1">
+                  <div className="user-name">{`${userProfile?.firstName} ${userProfile?.lastName}`}</div>
+                  <div className="user-status">online</div>
+                </div>
+              </div>
+              <div className="chat-options">
+                <Link href="#" data-bs-toggle="modal" id="modal" data-bs-target="#voice_call">
+                  <i className="material-icons">local_phone</i>
+                </Link>
+                <Link href="#" data-bs-toggle="modal" id="modal" data-bs-target="#video_call">
+                  <i className="material-icons">videocam</i>
+                </Link>
+                <Link href="#" id="more_vert" onClick={(e) => {
+                  e.preventDefault();
+                  handleClick(e)
+                }}>
+                  <i className="material-icons" >more_vert</i>
+                </Link>
+                <Menu
+                  id="long-menu"
+                  MenuListProps={{
+                    'aria-labelledby': 'long-button',
+                  }}
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  slotProps={{
+                    paper: {
+                      style: {
+                        maxHeight: ITEM_HEIGHT * 4.5,
+                        width: '20ch',
+                      }
+                    }
+                  }}
+                >
+                  {menuOptions.map((option) => (
+                    <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </div>
+            </div>
+            <div className="chat-body">
+              <div className={`chat-scroll ${allCurrentUserMessage.length == 0 ? 'chat-scroll-empty' : ''}`}>
+                <ul className={`list-unstyled ${allCurrentUserMessage.length == 0 ? 'chat-scroll-empty' : ''}`}>
+                  {
+                    allCurrentUserMessage.length == 0 ?
+                      <li ><CustomNoRowsOverlay text='No chat' /></li> :
+                      <>
                         {
-                          allCurrentUserMessage.length == 0 ?
-                            <li ><CustomNoRowsOverlay text='No chat' /></li> :
-                            <>
-                              {
-                                allCurrentUserMessage.map((mesage, i) => {
-                                  let isSent = mesage.senderId == currentUserId;
-                                  let senderImage: string = "";
-                                  if (activeChat !== null) {
-                                    senderImage = userChatData[activeChat]?.userData?.image
+                          allCurrentUserMessage.map((mesage, i) => {
+                            let isSent = mesage.senderId == currentUserId;
+                            let senderImage: string = "";
+                            if (activeChat !== null) {
+                              senderImage = userChatData[activeChat]?.userData?.image
+                            }
+                            if (mesage.reciverId == currentUserId || mesage.senderId == currentUserId) {
+                              let diff: any = dayjs.duration(dayjs().diff(dayjs(mesage?.time)))
+                              const { years, days, hours } = diff['$d' as keyof typeof diff]
+                              let dayName = weekdays[dayjs(mesage?.time).weekday()]
+                              let today = days == 0 && hours < 24
+                              let thisWeek = days !== 0 && days <= 7
+                              let thisYear = !thisWeek && years == 0
+                              return (
+                                <Fragment key={i} >
+                                  {i !== 0 &&
+                                    i !== 0 && dayjs(allCurrentUserMessage[i - 1]?.time).get('date') !== dayjs(mesage?.time).get('date') &&
+                                    <li className="chat-date">
+                                      {
+                                        today ? 'Today'
+                                          : thisWeek ? <>{dayName}</>
+                                            : thisYear ? <>{dayjs(mesage?.time).format('MMM D ')}</>
+                                              : <>{dayjs(mesage?.time).format('D MMM YY')}</>
+                                      }
+                                    </li>
                                   }
-                                  if (mesage.reciverId == currentUserId || mesage.senderId == currentUserId) {
-                                    let diff: any = dayjs.duration(dayjs().diff(dayjs(mesage?.time)))
-                                    const { years, days, hours } = diff['$d' as keyof typeof diff]
-                                    let dayName = weekdays[dayjs(mesage?.time).weekday()]
-                                    let today = days == 0 && hours < 24
-                                    let thisWeek = days !== 0 && days <= 7
-                                    let thisYear = !thisWeek && years == 0
-                                    return (
-                                      <Fragment key={i} >
-                                        {i !== 0 &&
-                                          i !== 0 && dayjs(allCurrentUserMessage[i - 1]?.time).get('date') !== dayjs(mesage?.time).get('date') &&
-                                          <li className="chat-date">
+                                  {mesage.message !== null && <li className={`media ${isSent ? 'sent' : 'received'} d-flex`}  >
+                                    <div className="avatar flex-shrink-0">
+                                      {!isSent && <img src={senderImage} alt="User" className="avatar-img rounded-circle" />}
+                                    </div>
+                                    <div className="media-body flex-grow-1">
+                                      <div className="msg-box">
+                                        <div style={{ whiteSpace: 'pre-line' }}>
+                                          <p ref={allCurrentUserMessage[allCurrentUserMessage.length - 1].message == mesage.message ? ref : ref1}>
+                                            {mesage.message}
+                                          </p>
+                                          <ul className="chat-msg-info">
+                                            <li>
+                                              <div className="chat-time">
+                                                <span>{dayjs(mesage.time).format('HH:mm')}</span>
+                                              </div>
+                                            </li>
+                                          </ul>
+                                        </div>
+                                      </div>
+                                      {Array.isArray(mesage.attachment) && <div className="msg-box">
+                                        <div>
+                                          <div className="chat-msg-attachments">
                                             {
-                                              today ? 'Today'
-                                                : thisWeek ? <>{dayName}</>
-                                                  : thisYear ? <>{dayjs(mesage?.time).format('MMM D ')}</>
-                                                    : <>{dayjs(mesage?.time).format('D MMM YY')}</>
+                                              mesage.attachment.map((a, index) => {
+                                                return (
+                                                  <div className="chat-attachment" key={index}>
+                                                    <img src={a.src} alt="Attachment" />
+                                                    <div className="chat-attach-caption">{a.name}</div>
+                                                    <Link href="#" className="chat-attach-download">
+                                                      <i className="fas fa-download"></i>
+                                                    </Link>
+                                                  </div>
+                                                )
+                                              })
                                             }
-                                          </li>
-                                        }
-                                        {mesage.message !== null && <li className={`media ${isSent ? 'sent' : 'received'} d-flex`}  >
-                                          <div className="avatar flex-shrink-0">
-                                            {!isSent && <img src={senderImage} alt="User" className="avatar-img rounded-circle" />}
                                           </div>
-                                          <div className="media-body flex-grow-1">
-                                            <div className="msg-box">
-                                              <div style={{ whiteSpace: 'pre-line' }}>
-                                                <p ref={allCurrentUserMessage[allCurrentUserMessage.length - 1].message == mesage.message ? ref : ref1}>
-                                                  {mesage.message}
-                                                </p>
-                                                <ul className="chat-msg-info">
-                                                  <li>
-                                                    <div className="chat-time">
-                                                      <span>{dayjs(mesage.time).format('HH:mm')}</span>
-                                                    </div>
-                                                  </li>
-                                                </ul>
+                                          <ul className="chat-msg-info">
+                                            <li>
+                                              <div className="chat-time">
+                                                <span >{dayjs(mesage.time).format('HH:mm')}</span>
                                               </div>
-                                            </div>
-                                            {Array.isArray(mesage.attachment) && <div className="msg-box">
-                                              <div>
-                                                <div className="chat-msg-attachments">
-                                                  {
-                                                    mesage.attachment.map((a, index) => {
-                                                      return (
-                                                        <div className="chat-attachment" key={index}>
-                                                          <img src={a.src} alt="Attachment" />
-                                                          <div className="chat-attach-caption">{a.name}</div>
-                                                          <Link href="#" className="chat-attach-download">
-                                                            <i className="fas fa-download"></i>
-                                                          </Link>
-                                                        </div>
-                                                      )
-                                                    })
-                                                  }
-                                                </div>
-                                                <ul className="chat-msg-info">
-                                                  <li>
-                                                    <div className="chat-time">
-                                                      <span >{dayjs(mesage.time).format('HH:mm')}</span>
-                                                    </div>
-                                                  </li>
-                                                </ul>
-                                              </div>
-                                            </div>}
-                                          </div>
-                                        </li>}
-                                      </Fragment>
-                                    )
-                                  }
-                                })
-                              }
-                            </>
+                                            </li>
+                                          </ul>
+                                        </div>
+                                      </div>}
+                                    </div>
+                                  </li>}
+                                </Fragment>
+                              )
+                            }
+                          })
                         }
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="chat-footer">
-                    <div className="input-group">
+                      </>
+                  }
+                </ul>
+              </div>
+            </div>
+            <div className="chat-footer">
+              <div className="input-group">
 
-                      <FormControl sx={{ width: '100%' }} >
-                        <TextField
-                          id="chat-input"
-                          required
-                          placeholder={activeChat == null ? 'Select user to chat ' : "Type something"}
-                          disabled={activeChat == null}
-                          value={chatInputValue}
-                          sx={{
-                            maxHeight: 1
-                          }}
-                          fullWidth
-                          onChange={(e) => {
-                            setChatInputValue(e.target.value)
-                          }}
-                          onKeyDown={(e) => {
-                            onButtonClick(e)
-                          }}
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">
-                              <button disabled={activeChat == null} aria-label='send' type="button" className="btn msg-send-btn rounded-pill ms-2" onClick={(e) => {
-                                onButtonClick(e)
-                              }}><i className="fab fa-telegram-plane"></i></button>
-                            </InputAdornment>,
-                            startAdornment: <InputAdornment position='start'>
-                              <div className="btn-file btn">
-                                <i className="fa fa-paperclip" ></i>
-                                <label style={{ display: 'none' }} htmlFor='file'>File</label>
-                                <input aria-label="File" disabled={activeChat == null} id='file' type="file" />
-                              </div>
-                            </InputAdornment>,
-                          }}
-                        />
-                      </FormControl>
-
-                    </div>
-                  </div>
-                </div>
-
+                <FormControl sx={{ width: '100%' }} >
+                  <TextField
+                    id="chat-input"
+                    required
+                    placeholder={activeChat == null ? 'Select user to chat ' : "Type something"}
+                    disabled={activeChat == null}
+                    value={chatInputValue}
+                    sx={{
+                      maxHeight: 1
+                    }}
+                    fullWidth
+                    onChange={(e) => {
+                      setChatInputValue(e.target.value)
+                    }}
+                    onKeyDown={(e) => {
+                      onButtonClick(e)
+                    }}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">
+                        <button disabled={activeChat == null} aria-label='send' type="button" className="btn msg-send-btn rounded-pill ms-2" onClick={(e) => {
+                          onButtonClick(e)
+                        }}><i className="fab fa-telegram-plane"></i></button>
+                      </InputAdornment>,
+                      startAdornment: <InputAdornment position='start'>
+                        <div className="btn-file btn">
+                          <i className="fa fa-paperclip" ></i>
+                          <label style={{ display: 'none' }} htmlFor='file'>File</label>
+                          <input aria-label="File" disabled={activeChat == null} id='file' type="file" />
+                        </div>
+                      </InputAdornment>,
+                    }}
+                  />
+                </FormControl>
 
               </div>
             </div>
           </div>
 
-        </div>
 
+        </div>
       </div>
+
       <div className="modal fade call-modal" id="voice_call" style={muiVar}>
         <div className="modal-dialog modal-dialog-centered" role="document">
           <div className="modal-content">

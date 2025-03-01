@@ -529,7 +529,7 @@ const Invoices: FC = (() => {
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           return (
-            <Link href={`/doctors/invoice-view/${btoa(row?._id!)}`} target='_blank'>{row.invoiceId}</Link>
+            <Link href={`/doctors/dashboard/invoice-view/${btoa(row?._id!)}`}>{row.invoiceId}</Link>
           )
         }
       },
@@ -693,7 +693,7 @@ const Invoices: FC = (() => {
           const online = patientProfile?.online || false
           return (
             <>
-              <Link className="avatar mx-2" target='_blank' href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
+              <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -704,7 +704,7 @@ const Invoices: FC = (() => {
                 </StyledBadge>
               </Link>
               <Stack>
-                <Link target='_blank'
+                <Link
                   href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}
                   style={{ color: theme.palette.secondary.main, maxWidth: '100%', minWidth: '100%' }}>
                   {`${patientProfile?.gender == '' ? '' : patientProfile?.gender + '.'}`}{patientProfile?.fullName}
@@ -972,7 +972,7 @@ const Invoices: FC = (() => {
         {isPrinting && <PrintInvoiceComponent ref={printRef} printProps={printProps} />}
       </iframe>
 
-      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp">
+      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp">
         {
           isLoading ?
             <div className="card">

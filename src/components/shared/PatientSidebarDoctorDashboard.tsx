@@ -1,160 +1,263 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useState, useEffect } from 'react'
-import useScssVar from '@/hooks/useScssVar'
+import { FC, Fragment, useEffect, useMemo } from 'react'
 import Link from 'next/link';
-import { patient_profile, doctor_17, doctor_14 } from '@/public/assets/imagepath'
+import { patient_profile } from '@/public/assets/imagepath'
 
 import { useTheme } from '@mui/material/styles';
 
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
-import { PatientProfile } from '../DoctorDashboardSections/MyPtients';
 import Avatar from '@mui/material/Avatar';
 import dayjs from 'dayjs'
 import preciseDiff from 'dayjs-precise-range'
+import { getSelectedBackgroundColor, StyledBadge } from "@/components/DoctorDashboardSections/ScheduleTiming"
 import { AppointmentReservationExtendType, DoctorPatientProfileTypes } from '../DoctorPatientProfile/DoctorPatientProfile';
-import { StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
+
+import { AppState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateHomeSideBarOpen } from '@/redux/homeSideBarOpen';
+import { hasCookie, getCookie, setCookie } from 'cookies-next';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { DoctorDashboardSidebarType, Drawer, DrawerHeader, OverflowTooltip } from './DoctorDashboardSidebar';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import { useRouter } from 'next/router';
 import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip'
 
 
 const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) => {
-
+  const homeSideBarOpen = useSelector((state: AppState) => state.homeSideBarOpen.value)
+  const dispatch = useDispatch();
+  const isMobile = useMediaQuery('(max-width:991px)');
+  const router = useRouter();
   dayjs.extend(preciseDiff)
 
-  const { muiVar } = useScssVar();
-
   const theme = useTheme();
+  const doctorsSideBarChildrens: DoctorDashboardSidebarType[] = useMemo(() => {
+
+    return [
+      router.pathname.startsWith('/doctors/dashboard/patient-profile/') ? {
+        href: "/doctors/dashboard",
+        iconClass: "fas fa-columns",
+        title: "Main Dashboard",
+        hasFunction: false,
+        subUrlForActivation: ['/doctors/dashboard/patient-profile/']
+      } :
+        {
+          href: `/doctors/dashboard/patient-profile/${btoa(doctorPatientProfile?._id)}`,
+          iconClass: "fas fa-columns",
+          title: "Patient Dashboard",
+          hasFunction: false,
+          subUrlForActivation: ['/doctors/dashboard/add-prescription/', 'doctors/dashboard/editprescription/']
+        },
+    ]
+
+  }, [doctorPatientProfile?._id, router.pathname])
+
+  useEffect(() => {
+    if (hasCookie('homeMiniSidebarOpen')) {
+      dispatch(updateHomeSideBarOpen(getCookie('homeMiniSidebarOpen')))
+    } else {
+      setCookie('homeMiniSidebarOpen', homeSideBarOpen)
+    }
+  }, [isMobile, dispatch, homeSideBarOpen])
 
 
   //@ts-ignore
   let { years, months, days } = dayjs.preciseDiff(doctorPatientProfile?.dob, dayjs(), true)
 
-
+  const handlesidebar = () => {
+    dispatch(updateHomeSideBarOpen(!homeSideBarOpen))
+    setCookie('homeMiniSidebarOpen', !homeSideBarOpen)
+  }
   return (
     <Fragment>
-      <div className="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar" style={muiVar}>
-        {
-          doctorPatientProfile == null ?
-            <CircleToBlockLoading color={theme.palette.primary.main} size="small" style={{
-              minWidth: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-            }} /> :
-            <>
-              <div className="profile-sidebar">
+      <Drawer
+        id="sidebar"
+        variant="permanent"
+        open={homeSideBarOpen}
+      >
+        <DrawerHeader open={homeSideBarOpen} />
+        <List sx={{ paddingTop: 0 }}>
+          <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
+            <div className="profile-sidebar">
+              <div className="widget-profile pro-widget-content">
+                <div className="profile-info-widget">
+                  <Link href="#" className={`booking-doc-img ${homeSideBarOpen ? "booking-doc-img-open" : 'booking-doc-img-close'}`} aria-label='book'>
+                    <StyledBadge
+                      overlap="circular"
+                      anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                      variant="dot"
+                      online={doctorPatientProfile?.online}
+                    >
+                      <Avatar alt="" src={`${doctorPatientProfile?.profileImage}`} className={`sidebar-avatar ${homeSideBarOpen ? 'sidebar-avatar-open' : 'sidebar-avatar-close'}`}>
+                        <img src={patient_profile} alt="" />
+                      </Avatar>
+                    </StyledBadge>
+                  </Link>
+                  <div className={`${homeSideBarOpen ? 'profile-det-info-open' : "profile-det-info-close"}`}>
+                    <OverflowTooltip text={`${doctorPatientProfile?.gender == "" ? "" : `${doctorPatientProfile?.gender}. `} ${doctorPatientProfile?.fullName}`} />
+                    <OverflowTooltip text={`Patient ID : #${doctorPatientProfile?.id}` || ''} as="h3" />
 
-
-                <div className="card widget-profile pat-widget-profile" style={{ border: 'none', borderRadius: 'unset' }}>
-                  <div className="card-body">
-                    <div className="pro-widget-content">
-                      <div className="profile-info-widget">
-                        <Link aria-label='patient' href="" className="booking-doc-img" onClick={(e) => e.preventDefault()}>
-                          <Avatar alt="" src={`${doctorPatientProfile?.profileImage}`} sx={{ width: "120px", height: '120px' }} key={doctorPatientProfile?.profileImage}>
-                            <img src={patient_profile} alt="" />
-                          </Avatar>
-                        </Link>
-                        <div className="profile-det-info">
-                          <h3>
-                            {doctorPatientProfile?.gender == "" ? "" : `${doctorPatientProfile?.gender}. `}
-                            {doctorPatientProfile?.fullName}
-                          </h3>
-
-                          <div className="patient-details">
-                            <h4>
-                              <b>Patient ID :</b> #{doctorPatientProfile?.id}
-                            </h4>
-                            <h5>
-                              <i className="fas fa-birthday-cake"></i>
-                              {doctorPatientProfile?.dob !== '' ? dayjs(doctorPatientProfile?.dob).format('DD MMM YYYY') : '---- -- --'}
-                            </h5>
-                            <h5>{`${isNaN(years) ? '--' : years} years ${isNaN(months) ? '--' : months} months ${isNaN(days) ? '--' : days} days`}</h5>
-                            <h6 className="mb-0" style={{ display: 'flex', justifyContent: 'center', gap: 20, alignItems: 'center' }}>
-                              <i className="fas fa-map-marker-alt"></i>
-                              <span style={{ textAlign: 'left' }}>
-                                {doctorPatientProfile?.city !== "" ? `City: ${doctorPatientProfile?.city}` : `City: -----`} <br />
-                                {doctorPatientProfile?.state !== "" ? `State: ${doctorPatientProfile?.state}` : `State: -----`} <br />
-                                {doctorPatientProfile?.country !== "" ? `Country: ${doctorPatientProfile?.country}` : `Country: -----`}
-                              </span>
-                            </h6>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="patient-info">
-                      <ul>
-                        <li>
-                          Phone <span>{doctorPatientProfile?.mobileNumber}</span>
-                        </li>
-                        <li>
-                          Blood Group <span>{doctorPatientProfile?.bloodG !== '' ? `🩸   ${doctorPatientProfile.bloodG}` : '-----------'}</span>
-                        </li>
-                      </ul>
+                    <div className="patient-details-open">
+                      <h4>
+                        <i className="fas fa-birthday-cake"></i>&nbsp;&nbsp;
+                        {doctorPatientProfile?.dob !== '' ? dayjs(doctorPatientProfile?.dob).format('DD MMM YYYY') : '---- -- --'}
+                      </h4>
+                      <OverflowTooltip
+                        text={`${isNaN(years) ? '--' : years} years ${isNaN(months) ? '--' : months} months ${isNaN(days) ? '--' : days} days`}
+                        as="h5"
+                      />
+                      <OverflowTooltip
+                        text={`${`City: ${doctorPatientProfile?.city}` || 'City: -----'}`}
+                        as="h6"
+                        className="mb-0 line-height-30"
+                      />
+                      <OverflowTooltip
+                        text={`${`State: ${doctorPatientProfile?.state}` || 'State: -----'}`}
+                        as="h6"
+                        className="mb-0 line-height-30"
+                      />
+                      <OverflowTooltip
+                        text={`${`Country: ${doctorPatientProfile?.country}` || 'Country: -----'}`}
+                        as="h6"
+                        className="mb-0 line-height-30"
+                      />
+                      <OverflowTooltip
+                        text={`${`Phone: ${doctorPatientProfile?.mobileNumber}` || 'Phone: -----'}`}
+                        as="h6"
+                        className="mb-0 line-height-30"
+                      />
+                      <OverflowTooltip
+                        text={`${`Blood Group: ${doctorPatientProfile?.bloodG !== '' ? `🩸   ${doctorPatientProfile.bloodG}` : '-----------'}` || 'Blood Group: -----'}`}
+                        as="h6"
+                        className="mb-0 line-height-30"
+                      />
                     </div>
                   </div>
                 </div>
-
-                <div className="card" style={{ border: 'none' }}>
-                  {doctorPatientProfile?.lastTwoAppointments.length > 0 && <div className="card-header">
-                    <h4 className="card-title">Last Booking</h4>
-                  </div>}
-                  <ul className="list-group list-group-flush">
-                    {
-                      doctorPatientProfile?.lastTwoAppointments.length > 0 &&
-                      doctorPatientProfile?.lastTwoAppointments
-                        .map((appointment: AppointmentReservationExtendType, index: number) => {
-                          const drName = `Dr. ${appointment?.doctorProfile?.firstName} ${appointment?.doctorProfile?.lastName}`
-                          let online = appointment?.doctorProfile?.online
-                          let { profileImage, specialities } = appointment?.doctorProfile
-                          return (
-                            <Fragment key={appointment.createdDate.toString()}>
-                              <li className="list-group-item">
-                                <div className="media align-items-center d-flex">
-                                  <div className="me-3 flex-shrink-0">
-                                    <Link aria-label='search' className="avatar mx-2" target='_blank' href={`/doctors/search/${btoa(appointment?.doctorId)}`}>
-                                      <StyledBadge
-                                        overlap="circular"
-                                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                                        variant="dot"
-                                        online={online}
-                                      >
-                                        <Avatar sx={{ width: `3rem`, height: `3rem` }} alt=""
-                                          src={`${profileImage}`} key={profileImage}
-                                        >
-                                          <img src={patient_profile} alt="" className="avatar" />
-                                        </Avatar>
-                                      </StyledBadge>
-                                    </Link>
-                                  </div>
-                                  <div className="media-body flex-grow-1">
-                                    <h5 className="d-block mb-0">
-                                      <Link aria-label='search' target='_blank' href={`/doctors/search/${btoa(appointment?.doctorId)}`}
-                                        style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
-                                        {drName}
-                                      </Link>
-                                    </h5>
-                                    <Typography sx={{ color: theme.palette.primary.main }} variant="caption" display="block" gutterBottom>{dayjs(appointment?.createdDate).format('YYYY MMM DD HH:mm')}</Typography>
-                                    <span className="d-block text-sm text-muted">
-                                      {specialities?.[0]?.specialities}
-                                    </span>
-                                    <span className="d-block text-sm text-muted">
-                                      {dayjs(appointment?.selectedDate).format('DD MMM YYYY')} {' '} {appointment?.timeSlot?.period}
-                                    </span>
-                                    <span className="d-block text-sm text-muted">
-
-                                      <Link href={`/doctors/invoice-view/${btoa(appointment?._id!)}`} target='_blank'>{appointment?.invoiceId}</Link>
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-                            </Fragment>
-                          )
-                        })
-                    }
-                  </ul>
-                </div>
               </div>
-            </>
-        }
-      </div>
+            </div>
+          </ListItem>
+          {doctorsSideBarChildrens.map((item: DoctorDashboardSidebarType, index: number) => {
+            const isActiveLink = router.pathname == item.href || item.subUrlForActivation.some(pattern => new RegExp(pattern).test(router.pathname));
+
+            return (
+              <ListItem key={index} disablePadding sx={{
+                display: 'block',
+                transition: 'background-color 500ms ease-in-out',
+                backgroundColor: homeSideBarOpen ? isActiveLink ? theme.palette.primary.main : '' : ''
+              }}>
+                <Tooltip arrow followCursor placement='right' title={homeSideBarOpen ? '' : item.title}>
+                  <ListItemButton
+                    onClick={() => {
+                      if (!item.hasFunction) {
+                        router.push(item.href, undefined, { shallow: true })
+                      } else {
+                        if (item.clickFunction) {
+                          item.clickFunction();
+                        }
+                      }
+                    }}
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: homeSideBarOpen ? 'initial' : 'center',
+                      px: 2.5,
+                      ":hover": {
+                        background: getSelectedBackgroundColor(theme.palette.primary.main, theme.palette.mode)
+                      }
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        marginRight: homeSideBarOpen ? 3 : 'auto',
+                        justifyContent: 'center',
+                        transition: 'margin-right 500ms ease-in-out, color 500ms ease-in-out',
+                        color: homeSideBarOpen ? theme.palette.text.color : isActiveLink ? theme.palette.secondary.main : theme.palette.text.color
+                      }}
+                    >
+                      <i className={item.iconClass} style={{ fontSize: '1rem' }}></i>
+                    </ListItemIcon>
+                    <ListItemText primary={item.title} sx={{
+                      opacity: homeSideBarOpen ? 1 : 0,
+                      visibility: homeSideBarOpen ? 'visible' : 'hidden',
+                      transition: 'opacity 500ms ease-in-out',
+                    }} />
+
+                  </ListItemButton>
+                </Tooltip>
+              </ListItem>
+            )
+          })
+          }
+
+          {doctorPatientProfile?.lastTwoAppointments.length > 0 &&
+            <ListItem disablePadding sx={{
+              display: 'block',
+              transition: 'background-color 500ms ease-in-out',
+            }}>
+              <ListItemButton sx={{
+
+                visibility: homeSideBarOpen ? 'visible' : "hidden",
+                transition: 'visibility 500ms ease-in-out, background 500ms ease-in-out',
+              }}>
+                <ListItemText inset primary='Last Booking' sx={{
+                  opacity: homeSideBarOpen ? 1 : 0,
+                  visibility: homeSideBarOpen ? 'visible' : 'hidden',
+                  transition: 'opacity 500ms ease-in-out',
+                }} />
+              </ListItemButton>
+            </ListItem>
+          }
+          {
+            doctorPatientProfile?.lastTwoAppointments.length > 0 &&
+            doctorPatientProfile?.lastTwoAppointments
+              .map((appointment: AppointmentReservationExtendType, index: number) => {
+                const drName = `Dr. ${appointment?.doctorProfile?.firstName} ${appointment?.doctorProfile?.lastName}`
+                let { specialities } = appointment?.doctorProfile
+                return (
+                  <Fragment key={appointment.createdDate.toString()}>
+                    <ListItemText sx={{
+                      padding: 3,
+                      margin: 1,
+                      border: `1px solid ${theme.palette.secondary.main}`,
+                      opacity: homeSideBarOpen ? 1 : 0,
+                      visibility: homeSideBarOpen ? 'visible' : 'hidden',
+                      transition: 'opacity 500ms ease-in-out',
+                    }} >
+                      <div className="media align-items-center d-flex">
+                        <div className="media-body flex-grow-1">
+                          <h5 className="d-block mb-0">
+                            <Link aria-label='search' target='_blank' href={`/doctors/profile/${btoa(appointment?.doctorId)}`}
+                              style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
+                              {drName}
+                            </Link>
+                          </h5>
+                          <Typography sx={{ color: theme.palette.primary.main }} variant="caption" display="block" gutterBottom>{dayjs(appointment?.createdDate).format('YYYY MMM DD HH:mm')}</Typography>
+                          <span className="d-block text-sm text-muted">
+                            {specialities?.[0]?.specialities}
+                          </span>
+                          <span className="d-block text-sm text-muted">
+                            {dayjs(appointment?.selectedDate).format('DD MMM YYYY')} {' '} {appointment?.timeSlot?.period}
+                          </span>
+                          <span className="d-block text-sm text-muted">
+
+                            <Link href={`/doctors/dashboard/invoice-view/${btoa(appointment?._id!)}`} >{appointment?.invoiceId}</Link>
+                          </span>
+                        </div>
+                      </div>
+                    </ListItemText>
+                  </Fragment>
+                )
+              })
+          }
+          <button className={`${homeSideBarOpen ? 'side-bar-toggle-button-open side-bar-toggle-doctor-patient-button-open' : 'side-bar-toggle-button-close side-bar-toggle-doctor-patient-button-close'}`}
+            aria-label="side-bar-toggle-button" onClick={handlesidebar}></button>
+        </List>
+      </Drawer>
     </Fragment>
   )
 });

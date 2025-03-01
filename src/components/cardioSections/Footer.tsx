@@ -38,7 +38,7 @@ const Footer: FC = (() => {
           <img src={hexagon_group_5} alt="#" className='img' />
           <img src={ecg} alt="#" />
         </div>
-        <div className="footer-top aos" data-aos="fade-up">
+        <div className="footer-top">
           <div className="container">
             <div className="footer-details">
               <div className="row">

@@ -3,14 +3,15 @@ import { FC, Fragment } from 'react'
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 import { FactFiveIconSvg, FactFourIconSvg, FactOneIconSvg, FactThreeIconSvg, FactTwoIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
+import { useTheme } from '@mui/material';
 
 
 const FactSection: FC = (() => {
   const { muiVar } = useScssVar();
-
+  const theme = useTheme();
   return (
     <Fragment>
-      <div className="facts-section-sixteen" style={muiVar}>
+      <div className="facts-section-sixteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="facts-section-all">
             <div className="facts-main-sixteen">

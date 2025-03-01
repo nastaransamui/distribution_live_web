@@ -13,10 +13,7 @@ import { updateUserData } from '@/redux/userData';
 import { AppState } from '@/redux/store'
 import { connect } from 'react-redux';
 import ScrollToTop from '@/components/sections/ScrollToTop';
-import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import isJsonString from '@/helpers/isJson';
 import getClinicsStatus from '@/helpers/getClinicsStatus';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import HomeCareBanner from '@/components/HomeCareSections/HomeCareBanner';

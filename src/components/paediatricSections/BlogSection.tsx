@@ -12,7 +12,7 @@ const BlogSection: FC = (() => {
 
   return (
     <Fragment>
-      <section className="latest-articles-thirteen common-padding" style={muiVar}>
+      <section className="latest-articles-thirteen common-padding" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="row">
             <div className="col-lg-12 aos" data-aos="fade-up">

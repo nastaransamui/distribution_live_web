@@ -180,7 +180,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
           const online = row?.doctorProfile?.online || false
           return (
             <>
-              <Link aria-label='profile' className=" mx-2" target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`} >
+              <Link aria-label='profile' className=" mx-2" href={`/doctors/profile/${btoa(row.doctorId)}`} >
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -193,15 +193,15 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                 </StyledBadge>
               </Link>
               <Stack>
-                <Link aria-label='profile' target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`}
+                <Link aria-label='profile' href={`/doctors/profile/${btoa(row.doctorId)}`}
                   style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
                   {formattedValue}
                 </Link>
                 <Link href={
                   userType == "patient" ?
                     `/patient/dashboard/invoice-view/${btoa(params.id as string)}` :
-                    `/doctors/invoice-view/${btoa(params.id as string)}`
-                } target='_blank'>{row.invoiceId}</Link></Stack>
+                    `/doctors/dashboard/invoice-view/${btoa(params.id as string)}`
+                } >{row.invoiceId}</Link></Stack>
             </>
           )
         }

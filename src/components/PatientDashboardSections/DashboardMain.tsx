@@ -168,7 +168,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar}>
+      <div className="col-md-12 col-lg-12 col-xl-12" style={muiVar}>
         <div>
           <div className="row">
             <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   animate__animated animate__backInDown">

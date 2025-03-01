@@ -4,12 +4,14 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import useScssVar from '@/hooks/useScssVar'
 import { servicesixteenicon, treatment1, treatment2, treatment3, treatment4 } from '../../../public/assets/imagepath';
+import { useTheme } from '@mui/material';
 
 const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
 
 
 const TreatmentSection: FC = (() => {
   const { muiVar } = useScssVar();
+  const theme = useTheme();
   const settings = {
     items: 4,
     loop: true,
@@ -67,7 +69,7 @@ const TreatmentSection: FC = (() => {
   };
   return (
     <Fragment>
-      <div className="treatment-section-sixteen" style={muiVar}>
+      <div className="treatment-section-sixteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="row">
             <div className="col-md-12">

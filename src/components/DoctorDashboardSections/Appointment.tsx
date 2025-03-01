@@ -168,7 +168,7 @@ const Appointment: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp">
+      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp">
         {
           isLoading ?
             <>
@@ -250,7 +250,7 @@ const Appointment: FC = (() => {
                 setShow(false)
               }, 500);
             }}>
-            <Link target='_blank' className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
+            <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
               <StyledBadge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -264,7 +264,6 @@ const Appointment: FC = (() => {
             </Link>
             <Typography
               component="a"
-              target='_blank'
               sx={{
                 color: theme.palette.primary.main,
                 fontSize: '1rem',
@@ -454,7 +453,7 @@ const DoctorAppointmentShowBox: FC<DoctorAppointmentShowBoxType> = (({ myAppoint
                     </h4>
                     <br />
                     <h4 className="mb-0">
-                      <Link href={`/doctors/invoice-view/${btoa(appointment?._id as string)}`} target='_blank'>
+                      <Link href={`/doctors/dashboard/invoice-view/${btoa(appointment?._id as string)}`} >
                         {appointment.invoiceId}
                       </Link>
                     </h4>

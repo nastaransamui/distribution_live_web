@@ -123,7 +123,7 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
 
   const onLoginSubmit = (data: FormType) => {
     if (hasCookie('cc_cookie')) {
-
+      dispatch(updateHomeFormSubmit(true))
       data.ipAddr = userData?.query;
       data.userAgent = navigator.userAgent;
       data.email = data.email.toLowerCase();

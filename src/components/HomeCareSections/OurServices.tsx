@@ -19,12 +19,13 @@ import {
 } from '@/public/assets/imagepath'
 
 import Link from 'next/link';
+import { useTheme } from '@mui/material';
 
 const OurServices: FC = (() => {
   const { muiVar } = useScssVar();
-
+  const theme = useTheme();
   return (
-    <section className="service-sec-fourteen" style={muiVar}>
+    <section className="service-sec-fourteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
       <div className="section-bg">
         <img src={service_sec_bg} alt="Img" />
       </div>

@@ -58,6 +58,7 @@ export interface UserPatientProfileType {
     doctors_id: string[];
     favs_id: string[];
     firstName: string;
+    fullName: string;
     gender: string;
     idle?: boolean;
     invoice_ids: string[];

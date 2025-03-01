@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
@@ -9,10 +9,17 @@ import { DoctThumb1_small, DoctThumb10, DoctThumb2, DoctThumb8, DoctThumb9, EyeB
 const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
   ssr: false,
 })
-
+import AOS from 'aos'
 const BlogPost: FC = (() => {
-
+  const theme = useTheme();
   const { muiVar } = useScssVar();
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
+
+  }, []);
   const doctersettings = {
     items: 4,
     loop: true,
@@ -67,7 +74,7 @@ const BlogPost: FC = (() => {
             <OwlCarousel {...doctersettings}>
               <div className="item">
                 <div className="our-blogs">
-                  <div className="blogs-img">
+                  <div className="blogs-img" style={{ borderRadius: `15px 15px 0px 0px` }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
                       <img
                         src={EyeBlog01}
@@ -75,7 +82,7 @@ const BlogPost: FC = (() => {
                         className="img-fluid blog-inner-img"
                       />
                     </Link>
-                    <div className="blogs-overlay">
+                    <div className="blogs-overlay" style={{ borderLeft: `1px solid ${theme.palette.secondary.main}`, borderRight: `1px solid ${theme.palette.secondary.main}` }}>
                       <div className="blog-name">
                         <img
                           src={DoctThumb1_small}
@@ -90,7 +97,7 @@ const BlogPost: FC = (() => {
                       <span className="blog-cat">Orthoptics</span>
                     </div>
                   </div>
-                  <div className="blogs-info">
+                  <div className="blogs-info" style={{ borderRadius: `0px 0px 15px 15px`, borderTop: 'none' }}>
                     <h3>
                       <Link href="/blog/blog-details" aria-label='blog post'>
                         Lorem Ipsum is simply dummy text of the printing?
@@ -109,7 +116,7 @@ const BlogPost: FC = (() => {
               </div>
               <div className="item">
                 <div className="our-blogs">
-                  <div className="blogs-img">
+                  <div className="blogs-img" style={{ borderRadius: `15px 15px 0px 0px` }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
                       <img
                         src={EyeBlog02}
@@ -117,7 +124,7 @@ const BlogPost: FC = (() => {
                         className="img-fluid blog-inner-img"
                       />
                     </Link>
-                    <div className="blogs-overlay">
+                    <div className="blogs-overlay" style={{ borderLeft: `1px solid ${theme.palette.secondary.main}`, borderRight: `1px solid ${theme.palette.secondary.main}` }}>
                       <div className="blog-name">
                         <img
                           src={DoctThumb2}
@@ -132,7 +139,7 @@ const BlogPost: FC = (() => {
                       <span className="blog-cat">Glaucoma</span>
                     </div>
                   </div>
-                  <div className="blogs-info">
+                  <div className="blogs-info" style={{ borderRadius: `0px 0px 15px 15px`, borderTop: 'none' }}>
                     <h3>
                       <Link href="/blog/blog-details" aria-label='blog post'>
                         It is a long established fact that a reader will be distracted
@@ -148,7 +155,7 @@ const BlogPost: FC = (() => {
               </div>
               <div className="item">
                 <div className="our-blogs">
-                  <div className="blogs-img">
+                  <div className="blogs-img" style={{ borderRadius: `15px 15px 0px 0px` }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
                       <img
                         src={EyeBlog03}
@@ -156,7 +163,7 @@ const BlogPost: FC = (() => {
                         className="img-fluid blog-inner-img"
                       />
                     </Link>
-                    <div className="blogs-overlay">
+                    <div className="blogs-overlay" style={{ borderLeft: `1px solid ${theme.palette.secondary.main}`, borderRight: `1px solid ${theme.palette.secondary.main}` }}>
                       <div className="blog-name">
                         <img
                           src={DoctThumb8}
@@ -171,7 +178,7 @@ const BlogPost: FC = (() => {
                       <span className="blog-cat">Corneal Ulcer </span>
                     </div>
                   </div>
-                  <div className="blogs-info">
+                  <div className="blogs-info" style={{ borderRadius: `0px 0px 15px 15px`, borderTop: 'none' }}>
                     <h3>
                       <Link href="/blog/blog-details" aria-label='blog post'>
                         Contrary to popular belief, Lorem Ipsum is not simply random
@@ -188,7 +195,7 @@ const BlogPost: FC = (() => {
               </div>
               <div className="item">
                 <div className="our-blogs">
-                  <div className="blogs-img">
+                  <div className="blogs-img" style={{ borderRadius: `15px 15px 0px 0px` }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
                       <img
                         src={EyeBlog04}
@@ -196,7 +203,7 @@ const BlogPost: FC = (() => {
                         className="img-fluid blog-inner-img"
                       />
                     </Link>
-                    <div className="blogs-overlay">
+                    <div className="blogs-overlay" style={{ borderLeft: `1px solid ${theme.palette.secondary.main}`, borderRight: `1px solid ${theme.palette.secondary.main}` }}>
                       <div className="blog-name">
                         <img
                           src={DoctThumb9}
@@ -211,7 +218,7 @@ const BlogPost: FC = (() => {
                       <span className="blog-cat">Keratoconus</span>
                     </div>
                   </div>
-                  <div className="blogs-info">
+                  <div className="blogs-info" style={{ borderRadius: `0px 0px 15px 15px`, borderTop: 'none' }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
                       <h3>There are many variations of passages</h3>
                     </Link>
@@ -228,7 +235,7 @@ const BlogPost: FC = (() => {
               </div>
               <div className="item">
                 <div className="our-blogs">
-                  <div className="blogs-img">
+                  <div className="blogs-img" style={{ borderRadius: `15px 15px 0px 0px` }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
                       <img
                         src={EyeBlog03}
@@ -236,7 +243,7 @@ const BlogPost: FC = (() => {
                         className="img-fluid blog-inner-img"
                       />
                     </Link>
-                    <div className="blogs-overlay">
+                    <div className="blogs-overlay" style={{ borderLeft: `1px solid ${theme.palette.secondary.main}`, borderRight: `1px solid ${theme.palette.secondary.main}` }}>
                       <div className="blog-name">
                         <img
                           src={DoctThumb10}
@@ -251,7 +258,7 @@ const BlogPost: FC = (() => {
                       <span className="blog-cat">Orthoptics</span>
                     </div>
                   </div>
-                  <div className="blogs-info">
+                  <div className="blogs-info" style={{ borderRadius: `0px 0px 15px 15px`, borderTop: 'none' }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
                       <h3>There are many variations of passages</h3>
                     </Link>

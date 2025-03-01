@@ -8,6 +8,7 @@ import {
   small_paw
 } from "../../../public/assets/imagepath";
 import { BathTubSvg, BottelSvg, InjectionSvg, PetDoctorSvg } from '../../../public/assets/images/icons/IconsSvgs';
+import { useTheme } from '@mui/material';
 
 
 
@@ -16,6 +17,7 @@ import { BathTubSvg, BottelSvg, InjectionSvg, PetDoctorSvg } from '../../../publ
 
 const ServiceSection: FC = (() => {
   const { muiVar } = useScssVar();
+  const theme = useTheme()
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -25,7 +27,7 @@ const ServiceSection: FC = (() => {
   }, []);
   return (
     <Fragment>
-      <section className="services-section-fourteen" style={muiVar}>
+      <section className="services-section-fourteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="floating-bg">
           <img src={big_paw} alt="" className='imgColorPrimary' />
           <img src={small_paw} alt="" className='img' />

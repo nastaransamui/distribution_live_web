@@ -9,9 +9,11 @@ import AOS from 'aos'
 const Owlcarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false })
 
 import { pharmacy_1, pharmacy_2, pharmacy_3, } from "../../../public/assets/imagepath";
+import { useTheme } from '@mui/material'
 
 const PharmacySection: FC = (() => {
   const { muiVar } = useScssVar();
+  const theme = useTheme()
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -51,7 +53,7 @@ const PharmacySection: FC = (() => {
 
   return (
     <Fragment>
-      <section className="pharmacy-section-fifteen" style={muiVar}>
+      <section className="pharmacy-section-fifteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="row">
             <div className="col-md-12">

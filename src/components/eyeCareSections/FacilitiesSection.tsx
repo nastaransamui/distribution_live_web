@@ -11,7 +11,7 @@ const FacilitiesSection: FC = (() => {
   const theme = useTheme();
   return (
     <Fragment>
-      <section className="facilities-section" style={muiVar}>
+      <section className="facilities-section" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="row">
             <div className="col-md-12 aos" data-aos="fade-up">

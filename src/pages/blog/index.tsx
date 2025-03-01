@@ -18,10 +18,7 @@ import BlogsList from '@/components/BlogSections/BlogsList';
 import BlogStickySide from '@/components/BlogSections/BlogStickySide';
 import { useState } from 'react';
 import Footer from '@/components/sections/Footer';
-import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import isJsonString from '@/helpers/isJson';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import useScssVar from '@/hooks/useScssVar';
 import { updateHomeExp } from '@/redux/homeExp';
@@ -64,11 +61,11 @@ const Blog: NextPage = () => {
                   <BlogStickySide blogView={blogView} setBlogView={setBlogView} />
                 </>
             }
-            <Footer />
             <CookieConsentComponent />
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

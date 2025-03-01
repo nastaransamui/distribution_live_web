@@ -1,13 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 import { faq_img_2, healthcare } from '../../../public/assets/imagepath';
 import { useTheme } from '@mui/material';
-
+import AOS from 'aos'
 const Faq: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
+
+  }, []);
   return (
     <Fragment>
       <section className="faq-section faq-section-ten" style={muiVar}>

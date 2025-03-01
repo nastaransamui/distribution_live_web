@@ -8,12 +8,13 @@ import {
   faq_sec_img_03,
   faq_sec_img_04,
 } from '@/public/assets/imagepath'
+import { useTheme } from '@mui/material';
 
 const Questions: FC = (() => {
   const { muiVar } = useScssVar();
-
+  const theme = useTheme();
   return (
-    <section className="faq-sec-fourteen" style={muiVar}>
+    <section className="faq-sec-fourteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
       <div className="container">
         <div className="section-head-fourteen">
           <h2>

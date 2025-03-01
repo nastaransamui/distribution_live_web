@@ -3,14 +3,15 @@ import { FC, Fragment } from 'react'
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 import { feedbacksixteen } from '../../../public/assets/imagepath';
+import { useTheme } from '@mui/material';
 
 
 const FeedbackSection: FC = (() => {
   const { muiVar } = useScssVar();
-
+  const theme = useTheme();
   return (
     <Fragment>
-      <section className="feedback-section-sixteen" style={muiVar}>
+      <section className="feedback-section-sixteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="feedback-schedule-all">
             <div className="row align-items-center">
@@ -27,10 +28,10 @@ const FeedbackSection: FC = (() => {
                     list!
                   </p>
                   <div className="feedback-btns">
-                    <Link href="" className="btn btn-primary">
+                    <Link href="" className="btn btn-primary" style={{ lineHeight: '20px' }}>
                       Make An Appointment
                     </Link>
-                    <Link href="/doctors/search" className="btn btn-primarytwo">
+                    <Link href="/doctors/search" className="btn btn-primary" style={{ lineHeight: '20px' }}>
                       <i className="feather-plus me-2" />
                       Get Free Check-up
                     </Link>

@@ -427,7 +427,14 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         filterOperators: createCustomOperators().string,
         renderCell(params: GridRenderCellParams) {
           const { value, row } = params
-          return <Link href={`/patient/invoice-view/${btoa(row?._id!)}`} target='_blank'>{row.invoiceId}</Link>
+          return <Link
+            href={
+              userType == 'patient' ?
+                `/patient/dashboard/bill-view/${btoa(row?._id!)}` :
+                `/doctors/dashboard/bill-view/${btoa(row?._id!)}`
+            }>
+            {row.invoiceId}
+          </Link>
         }
       },
       userType == 'patient' ? {
@@ -496,7 +503,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
           const online = row?.patientProfile?.online || false;
           return (
             <>
-              <Link className="avatar mx-2" target='_blank' href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
+              <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -507,7 +514,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                 </StyledBadge>
               </Link>
               <Stack>
-                <Link target='_blank'
+                <Link
                   href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}
                   style={{ color: theme.palette.secondary.main, maxWidth: '100%', minWidth: '100%' }}>
                   {`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}
@@ -1087,8 +1094,8 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                     slotProps={{
                       toolbar: {
                         printOptions: { disableToolbarButton: true },
-                        deleteId: deleteId,
-                        deleteClicked: () => { setShowDelete(true) },
+                        deleteId: userType == 'doctor' ? deleteId : [],
+                        deleteClicked: userType == 'doctor' ? () => { setShowDelete(true) } : () => { },
                         columnVisibilityModel: columnVisibilityModel,
                       },
                       pagination: {
@@ -1123,12 +1130,16 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                     rows={rows}
                     rowCount={rowCount}
                     columns={columns}
-                    checkboxSelection
+                    checkboxSelection={userType == 'doctor'}
                     isRowSelectable={(params) => {
-                      if (params.row.status !== "Pending") {
-                        return false;
+                      if (userType == 'doctor') {
+                        if (params.row.status !== "Pending") {
+                          return false;
+                        } else {
+                          return true;
+                        }
                       } else {
-                        return true;
+                        return false;
                       }
                     }}
                     onRowSelectionModelChange={(newRowSelectionModel) => {

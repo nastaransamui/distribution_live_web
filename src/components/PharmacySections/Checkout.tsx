@@ -199,7 +199,7 @@ const Checkout: FC = (() => {
     <Fragment>
       <div className="col-md-6 col-lg-7" style={muiVar}>
         <div className="card">
-          <div className="card-header">
+          <div className="card-header" style={{ borderRadius: '8px 8px 0px 0px' }}>
             <h3 className="card-title">Billing details</h3>
           </div>
           <div className="card-body">
@@ -467,7 +467,7 @@ const Checkout: FC = (() => {
                     </Link>
                   </h4>
                   <div id="collapseone" className={`collapse ${!userProfile ? 'hide' : 'show'}`}>
-                    <div className="filter-collapse">
+                    <div className="filter-collapse" style={{ paddingLeft: 5 }}>
                       <GooglePayButton
                         environment="TEST"
                         paymentRequest={{
@@ -564,7 +564,7 @@ const Checkout: FC = (() => {
         <StickyBox offsetTop={20} offsetBottom={20}>
           {/* Booking Summary */}
           <div className="card booking-card">
-            <div className="card-header">
+            <div className="card-header" style={{ borderRadius: '8px 8px 0px 0px' }}>
               <h3 className="card-title">Your Order</h3>
             </div>
             <div className="card-body">

@@ -16,6 +16,7 @@ import { doctorPatientInitialLimitsAndSkips, DoctorPatientInitialLimitsAndSkipsT
 import AddBilling, { BillingType } from '../DoctorDashboardSections/AddBilling'
 import EditBilling, { BillingTypeWithDoctorProfile } from '../DoctorDashboardSections/EditBilling'
 import SeeBilling from '../PatientDashboardSections/SeeBilling'
+import DoctorDashboardSidebar from '../shared/DoctorDashboardSidebar'
 
 export interface PatientProfileExtendBillingType extends PatientProfile {
   user: PatientProfile
@@ -147,7 +148,7 @@ const BillingPage: FC<DoctorPatientProfileBillingTypes> = (({ doctorPatientProfi
   return (
     <Fragment>
       {userType == 'doctor' ?
-        <PatientSidebarDoctorDashboard doctorPatientProfile={profile} /> :
+        <DoctorDashboardSidebar /> :
         <PatientDashboardSidebar />
       }
 

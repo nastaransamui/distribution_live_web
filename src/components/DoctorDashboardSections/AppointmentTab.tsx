@@ -113,7 +113,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
           const online = row?.patientProfile?.online || false
           return (
             <>
-              <Link className="avatar mx-2" target='_blank' href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}>
+              <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -122,7 +122,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
                 >
                   <Avatar alt="" src={profileImage} />
                 </StyledBadge></Link>
-              <Link target='_blank' href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`} >{`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}</Link></>
+              <Link href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`} >{`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}</Link></>
           )
         }
       },

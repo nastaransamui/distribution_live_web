@@ -6,13 +6,13 @@ import { hasCookie, getCookie, deleteCookie } from 'cookies-next';
 //Redux
 import { wrapper } from '@/redux/store'
 import { AppState } from '@/redux/store'
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import PatientDashboardSidebar from '@/components/shared/PatientDashboardSidebar';
-import Footer from '@/components/sections/Footer';
+import DashboardFooter from '@/components/sections/DashboardFooter';
 import ChangePassword from '@/components/PatientDashboardSections/ChangePassword';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 
@@ -24,8 +24,11 @@ import { updateHomeServices } from '@/redux/homeServices';
 import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
 import { ErrorComponent } from '@/pages/404';
+import { updateHomeSideBarOpen } from '@/redux/homeSideBarOpen';
 const ChangePasswordPage: NextPage = (props: any) => {
   const { muiVar } = useScssVar();
+  const homeSideBarOpen = useSelector((state: AppState) => state.homeSideBarOpen.value)
+
   if (props.error) {
     return <ErrorComponent errorCode={props.errorCode} errorText={props.error} />;
   }
@@ -42,7 +45,7 @@ const ChangePasswordPage: NextPage = (props: any) => {
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb subtitle='Change password' title='Change password' />
-      <div className="content" style={muiVar}>
+      <div className={`content ${homeSideBarOpen ? 'content-padding-open' : 'content-padding-close'}`} style={muiVar}>
         <div className="container-fluid">
           <div className="row">
             <PatientDashboardSidebar />
@@ -50,7 +53,7 @@ const ChangePasswordPage: NextPage = (props: any) => {
           </div>
         </div>
       </div>
-      <Footer />
+      <DashboardFooter />
     </>
   )
 }
@@ -76,6 +79,9 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
       }
 
+      if (hasCookie('homeMiniSidebarOpen', ctx)) {
+        store.dispatch(updateHomeSideBarOpen(getCookie('homeMiniSidebarOpen', ctx)))
+      }
 
       if (hasCookie('homeAccessToken', ctx)) {
         const accessToken = getCookie('homeAccessToken', ctx);

@@ -57,6 +57,7 @@ const DoctorsSection: FC = (() => {
     <Fragment>
       <div className="our-doctor-thirteen common-padding" style={{
         ...muiVar,
+        backgroundColor: theme.palette.background.paper,
         backgroundImage: `url(/assets/images/cloud-bg_${theme.palette.mode}.webp)`
       }}>
         <div className="container">

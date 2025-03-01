@@ -31,6 +31,7 @@ import Typography from '@mui/material/Typography';
 import CustomPagination from '../shared/CustomPagination';
 import Stack from '@mui/material/Stack';
 import RenderExpandableCell from '../shared/RenderExpandableCell';
+import { useRouter } from 'next/router';
 
 export interface FavPatientProfile {
   patients: PatientProfile[];
@@ -43,6 +44,7 @@ const Favourits: FC = (() => {
   dayjs.extend(timezone)
   dayjs.extend(preciseDiff)
   const { bounce } = useScssVar();
+  const router = useRouter();
   const dataGridRef = useRef<any>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false)
@@ -309,7 +311,7 @@ const Favourits: FC = (() => {
             key="view-action"
             onClick={() => {
               const encodedId = btoa(params.row?._id);
-              window.open(`/doctors/dashboard/patient-profile/${encodedId}`, '_blank');
+              router.push(`/doctors/dashboard/patient-profile/${encodedId}`)
             }}
             icon={<i className="far fa-eye" style={{ color: theme.palette.secondary.main }}></i>} label="View" />,
 
@@ -465,7 +467,7 @@ const Favourits: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp">
+      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp">
 
         {
           isLoading ?

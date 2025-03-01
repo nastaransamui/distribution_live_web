@@ -11,12 +11,9 @@ import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
-import Footer from '@/components/sections/Footer';
+import DashboardFooter from '@/components/sections/DashboardFooter';
 import Invoice from '@/components/DoctorsSections/CheckOut/Invoice';
-import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import isJsonString from '@/helpers/isJson';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import { updateHomeExp } from '@/redux/homeExp';
 import { updateHomeIAT } from '@/redux/homeIAT';
@@ -25,12 +22,14 @@ import { updateHomeServices } from '@/redux/homeServices';
 import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
+import DoctorDashboardSidebar from '@/components/shared/DoctorDashboardSidebar';
+import useScssVar from '@/hooks/useScssVar';
 
 
 const InvoiceViewPage: NextPage = (props: any) => {
-  const { userProfile, homeRoleName } = props;
+  const { homeRoleName } = props;
   const { value: roleName } = homeRoleName
-
+  const { muiVar } = useScssVar();
   return (
     <>
       <Head>
@@ -45,8 +44,11 @@ const InvoiceViewPage: NextPage = (props: any) => {
       </Head>
       <BreadCrumb title={`${roleName.charAt(0).toLocaleUpperCase()}${roleName.slice(1)} Invoice`}
         subtitle={`${roleName.charAt(0).toLocaleUpperCase()}${roleName.slice(1)} Invoice`} />
+      <span style={muiVar}>
+        <DoctorDashboardSidebar />
+      </span>
       <Invoice />
-      <Footer />
+      <DashboardFooter />
       <CookieConsentComponent />
     </>
   )

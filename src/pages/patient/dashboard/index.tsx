@@ -6,14 +6,14 @@ import { hasCookie, getCookie, deleteCookie } from 'cookies-next';
 //Redux
 import { wrapper } from '@/redux/store'
 import { AppState } from '@/redux/store'
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import PatientDashboardSidebar from '@/components/shared/PatientDashboardSidebar';
 import DashboardMain from '@/components/PatientDashboardSections/DashboardMain';
-import Footer from '@/components/sections/Footer';
+import DashboardFooter from '@/components/sections/DashboardFooter';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import useScssVar from '@/hooks/useScssVar';
 import { updateHomeUserId } from '@/redux/homeUserId';
@@ -23,10 +23,12 @@ import { updateHomeIAT } from '@/redux/homeIAT';
 import { updateHomeExp } from '@/redux/homeExp';
 import { ErrorComponent } from '@/pages/404'
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
+import { updateHomeSideBarOpen } from '@/redux/homeSideBarOpen';
 
 const DashboardPage: NextPage = (props: any) => {
   const { doctorPatientProfile } = props;
   const { muiVar } = useScssVar();
+  const homeSideBarOpen = useSelector((state: AppState) => state.homeSideBarOpen.value)
 
   if (props.error) {
     return <ErrorComponent errorCode={props.errorCode} errorText={props.error} />;
@@ -44,7 +46,7 @@ const DashboardPage: NextPage = (props: any) => {
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb subtitle='Dashboard' title='Dashboard' />
-      <div className="content" style={muiVar}>
+      <div className={`content ${homeSideBarOpen ? 'content-padding-open' : 'content-padding-close'}`} style={muiVar}>
         <div className="container-fluid">
           <div className="row">
             <PatientDashboardSidebar />
@@ -52,7 +54,7 @@ const DashboardPage: NextPage = (props: any) => {
           </div>
         </div>
       </div>
-      <Footer />
+      <DashboardFooter />
     </>
   )
 }
@@ -76,6 +78,9 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       }
       if (hasCookie('homeThemeName', ctx)) {
         store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
+      }
+      if (hasCookie('homeMiniSidebarOpen', ctx)) {
+        store.dispatch(updateHomeSideBarOpen(getCookie('homeMiniSidebarOpen', ctx)))
       }
       if (hasCookie('homeAccessToken', ctx)) {
         const accessToken = getCookie('homeAccessToken', ctx);

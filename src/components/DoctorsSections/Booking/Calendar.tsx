@@ -401,7 +401,8 @@ const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSl
                                                       })
                                                     }
                                                     const isOccupied = bookingTimeSlot.occupyTime.some(
-                                                      (occupy) => occupy.timeSlot.id === newTimeslot.id && dayjs(occupy.selectedDate).isSame(dayjs(calendarValue), 'day')
+                                                      (occupy) => occupy.timeSlot.period === newTimeslot.period && dayjs(occupy.selectedDate).isSame(dayjs(calendarValue), 'day')
+
                                                     );
                                                     const patientHasOccupiedTime = bookingTimeSlot?.occupyTime?.filter((a) => `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}` == `${selectedDate} ${period}`).some(
                                                       (occupy) => occupy.patientId === userProfile?._id
@@ -411,7 +412,9 @@ const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSl
                                                       .map((a) => a._id)
                                                       .filter(Boolean) as string[]
                                                     const occupiedPeriod = bookingTimeSlot.occupyTime.filter((a) => a.patientId == userProfile?._id).map((a) => `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}`).join(', ')
-
+                                                    const dayAndPeriodOfOcupy = bookingTimeSlot.occupyTime.map((a) => `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}`).join(', ')
+                                                    const eachDayAndPeriod = `${dayjs(calendarValue).format('DD MMM YYYY')} ${newTimeslot.period}`
+                                                    const disableExactOccupy = eachDayAndPeriod == dayAndPeriodOfOcupy
                                                     const disabled = isPassed
                                                       ? true
                                                       : isBooked
@@ -420,7 +423,7 @@ const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSl
                                                           ? false // Allow action for the user's occupied time
                                                           : bookingTimeSlot.occupyTime.some((a) => a.patientId === userProfile?._id)
                                                             ? true // If the user has any occupied time, disable all other buttons
-                                                            : false; // Otherwise, allow selection
+                                                            : disableExactOccupy; // Otherwise, allow selection
                                                     return (
                                                       <li style={{ width: 'inherit' }} key={slotIndex.toString() + " " + j.toString() + i.toString()}>
                                                         <Tooltip placement='top' arrow title={
@@ -495,7 +498,6 @@ const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSl
         <div className="submit-section proceed-btn text-end" style={{ marginTop: 40 }}>
           {occupyTime &&
             <Button
-              // href={`/doctors/check-out/${btoa(`${JSON.stringify(occupyTime)}`)}`}
               disabled={bookingTimeSlot?.doctorProfile?._id === userProfile?._id || userProfile?.roleName == 'doctors'}
               onClick={(e) => {
                 e.preventDefault()

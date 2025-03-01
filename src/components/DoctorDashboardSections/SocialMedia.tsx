@@ -33,30 +33,23 @@ const getSocialIcon = (platform: string) => {
   }
 };
 const SocialMedia: FC = (() => {
-  const { muiVar, bounce } = useScssVar();
+  const { bounce } = useScssVar();
 
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const dispatch = useDispatch();
-  const router = useRouter();
 
   const {
-    register,
     handleSubmit,
-    clearErrors,
     formState: { errors },
-    watch,
     reset,
     control,
-    setError,
-    getValues,
-    setValue: setFormValue
   } = useForm({
     defaultValues: {
       socialMedia: userDoctorProfile?.socialMedia,
     }
   })
-  const { fields, append, remove } = useFieldArray<any>({
+  const { fields, } = useFieldArray<any>({
     control,
     name: "socialMedia"
   });
@@ -115,7 +108,7 @@ const SocialMedia: FC = (() => {
   }, [userDoctorProfile?.socialMedia, reset]);
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9   animate__animated animate__backInUp" style={muiVar}>
+      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp" >
         <div className="card">
           <div className="card-body">
             <form noValidate onSubmit={handleSubmit(onSocialMediaSubmit)} >

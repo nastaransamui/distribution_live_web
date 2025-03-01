@@ -14,7 +14,7 @@ const CartTotals: FC = (() => {
         <div className="col-md-5 col-lg-4">
           {/* Booking Summary */}
           <div className="card booking-card">
-            <div className="card-header">
+            <div className="card-header" style={{ borderRadius: '8px 8px 0px 0px' }}>
               <h1 className="card-title">Cart Totals</h1>
             </div>
             <div className="card-body">

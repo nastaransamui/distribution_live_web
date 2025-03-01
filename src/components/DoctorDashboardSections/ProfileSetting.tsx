@@ -21,7 +21,6 @@ import { useDropzone } from 'react-dropzone';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
 import randomstring from 'randomstring'
-import { Image as ImageGalleryType } from 'react-grid-gallery'
 
 
 //Mui
@@ -36,7 +35,6 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { useTheme } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box'
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -58,7 +56,6 @@ import { toast } from 'react-toastify';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import CurrencyAutocomplete from '@/shared/CurrencyAutocomplete';
-import { LoadingComponent } from './ScheduleTiming';
 import dataGridStyle from '../shared/dataGridStyle';
 
 export interface SpecialitiesType {
@@ -565,7 +562,8 @@ const ProfileSetting: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar} >
+      {/* <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar} > */}
+      <div className="col-md-12 col-lg-12 col-xl-12">
 
         <form noValidate onSubmit={handleSubmit(onProfileSubmit)}>
           <div className="card  animate__animated animate__backInDown">

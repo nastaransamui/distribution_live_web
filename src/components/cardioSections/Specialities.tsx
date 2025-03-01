@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
+import AOS from 'aos'
 
 import {
   DrugsSvg,
@@ -16,6 +17,13 @@ import {
 
 const Specialities: FC = (() => {
   const { muiVar } = useScssVar();
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
+
+  }, []);
   return (
     <Fragment>
       <section className="specialities-section-one" style={muiVar}>

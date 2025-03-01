@@ -90,8 +90,8 @@ const App = ({ Component, ...rest }: MyAppProps) => {
                 </AppWrapper>
               </GoogleOAuthProvider>
             </Provider>
-          </CacheProvider > :
-
+          </CacheProvider >
+          :
           <Provider store={store}>
             <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
               <AppWrapper>

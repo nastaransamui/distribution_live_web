@@ -1,18 +1,24 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { client07, client08, client09, healthcare } from '../../../public/assets/imagepath';
 import { Typography, useTheme } from '@mui/material';
-
+import AOS from 'aos'
 
 const Testimonals: FC = (() => {
   const { muiVar } = useScssVar();
 
   const theme = useTheme();
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
 
+  }, []);
   return (
     <Fragment>
-      <div className="testimonial-section-ten need-to-know-section" style={muiVar}>
+      <div className="testimonial-section-ten need-to-know-section" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="floating-bg">
           <img src={healthcare} alt='' />
         </div>

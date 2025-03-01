@@ -62,7 +62,7 @@ const TestimonialSection: FC = (() => {
   }
   return (
     <Fragment>
-      <section className="client-us-section-thirteen common-padding" style={muiVar}>
+      <section className="client-us-section-thirteen common-padding" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="client-us-section-thirteenone aos" data-aos="fade-right">
           <img src={cloud_2} alt="#" />
           <img src={rainbow_2} alt="#" />

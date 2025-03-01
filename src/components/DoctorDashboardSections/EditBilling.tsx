@@ -157,7 +157,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9 animate__animated animate__backInUp" style={muiVar}>
+      <div className="col-md-12 col-lg-12 col-xl-12 animate__animated animate__backInUp" style={muiVar}>
 
         {_.isEmpty(getFormValue()) ?
           <div className="card">
@@ -198,7 +198,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
               </div>
 
 
-              <div style={{ display: 'flex', alignItems: "center", justifyContent: 'space-between', minHeight: '90px' }}>
+              <div className='row '>
                 <div className="col-md-6">
                   <div className="form-group mb-0">
                     <Controller
@@ -238,22 +238,23 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                     />
                   </div>
                 </div>
+
+                <div className="col-md-6">
+                  <div className="form-group mb-0">
+                    <Chip
+                      color={
+                        singleBill?.status == 'Paid' ? 'success' :
+                          (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ? 'error' :
+                            'primary'}
+                      label={`${singleBill?.status !== 'Paid' && (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ? `Over Due` : singleBill?.status}`}
+
+                      sx={{ color: '#000', fontSize: '18px', minWidth: '100%', height: '40px', mb: 3 }} />
+                  </div>
+                </div>
                 {billsFields.length < 5 &&
                   <div className="add-more text-end" onClick={addInputField} style={{ marginBottom: 8 }}>
                     <Link href="" onClick={(e) => { e.preventDefault() }} className="add-education"><i className="fa fa-plus-circle"></i> Add More</Link>
                   </div>}
-              </div>
-              <div className="col-md-12">
-                <div className="form-group mb-0" style={{ paddingLeft: '10px' }}>
-                  <Chip
-                    color={
-                      singleBill?.status == 'Paid' ? 'success' :
-                        (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ? 'error' :
-                          'primary'}
-                    label={`${singleBill?.status !== 'Paid' && (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ? `Over Due` : singleBill?.status}`}
-
-                    sx={{ color: '#000', fontSize: '18px', minWidth: '100%', height: '40px', mb: 3 }} />
-                </div>
               </div>
 
 

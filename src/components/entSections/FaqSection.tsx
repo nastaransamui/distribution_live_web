@@ -4,6 +4,7 @@ import AOS from 'aos'
 import dynamic from 'next/dynamic'
 import useScssVar from '@/hooks/useScssVar'
 import { BsArrowRightCircle } from 'react-icons/bs'
+import { useTheme } from '@mui/material'
 
 const Owlcarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
 
@@ -11,7 +12,7 @@ const Owlcarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
 
 const FaqSection: FC = (() => {
   const { muiVar } = useScssVar();
-
+  const theme = useTheme();
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -47,7 +48,7 @@ const FaqSection: FC = (() => {
   };
   return (
     <Fragment>
-      <section className="frequently-section-fifteen" style={muiVar}>
+      <section className="frequently-section-fifteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="row">
             <div className="col-md-12">

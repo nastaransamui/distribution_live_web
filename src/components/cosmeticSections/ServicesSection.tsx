@@ -6,12 +6,14 @@ import useScssVar from '@/hooks/useScssVar'
 import { servicesixteenicon } from '../../../public/assets/imagepath';
 import { DiscoverFiveSvg, DiscoverFourSvg, DiscoverOneSvg, DiscoverThreeSvg, DiscoverTwoSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import $ from 'jquery'
+import { useTheme } from '@mui/material';
 const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
 
 
 
 const ServicesSection: FC = (() => {
   const { muiVar } = useScssVar();
+  const theme = useTheme();
   const settings = {
     items: 5,
     loop: true,
@@ -58,7 +60,7 @@ const ServicesSection: FC = (() => {
   };
   return (
     <Fragment>
-      <section className="services-section-sixteen" style={muiVar}>
+      <section className="services-section-sixteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="row">
             <div className="col-md-12">

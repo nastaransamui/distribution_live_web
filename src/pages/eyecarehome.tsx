@@ -25,10 +25,7 @@ import AppointmentSection from '@/components/eyeCareSections/AppointmentSection'
 import Faq from '@/components/eyeCareSections/Faq';
 import Footer from '@/components/eyeCareSections/Footer';
 import OfferSection from '@/components/eyeCareSections/OfferSection';
-import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import isJsonString from '@/helpers/isJson';
 import getClinicsStatus from '@/helpers/getClinicsStatus';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import { LazyLoadWrapper } from './index';

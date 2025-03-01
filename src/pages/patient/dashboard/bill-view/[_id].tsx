@@ -11,11 +11,8 @@ import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
-import Footer from '@/components/sections/Footer';
-import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
+import DashboardFooter from '@/components/sections/DashboardFooter';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import isJsonString from '@/helpers/isJson';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import BillInvoice from '@/components/PatientSection/BillPayment/BillInvoice';
 import { updateHomeExp } from '@/redux/homeExp';
@@ -23,13 +20,21 @@ import { updateHomeIAT } from '@/redux/homeIAT';
 import { updateHomeRoleName } from '@/redux/homeRoleName';
 import { updateHomeServices } from '@/redux/homeServices';
 import { updateHomeUserId } from '@/redux/homeUserId';
-import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
+import PatientDashboardSidebar from '@/components/shared/PatientDashboardSidebar';
+import useScssVar from '@/hooks/useScssVar';
+import { Params } from '@/pages/doctors/dashboard/patient-profile/[_id]';
+import { updateHomeSideBarOpen } from '@/redux/homeSideBarOpen';
+import { ErrorComponent } from '@/pages/404';
+import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 
+const InvoiceViewPage: NextPage = (props: any) => {
+  const { doctorPatientProfile } = props;
 
-const InvoiceViewPage: NextPage = () => {
-
-
+  const { muiVar } = useScssVar();
+  if (props.error) {
+    return <ErrorComponent errorCode={props.errorCode} errorText={props.error} />;
+  }
   return (
     <>
       <Head>
@@ -43,8 +48,11 @@ const InvoiceViewPage: NextPage = () => {
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb title='Patient Profile' subtitle='Patient Profile' />
+      <span style={muiVar}>
+        <PatientDashboardSidebar />
+      </span>
       <BillInvoice />
-      <Footer />
+      <DashboardFooter />
       <CookieConsentComponent />
     </>
   )
@@ -53,6 +61,8 @@ const InvoiceViewPage: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx) => {
     try {
+      const { params } = ctx
+      const { _id: encryptID } = params as Params
       let props = {}
       const result = await fetch('http://ip-api.com/json/', {
         method: 'GET',
@@ -70,6 +80,10 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       if (hasCookie('homeThemeName', ctx)) {
         store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
       }
+      if (hasCookie('homeMiniSidebarOpen', ctx)) {
+        store.dispatch(updateHomeSideBarOpen(getCookie('homeMiniSidebarOpen', ctx)))
+      }
+
       if (hasCookie('homeAccessToken', ctx)) {
         const accessToken = getCookie('homeAccessToken', ctx);
         const user_id = getCookie('user_id', ctx);
@@ -84,6 +98,20 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             Authorization: `Bearer ${accessToken}`
           }
         })
+        // Check if the response is JSON
+        const contentType = res.headers.get("content-type");
+        if (!res.ok) {
+          return {
+            props: { ...props, error: `API Error: ${res.status} - ${res.statusText}`, errorCode: 502 },
+          };
+        }
+
+        if (!contentType || !contentType.includes("application/json")) {
+          return {
+            props: { ...props, error: `Invalid response from API`, errorCode: 415 },
+          };
+        }
+
         const data = await res.json();
 
 
@@ -102,17 +130,32 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             },
           }
         }
-        store.dispatch(updateHomeAccessToken(accessToken))
-        store.dispatch(updateHomeUserId(user_id))
-        store.dispatch(updateHomeServices(services))
-        store.dispatch(updateHomeRoleName(roleName))
-        store.dispatch(updateHomeIAT(iat))
-        store.dispatch(updateHomeExp(exp))
-        roleName == 'patient' ?
-          store.dispatch(updateUserPatientProfile(data)) :
-          store.dispatch(updateUserDoctorProfile(data))
-      }
+        if (roleName == 'patient') {
+          store.dispatch(updateHomeAccessToken(accessToken))
+          store.dispatch(updateHomeUserId(user_id))
+          store.dispatch(updateHomeServices(services))
+          store.dispatch(updateHomeRoleName(roleName))
+          store.dispatch(updateHomeIAT(iat))
+          store.dispatch(updateHomeExp(exp))
+          store.dispatch(updateUserPatientProfile(data))
+        } else {
+          return {
+            redirect: {
+              destination: `/${roleName}/dashboard`,
+              permanent: false,
+            },
+          }
+        }
 
+      } else {
+        return {
+          ...props,
+          redirect: {
+            destination: `/login`,
+            permanent: false,
+          },
+        }
+      }
       return {
         props
       }
@@ -139,6 +182,20 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             Authorization: `Bearer ${accessToken}`
           }
         })
+        // Check if the response is JSON
+        const contentType = res.headers.get("content-type");
+        if (!res.ok) {
+          return {
+            props: { ...props, error: `API Error: ${res.status} - ${res.statusText}`, errorCode: 502 },
+          };
+        }
+
+        if (!contentType || !contentType.includes("application/json")) {
+          return {
+            props: { ...props, error: `Invalid response from API`, errorCode: 415 },
+          };
+        }
+
         const data = await res.json();
 
 
@@ -157,15 +214,30 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
             },
           }
         }
-        store.dispatch(updateHomeAccessToken(accessToken))
-        store.dispatch(updateHomeUserId(user_id))
-        store.dispatch(updateHomeServices(services))
-        store.dispatch(updateHomeRoleName(roleName))
-        store.dispatch(updateHomeIAT(iat))
-        store.dispatch(updateHomeExp(exp))
-        roleName == 'patient' ?
-          store.dispatch(updateUserPatientProfile(data)) :
-          store.dispatch(updateUserDoctorProfile(data))
+        if (roleName == 'patient') {
+          store.dispatch(updateHomeAccessToken(accessToken))
+          store.dispatch(updateHomeUserId(user_id))
+          store.dispatch(updateHomeServices(services))
+          store.dispatch(updateHomeRoleName(roleName))
+          store.dispatch(updateHomeIAT(iat))
+          store.dispatch(updateHomeExp(exp))
+          store.dispatch(updateUserPatientProfile(data))
+        } else {
+          return {
+            redirect: {
+              destination: `/${roleName}/dashboard`,
+              permanent: false,
+            },
+          }
+        }
+      } else {
+        return {
+          ...props,
+          redirect: {
+            destination: `/login`,
+            permanent: false,
+          },
+        }
       }
       return {
         props

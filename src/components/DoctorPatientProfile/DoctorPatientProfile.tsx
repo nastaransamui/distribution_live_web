@@ -107,7 +107,7 @@ const DoctorPatientProfile: FC<DoctorPatientProfileTypes> = (({ doctorPatientPro
     <Fragment>
       <PatientSidebarDoctorDashboard doctorPatientProfile={profile} />
 
-      <div className="col-md-7 col-lg-8 col-xl-9 dct-appoinment    animate__animated animate__backInUp" >
+      <div className="col-md-12 col-lg-12 col-xl-12 dct-appoinment    animate__animated animate__backInUp" >
         <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='doctor' />
       </div>
     </Fragment>

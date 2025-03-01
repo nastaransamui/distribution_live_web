@@ -32,6 +32,7 @@ export interface UserDoctorProfileTypeValue {
   experinces: ExperienceType[];
   favs_id: string[];
   firstName: string;
+  fullName: string;
   gender: string;
   idle?: boolean;
   invoice_ids: string[];
@@ -89,6 +90,7 @@ export interface UserDoctorProfileType {
     experinces: ExperienceType[];
     favs_id: string[];
     firstName: string;
+    fullName: string;
     gender: string;
     idle?: boolean;
     invoice_ids: string[];

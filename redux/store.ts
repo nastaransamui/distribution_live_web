@@ -16,6 +16,7 @@ import homeFormSubmitReducer from "./homeFormSubmit";
 import userDataReducer from "./userData";
 import clinicStatusReducer from "./clinicStatus";
 import homeSocketReducer from "./homeSocket";
+import homeSideBarOpenReducer from "./homeSideBarOpen";
 
 import userPatientProfileReducer, {
   UserPatientProfileType,
@@ -24,6 +25,7 @@ import userDoctorProfileReducer, {
   UserDoctorProfileType,
 } from "./userDoctorProfile";
 import specialitiesReducer from "./specialities";
+import { homeSideBarOpenSlice } from "./homeSideBarOpen";
 
 export interface AppState {
   homeAccessToken: ReturnType<typeof homeAccessTokenReducer>;
@@ -36,6 +38,7 @@ export interface AppState {
   homeThemeType: ReturnType<typeof homeThemeTypeReducer>;
   homeLoadingBar: ReturnType<typeof homeLoadingBarReducer>;
   homeFormSubmit: ReturnType<typeof homeFormSubmitReducer>;
+  homeSideBarOpen: ReturnType<typeof homeSideBarOpenReducer>;
   userData: ReturnType<typeof userDataReducer>;
   clinicStatus: ReturnType<typeof clinicStatusReducer>;
   homeSocket: ReturnType<typeof homeSocketReducer>;
@@ -58,6 +61,7 @@ export function makeStore() {
       homeThemeType: homeThemeTypeReducer,
       homeLoadingBar: homeLoadingBarReducer,
       homeFormSubmit: homeFormSubmitReducer,
+      homeSideBarOpen: homeSideBarOpenReducer,
       userData: userDataReducer,
       clinicStatus: clinicStatusReducer,
       homeSocket: homeSocketReducer,

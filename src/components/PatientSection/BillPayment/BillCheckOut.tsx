@@ -446,7 +446,7 @@ const BillCheckOut: FC = (() => {
                         {!watch('paymentConfirm') &&
                           <div id="collapseone"
                             className={`collapse ${watch('paymentConfirm') ? 'hide' : watch('terms') ? 'show' : 'hide'}`}>
-                            <div className="filter-collapse">
+                            <div className="filter-collapse" style={{ paddingLeft: 5 }}>
                               <GooglePayButton
                                 environment="TEST"
                                 paymentRequest={{

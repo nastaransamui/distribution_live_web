@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect } from 'react'
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 
@@ -9,13 +9,20 @@ import {
 } from "../../../public/assets/imagepath";
 import { EyeIconSvg, Doc_1Svg, Doc_2Svg, Doc_3Svg } from '../../../public/assets/images/icons/IconsSvgs';
 import { useTheme } from '@mui/material';
-
+import AOS from 'aos'
 const WhoWeAre: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true
+    });
+
+  }, []);
   return (
     <Fragment>
-      <section className="center-section" style={muiVar}>
+      <section className="center-section" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="ban-bg">
           <img src={center_bg} alt="" className="img-fluid bg-05 img" style={{ opacity: 0.3 }} />
         </div>
@@ -35,7 +42,7 @@ const WhoWeAre: FC = (() => {
                 </div>
               </div>
             </div>
-            <div className="col-lg-7 aos" data-aos="fade-up" style={{ background: theme.palette.background.default, padding: `15px` }}>
+            <div className="col-lg-7 aos" data-aos="fade-up" style={{ borderRadius: '15px', background: theme.palette.background.default, padding: `15px` }}>
               <div className="center-info">
                 <div className="section-heading sec-heading-eye">
                   <EyeIconSvg />

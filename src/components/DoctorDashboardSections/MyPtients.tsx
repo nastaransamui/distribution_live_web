@@ -28,6 +28,7 @@ import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridM
 import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent, StyledBadge } from './ScheduleTiming';
 import CustomPagination from '../shared/CustomPagination';
 import RenderExpandableCell from '../shared/RenderExpandableCell';
+import { useRouter } from 'next/router';
 
 export const ProfileImageStyledBadge = styled(Badge, {
   shouldForwardProp: (prop) => prop !== 'online'
@@ -114,13 +115,14 @@ export interface MyPatientsProfile {
   totalCount: number;
 }
 
-const perPage = 12
+
 const MyPtients: FC = (() => {
   dayjs.extend(utc)
   dayjs.extend(timezone)
   dayjs.extend(preciseDiff)
   const { muiVar, bounce } = useScssVar();
-  const dataGridRef = useRef<any>(null)
+  const dataGridRef = useRef<any>(null);
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false)
   const [patiensDataProfile, setpatiensDataProfile] = useState<PatientProfile[]>([])
@@ -386,7 +388,7 @@ const MyPtients: FC = (() => {
             key="view-action"
             onClick={() => {
               const encodedId = btoa(params.row?._id);
-              window.open(`/doctors/dashboard/patient-profile/${encodedId}`, '_blank');
+              router.push(`/doctors/dashboard/patient-profile/${encodedId}`)
             }}
             icon={<i className="far fa-eye" style={{ color: theme.palette.secondary.main }}></i>} label="View" />,
 
@@ -550,7 +552,7 @@ const MyPtients: FC = (() => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9   animate__animated animate__backInUp" style={muiVar}>
+      <div className="col-md-12 col-lg-12 col-xl-12   animate__animated animate__backInUp" style={muiVar}>
 
         {
           isLoading ?

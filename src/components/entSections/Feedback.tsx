@@ -4,10 +4,12 @@ import Link from 'next/link'
 import AOS from 'aos'
 import useScssVar from '@/hooks/useScssVar'
 import { feedback_fifteen, logo } from '../../../public/assets/imagepath';
+import { useTheme } from '@mui/material';
 
 
 const Feedback: FC = (() => {
   const { muiVar } = useScssVar();
+  const theme = useTheme();
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -17,7 +19,7 @@ const Feedback: FC = (() => {
   }, []);
   return (
     <Fragment>
-      <section className="feedback-section-fifteen" style={muiVar}>
+      <section className="feedback-section-fifteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
         <div className="container">
           <div className="feedback-schedule-all">
             <div className="row">

@@ -115,7 +115,7 @@ const Rates: FC = () => {
                 `${row?.authorProfile.gender}. ` : ""}`}${row?.authorProfile?.fullName}`
           return (
             <>
-              <Link aria-label='profile' className=" mx-2" target='_blank' href={
+              <Link aria-label='profile' className=" mx-2" href={
                 roleName == "doctors" ?
                   `/doctors/profile/${btoa(row?.authorId)}` :
                   `/doctors/dashboard/patient-profile/${btoa(row?.authorId)}`} >
@@ -131,7 +131,7 @@ const Rates: FC = () => {
                 </StyledBadge>
               </Link>
               <Stack >
-                <Link aria-label='profile' target='_blank' href={
+                <Link aria-label='profile' href={
                   roleName == "doctors" ?
                     `/doctors/profile/${btoa(row?.authorId)}` :
                     `/doctors/dashboard/patient-profile/${btoa(row?.authorId)}`}
@@ -486,7 +486,7 @@ const Rates: FC = () => {
 
   return (
     <Fragment>
-      <div className="col-md-7 col-lg-8 col-xl-9  animate__animated animate__backInUp">
+      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp">
         {
           isLoading ?
             <div className="card">
