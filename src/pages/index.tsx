@@ -30,10 +30,7 @@ import ScrollToTop from '@/components/sections/ScrollToTop';
 import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
-import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import isJsonString from '@/helpers/isJson';
 import { useEffect, useRef, useState } from 'react';
 import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateHomeExp } from '@/redux/homeExp';
@@ -69,8 +66,8 @@ export const LazyLoadWrapper = ({ children }: { children: React.ReactNode }) => 
   return <div ref={ref}>{isVisible && children}</div>;
 };
 
-const Home: NextPage = () => {
-
+const Home: NextPage = (props: any) => {
+  // console.log(props)
   return (
     <>
       <Head>
@@ -183,7 +180,25 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           }
         }
       }
+      // const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/api/bestDoctors`, {
+      //   method: 'GET',
+      //   headers: {
+      //     'Accept': 'application/json',
+      //     'Content-Type': 'application/json'
+      //   }
+      // })
 
+      // const data = await res.json();
+
+      // // if (!data?.error && data.length > 0) {
+      // //   const { bestDoctors, totalBestDoctors, totalDoctors } = data[0];
+      // //   store.dispatch(updateBestDoctorsData({
+      // //     bestDoctors: bestDoctors || [],
+      // //     totalBestDoctor: totalBestDoctors ?? 0, // Ensure it's a number
+      // //     totalDoctors: totalDoctors ?? 0, // Ensure it's a number
+      // //   }));
+
+      // // }
       if (hasCookie('homeAccessToken', ctx)) {
         const accessToken = getCookie('homeAccessToken', ctx);
         const user_id = getCookie('user_id', ctx);

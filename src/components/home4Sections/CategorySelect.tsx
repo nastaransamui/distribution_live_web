@@ -1,10 +1,13 @@
 import { FC, Fragment } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux/store';
 
 const CategorySelect: FC = (() => {
   const { muiVar } = useScssVar();
-
+  const bestDoctorsData = useSelector((state: AppState) => state.bestDoctorsData)
+  const { totalDoctors } = bestDoctorsData
   return (
     <Fragment>
       <section className="doctor-category" style={muiVar}>
@@ -19,7 +22,7 @@ const CategorySelect: FC = (() => {
                 </div>
                 <div className="body-section">
                   <h3>Visit a Doctor</h3>
-                  <p>250 +  Doctors</p>
+                  <p>{totalDoctors == 0 ? '250' : totalDoctors} +  Doctors</p>
                   <Link href="/doctors/search" className="btn book-btn" tabIndex={0} style={{ color: 'black' }}>Book Now</Link>
                 </div>
               </div>
@@ -33,7 +36,7 @@ const CategorySelect: FC = (() => {
                 </div>
                 <div className="body-section">
                   <h3>Find a Pharmacy</h3>
-                  <p>2560 +  Pharmacy</p>
+                  <p>60 +  Pharmacy</p>
                   <Link href="/doctors/search" className="btn book-btn" tabIndex={0} style={{ color: 'black' }}>Book Now</Link>
                 </div>
               </div>
@@ -47,7 +50,7 @@ const CategorySelect: FC = (() => {
                 </div>
                 <div className="body-section">
                   <h3>Find a Lab</h3>
-                  <p>250 +  Testing Labs</p>
+                  <p>50 +  Testing Labs</p>
                   <Link href="/doctors/search" className="btn book-btn" tabIndex={0} style={{ color: 'black' }}>Book Now</Link>
                 </div>
               </div>

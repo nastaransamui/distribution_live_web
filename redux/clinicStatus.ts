@@ -1,8 +1,9 @@
-import { createSlice, AnyAction } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { HYDRATE } from 'next-redux-wrapper';
+import { createSlice, AnyAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
 export interface ClinicStatusType {
   _id: string;
+  id: number;
   href: string;
   active: boolean;
   hasThemeImage: boolean;
@@ -18,7 +19,7 @@ const initialState = {
 };
 
 export const clinicStatusSlice = createSlice({
-  name: 'clinicStatus',
+  name: "clinicStatus",
   initialState,
   reducers: {
     updateClinicStatus: (state, action: PayloadAction<any>) => {

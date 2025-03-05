@@ -11,7 +11,7 @@ const Bookappointment: FC = (() => {
   const theme = useTheme();
   useEffect(() => {
     AOS.init({
-      duration: 1200,
+      duration: 100200,
       once: true
     });
 

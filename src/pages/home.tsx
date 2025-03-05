@@ -53,13 +53,11 @@ const Home: NextPage = () => {
       </Head>
       <HomeSearch />
       <LookingFor />
-      <LazyLoadWrapper>
-        <HomeSpecialities />
-        <HomeBookDoctor />
-        <HomeFeatures />
-        <HomeBlog />
-        <Footer />
-      </LazyLoadWrapper>
+      <HomeSpecialities />
+      <HomeBookDoctor />
+      <HomeFeatures />
+      <HomeBlog />
+      <Footer />
       <CookieConsentComponent />
       <ScrollToTop />
     </>

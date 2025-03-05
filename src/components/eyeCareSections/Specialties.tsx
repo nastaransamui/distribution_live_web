@@ -16,7 +16,7 @@ import {
   clinic_015
 } from "../../../public/assets/imagepath";
 import { EyeIconOneSvg, EyeIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
-import $ from 'jquery'
+
 import AOS from 'aos'
 const Specialities: FC = (() => {
   const { muiVar } = useScssVar();

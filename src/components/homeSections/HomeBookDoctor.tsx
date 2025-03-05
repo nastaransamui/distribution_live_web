@@ -1,15 +1,22 @@
 // @ts-nocheck
 /* eslint-disable @next/next/no-img-element */
-import { Fragment, FC, useEffect } from "react";
+import { Fragment, FC, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Slider from "react-slick";
 import AOS from 'aos'
 import useScssVar from "@/hooks/useScssVar";
 import { useTheme } from "@mui/material";
 import { Doc01, Doc02, Doc03, Doc04 } from "@/public/assets/imagepath";
-
+import { useSelector } from "react-redux";
+import { AppState } from "@/redux/store";
+import Rating from '@mui/material/Rating'
+import Skeleton from '@mui/material/Skeleton'
+import { formatNumberWithCommas } from "../DoctorDashboardSections/ScheduleTiming";
+import { FavButton } from "../SearchDoctorSections/DoctorSearchResults";
 const HomeBookDoctor: FC = (() => {
   const { muiVar } = useScssVar();
+  const bestDoctorsData = useSelector((state: AppState) => state.bestDoctorsData)
+  const { bestDoctors } = bestDoctorsData;
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -17,9 +24,13 @@ const HomeBookDoctor: FC = (() => {
     });
 
   }, []);
-
+  useEffect(() => {
+    const prevArrow = document.querySelector(".slick-prev");
+    if (prevArrow) {
+      (prevArrow as HTMLElement).style.left = "-35px";
+    }
+  }, [bestDoctorsData]);
   const theme = useTheme();
-
   const settings = {
     width: 400,
     dots: false,
@@ -54,6 +65,59 @@ const HomeBookDoctor: FC = (() => {
     ]
 
   };
+  const dummyDoctorData = useMemo(() => {
+    return [
+      {
+        img: Doc01,
+        name: 'Dr. Ruby Perrin',
+        link: "/doctors/search",
+        specialities: 'MDS - Periodontology and Oral Implantology, BDS',
+        avgRating: 4.5,
+        vote: 17,
+        city: "Florida",
+        country: "USA",
+        available: "Available on Fri, 22 Mar",
+        avaragePrice: "$300 - $1000"
+      },
+      {
+        img: Doc02,
+        name: 'Dr. Darren Elder',
+        link: "/doctors/search",
+        specialities: 'BDS, MDS - Oral & Maxillofacial Surgery',
+        avgRating: 4,
+        vote: 35,
+        city: "Newyork",
+        country: "USA",
+        available: "Available on Fri, 22 Mar",
+        avaragePrice: "$50 - $300"
+      },
+      {
+        img: Doc03,
+        name: 'Dr. Deborah Angel',
+        link: "/doctors/search",
+        specialities: 'MBBS, MD - General Medicine, DNB - Cardiology',
+        avgRating: 3,
+        vote: 27,
+        city: "Georgia",
+        country: "USA",
+        available: "Available on Fri, 22 Mar",
+        avaragePrice: "$100 - $400"
+      },
+      {
+        img: Doc04,
+        name: 'Dr. Sofia Brient',
+        link: "/doctors/search",
+        specialities: 'MBBS, MS - General Surgery, MCh - Urology',
+        avgRating: 3,
+        vote: 4,
+        city: "Louisiana",
+        country: "USA",
+        available: "Available on Fri, 22 Mar",
+        avaragePrice: "$150 - $250"
+      },
+    ]
+  }, [])
+
   return (
     <Fragment>
       <section className="section section-doctor" style={muiVar}>
@@ -68,204 +132,149 @@ const HomeBookDoctor: FC = (() => {
                 <p>It is a long established fact that a reader will be distracted by the readable
                   content of a page when looking at its layout. The point of using Lorem Ipsum.</p>
                 <p>web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes</p>
-                <Link href="#" >Read More..</Link>
+                <Link href="/doctors/search" >Reserve</Link>
               </div>
             </div>
             <div className="col-lg-8">
               <div className="doctor-slider slider ">
                 <Slider {...settings}>
-                  <div>
-                    <div className="profile-widget">
-                      <div className="doc-img">
-                        <Link href="/doctors/search">
-                          <img className="img-fluid" alt="User" src={Doc01} />
-                        </Link>
-                        <Link href="#" className="fav-btn">
-                          <i className="far fa-bookmark"></i>
-                        </Link>
-                      </div>
-                      <div className="pro-content">
-                        <h3 className="title">
-                          <Link href="/doctors/search">Ruby Perrin</Link>
-                          <i className="fas fa-check-circle verified"></i>
-                        </h3>
-                        <p className="speciality">MDS - Periodontology and Oral Implantology, BDS</p>
-                        <div className="rating">
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <span className="d-inline-block average-rating">(17)</span>
-                        </div>
-                        <ul className="available-info">
-                          <li>
-                            <i className="fas fa-map-marker-alt"></i> Florida, USA
-                          </li>
-                          <li>
-                            <i className="far fa-clock"></i> Available on Fri, 22 Mar
-                          </li>
-                          <li>
-                            <i className="far fa-money-bill-alt"></i> $300 - $1000 {" "}
-                            <i className="fas fa-info-circle" data-toggle="tooltip" title="Lorem Ipsum"></i>
-                          </li>
-                        </ul>
-                        <div className="row row-sm">
-                          <div className="col-6">
-                            <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
+                  {
+                    bestDoctors == null ?
+                      (
+                        Array(3).fill(0).map((_, index) => (
+                          <div key={index}>
+                            <DoctorSkeletonHome />
                           </div>
-                          <div className="col-6">
-                            <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="profile-widget">
-                      <div className="doc-img">
-                        <Link href="/doctors/search">
-                          <img className="img-fluid" alt="User" src={Doc02} />
-                        </Link>
-                        <Link href="#" className="fav-btn">
-                          <i className="far fa-bookmark"></i>
-                        </Link>
-                      </div>
-                      <div className="pro-content">
-                        <h3 className="title">
-                          <Link href="/doctors/search">Darren Elder</Link>
-                          <i className="fas fa-check-circle verified"></i>
-                        </h3>
-                        <p className="speciality">BDS, MDS - Oral & Maxillofacial Surgery</p>
-                        <div className="rating">
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star"></i>
-                          <span className="d-inline-block average-rating">(35)</span>
-                        </div>
-                        <ul className="available-info">
-                          <li>
-                            <i className="fas fa-map-marker-alt"></i> Newyork, USA
-                          </li>
-                          <li>
-                            <i className="far fa-clock"></i> Available on Fri, 22 Mar
-                          </li>
-                          <li>
-                            <i className="far fa-money-bill-alt"></i> $50 - $300{" "}
-                            <i className="fas fa-info-circle" data-toggle="tooltip" title="Lorem Ipsum"></i>
-                          </li>
-                        </ul>
-                        <div className="row row-sm">
-                          <div className="col-6">
-                            <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
-                          </div>
-                          <div className="col-6">
-                            <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="profile-widget">
-                      <div className="doc-img">
-                        <Link href="/doctors/search">
-                          <img className="img-fluid" alt="User" src={Doc03} />
-                        </Link>
-                        <Link href="#" className="fav-btn">
-                          <i className="far fa-bookmark"></i>
-                        </Link>
-                      </div>
-                      <div className="pro-content">
-                        <h3 className="title">
-                          <Link href="/doctors/search">Deborah Angel</Link>
-                          <i className="fas fa-check-circle verified"></i>
-                        </h3>
-                        <p className="speciality">MBBS, MD - General Medicine, DNB - Cardiology</p>
-                        <div className="rating">
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star"></i>
-                          <span className="d-inline-block average-rating">(27)</span>
-                        </div>
-                        <ul className="available-info">
-                          <li>
-                            <i className="fas fa-map-marker-alt"></i> Georgia, USA
-                          </li>
-                          <li>
-                            <i className="far fa-clock"></i> Available on Fri, 22 Mar
-                          </li>
-                          <li>
-                            <i className="far fa-money-bill-alt"></i> $100 - $400{" "}
-                            <i className="fas fa-info-circle" data-toggle="tooltip" title="Lorem Ipsum"></i>
-                          </li>
-                        </ul>
-                        <div className="row row-sm">
-                          <div className="col-6">
-                            <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
-                          </div>
-                          <div className="col-6">
-                            <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="profile-widget">
-                      <div className="doc-img">
-                        <Link href="/doctors/search">
-                          <img className="img-fluid" alt="User" src={Doc04} />
-                        </Link>
-                        <Link href="#" className="fav-btn">
-                          <i className="far fa-bookmark"></i>
-                        </Link>
-                      </div>
-                      <div className="pro-content">
-                        <h3 className="title">
-                          <Link href="/doctors/search">Sofia Brient</Link>
-                          <i className="fas fa-check-circle verified"></i>
-                        </h3>
-                        <p className="speciality">MBBS, MS - General Surgery, MCh - Urology</p>
-                        <div className="rating">
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star filled"></i>
-                          <i className="fas fa-star"></i>
-                          <span className="d-inline-block average-rating">(4)</span>
-                        </div>
-                        <ul className="available-info">
-                          <li>
-                            <i className="fas fa-map-marker-alt"></i> Louisiana, USA
-                          </li>
-                          <li>
-                            <i className="far fa-clock"></i> Available on Fri, 22 Mar
-                          </li>
-                          <li>
-                            <i className="far fa-money-bill-alt"></i> $150 - $250{" "}
-                            <i className="fas fa-info-circle" data-toggle="tooltip" title="Lorem Ipsum"></i>
-                          </li>
-                        </ul>
-                        <div className="row row-sm">
-                          <div className="col-6">
-                            <Link href="/doctors/search" className="btn view-btn">View Profile</Link>
-                          </div>
-                          <div className="col-6">
-                            <Link href="/doctors/search" className="btn book-btn">Book Now</Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                        ))
+                      ) :
+                      bestDoctors.length == 0 ?
+                        (
+                          dummyDoctorData.map((doctor, index) => {
+                            return (
+                              <div key={index}>
+                                <div className="profile-widget">
+                                  <div className="doc-img">
+                                    <Link href={doctor.link}>
+                                      <img className="img-fluid" alt="User" src={doctor.img} />
+                                    </Link>
+                                    <Link href="#" className="fav-btn">
+                                      <i className="far fa-bookmark"></i>
+                                    </Link>
+                                  </div>
+                                  <div className="pro-content">
+                                    <h3 className="title">
+                                      <Link href={doctor.link}>{doctor.name}</Link>
+                                      <i className="fas fa-check-circle verified"></i>
+                                    </h3>
+                                    <p className="speciality">{doctor.specialities}</p>
+                                    <div className="rating" style={{ display: 'flex' }}>
+                                      <Rating
+                                        name="read-only"
+                                        precision={0.5}
+                                        value={doctor.avgRating}
+                                        readOnly
+                                        size='small' />
+                                      <span className="d-inline-block average-rating">({doctor.vote})</span>
+                                    </div>
+                                    <ul className="available-info">
+                                      <li>
+                                        <i className="fas fa-map-marker-alt"></i> {doctor.city}, {doctor.country}
+                                      </li>
+                                      <li>
+                                        <i className="far fa-clock"></i> {doctor.available}
+                                      </li>
+                                      <li>
+                                        <i className="far fa-money-bill-alt"></i>{doctor.avaragePrice} {" "}
+                                        <i className="fas fa-info-circle" data-toggle="tooltip" title="Lorem Ipsum"></i>
+                                      </li>
+                                    </ul>
+                                    <div className="row row-sm">
+                                      <div className="col-6">
+                                        <Link href={doctor.link} className="btn view-btn">View Profile</Link>
+                                      </div>
+                                      <div className="col-6">
+                                        <Link href={doctor.link} className="btn view-btn">Book Now</Link>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })
+                        ) :
+                        (bestDoctors.map((doctor, index) => {
+                          return (
+                            <div key={index}>
+                              <div className="profile-widget">
+                                <div className="doc-img">
+                                  <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
+                                    <img className="img-fluid" alt="User" src={doctor.profileImage} />
+                                  </Link>
+                                  <Link href="#" onClick={(e) => e.preventDefault()} className="fav-btn">
+                                    <FavButton />
+                                  </Link>
+                                </div>
+                                <div className="pro-content">
+                                  <h3 className="title">
+                                    <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>{`Dr. ${doctor.fullName}`}</Link>
+                                    <i className="fas fa-check-circle verified"></i>
+                                  </h3>
+                                  <p className="speciality">{doctor?.specialities?.[0]?.specialities}</p>
+                                  <div className="rating" style={{ display: 'flex' }}>
+                                    <Rating
+                                      name="read-only"
+                                      precision={0.5}
+                                      value={doctor.avgRate}
+                                      readOnly
+                                      size='small' />
+                                    <span className="d-inline-block average-rating">({doctor.recommendScore})</span>
+                                  </div>
+                                  <ul className="available-info">
+                                    <li>
+                                      <i className="fas fa-map-marker-alt"></i> {doctor.city}, {doctor.country}
+                                    </li>
+                                    {doctor.timeslots.map((slot, index) => (
+                                      <Fragment key={index}>
+                                        <li>
+                                          <i className="fa fa-check" style={{ width: "10px", color: slot.isThisMonthAvailable ? "green" : "crimson" }}></i>
+                                          {slot.isThisMonthAvailable ? " Available This Month" : " Not Available This Month"}
+                                        </li>
+                                        <li>
+                                          <i className="fa fa-check" style={{ width: "10px", color: slot.isThisWeekAvailable ? "green" : "crimson" }}></i>
+                                          {slot.isThisWeekAvailable ? " Available This Week" : " Not Available This Week"}
+                                        </li>
+                                        <li>
+                                          <i className="fa fa-check" style={{ width: "10px", color: slot.isTodayAvailable ? "green" : "crimson" }}></i>
+                                          {slot.isTodayAvailable ? " Available Today" : " Not Available Today"}
+                                        </li>
+                                        <li>
+                                          <i className="fa fa-check" style={{ width: "10px", color: slot.isTommorowAvailable ? "green" : "crimson" }}></i>
+                                          {slot.isTommorowAvailable ? " Available Tomorrow" : " Not Available Tomorrow"}
+                                        </li>
+                                      </Fragment>
+                                    ))}
+                                    <li>
+                                      <i className="far fa-money-bill-alt"></i>
+                                      {" "} {doctor?.currency?.[0]?.currency_symbol}
+                                      {formatNumberWithCommas(doctor?.timeslots?.[0]?.averageHourlyPrice?.toFixed(0))} {" "}
 
-
-
-                  </div>
-
+                                    </li>
+                                  </ul>
+                                  <div className="row row-sm">
+                                    <div className="col-6">
+                                      <Link href={`/doctors/profile/${btoa(doctor?._id)}`} className="btn view-btn">View Profile</Link>
+                                    </div>
+                                    <div className="col-6">
+                                      <Link href={`/doctors/search?keyWord=${doctor.fullName}`} className="btn view-btn">Book Now</Link>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })
+                        )
+                  }
                 </Slider>
               </div>
             </div>
@@ -277,3 +286,65 @@ const HomeBookDoctor: FC = (() => {
 })
 
 export default HomeBookDoctor;
+
+export const DoctorSkeletonHome: FC = (() => {
+  const theme = useTheme();
+  return (
+    <div className="profile-widget">
+      <div className="doc-img">
+        <Skeleton animation="wave" variant="rectangular" width="100%" height={250} />
+      </div>
+      <div className="pro-content">
+        <Skeleton
+          animation="wave"
+          variant="rectangular"
+          sx={{ borderRadius: '8px', minHeight: '26px', minWidth: '55px' }} />
+
+        <Skeleton
+          animation="wave"
+          variant="rectangular"
+          sx={{ borderRadius: '8px', minHeight: '6px', minWidth: '55px', marginTop: "20px" }} />
+        <div className="rating">
+          <Skeleton
+            animation="wave"
+            variant="rectangular"
+            sx={{ borderRadius: '8px', minHeight: '6px', minWidth: '25px', marginTop: "20px" }} />
+        </div>
+        <ul className="available-info">
+          <li>
+            <Skeleton
+              animation="wave"
+              variant="rectangular"
+              sx={{ borderRadius: '8px', minHeight: '6px', minWidth: '25px', marginTop: "20px" }} />
+          </li>
+          <li>
+            <Skeleton
+              animation="wave"
+              variant="rectangular"
+              sx={{ borderRadius: '8px', minHeight: '6px', minWidth: '25px', marginTop: "20px" }} />
+          </li>
+          <li>
+            <Skeleton
+              animation="wave"
+              variant="rectangular"
+              sx={{ borderRadius: '8px', minHeight: '6px', minWidth: '25px', marginTop: "20px" }} />
+          </li>
+        </ul>
+        <div className="row row-sm">
+          <div className="col-6">
+            <Skeleton
+              animation="wave"
+              variant="rectangular"
+              sx={{ borderRadius: '4px', height: '40px', border: `1px solid ${theme.palette.secondary.main}` }} />
+          </div>
+          <div className="col-6">
+            <Skeleton
+              animation="wave"
+              variant="rectangular"
+              sx={{ borderRadius: '4px', height: '40px', border: `1px solid ${theme.palette.primary.main}` }} />
+          </div>
+        </div>
+      </div>
+    </div >
+  )
+})

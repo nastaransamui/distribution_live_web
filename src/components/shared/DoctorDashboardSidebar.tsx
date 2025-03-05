@@ -469,10 +469,12 @@ export const OverflowTooltip: FC<OverflowTooltipProps> = ({
       <Component
         ref={textRef}
         style={{
+          display: "inline-block",
           maxWidth: `${maxWidth}px`,
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
+          cursor: isOverflowing ? "pointer" : "default",
         }}
         {...props}
       >

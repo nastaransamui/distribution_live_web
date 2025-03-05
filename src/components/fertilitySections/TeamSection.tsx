@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect } from 'react'
+import { FC, Fragment, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 import AOS from 'aos'
@@ -7,8 +7,12 @@ import dynamic from 'next/dynamic'
 import { useTheme } from '@mui/material'
 import { ServeImageIconOneSvg, ServeImageIconTwoSvg } from '../../../public/assets/images/icons/IconsSvgs'
 import { doctor_15_aspect, doctor_16_aspect, doctor_17_aspect } from '@/public/assets/imagepath'
+import { useSelector } from 'react-redux'
+import { AppState } from '@/redux/store'
+import { formatNumberWithCommas } from '../DoctorDashboardSections/ScheduleTiming'
 const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false })
-
+import Rating from '@mui/material/Rating'
+import Skeleton from '@mui/material/Skeleton'
 
 
 const TeamSection: FC = (() => {
@@ -58,6 +62,45 @@ const TeamSection: FC = (() => {
       }
     }
   }
+  const bestDoctorsData = useSelector((state: AppState) => state.bestDoctorsData)
+  const { bestDoctors } = bestDoctorsData;
+  const dummyDoctorData = useMemo(() => {
+    return [
+      {
+        img: doctor_15_aspect,
+        name: "Dr. Marie Wells",
+        speciality: "Pregnancy Specialist",
+        totalPatients: 200,
+        totalRating: 3,
+        totalVote: 35,
+        avgPrice: 200,
+        city: "New York",
+        country: "USA"
+      },
+      {
+        img: doctor_16_aspect,
+        name: "Dr. Justin Parker",
+        speciality: "Surgeon",
+        totalPatients: 120,
+        totalVote: 35,
+        avgPrice: 600,
+        totalRating: 2.5,
+        city: "New York",
+        country: "USA"
+      },
+      {
+        img: doctor_17_aspect,
+        name: "Dr. Marie Wells",
+        speciality: "Pregnancy Specialist",
+        totalPatients: 72,
+        totalVote: 35,
+        avgPrice: 200,
+        totalRating: 4.5,
+        city: "New York",
+        country: "USA"
+      },
+    ]
+  }, [])
   return (
     <Fragment>
       <div className="team-section-fourteen" style={muiVar}>
@@ -81,142 +124,119 @@ const TeamSection: FC = (() => {
           </div>
           <div className="owl-theme team-fourteen-slider">
             <OwlCarousel {...doctersettings}>
-              <div className="articles-grid articles-grid-fourteen w-100">
-                <div className="articles-info">
-                  <div className="articles-left">
-                    <Link href="/doctors/search" aria-label='search'>
-                      <div className="articles-img articles-img-fourteen">
-                        <img
-                          src={doctor_15_aspect}
-                          alt=""
-                          className="img-fluid"
-                        />
-                      </div>
-                    </Link>
-                  </div>
-                  <div className="articles-right">
-                    <div className="articles-content articles-content-fourteen">
-                      <Link href="/doctors/search" aria-label='search'>Dr. Marie Wells</Link>
-                      <ul className="articles-list nav">
-                        <li className="Qualified-doctors-fourteen">
-                          Pregnancy Specialist
-                        </li>
-                        <li className="Qualified-doctors-fourteentwo">
-                          +2000 Patients
-                        </li>
-                      </ul>
-                      <div className="rating rating-fourteen">
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star" />
-                        <span className="d-inline-block average-rating">(35)</span>
-                      </div>
-                      <p className="text-muted">
-                        <i className="feather-map-pin" />
-                        <span>0.9</span> min - Newyork, USA
-                      </p>
-                      <ul className="articles-list nav mb-0">
-                        <li className="Qualified-doctors-fourteenthree">$ 200</li>
-                        <li className="Qualified-doctors-fourteenfour">
-                          <Link href="/doctors/search" aria-label='search'>Consult Now</Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="articles-grid articles-grid-fourteen w-100">
-                <div className="articles-info">
-                  <div className="articles-left">
-                    <Link href="/doctors/search" aria-label='search'>
-                      <div className="articles-img articles-img-fourteen">
-                        <img
-                          src={doctor_16_aspect}
-                          alt=""
-                          className="img-fluid"
-                        />
-                      </div>
-                    </Link>
-                  </div>
-                  <div className="articles-right">
-                    <div className="articles-content articles-content-fourteen">
-                      <Link href="/doctors/search" aria-label='search'>Dr. Justin Parker</Link>
-                      <ul className="articles-list nav">
-                        <li className="Qualified-doctors-fourteen">Surgeon</li>
-                        <li className="Qualified-doctors-fourteentwo">
-                          +4000 Patients
-                        </li>
-                      </ul>
-                      <div className="rating rating-fourteen">
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star" />
-                        <span className="d-inline-block average-rating">(125)</span>
-                      </div>
-                      <p className="text-muted">
-                        <i className="feather-map-pin" />
-                        <span>1.0</span> min - Newyork, USA
-                      </p>
-                      <ul className="articles-list nav mb-0">
-                        <li className="Qualified-doctors-fourteenthree">$ 600</li>
-                        <li className="Qualified-doctors-fourteenfour">
-                          <Link href="/doctors/search" aria-label='search'>Consult Now</Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="articles-grid articles-grid-fourteen w-100">
-                <div className="articles-info">
-                  <div className="articles-left">
-                    <Link href="/doctors/search" aria-label='search'>
-                      <div className="articles-img articles-img-fourteen">
-                        <img
-                          src={doctor_17_aspect}
-                          alt=""
-                          className="img-fluid"
-                        />
-                      </div>
-                    </Link>
-                  </div>
-                  <div className="articles-right">
-                    <div className="articles-content articles-content-fourteen">
-                      <Link href="/doctors/search" aria-label='search'>Dr. Marie Wells</Link>
-                      <ul className="articles-list nav">
-                        <li className="Qualified-doctors-fourteen">
-                          Pregnancy Specialist
-                        </li>
-                        <li className="Qualified-doctors-fourteentwo">
-                          +2000 Patients
-                        </li>
-                      </ul>
-                      <div className="rating rating-fourteen">
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star filled" />
-                        <i className="fas fa-star" />
-                        <span className="d-inline-block average-rating">(35)</span>
-                      </div>
-                      <p className="text-muted">
-                        <i className="feather-map-pin" />
-                        <span>0.9</span> min - Newyork, USA
-                      </p>
-                      <ul className="articles-list nav mb-0">
-                        <li className="Qualified-doctors-fourteenthree">$ 200</li>
-                        <li className="Qualified-doctors-fourteenfour">
-                          <Link href="/doctors/search" aria-label='search'>Consult Now</Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {
+                bestDoctors == null ?
+                  (Array(2).fill(0).map((_, index) => (
+                    <FertilityDoctorSkeleton key={index} />
+                  ))) :
+                  bestDoctors.length == 0 ?
+                    (dummyDoctorData.map((doctor, index) => {
+                      return (
+                        <div className="articles-grid articles-grid-fourteen w-100" key={index}>
+                          <div className="articles-info">
+                            <div className="articles-left">
+                              <Link href="/doctors/search" aria-label='search'>
+                                <div className="articles-img articles-img-fourteen">
+                                  <img
+                                    src={doctor.img}
+                                    alt=""
+                                    className="img-fluid"
+                                  />
+                                </div>
+                              </Link>
+                            </div>
+                            <div className="articles-right">
+                              <div className="articles-content articles-content-fourteen">
+                                <Link href="/doctors/search" aria-label='search'>{doctor.name}</Link>
+                                <ul className="articles-list nav">
+                                  <li className="Qualified-doctors-fourteen">
+                                    {doctor.speciality}
+                                  </li>
+                                  <li className="Qualified-doctors-fourteentwo">
+                                    +{doctor.totalPatients} Patients
+                                  </li>
+                                </ul>
+                                <div className="rating rating-fourteen" style={{ display: 'flex' }}>
+                                  <Rating
+                                    name="read-only"
+                                    precision={0.5}
+                                    value={doctor.totalRating}
+                                    readOnly
+                                    size='small' />
+                                  <span className="d-inline-block average-rating">({doctor.totalVote})</span>
+                                </div>
+                                <p className="text-muted">
+                                  <i className="feather-map-pin" />
+                                  {doctor.city}, {doctor.country}
+                                </p>
+                                <ul className="articles-list nav mb-0">
+                                  <li className="Qualified-doctors-fourteenthree">$ {doctor.avgPrice}</li>
+                                  <li className="Qualified-doctors-fourteenfour">
+                                    <Link href="/doctors/search" aria-label='search'>Consult Now</Link>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })) :
+                    (bestDoctors.map((doctor, index) => {
+                      return (
+                        <div className="articles-grid articles-grid-fourteen " style={{ width: '99%' }} key={index}>
+                          <div className="articles-info">
+                            <div className="articles-left">
+                              <Link href={`/doctors/profile/${btoa(doctor._id)}`} aria-label='search'>
+                                <div className="articles-img articles-img-fourteen">
+                                  <img
+                                    src={doctor.profileImage}
+                                    alt=""
+                                    className="img-fluid"
+                                  />
+                                </div>
+                              </Link>
+                            </div>
+                            <div className="articles-right">
+                              <div className="articles-content articles-content-fourteen">
+                                <Link href={`/doctors/profile/${btoa(doctor._id)}`} aria-label='search'>{doctor.fullName}</Link>
+                                <ul className="articles-list nav">
+                                  <li className="Qualified-doctors-fourteen">
+                                    {doctor?.specialities?.[0]?.specialities}
+                                  </li>
+                                  <li className="Qualified-doctors-fourteentwo">
+                                    +{doctor.patientCount} Patients
+                                  </li>
+                                </ul>
+                                <div className="rating rating-fourteen" style={{ display: 'flex' }}>
+                                  <Rating
+                                    name="read-only"
+                                    precision={0.5}
+                                    value={doctor.avgRate}
+                                    readOnly
+                                    size='small' />
+                                  <span className="d-inline-block average-rating">({doctor.totalVote})</span>
+                                </div>
+                                <p className="text-muted">
+                                  <i className="feather-map-pin" />
+                                  {doctor.city}
+                                </p>
+                                <p className="text-muted">
+                                  <i className="feather-map-pin" />
+                                  {doctor.country}
+                                </p>
+                                <ul className="articles-list nav mb-0">
+                                  <li className="Qualified-doctors-fourteenthree">{doctor?.currency?.[0]?.currency_symbol} {formatNumberWithCommas(doctor?.timeslots?.[0]?.averageHourlyPrice?.toFixed(0) || "0")}</li>
+                                  <li className="Qualified-doctors-fourteenfour">
+                                    <Link href={`/doctors/profile/${btoa(doctor._id)}`} aria-label='search'>Consult Now</Link>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    }))
+              }
             </OwlCarousel>
           </div>
         </div>
@@ -235,3 +255,41 @@ const TeamSection: FC = (() => {
 })
 
 export default TeamSection;
+
+export const FertilityDoctorSkeleton: FC = (() => {
+  return (
+    <div className="articles-grid articles-grid-fourteen w-100">
+      <div className="articles-info">
+        <div className="articles-left" style={{ minWidth: '230px' }}>
+          <Link href="/doctors/search" onClick={(e) => e.preventDefault()} aria-label='search'>
+            <Skeleton className="articles-img articles-img-fourteen" animation="wave" component="div" variant="rectangular" width="100%" height={250} sx={{ borderRadius: `20px` }} />
+
+          </Link>
+        </div>
+        <div className="articles-right">
+          <div className="articles-content articles-content-fourteen">
+            <Skeleton animation="wave" variant="rectangular" width="50%" height={20} sx={{ borderRadius: `5px`, bgcolor: 'primary.main', mb: 2 }} />
+
+            <ul className="articles-list nav">
+              <Skeleton animation="wave" component="li" className="Qualified-doctors-fourteen" variant="rectangular" width="80%" height={35} sx={{ borderRadius: `5px`, bgcolor: 'primary.main', mb: 2 }} />
+
+              <Skeleton animation="wave" component="li" variant="rectangular" width="40%" height={10} sx={{ borderRadius: `5px`, bgcolor: 'text.disabled', mt: 2 }} />
+
+            </ul>
+            <Skeleton animation="wave" variant="rectangular" width="80%" height={20} sx={{ borderRadius: `5px`, bgcolor: '#ffaf14', mb: 2 }} />
+
+            <p className="text-muted">
+              <Skeleton animation="wave" component="li" variant="rectangular" width="70%" height={10} sx={{ borderRadius: `5px`, bgcolor: 'text.disabled', mt: 2 }} />
+
+            </p>
+            <ul className="articles-list nav mb-0">
+              <Skeleton animation="wave" component="li" className="Qualified-doctors-fourteenthree" sx={{ minHeight: '55px', minWidth: '55px' }} />
+              <Skeleton animation="wave" component="li" className="Qualified-doctors-fourteenfour" sx={{ minHeight: '75px', minWidth: '75px', backgroundColor: "primary.main" }} />
+
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+})

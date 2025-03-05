@@ -17,7 +17,7 @@ import WhyChooseUs from '@/components/AboutSections/WhyChooseUs';
 import WaySection from '@/components/AboutSections/WaySection';
 import Testimonial from '@/components/sections/Testimonial';
 import FaqSection from '@/components/sections/FaqSection';
-import BestDoctors from '@/components/AboutSections/BestDoctors';
+const Doctors = dynamic(() => import('@/components/sections/Doctors'), { ssr: true });
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import { LazyLoadWrapper } from '.';
@@ -29,6 +29,7 @@ import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
 import useScssVar from '@/hooks/useScssVar';
+import dynamic from 'next/dynamic';
 
 const AboutPage: NextPage = () => {
 
@@ -54,13 +55,13 @@ const AboutPage: NextPage = () => {
         </div>
       </div>
       <WhyChooseUs />
-      {/* <LazyLoadWrapper> */}
-      <WaySection />
-      <BestDoctors />
-      <Testimonial />
-      <FaqSection />
-      <Footer />
-      {/* </LazyLoadWrapper> */}
+      <LazyLoadWrapper>
+        <WaySection />
+        <Doctors />
+        <Testimonial />
+        <FaqSection />
+        <Footer />
+      </LazyLoadWrapper>
       <CookieConsentComponent />
     </>
   )

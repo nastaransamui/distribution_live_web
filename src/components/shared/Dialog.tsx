@@ -13,7 +13,8 @@ export const Transition = React.forwardRef(function Transition(
   },
   ref: React.Ref<unknown>,
 ) {
-  return <Slide id="edit_invoice_details" className="animate__animated animate__backInDown" ref={ref} {...props} />;
+  let newId = props?.children?.props?.ownerState?.id == "forwardId" && 'edit_invoice_details1'
+  return <Slide id={newId || "edit_invoice_details"} className="animate__animated animate__backInDown" ref={ref} {...props} />;
 });
 
 export const BootstrapDialog = styled(Dialog)(({ theme }) => ({

@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useMemo } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import dynamic from 'next/dynamic'
 import Link from 'next/link';
@@ -9,7 +9,9 @@ import {
 }
   from '@/public/assets/imagepath'
 import { useTheme } from '@mui/material';
-
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux/store';
+import Skeleton from '@mui/material/Skeleton';
 const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
 
 
@@ -53,6 +55,72 @@ const DoctorsSection: FC = (() => {
 
   }
   const theme = useTheme()
+  const bestDoctorsData = useSelector((state: AppState) => state.bestDoctorsData)
+  const { bestDoctors } = bestDoctorsData;
+  const dummyDoctorData = useMemo(() => {
+    return [
+      {
+        img: doctor_25_aspect,
+        avgRate: 4.1,
+        speciality: "Paediatrician",
+        name: "Dr. Gloria Smith",
+        totalVote: 3621,
+        totalPatients: 100,
+        city: "New York",
+        country: "USA"
+      },
+      {
+        img: doctor_27_aspect,
+        avgRate: 4.0,
+        speciality: "Paediatrician",
+        name: "Dr. Mark E. Wong",
+        totalVote: 1053,
+        totalPatients: 200,
+        city: "New Mexico",
+        country: "USA"
+      },
+      {
+        img: doctor_26_aspect,
+        avgRate: 4.0,
+        speciality: "Paediatrician",
+        name: "Dr. William M. Williams",
+        totalVote: 876,
+        totalPatients: 250,
+        city: "Los Angels",
+        country: "USA"
+      },
+      {
+        img: doctor_25_aspect,
+        avgRate: 4.1,
+        speciality: "Paediatrician",
+        name: "Dr. Gloria Smith",
+        totalVote: 3621,
+        totalPatients: 100,
+        city: "New York",
+        country: "USA"
+      },
+      {
+        img: doctor_27_aspect,
+        avgRate: 4.0,
+        speciality: "Paediatrician",
+        name: "Dr. Mark E. Wong",
+        totalVote: 1053,
+        totalPatients: 200,
+        city: "New Mexico",
+        country: "USA"
+      },
+      {
+        img: doctor_26_aspect,
+        avgRate: 4.0,
+        speciality: "Paediatrician",
+        name: "Dr. William M. Williams",
+        totalVote: 876,
+        totalPatients: 250,
+        city: "Los Angels",
+        country: "USA"
+      },
+    ]
+  }, [])
   return (
     <Fragment>
       <div className="our-doctor-thirteen common-padding" style={{
@@ -73,244 +141,94 @@ const DoctorsSection: FC = (() => {
           </div>
           <div className=" our-slider-thirteen owl-theme aos" data-aos="fade-up" >
             <OwlCarousel {...settings}>
-              <div className="our-doctor-thirteen-all">
-                <div className="our-doctor-thirteen-img">
-                  <img
-                    src={doctor_25_aspect}
-                    alt=""
-                    className="img-fluid"
-                  />
-                </div>
-                <div className="our-doctor-content">
-                  <Link href="/doctors/search">Gloria Smith</Link>
-                  <div className="our-doctor-content-inner">
-                    <span>Paediatrician</span>
-                    <div className="reviews-ratings">
-                      <p>
-                        <span>
-                          <i className="fas fa-star" /> 4.1
-                        </span>{" "}
-                        (3621)
-                      </p>
-                    </div>
-                  </div>
-                  <h6>+1500 Patients</h6>
-                  <p>
-                    <i className="fa-solid fa-location-dot" /> New York, USA
-                  </p>
-                  <div className="our-doctor-thirteen-imgone">
-                    <img
-                      src={add_circle}
-                      alt=""
-                      className="img-fluid imgColorSecondary"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="our-doctor-thirteen-all">
-                <div className="our-doctor-thirteen-img">
-                  <img
-                    src={doctor_27_aspect}
-                    alt=""
-                    className="img-fluid"
-                  />
-                </div>
-                <div className="our-doctor-content">
-                  <Link href="/doctors/search">Mark E. Wong</Link>
-                  <div className="our-doctor-content-inner">
-                    <span>Paediatrician</span>
-                    <div className="reviews-ratings">
-                      <p>
-                        <span>
-                          <i className="fas fa-star" /> 4.0
-                        </span>{" "}
-                        (1053)
-                      </p>
-                    </div>
-                  </div>
-                  <h6>+1500 Patients</h6>
-                  <p>
-                    <i className="fa-solid fa-location-dot" /> Mexico, USA
-                  </p>
-                  <div className="our-doctor-thirteen-imgone">
-                    <img
-                      src={add_circle}
-                      alt=""
-                      className="img-fluid imgColorSecondary"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="our-doctor-thirteen-all">
-                <div className="our-doctor-thirteen-img">
-                  <img
-                    src={doctor_25_aspect}
-                    alt=""
-                    className="img-fluid"
-                  />
-                </div>
-                <div className="our-doctor-content">
-                  <Link href="/doctors/search">William M. Williams</Link>
-                  <div className="our-doctor-content-inner">
-                    <span>Paediatrician</span>
-                    <div className="reviews-ratings">
-                      <p>
-                        <span>
-                          <i className="fas fa-star" /> 4.5
-                        </span>{" "}
-                        (3500)
-                      </p>
-                    </div>
-                  </div>
-                  <h6>+6500 Patients</h6>
-                  <p>
-                    <i className="fa-solid fa-location-dot" /> Los Angels, USA
-                  </p>
-                  <div className="our-doctor-thirteen-imgone">
-                    <img
-                      src={add_circle}
-                      alt=""
-                      className="img-fluid imgColorSecondary"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="our-doctor-thirteen-all">
-                <div className="our-doctor-thirteen-img">
-                  <img
-                    src={doctor_26_aspect}
-                    alt=""
-                    className="img-fluid"
-                  />
-                </div>
-                <div className="our-doctor-content">
-                  <Link href="/doctors/search">Gloria Smith</Link>
-                  <div className="our-doctor-content-inner">
-                    <span>Paediatrician</span>
-                    <div className="reviews-ratings">
-                      <p>
-                        <span>
-                          <i className="fas fa-star" /> 4.5
-                        </span>{" "}
-                        (35)
-                      </p>
-                    </div>
-                  </div>
-                  <h6>+1500 Patients</h6>
-                  <p>
-                    <i className="fa-solid fa-location-dot" /> Mexico, USA
-                  </p>
-                  <div className="our-doctor-thirteen-imgone">
-                    <img
-                      src={add_circle}
-                      alt=""
-                      className="img-fluid imgColorSecondary"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="our-doctor-thirteen-all">
-                <div className="our-doctor-thirteen-img">
-                  <img
-                    src={doctor_25_aspect}
-                    alt=""
-                    className="img-fluid"
-                  />
-                </div>
-                <div className="our-doctor-content">
-                  <Link href="/doctors/search">Gloria Smith</Link>
-                  <div className="our-doctor-content-inner">
-                    <span>Paediatrician</span>
-                    <div className="reviews-ratings">
-                      <p>
-                        <span>
-                          <i className="fas fa-star" /> 4.1
-                        </span>{" "}
-                        (3621)
-                      </p>
-                    </div>
-                  </div>
-                  <h6>+1500 Patients</h6>
-                  <p>
-                    <i className="fa-solid fa-location-dot" /> New York, USA
-                  </p>
-                  <div className="our-doctor-thirteen-imgone">
-                    <img
-                      src={add_circle}
-                      alt=""
-                      className="img-fluid imgColorSecondary"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="our-doctor-thirteen-all">
-                <div className="our-doctor-thirteen-img">
-                  <img
-                    src={doctor_27_aspect}
-                    alt=""
-                    className="img-fluid"
-                  />
-                </div>
-                <div className="our-doctor-content">
-                  <Link href="/doctors/search">Mark E. Wong</Link>
-                  <div className="our-doctor-content-inner">
-                    <span>Paediatrician</span>
-                    <div className="reviews-ratings">
-                      <p>
-                        <span>
-                          <i className="fas fa-star" /> 4.0
-                        </span>{" "}
-                        (1053)
-                      </p>
-                    </div>
-                  </div>
-                  <h6>+1500 Patients</h6>
-                  <p>
-                    <i className="fa-solid fa-location-dot" /> Mexico, USA
-                  </p>
-                  <div className="our-doctor-thirteen-imgone">
-                    <img
-                      src={add_circle}
-                      alt=""
-                      className="img-fluid imgColorSecondary"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="our-doctor-thirteen-all">
-                <div className="our-doctor-thirteen-img">
-                  <img
-                    src={doctor_25_aspect}
-                    alt=""
-                    className="img-fluid"
-                  />
-                </div>
-                <div className="our-doctor-content">
-                  <Link href="/doctors/search">William M. Williams</Link>
-                  <div className="our-doctor-content-inner">
-                    <span>Paediatrician</span>
-                    <div className="reviews-ratings">
-                      <p>
-                        <span>
-                          <i className="fas fa-star" /> 4.5
-                        </span>{" "}
-                        (3500)
-                      </p>
-                    </div>
-                  </div>
-                  <h6>+6500 Patients</h6>
-                  <p>
-                    <i className="fa-solid fa-location-dot" /> Los Angels, USA
-                  </p>
-                  <div className="our-doctor-thirteen-imgone">
-                    <img
-                      src={add_circle}
-                      alt=""
-                      className="img-fluid imgColorSecondary"
-                    />
-                  </div>
-                </div>
-              </div>
+              {
+                bestDoctors == null ?
+                  (Array(4).fill(0).map((_, index) => (
+                    <PadiatricDoctorSkeleton key={index} />
+                  ))) :
+                  bestDoctors.length == 0 ?
+                    dummyDoctorData.map((doctor, index) => {
+                      return (
+                        <div className="our-doctor-thirteen-all" key={index}>
+                          <div className="our-doctor-thirteen-img">
+                            <img
+                              src={doctor.img}
+                              alt=""
+                              className="img-fluid"
+                            />
+                          </div>
+                          <div className="our-doctor-content" style={{ borderRadius: `0px 0px 10px 10px` }}>
+                            <Link href="/doctors/search">{doctor.name}</Link>
+                            <div className="our-doctor-content-inner">
+                              <span>{doctor.speciality}</span>
+                              <div className="reviews-ratings">
+                                <p>
+                                  <span>
+                                    <i className="fas fa-star" /> {doctor.avgRate}
+                                  </span>{" "}
+                                  ({doctor.totalVote})
+                                </p>
+                              </div>
+                            </div>
+                            <h6>+{doctor.totalPatients} Patients</h6>
+                            <p>
+                              <i className="fa-solid fa-location-dot" /> {doctor.city}, {doctor.country}
+                            </p>
+                            <div className="our-doctor-thirteen-imgone">
+                              <img
+                                src={add_circle}
+                                alt=""
+                                className="img-fluid imgColorSecondary"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    }) :
+                    (
+                      bestDoctors.slice(0, 4).map((doctor, index) => {
+                        return (
+                          <div className="our-doctor-thirteen-all" key={index}>
+                            <div className="our-doctor-thirteen-img">
+                              <img
+                                src={doctor.profileImage}
+                                alt=""
+                                className="img-fluid"
+                              />
+                            </div>
+                            <div className="our-doctor-content" style={{ borderRadius: `0px 0px 10px 10px` }}>
+                              <Link href={`/doctors/profile/${btoa(doctor._id)}`}>Dr. {doctor.fullName}</Link>
+                              <div className="our-doctor-content-inner">
+                                <span>{doctor?.specialities?.[0]?.specialities}</span>
+                                <div className="reviews-ratings">
+                                  <p>
+                                    <span>
+                                      <i className="fas fa-star" /> {doctor.avgRate}
+                                    </span>{" "}
+                                    ({doctor?.totalVote})
+                                  </p>
+                                </div>
+                              </div>
+                              <h6>+{doctor?.patientCount} Patients</h6>
+                              <p>
+                                <i className="fa-solid fa-location-dot" /> {doctor?.city}
+                              </p>
+                              <p>
+                                <i className="fa-solid fa-location-dot" />{doctor.country}
+                              </p>
+                              <div className="our-doctor-thirteen-imgone">
+                                <img
+                                  src={add_circle}
+                                  alt=""
+                                  className="img-fluid imgColorSecondary"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })
+                    )
+              }
             </OwlCarousel>
           </div>
         </div>
@@ -326,3 +244,42 @@ const DoctorsSection: FC = (() => {
 });
 
 export default DoctorsSection;
+
+export const PadiatricDoctorSkeleton: FC = (() => {
+
+  return (
+    <div className="our-doctor-thirteen-all">
+      <div className="our-doctor-thirteen-img">
+        <Skeleton animation="wave" variant="rectangular" width="100%" height={450} sx={{ borderRadius: `20px 20px 0px 0px` }} />
+
+      </div>
+      <div className="our-doctor-content" style={{ borderRadius: `0px 0px 10px 10px` }}>
+        <Skeleton animation="wave" variant="rectangular" width="50%" height={10} sx={{ borderRadius: `5px`, bgcolor: 'primary.light', mb: 3 }} />
+        <div className="our-doctor-content-inner">
+          {/* <span>Paediatrician</span> */}
+          <Skeleton component="span" animation="wave" variant="rectangular" height={25} width={150} />
+
+          <div className="reviews-ratings">
+            <p>
+              <Skeleton component="span" animation="wave" variant="rectangular" height={10} width={100} sx={{ backgroundColor: '#fbbf24', borderRadius: 2 }} />
+
+            </p>
+          </div>
+        </div>
+        <Skeleton component="h6" animation="wave" variant="rectangular" height={5} width={100} sx={{ bgcolor: 'text.disabled', borderRadius: 2 }} />
+
+        <p>
+          <Skeleton component="i" animation="wave" variant="rectangular" height={5} width={100} sx={{ bgcolor: 'text.disabled', borderRadius: 2 }} />
+
+        </p>
+        <div className="our-doctor-thirteen-imgone">
+          <img
+            src={add_circle}
+            alt=""
+            className="img-fluid imgColorSecondary"
+          />
+        </div>
+      </div>
+    </div>
+  )
+})

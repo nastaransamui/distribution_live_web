@@ -1,11 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect } from 'react'
+import { FC, Fragment, useEffect, useMemo } from 'react'
 import AOS from 'aos'
 import useScssVar from '@/hooks/useScssVar'
 import dynamic from 'next/dynamic'
 import { EyeIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
-import { client03, client04, client06_small, client07, eyeTestimonial } from '@/public/assets/imagepath'
+import { client03, client04, client06_small, client07, eye_care_testimonial, eyeTestimonial } from '@/public/assets/imagepath'
 import { useTheme } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux/store';
+import Skeleton from '@mui/material/Skeleton'
 const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
   ssr: false,
 })
@@ -59,6 +62,59 @@ const Testimonials: FC = (() => {
       }
     }
   }
+  const lastReviewsData = useSelector((state: AppState) => state.lastReviewsData)
+  const { lastReviews } = lastReviewsData;
+
+
+  const dummyReviewData = useMemo(() => {
+    return [
+      {
+        name: "Elizabeth Forsyth",
+        title: "“ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical ”",
+        body: `Lorem Ipsum is simply dummy text of the printing and typesetting
+                      industry. Lorem Ipsum has been the industrys standard. The point
+                      of using Lorem Ipsum is that it has a more-or-less normal
+                      distribution of letters, as opposed to using Content here,
+                      content here, making it look like readable English. Many desktop
+                      publishing packages and web page editors now use Lorem Ipsum as
+                      their default model text, and a search for lorem ipsum will
+                      uncover many web sites still in their infancy`,
+        city: "Las Vegas",
+        country: "USA"
+      },
+      {
+        name: "Leigh Baley",
+        title: "“ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical ”",
+        body: `Lorem Ipsum is simply dummy text of the printing and typesetting
+                      industry. Lorem Ipsum has been the industrys standard. The point
+                      of using Lorem Ipsum is that it has a more-or-less normal
+                      distribution of letters, as opposed to using Content here,
+                      content here, making it look like readable English. Many desktop
+                      publishing packages and web page editors now use Lorem Ipsum as
+                      their default model text, and a search for lorem ipsum will
+                      uncover many web sites still in their infancy`,
+        city: "San Jose",
+        country: "USA"
+      },
+      {
+        name: "Jon Sparks",
+        title: "“ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical ”",
+        body: `It is a long established fact that a reader will be distracted by
+                      the readable content of a page when looking at its layout. The
+                      point of using Lorem Ipsum is that it has a more-or-less normal
+                      distribution of letters, as opposed to using Content here,
+                      content here, making it look like readable English. Many desktop
+                      publishing packages and web page editors now use Lorem Ipsum as
+                      their default model text, and a search for lorem ipsum will
+                      uncover many web sites still in their infancy`,
+        city: "Irvine",
+        country: "USA"
+      },
+    ]
+  }, [])
+
+  const dummyImages = [client04, client03, client06_small, client07]
+
   return (
     <Fragment>
       <section className="eye-testimonial-section" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
@@ -85,102 +141,68 @@ const Testimonials: FC = (() => {
               <div className="testi-users">
                 <div className="nav nav-container slide-11" />
                 <ul>
-                  <li>
-                    <img
-                      src={client04}
-                      alt=""
-                      className="img-fluid"
-                    />
-                  </li>
-                  <li>
-                    <img
-                      src={client03}
-                      alt=""
-                      className="img-fluid"
-                    />
-                  </li>
-                  <li>
-                    <img
-                      src={client06_small}
-                      alt=""
-                      className="img-fluid"
-                    />
-                  </li>
-                  <li>
-                    <img
-                      src={client07}
-                      alt=""
-                      className="img-fluid"
-                    />
-                  </li>
+                  {
+                    lastReviews == null ?
+                      (Array.from(Array(3).keys()).map((i) => <EyeTestimonialImagesSkeleton key={i} />)) :
+                      lastReviews.length == 0 ?
+                        <>{dummyImages.map((_, index) => <li key={index}><img src={_} alt='' className='img-fluid' /></li>)}</> :
+                        <>{lastReviews.map((_, index) => <li key={index}><img src={_.authorProfile?.profileImage} alt='' className='img-fluid' /></li>)}</>
+                  }
                 </ul>
               </div>
             </div>
             <div className="col-md-7">
               <div className="eye-testislider">
                 <OwlCarousel {...doctersettings}>
-                  <div className="testimonial-wrap">
-                    <h3>
-                      Contrary to popular belief, Lorem Ipsum is not simply random text.
-                      It has roots in a piece of classical
-                    </h3>
-                    <p>
-                      Lorem Ipsum is simply dummy text of the printing and typesetting
-                      industry. Lorem Ipsum has been the industrys standard. The point
-                      of using Lorem Ipsum is that it has a more-or-less normal
-                      distribution of letters, as opposed to using Content here,
-                      content here, making it look like readable English. Many desktop
-                      publishing packages and web page editors now use Lorem Ipsum as
-                      their default model text, and a search for lorem ipsum will
-                      uncover many web sites still in their infancy
-                    </p>
-                    <div className="testimonial-user">
-                      <h4>Elizabeth Forsyth</h4>
-                      <p>Las Vegas, USA</p>
-                    </div>
-                  </div>
-                  <div className="testimonial-wrap">
-                    <h3>
-                      Contrary to popular belief, Lorem Ipsum is not simply random text.
-                      It has roots in a piece of classical
-                    </h3>
-                    <p>
-                      It is a long established fact that a reader will be distracted by
-                      the readable content of a page when looking at its layout. The
-                      point of using Lorem Ipsum is that it has a more-or-less normal
-                      distribution of letters, as opposed to using Content here,
-                      content here, making it look like readable English. Many desktop
-                      publishing packages and web page editors now use Lorem Ipsum as
-                      their default model text, and a search for lorem ipsum will
-                      uncover many web sites still in their infancy
-                    </p>
-                    <div className="testimonial-user">
-                      <h4>Leigh Baley</h4>
-                      <p>San Jose, USA</p>
-                    </div>
-                  </div>
-                  <div className="testimonial-wrap">
-                    <h3>
-                      Contrary to popular belief, Lorem Ipsum is not simply random text.
-                      It has roots in a piece of classical
-                    </h3>
-                    <p>
-                      Lorem Ipsum is simply dummy text of the printing and typesetting
-                      industry. Lorem Ipsum has been the industry s standard dummy text
-                      ever since the 1500s, when an unknown printer took a galley of
-                      type and scrambled it to make a type specimen book. It has
-                      survived not only five centuries. The point of using Lorem Ipsum
-                      is that it has a more-or-less normal distribution of letters, as
-                      opposed to using Content here, content here making it look like
-                      readable English.
-                    </p>
-                    <div className="testimonial-user">
-                      <h4>Jon Sparks</h4>
-                      <p>Irvine, USA</p>
-                    </div>
-                  </div>
+                  {
+                    lastReviews == null ?
+                      (<EyeTestimonialSkeleton />) :
+                      lastReviews.length == 0 ?
+                        (
+                          dummyReviewData.map((review, index) => {
+                            return (
+                              <div className="testimonial-wrap" key={index}>
+                                <h3>{review.title}</h3>
+                                <p style={{
+                                  minHeight: '270px',
+                                  alignContent: 'center',
+                                }}>{review.body}</p>
+                                <div className="testimonial-user">
+                                  <h4>{review.name}</h4>
+                                  <p>{review.city}, {review.country}</p>
+                                </div>
+                              </div>
+                            )
+                          })
+                        ) :
+                        (
+                          lastReviews.map((review, index) => {
+                            return (
+                              <div className="testimonial-wrap" key={index}>
+                                <h3>{review.title}</h3>
+                                <p style={{
+                                  minHeight: '270px',
+                                  alignContent: 'center',
+                                }}>{review.body}</p>
+                                <div className="testimonial-user">
+                                  <h4>{review.authorProfile?.fullName}</h4>
+                                  <p>{review?.authorProfile?.city}, {review?.authorProfile?.country}</p>
+                                </div>
+                              </div>
+                            )
+                          })
+                        )
+                  }
                 </OwlCarousel>
               </div>
+            </div>
+            <div className="ban-bg" style={{ opacity: 0.3, position: 'relative', top: -280, left: -270 }}>
+              <img
+                src={eye_care_testimonial}
+                alt=""
+                className="img-fluid bg-08 img"
+
+              />
             </div>
           </div>
         </div>
@@ -190,3 +212,36 @@ const Testimonials: FC = (() => {
 });
 
 export default Testimonials
+
+export const EyeTestimonialImagesSkeleton: FC = (() => {
+  const theme = useTheme()
+  return (
+    <li>
+      <Skeleton animation="wave" variant="circular" width={45} height={45} sx={{ border: `2px solid ${theme.palette.text.color}`, ml: 2, backgroundColor: 'primary.main' }} />
+    </li>
+  )
+})
+
+export const EyeTestimonialSkeleton: FC = (() => {
+  const theme = useTheme();
+  return (
+    <div className="testimonial-wrap">
+      <h3>
+        <Skeleton animation="wave" sx={{ height: '15px', width: '100%', borderRadius: '5px', backgroundColor: theme.palette.primary.main }} />
+
+      </h3>
+      <p>
+        <Skeleton animation="wave" sx={{ height: '15px', width: '100%', mb: 1, borderRadius: '5px', backgroundColor: theme.palette.text.disabled }} />
+        <Skeleton animation="wave" sx={{ height: '15px', width: '100%', mb: 1, borderRadius: '5px', backgroundColor: theme.palette.text.disabled }} />
+        <Skeleton animation="wave" sx={{ height: '15px', width: '100%', mb: 1, borderRadius: '5px', backgroundColor: theme.palette.text.disabled }} />
+        <Skeleton animation="wave" sx={{ height: '15px', width: '100%', mb: 1, borderRadius: '5px', backgroundColor: theme.palette.text.disabled }} />
+        <Skeleton animation="wave" sx={{ height: '15px', width: '100%', mb: 1, borderRadius: '5px', backgroundColor: theme.palette.text.disabled }} />
+
+      </p>
+      <div className="testimonial-user">
+        <h4><Skeleton animation="wave" sx={{ height: '15px', width: '15%', mb: 1, borderRadius: '5px', backgroundColor: theme.palette.secondary.main }} /></h4>
+        <p><Skeleton animation="wave" sx={{ height: '15px', width: '15%', mb: 1, borderRadius: '5px', backgroundColor: theme.palette.text.disabled }} /></p>
+      </div>
+    </div>
+  )
+})

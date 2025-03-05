@@ -42,10 +42,9 @@ import { SpecialitiesType, updateSpecialities } from '@/redux/specialities';
 //indexdb
 import browserDb, { createBrowserDb } from '@/hooks/useBrowserDb';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { UserProfileType, updateUserProfile } from '@/redux/userProfile';
-import isJsonString from '@/helpers/isJson';
+import _ from 'lodash'
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import chunkString from '@/helpers/chunkString';
+
 import { updateHomeExp } from '@/redux/homeExp';
 import { updateHomeIAT } from '@/redux/homeIAT';
 import { updateHomeRoleName } from '@/redux/homeRoleName';
@@ -53,14 +52,16 @@ import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
 import { updateHomeServices } from '@/redux/homeServices';
 import { updateHomeUserId } from '@/redux/homeUserId';
+import { BestDoctorsDataType, updateBestDoctorsData } from '@/redux/bestDoctorsData';
+import { LastReviewsDataType, updateLastReviewsData } from '@/redux/lastReviewsData';
+import { BestCardioDoctorsDataType, updateBestCardioDoctorsData } from '@/redux/bestCardioDoctors';
+import { updateBestEyeCareDoctorsData } from '@/redux/bestEyeCareDoctors';
 
 export type ChildrenProps = {
   children: JSX.Element;
 };
 
 const AppWrapper = ({ children }: ChildrenProps) => {
-  const [percent, setPercent] = useState<number>(50)
-  const [showLoading, setShowLoading] = useState<boolean>(true)
   const dispatch = useDispatch()
   const router = useRouter();
   const { bounce } = useScssVar();
@@ -70,16 +71,17 @@ const AppWrapper = ({ children }: ChildrenProps) => {
   const homeThemeType = useSelector((state: AppState) => state.homeThemeType.value)
   const homeLoadingBar = useSelector((state: AppState) => state.homeLoadingBar.value)
   const homeFormSubmit = useSelector((state: AppState) => state.homeFormSubmit.value)
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const bestDoctorsData = useSelector((state: AppState) => state.bestDoctorsData)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
   const userData = useSelector((state: AppState) => state.userData.value)
   const clinicStatus = useSelector((state: AppState) => state.clinicStatus.value)
   const homeAccessToken = useSelector((state: AppState) => state.homeAccessToken.value)
   const specialities = useSelector((state: AppState) => state.specialities.value)
   const homeUserId = useSelector((state: AppState) => state.homeUserId.value)
-
+  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [homeTheme, setHomeTheme] = useState({
     ...appTheme(homeThemeName as string,
       homeThemeType as PaletteMode,
@@ -87,161 +89,243 @@ const AppWrapper = ({ children }: ChildrenProps) => {
     ),
   });
 
-  // const { accessToken, user_id, services, roleName, iat, exp } = verifyHomeAccessToken(homeAccessToken)
-
-  const socket = useRef<any>();
+  const socket = useRef<any>(null);
 
   useEffect(() => {
-    if (socket.current == undefined) {
-      const userProfile = homeRoleName == "doctors" ? userDoctorProfile : userPatientProfile
-      createBrowserDb().catch(err => console.log(err))
-      socket.current = io(process.env.NEXT_PUBLIC_SOCKET_URL as string, {
+    createBrowserDb().catch(err => console.log(err))
+    const createSocket = () => {
+      const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL as string, {
         extraHeaders: {
           userData: JSON.stringify(userData),
           token: `Bearer ${homeAccessToken}`,
-          userid: homeUserId || ''
+          userid: homeUserId || '',
         },
-        // transports: ['websocket'], // Ensure WebSocket is used
-        secure: true // Explicitly use secure connection
+        secure: true,
       });
-      socket.current.on('connect', () => {
-        dispatch(updateHomeSocket(socket))
-        setPercent(() => 100)
-        setShowLoading(false)
-      });
-      socket.current.on('getThemeFromAdmin', (msg: { homeThemeName: string, homeThemeType: string, homeActivePage: string }) => {
 
-        setCookie('homeThemeType', msg?.homeThemeType || "dark")
-        setCookie('homeThemeName', msg?.homeThemeName || "joker")
-        setCookie('homeActivePage', msg?.homeActivePage || "default")
-        dispatch(updateHomeLoadingBar(homeLoadingBar == 100 ? 0 : 100))
-        setHomeTheme((prevState: any) => {
-          return {
-            ...appTheme(msg?.homeThemeName || "joker" as string,
-              msg?.homeThemeType as PaletteMode || "dark",
-              'ltr'
-            )
+      newSocket.on('connect', () => {
+        dispatch(updateHomeSocket({ current: newSocket })); //update homeSocket to the new socket.
+        console.log('Socket connected');
+        socket.current.on('getThemeFromAdmin', (msg: { homeThemeName: string, homeThemeType: string, homeActivePage: string }) => {
+          const body = document.getElementById('body');
+          if (body) {
+            body.style.backgroundColor = msg?.homeThemeType == "dark" ? '#212121' : '#fff'
+          }
+
+          setCookie('homeThemeType', msg?.homeThemeType || "dark")
+          setCookie('homeThemeName', msg?.homeThemeName || "joker")
+          setCookie('homeActivePage', msg?.homeActivePage || "default")
+          dispatch(updateHomeLoadingBar(homeLoadingBar == 100 ? 0 : 100))
+          setHomeTheme((prevState: any) => {
+            return {
+              ...appTheme(msg?.homeThemeName || "joker" as string,
+                msg?.homeThemeType as PaletteMode || "dark",
+                'ltr'
+              )
+            }
+          })
+        })
+        socket.current.on('getClinicStatusFromAdmin', async (msg: ClinicStatusType[]) => {
+          dispatch(updateClinicStatus(msg))
+          const clinicStatusBrowserTable = await browserDb.clinicStatusBrowserTable.toArray();
+          const removedIdMsg = msg.map(item => {
+            const { id, ...rest } = item;
+            return rest;
+          });
+          const removedIdIndexDb = clinicStatusBrowserTable.map(item => {
+            const { id, ...rest } = item;
+            return rest;
+          });
+          if (_.isEqual(removedIdMsg, removedIdIndexDb)) {
+            await browserDb.clinicStatusBrowserTable.clear()
+            await browserDb.clinicStatusBrowserTable.bulkAdd(msg)
+          } else {
+            await browserDb.clinicStatusBrowserTable.clear()
+            await browserDb.clinicStatusBrowserTable.bulkAdd(msg)
           }
         })
-      })
-      socket.current.on('getClinicStatusFromAdmin', async (msg: ClinicStatusType[]) => {
-        dispatch(updateClinicStatus(msg))
-        const clinicStatusBrowserTable = await browserDb.clinicStatusBrowserTable.toArray();
-        if (clinicStatusBrowserTable.length == 0) {
-          await browserDb.clinicStatusBrowserTable.bulkAdd(msg)
-        } else {
-          await browserDb.clinicStatusBrowserTable.clear()
-          await browserDb.clinicStatusBrowserTable.bulkAdd(msg)
-        }
-      })
-      socket.current.on('getSpecialitiesFromAdmin', async (msg: SpecialitiesType[]) => {
-        dispatch(updateSpecialities(msg))
-        const specialitiesBrowserTable = await browserDb.specialitiesBrowserTable.toArray();
-        if (specialitiesBrowserTable.length == 0) {
-          // Remove 'id' from all items before adding
-          const specialitiesWithoutId = msg.map(({ id, ...rest }) => rest);
-          await browserDb.specialitiesBrowserTable.bulkAdd(specialitiesWithoutId);
-        } else {
-          await browserDb.specialitiesBrowserTable.clear();
-          // Again, remove 'id' from all items before adding
-          const specialitiesWithoutId = msg.map(({ id, ...rest }) => rest);
-          await browserDb.specialitiesBrowserTable.bulkAdd(specialitiesWithoutId);
-        }
-      })
-      socket.current.on('getUserProfileFromAdmin', async (msg: string) => {
-        //Handle update token
-        var { accessToken, user_id, services, roleName, iat, exp, userProfile: newUserProfile } = verifyHomeAccessToken(msg)
-        const { isActive } = newUserProfile;
-        if (accessToken == '' || accessToken !== userProfile?.accessToken || !isActive) {
-          //Logut users
-          if (getCookie('homeAccessToken')) {
-            deleteCookie('homeAccessToken')
-            dispatch(updateHomeAccessToken(null))
-            toast.info('This user is not eligible to login any more', {
-              position: "bottom-center",
-              autoClose: 5000,
-              toastId: 'connectionError',
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              transition: bounce,
-              onClose: () => {
-                toast.dismiss('connectionError')
-                router.reload();
-              }
-            });
-          }
-        } else {
-          dispatch(updateHomeAccessToken(accessToken))
-          dispatch(updateHomeExp(exp));
-          dispatch(updateHomeIAT(iat))
-          dispatch(updateHomeRoleName(roleName))
-          dispatch(updateHomeServices(services));
-          dispatch(updateHomeUserId(user_id));
-          if (roleName == 'doctors') {
-            dispatch(updateUserDoctorProfile(newUserProfile))
-          } else if (roleName == 'patient') {
-            dispatch(updateUserPatientProfile(newUserProfile));
+        socket.current.on('getSpecialitiesFromAdmin', async (msg: SpecialitiesType[]) => {
+          dispatch(updateSpecialities(msg))
+
+          const specialitiesBrowserTable = await browserDb.specialitiesBrowserTable.toArray();
+          const removedIdMsg = msg.map(({ id, ...rest }) => rest);
+          const removedIdIndexDb = specialitiesBrowserTable.map(({ id, ...rest }) => rest);
+
+          if (_.isEqual(removedIdMsg, removedIdIndexDb)) {
+            await browserDb.specialitiesBrowserTable.clear();
           }
 
-          setCookie('homeAccessToken', accessToken);
-          setCookie('user_id', user_id);
-          setCookie('services', services);
-          setCookie('roleName', roleName);
-          setCookie('iat', iat);
-          setCookie('exp', exp);
-        }
+          await browserDb.specialitiesBrowserTable.bulkPut(removedIdMsg);
+        })
+        socket.current.on('getUserProfileFromAdmin', async (msg: string) => {
+          //Handle update token
+          var { accessToken, user_id, services, roleName, iat, exp, userProfile: newUserProfile } = verifyHomeAccessToken(msg)
+          const { isActive } = newUserProfile;
+          if (accessToken == '' || accessToken !== newUserProfile?.accessToken || !isActive) {
+            //Logut users
+            if (getCookie('homeAccessToken')) {
+              deleteCookie('homeAccessToken')
+              dispatch(updateHomeAccessToken(null))
+              toast.info('This user is not eligible to login any more', {
+                position: "bottom-center",
+                autoClose: 5000,
+                toastId: 'connectionError',
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                transition: bounce,
+                onClose: () => {
+                  toast.dismiss('connectionError')
+                  // router.reload();
+                }
+              });
+            }
+          } else {
+            dispatch(updateHomeAccessToken(accessToken))
+            dispatch(updateHomeExp(exp));
+            dispatch(updateHomeIAT(iat))
+            dispatch(updateHomeRoleName(roleName))
+            dispatch(updateHomeServices(services));
+            dispatch(updateHomeUserId(user_id));
+            if (roleName == 'doctors') {
+              dispatch(updateUserDoctorProfile(newUserProfile))
+            } else if (roleName == 'patient') {
+              dispatch(updateUserPatientProfile(newUserProfile));
+            }
 
-      })
-      socket.current.emit('webJoin', { userProfile, userData: { ...userData, userAgent: navigator.userAgent } })
+            setCookie('homeAccessToken', accessToken);
+            setCookie('user_id', user_id);
+            setCookie('services', services);
+            setCookie('roleName', roleName);
+            setCookie('iat', iat);
+            setCookie('exp', exp);
+          }
 
-      socket.current.on('disconnect', () => {
-        console.log('disconnect')
+        })
+        socket.current.on('getLastReviewsFromAdmin', async (msg: { status: number, data: LastReviewsDataType[] }) => {
+          const { status, data } = msg;
+          if (status == 200) {
+            const { lastReviews, totalReviews } = data[0];
+            dispatch(updateLastReviewsData({
+              lastReviews: lastReviews || [],
+              totalReviews: totalReviews ?? 0
+            }));
+          } else {
+            dispatch(updateLastReviewsData({
+              lastReviews: [],
+              totalReviews: 0
+            }));
+          }
+        })
+        socket.current.on('getBestDoctorsFromAdmin', async (msg: { status: number, data: BestDoctorsDataType[] }) => {
+          const { status, data } = msg;
+          if (status == 200) {
+            const { bestDoctors, totalBestDoctors, totalDoctors } = data[0];
+            dispatch(updateBestDoctorsData({
+              bestDoctors: bestDoctors || [],
+              totalBestDoctors: totalBestDoctors ?? 0,
+              totalDoctors: totalDoctors ?? 0,
+            }));
+          } else {
+            dispatch(updateBestDoctorsData({
+              bestDoctors: [],
+              totalBestDoctors: 0,
+              totalDoctors: 0,
+            }));
+          }
+        })
+
+
+        socket.current.on('getBestCardiologyDoctorsFromAdmin', async (msg: { status: number, data: BestCardioDoctorsDataType[] }) => {
+          const { status, data } = msg;
+          if (status == 200) {
+            const { bestDoctors, totalBestDoctors, totalDoctors } = data[0];
+            dispatch(updateBestCardioDoctorsData({
+              bestDoctors: bestDoctors || [],
+              totalBestDoctors: totalBestDoctors ?? 0,
+              totalDoctors: totalDoctors ?? 0,
+            }));
+          } else {
+            dispatch(updateBestCardioDoctorsData({
+              bestDoctors: [],
+              totalBestDoctors: 0,
+              totalDoctors: 0,
+            }));
+          }
+        })
+        // getBestOphthalmologyDoctorsFromAdmin
+        socket.current.on('getBestOphthalmologyDoctorsFromAdmin', async (msg: { status: number, data: BestCardioDoctorsDataType[] }) => {
+          const { status, data } = msg;
+          if (status == 200) {
+            const { bestDoctors, totalBestDoctors, totalDoctors } = data[0];
+            dispatch(updateBestEyeCareDoctorsData({
+              bestDoctors: bestDoctors || [],
+              totalBestDoctors: totalBestDoctors ?? 0,
+              totalDoctors: totalDoctors ?? 0,
+            }));
+          } else {
+            dispatch(updateBestEyeCareDoctorsData({
+              bestDoctors: [],
+              totalBestDoctors: 0,
+              totalDoctors: 0,
+            }));
+          }
+        })
+        socket.current.emit('webJoin', { userProfile, userData: { ...userData, userAgent: navigator.userAgent } })
+
       });
-      socket.current.on('connect_error', async (err: any) => {
-        console.log('connect_error')
-        // the reason of the error, for example "xhr poll error"
-        console.log(err.message);
 
-        // some additional description, for example the status code of the initial HTTP response
-        console.log(err.description);
+      return newSocket;
+    };
 
-        // some additional context, for example the XMLHttpRequest object
-        console.log(err.context);
-        const clinicStatusBrowserTable = await browserDb.clinicStatusBrowserTable.toArray();
-
-        const specialitiesBrowserTable = await browserDb.specialitiesBrowserTable.toArray();
-
-        if (clinicStatusBrowserTable.length !== 0) {
-          if (clinicStatus.length == 0) dispatch(updateClinicStatus(clinicStatusBrowserTable))
-        }
-        if (specialitiesBrowserTable.length !== 0) {
-          if (specialities.length == 0) dispatch(updateSpecialities(specialitiesBrowserTable))
-        }
-        // socket.current.disconnect()
-      });
-      socket.current.on('connect_failed', () => {
-        console.log('connect_failed ')
-      });
-
-
-
+    if (!socket.current) {
+      // console.log('Creating new socket');
+      socket.current = createSocket();
     } else {
-      if (!socket.current?.connected) {
-        setPercent(() => 100)
-        setShowLoading(false)
-
+      // console.log('Socket already exists, ensuring connection');
+      if (socket.current.disconnected) {
+        // console.log("socket was disconnected, creating new socket");
+        socket.current = createSocket();
+      } else {
+        // console.log('Socket was already connected');
       }
     }
+
+
+    const handleRouteChange = (url: string) => {
+      if (socket.current) {
+        socket.current.disconnect();
+        socket.current = null;
+      }
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
     return () => {
+      // console.log('Cleanup: removing route change listener');
+      router.events.off('routeChangeStart', handleRouteChange);
+      if (socket.current) {
+        // console.log('Cleanup: disconnecting socket');
+        socket.current.disconnect();
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, homeAccessToken, homeUserId, userData]);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        await createBrowserDb(); // Ensure db is created
+        const data = await browserDb.clinicStatusBrowserTable.toArray();
+        dispatch(updateClinicStatus(data));
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    };
 
-      // socket.current.disconnect()
-    }
-
-
-  }, [bounce, clinicStatus, dispatch, homeAccessToken, homeLoadingBar, homeRoleName, homeUserId, router, specialities, userData, userDoctorProfile, userPatientProfile])
+    loadData();
+  }, [dispatch]);
 
 
   const jss = create({ plugins: [...jssPreset().plugins, rtl()] });

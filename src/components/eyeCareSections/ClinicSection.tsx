@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect } from 'react'
+import { FC, Fragment, useEffect, useMemo } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
@@ -12,6 +12,10 @@ const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
   ssr: false,
 })
 import AOS from 'aos'
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux/store';
+import Rating from '@mui/material/Rating'
+import Skeleton from '@mui/material/Skeleton'
 const ClinicSection: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
@@ -52,6 +56,40 @@ const ClinicSection: FC = (() => {
       }
     }
   }
+  const bestEyeCareDoctors = useSelector((state: AppState) => state.bestEyeCareDoctorsData)
+  const { bestDoctors } = bestEyeCareDoctors;
+  const dummyDoctorData = useMemo(() => {
+    return [
+      {
+        img: eyeDoctor01,
+        avgRate: 3.8,
+        speciality: "Ophthalmology",
+        name: "Dr. Andrea",
+        experience: 8
+      },
+      {
+        img: eyeDoctor02,
+        avgRate: 4.5,
+        speciality: "Ophthalmology",
+        name: "Dr. Elizabeth Bella",
+        experience: 6
+      },
+      {
+        img: eyeDoctor03,
+        avgRate: 4.0,
+        speciality: "Ophthalmology",
+        name: "Dr. Andrea",
+        experience: 7
+      },
+      {
+        img: eyeDoctor04,
+        avgRate: 3.7,
+        speciality: "Ophthalmology",
+        name: "Dr. Gabrielle Carolyn",
+        experience: 4
+      },
+    ]
+  }, [])
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -76,150 +114,83 @@ const ClinicSection: FC = (() => {
           </div>
           <div className="eye-clinic owl-them aos" data-aos="fade-up" style={{ position: 'relative', zIndex: 2 }}>
             <OwlCarousel {...doctersettings}>
-              <div className="item">
-                <div className="our-doctors-card eye-doc">
-                  <div className="doctors-header">
-                    <Link href="/doctors/search" aria-label='doctor search'>
-                      <img
-                        src={eyeDoctor01}
-                        alt=""
-                        className="img-fluid"
-                      />
-                    </Link>
-                  </div>
-                  <div className="doctors-body">
-                    <h3>
-                      <Link href="/doctors/search" aria-label='doctor search'>Dr. Andrea</Link>
-                    </h3>
-                    <p>MBBS, DOMS, DNB - Ophthalmology</p>
-                    <h4>8+ Years Experience Overall</h4>
-                    <div className="rating">
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <span>3.8</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item">
-                <div className="our-doctors-card eye-doc">
-                  <div className="doctors-header">
-                    <Link href="/doctors/search" aria-label='doctor search'>
-                      <img
-                        src={eyeDoctor02}
-                        alt=""
-                        className="img-fluid"
-                      />
-                    </Link>
-                  </div>
-                  <div className="doctors-body">
-                    <h3>
-                      <Link href="/doctors/search" aria-label='doctor search'>Dr. Elizabeth Bella</Link>
-                    </h3>
-                    <p>MBBS, MS - Ophthalmology</p>
-                    <h4>6+ Years Experience Overall</h4>
-                    <div className="rating">
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <span>4.5</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item">
-                <div className="our-doctors-card eye-doc">
-                  <div className="doctors-header">
-                    <Link href="/doctors/search" aria-label='doctor search'>
-                      <img
-                        src={eyeDoctor03}
-                        alt=""
-                        className="img-fluid"
-                      />
-                    </Link>
-                  </div>
-                  <div className="doctors-body">
-                    <h3>
-                      <Link href="/doctors/search" aria-label='doctor search'>Dr. Christian</Link>
-                    </h3>
-                    <p>MBBS, DOMS, DNB - Ophthalmology</p>
-                    <h4>7+ Years Experience Overall</h4>
-                    <div className="rating">
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <span>4.0</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item">
-                <div className="our-doctors-card eye-doc">
-                  <div className="doctors-header">
-                    <Link href="/doctors/search" aria-label='doctor search'>
-                      <img
-                        src={eyeDoctor04}
-                        alt=""
-                        className="img-fluid"
-                      />
-                    </Link>
-                  </div>
-                  <div className="doctors-body">
-                    <h3>
-                      <Link href="/doctors/search" aria-label='doctor search'>Dr. Gabrielle Carolyn</Link>
-                    </h3>
-                    <p>MBBS, MS - Surgeon</p>
-                    <h4>4+ Years Experience Overall</h4>
-                    <div className="rating">
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <span>3.7</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item">
-                <div className="our-doctors-card eye-doc">
-                  <div className="doctors-header">
-                    <Link href="/doctors/search" aria-label='doctor search'>
-                      <img
-                        src={eyeDoctor05}
-                        alt=""
-                        className="img-fluid"
-                      />
-                    </Link>
-                  </div>
-                  <div className="doctors-body">
-                    <h3>
-                      <Link href="/doctors/search" aria-label='doctor search'>Dr. Gaby Carl</Link>
-                    </h3>
-                    <p>MBBS, DNB - Ophthalmology</p>
-                    <h4>5+ Years Experience Overall</h4>
-                    <div className="rating">
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <i className="fas fa-star filled" />
-                      <span>3.5</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {
+                bestDoctors == null ?
+                  (Array(3).fill(0).map((_, index) => (
+                    <EyeDoctorSkeleton key={index} />
+                  ))) :
+                  bestDoctors.length == 0 ?
+                    (dummyDoctorData.map((doctor, index) => {
+                      return (
+                        <div className="item" key={index}>
+                          <div className="our-doctors-card eye-doc">
+                            <div className="doctors-header">
+                              <Link href="/doctors/search" aria-label='doctor search'>
+                                <img
+                                  src={doctor.img}
+                                  alt=""
+                                  className="img-fluid"
+                                />
+                              </Link>
+                            </div>
+                            <div className="doctors-body">
+                              <h3>
+                                <Link href="/doctors/search" aria-label='doctor search'>{doctor.name}</Link>
+                              </h3>
+                              <p>{doctor.speciality}</p>
+                              <h4>{doctor.experience}+ Years Experience Overall</h4>
+                              <div className="rating" style={{ display: 'flex' }}>
+                                <Rating
+                                  name="read-only"
+                                  precision={0.5}
+                                  value={doctor.avgRate}
+                                  readOnly
+                                  size='small' />
+                                <span >{doctor.avgRate}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })) :
+                    (bestDoctors.slice(0, 4).map((doctor, index) => {
+                      return (
+                        <div className="item" key={index}>
+                          <div className="our-doctors-card eye-doc">
+                            <div className="doctors-header">
+                              <Link href={`/doctors/profile/${btoa(doctor?._id)}`} aria-label='doctor search'>
+                                <img
+                                  src={doctor.profileImage}
+                                  alt=""
+                                  className="img-fluid"
+                                />
+                              </Link>
+                            </div>
+                            <div className="doctors-body">
+                              <h3>
+                                <Link href={`/doctors/profile/${btoa(doctor?._id)}`} aria-label='doctor search'>Dr. {doctor.fullName}</Link>
+                              </h3>
+                              <p>{doctor?.specialities?.[0]?.specialities}</p>
+                              <h4>{doctor.totalExperience}+ Years Experience Overall</h4>
+                              <div className="rating" style={{ display: 'flex' }}>
+                                <Rating
+                                  name="read-only"
+                                  precision={0.5}
+                                  value={doctor.avgRate}
+                                  readOnly
+                                  size='small' />
+                                <span >{doctor.avgRate}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    }))
+              }
             </OwlCarousel>
           </div>
         </div>
-        <div className="ban-bg" style={{ opacity: 0.3, position: 'relative', top: -390, left: 0 }}>
+        <div className="ban-bg" style={{ opacity: 0.3, position: 'relative', top: -390, left: -50 }}>
           <img
             src={clinic_bg_01}
             alt=""
@@ -233,3 +204,26 @@ const ClinicSection: FC = (() => {
 })
 
 export default ClinicSection;
+
+export const EyeDoctorSkeleton: FC = (() => {
+  return (
+    <div className="item">
+      <div className="our-doctors-card eye-doc">
+        <div className="doctors-header">
+          <Skeleton animation="wave" variant="rectangular" width="100%" height={450} sx={{ borderRadius: `20px` }} />
+        </div>
+        <div className="doctors-body">
+          <h3>
+            <Skeleton animation="wave" variant="rectangular" width="50%" height={10} sx={{ borderRadius: `5px`, bgcolor: 'primary.dark' }} />
+          </h3>
+          <Skeleton animation="wave" variant="rectangular" width="40%" height={10} sx={{ borderRadius: `5px`, bgcolor: 'text.color', mt: 2 }} />
+
+          <Skeleton animation="wave" variant="rectangular" width="50%" height={10} sx={{ borderRadius: `5px`, bgcolor: 'primary.main', mt: 2 }} />
+
+          <Skeleton animation="wave" variant="rectangular" width="30%" height={10} sx={{ borderRadius: `5px`, bgcolor: '#ffaf14', mt: 2 }} />
+
+        </div>
+      </div>
+    </div>
+  )
+})

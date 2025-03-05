@@ -85,6 +85,8 @@ import { ProfileImageStyledBadge } from '../DoctorDashboardSections/MyPtients';
 import { loadStylesheet } from '@/pages/_app';
 import { getCookies, setCookie } from 'cookies-next';
 import { makeStyles } from 'tss-react/mui';
+import { BestDoctorsType } from '@/redux/bestDoctorsData';
+import { BestCardioDoctorsType } from '@/redux/bestCardioDoctors';
 
 export interface DoctorSearchResultsPropsType {
   doctorResults: DoctorProfileType[];
@@ -325,7 +327,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
   }, [totalDoctors, displayType]);
 
   useEffect(() => {
-    loadStylesheet('/css/react-virtualized-styles.min.css')
+    // loadStylesheet('/css/react-virtualized-styles.min.css')
     loadStylesheet('/css/yet-another-react-lightbox-styles.css')
   }, [])
 
@@ -1456,13 +1458,13 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
 };
 
 export interface FavButtonTypes {
-  doctor: DoctorProfileType;
+  doctor: DoctorProfileType | BestDoctorsType | BestCardioDoctorsType;
   index: number
 }
 export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
   const { bounce, muiVar } = useScssVar();
   const [loginDialog, setLoginDialog] = useState<boolean>(false)
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+  const [localDoctor, setLocalDoctor] = useState({ ...doctor });
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -1504,7 +1506,11 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
                 }
               });
             } else {
-              doctor?.favs_id.push(userProfile._id)
+              // doctor?.favs_id.push(userProfile._id)
+              setLocalDoctor(prevDoctor => ({
+                ...prevDoctor,
+                favs_id: [...(prevDoctor.favs_id || []), userProfile._id]
+              }));
               setFavIconLoading((prevState: { [key: string]: boolean }) => {
                 return {
                   ...prevState,
@@ -1544,7 +1550,11 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
               });
               const codeIndex = doctor?.favs_id.indexOf(userProfile._id);
               if (codeIndex > -1) {
-                doctor?.favs_id.splice(codeIndex, 1);
+                // doctor?.favs_id.splice(codeIndex, 1);
+                setLocalDoctor(prevDoctor => ({
+                  ...prevDoctor,
+                  favs_id: prevDoctor.favs_id.filter(id => id !== userProfile._id) // Remove without mutation
+                }));
               }
             }
           })
@@ -1552,6 +1562,8 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
       }
     }
   }
+
+
   return (
     <Fragment>
       <Tooltip arrow title={!userProfile ? 'Login in to add to favorit.' : `${isFav ? 'Remove' : 'Add'} doctor to favorite.`}>
@@ -1585,7 +1597,7 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
         TransitionComponent={Transition}
         open={loginDialog}
         onClose={() => {
-          document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+          document.getElementById('edit_invoice_details1')?.classList.replace('animate__backInDown', 'animate__backOutDown')
           setTimeout(() => {
             setLoginDialog(false)
           }, 500);
@@ -1594,13 +1606,15 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
         aria-labelledby="login"
         aria-describedby="login"
         maxWidth="xs"
+        id='forwardId'
       >
         <DialogTitle id="login" >
           Login
           <IconButton
             color="inherit"
             onClick={() => {
-              document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+              const elem = document.getElementById("edit_invoice_details1")
+              elem?.classList.replace('animate__backInDown', 'animate__backOutDown')
               setTimeout(() => {
                 setLoginDialog(false)
               }, 500);

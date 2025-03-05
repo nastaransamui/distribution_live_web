@@ -1,12 +1,14 @@
 // @ts-nocheck
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useMemo } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Slider from 'react-slick'
 import { useTheme } from '@mui/material';
 import { AboutUsIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import { aboutus_fift_1, client08, client09, client10, clinet02, clinet05 } from '@/public/assets/imagepath';
-
+import Skeleton from '@mui/material/Skeleton'
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux/store';
 
 const TestimonialsSection: FC = (() => {
   const { muiVar } = useScssVar();
@@ -21,6 +23,46 @@ const TestimonialsSection: FC = (() => {
     vertical: true,
     verticalSwiping: true,
   };
+  const lastReviewsData = useSelector((state: AppState) => state.lastReviewsData)
+  const { lastReviews } = lastReviewsData;
+
+
+  const dummyReviewData = useMemo(() => {
+    return [
+      {
+        img: clinet05,
+        name: "Madeleine Jennifer",
+        body: ` Lorem Ipsum is simply dummy text of the printing and typesetting
+    industry. Lorem Ipsum has been the industry s standard dummy
+    text ever since the 1500s, when an unknown printer took a galley
+    of type and scrambled it to make a type specimen book.`
+      },
+      {
+        img: client09,
+        name: "Chennai, Tamilnadu",
+        body: ` Lorem Ipsum is simply dummy text of the printing and typesetting
+    industry. Lorem Ipsum has been the industry s standard dummy
+    text ever since the 1500s, when an unknown printer took a galley
+    of type and scrambled it to make a type specimen book.`
+      },
+      {
+        img: clinet02,
+        name: "Madeleine Jennifer",
+        body: ` Lorem Ipsum is simply dummy text of the printing and typesetting
+    industry. Lorem Ipsum has been the industry s standard dummy
+    text ever since the 1500s, when an unknown printer took a galley
+    of type and scrambled it to make a type specimen book.`
+      },
+      {
+        img: clinet02,
+        name: "Madeleine Jennifer",
+        body: ` Lorem Ipsum is simply dummy text of the printing and typesetting
+    industry. Lorem Ipsum has been the industry s standard dummy
+    text ever since the 1500s, when an unknown printer took a galley
+    of type and scrambled it to make a type specimen book.`
+      },
+    ]
+  }, [])
   return (
     <Fragment>
       <section className="about-us-section-fifteen" style={muiVar}>
@@ -51,90 +93,57 @@ const TestimonialsSection: FC = (() => {
             <div className="col-lg-6 position-relative">
               <div className="slider vertical-slider slick-initialized slick-slider slick-vertical">
                 <Slider {...settings} className="slider vertical-slider slick-initialized slick-slider slick-vertical">
-                  <div className="aboutus-fifteen-main">
-                    <div className="aboutus-profile-left">
-                      <div className="aboutus-image">
-                        <img
-                          src={clinet05}
-                          alt=""
-                          className="img-fluid"
-                        />
-                      </div>
-                      <div className="aboutus-contents">
-                        <h6>Madeleine Jennifer</h6>
-                        <span>Chennai, Tamilnadu</span>
-                      </div>
-                    </div>
-                    <p>
-                      Lorem Ipsum is simply dummy text of the printing and typesetting
-                      industry. Lorem Ipsum has been the industry s standard dummy
-                      text ever since the 1500s, when an unknown printer took a galley
-                      of type and scrambled it to make a type specimen book.
-                    </p>
-                  </div>
-                  <div className="aboutus-fifteen-main">
-                    <div className="aboutus-profile-left">
-                      <div className="aboutus-image">
-                        <img
-                          src={client09}
-                          alt=""
-                          className="img-fluid"
-                        />
-                      </div>
-                      <div className="aboutus-contents">
-                        <h6>Madeleine Jennifer</h6>
-                        <span>Chennai, Tamilnadu</span>
-                      </div>
-                    </div>
-                    <p>
-                      Lorem Ipsum is simply dummy text of the printing and typesetting
-                      industry. Lorem Ipsum has been the industry s standard dummy
-                      text ever since the 1500s, when an unknown printer took a galley
-                      of type and scrambled it to make a type specimen book.
-                    </p>
-                  </div>
-                  <div className="aboutus-fifteen-main">
-                    <div className="aboutus-profile-left">
-                      <div className="aboutus-image">
-                        <img
-                          src={clinet02}
-                          alt=""
-                          className="img-fluid"
-                        />
-                      </div>
-                      <div className="aboutus-contents">
-                        <h6>Madeleine Jennifer</h6>
-                        <span>Chennai, Tamilnadu</span>
-                      </div>
-                    </div>
-                    <p>
-                      Lorem Ipsum is simply dummy text of the printing and typesetting
-                      industry. Lorem Ipsum has been the industry s standard dummy
-                      text ever since the 1500s, when an unknown printer took a galley
-                      of type and scrambled it to make a type specimen book.
-                    </p>
-                  </div>
-                  <div className="aboutus-fifteen-main">
-                    <div className="aboutus-profile-left">
-                      <div className="aboutus-image">
-                        <img
-                          src={clinet02}
-                          alt=""
-                          className="img-fluid"
-                        />
-                      </div>
-                      <div className="aboutus-contents">
-                        <h6>Madeleine Jennifer</h6>
-                        <span>Chennai, Tamilnadu</span>
-                      </div>
-                    </div>
-                    <p>
-                      Lorem Ipsum is simply dummy text of the printing and typesetting
-                      industry. Lorem Ipsum has been the industry s standard dummy
-                      text ever since the 1500s, when an unknown printer took a galley
-                      of type and scrambled it to make a type specimen book.
-                    </p>
-                  </div>
+                  {
+                    lastReviews == null ?
+                      (
+                        Array.from(Array(3).keys()).map((i) => (
+                          <EntTestimonialsEskeleton key={i} />
+                        ))
+                      ) :
+                      lastReviews.length == 0 ?
+                        (
+                          dummyReviewData.map((review, index) => {
+                            return (
+                              <div className="aboutus-fifteen-main" key={index}>
+                                <div className="aboutus-profile-left">
+                                  <div className="aboutus-image">
+                                    <img
+                                      src={review.img}
+                                      alt=""
+                                      className="img-fluid"
+                                    />
+                                  </div>
+                                  <div className="aboutus-contents">
+                                    <h6>{review.name}</h6>
+                                  </div>
+                                </div>
+                                <p>{review.body}</p>
+                              </div>
+                            )
+                          })
+                        ) :
+                        (
+                          lastReviews.map((review, index) => {
+                            return (
+                              <div className="aboutus-fifteen-main" key={index}>
+                                <div className="aboutus-profile-left">
+                                  <div className="aboutus-image">
+                                    <img
+                                      src={review.authorProfile?.profileImage}
+                                      alt=""
+                                      className="img-fluid"
+                                    />
+                                  </div>
+                                  <div className="aboutus-contents">
+                                    <h6>{review?.authorProfile?.gender !== "" && `${review?.authorProfile?.gender} .`}{review?.authorProfile?.fullName}</h6>
+                                  </div>
+                                </div>
+                                <p>{review.body}</p>
+                              </div>
+                            )
+                          })
+                        )
+                  }
                 </Slider>
               </div>
             </div>
@@ -146,3 +155,21 @@ const TestimonialsSection: FC = (() => {
 });
 
 export default TestimonialsSection;
+
+const EntTestimonialsEskeleton: FC = (() => {
+  return (
+    <div className="aboutus-fifteen-main">
+      <div className="aboutus-profile-left">
+        <div className="aboutus-image">
+          <Skeleton animation="wave" variant='circular' width={50} height={50} sx={{ borderRadius: '50%' }} />
+        </div>
+        <div className="aboutus-contents" style={{ minWidth: '100px' }}>
+          <Skeleton component="h6" animation="wave" variant='rectangular' height={5} width={"100%"} sx={{ borderRadius: '8px', backgroundColor: 'primary.main' }} />
+
+        </div>
+      </div>
+      <Skeleton component="p" animation="wave" variant='rectangular' height={5} width={"100%"} sx={{ borderRadius: '8px', backgroundColor: 'text.disabled' }} />
+
+    </div>
+  )
+})

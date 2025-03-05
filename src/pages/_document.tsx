@@ -26,7 +26,7 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
         <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
         {emotionStyleTags}
       </Head>
-      <body>
+      <body id='body'>
         <Main />
         <NextScript />
 

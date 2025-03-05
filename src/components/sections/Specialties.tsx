@@ -18,13 +18,14 @@ import { AppState } from '@/redux/store';
 
 import TouchBallLoading from 'react-loadingg/lib/TouchBallLoading';
 import Tooltip from '@mui/material/Tooltip';
+import { useRouter } from 'next/router';
 
 
 const Specialties: FC = (() => {
   const specialities = useSelector((state: AppState) => state.specialities.value)
 
   const { muiVar } = useScssVar();
-
+  const router = useRouter();
   const specialitysettings = {
     items: 4,
     loop: true,
@@ -68,20 +69,6 @@ const Specialties: FC = (() => {
 
   }, []);
 
-  // remove extra button on rerun
-  // useEffect(() => {
-  //   if (typeof window !== 'undefined') {
-  //     if (specialities.length !== 0) {
-  //       let m = document.getElementById('slide-nav-1')!
-  //       if (m !== null && m.childNodes.length >= 2) {
-  //         m.childNodes.forEach((child) => {
-  //           m.removeChild(child)
-  //         })
-  //       }
-  //     }
-
-  //   }
-  // }, [specialities])
 
 
   return (
@@ -151,7 +138,9 @@ const Specialties: FC = (() => {
           <div className="form-search-btn aos" data-aos="fade-up" style={{ display: 'flex', justifyContent: 'center' }}>
             <Button sx={{
               mt: { lg: 1.5, md: 2, sm: 2, xs: 2 },
-            }} className="btn" onClick={(e) => e.preventDefault()}>
+            }} className="btn" onClick={(e) => {
+              router.push("/doctors/search")
+            }}>
               See all Specialities
             </Button>
           </div>

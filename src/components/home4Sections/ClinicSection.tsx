@@ -3,10 +3,13 @@ import { FC, Fragment } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
 import { spec, spec1, spec2, spec3, spec4, spec5, spec6, spec7 } from '../../../public/assets/imagepath';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux/store';
 
 const ClinicSection: FC = (() => {
   const { muiVar } = useScssVar();
-
+  const bestDoctorsData = useSelector((state: AppState) => state.bestDoctorsData)
+  const { totalDoctors } = bestDoctorsData
   return (
     <Fragment>
       <section className="clinic-specialities" style={muiVar}>
@@ -25,7 +28,7 @@ const ClinicSection: FC = (() => {
                 </div>
                 <div className="row row-sm special-footer">
                   <div className="col-6 text-left">
-                    <Link href="#" className="doc-count">124 <span>Doctors</span></Link>
+                    <Link href="#" className="doc-count">{totalDoctors == 0 ? 124 : totalDoctors} <span>Doctors</span></Link>
                   </div>
                   <div className="col-6 text-right">
                     <Link href="#" className="clin-count">24 <span>Clinics</span></Link>
@@ -42,7 +45,7 @@ const ClinicSection: FC = (() => {
                 </div>
                 <div className="row row-sm special-footer">
                   <div className="col-6 text-left">
-                    <Link href="#" className="doc-count">124 <span>Doctors</span></Link>
+                    <Link href="#" className="doc-count">{totalDoctors == 0 ? 124 : totalDoctors}<span>Doctors</span></Link>
                   </div>
                   <div className="col-6 text-right">
                     <Link href="#" className="clin-count">24 <span>Clinics</span></Link>
@@ -59,7 +62,7 @@ const ClinicSection: FC = (() => {
                 </div>
                 <div className="row row-sm special-footer">
                   <div className="col-6 text-left">
-                    <Link href="#" className="doc-count">124 <span>Doctors</span></Link>
+                    <Link href="#" className="doc-count">{totalDoctors == 0 ? 124 : totalDoctors} <span>Doctors</span></Link>
                   </div>
                   <div className="col-6 text-right">
                     <Link href="#" className="clin-count">24 <span>Clinics</span></Link>
@@ -76,7 +79,7 @@ const ClinicSection: FC = (() => {
                 </div>
                 <div className="row row-sm special-footer">
                   <div className="col-6 text-left">
-                    <Link href="#" className="doc-count">124 <span>Doctors</span></Link>
+                    <Link href="#" className="doc-count">{totalDoctors == 0 ? 124 : totalDoctors} <span>Doctors</span></Link>
                   </div>
                   <div className="col-6 text-right">
                     <Link href="#" className="clin-count">24 <span>Clinics</span></Link>
@@ -93,7 +96,7 @@ const ClinicSection: FC = (() => {
                 </div>
                 <div className="row row-sm special-footer">
                   <div className="col-6 text-left">
-                    <Link href="#" className="doc-count">124 <span>Doctors</span></Link>
+                    <Link href="#" className="doc-count">{totalDoctors == 0 ? 124 : totalDoctors} <span>Doctors</span></Link>
                   </div>
                   <div className="col-6 text-right">
                     <Link href="#" className="clin-count">24 <span>Clinics</span></Link>
@@ -110,7 +113,7 @@ const ClinicSection: FC = (() => {
                 </div>
                 <div className="row row-sm special-footer">
                   <div className="col-6 text-left">
-                    <Link href="#" className="doc-count">124 <span>Doctors</span></Link>
+                    <Link href="#" className="doc-count">{totalDoctors == 0 ? 124 : totalDoctors} <span>Doctors</span></Link>
                   </div>
                   <div className="col-6 text-right">
                     <Link href="#" className="clin-count">24 <span>Clinics</span></Link>
@@ -127,7 +130,7 @@ const ClinicSection: FC = (() => {
                 </div>
                 <div className="row row-sm special-footer">
                   <div className="col-6 text-left">
-                    <Link href="#" className="doc-count">124 <span>Doctors</span></Link>
+                    <Link href="#" className="doc-count">{totalDoctors == 0 ? 124 : totalDoctors} <span>Doctors</span></Link>
                   </div>
                   <div className="col-6 text-right">
                     <Link href="#" className="clin-count">24 <span>Clinics</span></Link>
@@ -144,7 +147,7 @@ const ClinicSection: FC = (() => {
                 </div>
                 <div className="row row-sm special-footer">
                   <div className="col-6 text-left">
-                    <Link href="#" className="doc-count">124 <span>Doctors</span></Link>
+                    <Link href="#" className="doc-count">{totalDoctors == 0 ? 124 : totalDoctors} <span>Doctors</span></Link>
                   </div>
                   <div className="col-6 text-right">
                     <Link href="#" className="clin-count">24 <span>Clinics</span></Link>

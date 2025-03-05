@@ -201,7 +201,10 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                   userType == "patient" ?
                     `/patient/dashboard/invoice-view/${btoa(params.id as string)}` :
                     `/doctors/dashboard/invoice-view/${btoa(params.id as string)}`
-                } >{row.invoiceId}</Link></Stack>
+                } >
+                  {row.invoiceId}
+                </Link>
+              </Stack>
             </>
           )
         }

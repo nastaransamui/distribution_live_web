@@ -17,7 +17,6 @@ import userDataReducer from "./userData";
 import clinicStatusReducer from "./clinicStatus";
 import homeSocketReducer from "./homeSocket";
 import homeSideBarOpenReducer from "./homeSideBarOpen";
-
 import userPatientProfileReducer, {
   UserPatientProfileType,
 } from "./userPatientProfile";
@@ -25,7 +24,10 @@ import userDoctorProfileReducer, {
   UserDoctorProfileType,
 } from "./userDoctorProfile";
 import specialitiesReducer from "./specialities";
-import { homeSideBarOpenSlice } from "./homeSideBarOpen";
+import bestDoctorsDataReducer from "./bestDoctorsData";
+import bestCardioDoctorsDataReducer from "./bestCardioDoctors";
+import bestEyeCareDoctorsDataReducer from "./bestEyeCareDoctors";
+import lastReviewsDataReducer from "./lastReviewsData";
 
 export interface AppState {
   homeAccessToken: ReturnType<typeof homeAccessTokenReducer>;
@@ -42,10 +44,13 @@ export interface AppState {
   userData: ReturnType<typeof userDataReducer>;
   clinicStatus: ReturnType<typeof clinicStatusReducer>;
   homeSocket: ReturnType<typeof homeSocketReducer>;
-  // userProfile: UserProfileType;
   userPatientProfile: UserPatientProfileType;
   userDoctorProfile: UserDoctorProfileType;
   specialities: ReturnType<typeof specialitiesReducer>;
+  bestDoctorsData: ReturnType<typeof bestDoctorsDataReducer>;
+  bestCardioDoctorsData: ReturnType<typeof bestCardioDoctorsDataReducer>;
+  bestEyeCareDoctorsData: ReturnType<typeof bestEyeCareDoctorsDataReducer>;
+  lastReviewsData: ReturnType<typeof lastReviewsDataReducer>;
 }
 
 export function makeStore() {
@@ -68,6 +73,10 @@ export function makeStore() {
       userPatientProfile: userPatientProfileReducer,
       userDoctorProfile: userDoctorProfileReducer,
       specialities: specialitiesReducer,
+      bestDoctorsData: bestDoctorsDataReducer,
+      bestCardioDoctorsData: bestCardioDoctorsDataReducer,
+      bestEyeCareDoctorsData: bestEyeCareDoctorsDataReducer,
+      lastReviewsData: lastReviewsDataReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

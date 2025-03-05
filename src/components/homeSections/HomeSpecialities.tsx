@@ -60,7 +60,7 @@ const HomeSpecialities: FC = (() => {
         <div className="container-fluid">
           <div className="section-header text-center">
             <h2>Clinic and Specialities</h2>
-            <p className="sub-title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            {/* <p className="sub-title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p> */}
           </div>
           <div className="row justify-content-center">
             <div className="col-md-9">
@@ -100,6 +100,7 @@ const HomeSpecialities: FC = (() => {
                                       <p>{spec.specialities.slice(0, 10) + ' ...'}</p>
                                     </Tooltip>
                                 }
+                                <p style={{ marginTop: 10 }}>{spec.users_id.length !== 0 && spec.users_id.length + ` Doctors`}</p>
                               </div>
                             </div>
                           )

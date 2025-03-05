@@ -143,7 +143,7 @@ const ClinicSection: FC = (() => {
                                 </div>
                                 <div className="clinics-info">
                                   <img src={src} className="img-fluid " alt='' />
-                                  <Link href="#" aria-label={`${spec.specialities}`}>
+                                  <Link href="/doctors/search" aria-label={`${spec.specialities}`}>
                                     {
                                       spec.specialities.length <= 13 ? <span>{spec.specialities}</span> :
                                         <Tooltip title={spec.specialities} arrow>
@@ -154,7 +154,7 @@ const ClinicSection: FC = (() => {
                                 </div>
                               </div>
                               <div className="clinics-icon">
-                                <Link href="#" aria-label='clinics-icons'><i className="fas fa-long-arrow-alt-right" /></Link>
+                                <Link href="/doctors/search" aria-label='clinics-icons'><i className="fas fa-long-arrow-alt-right" /></Link>
                               </div>
                             </div>
                           </div>

@@ -113,7 +113,9 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
     watch,
     reset,
     setError,
-    control
+    control,
+    getValues,
+    trigger
   } = useForm({
     defaultValues: {
       email: '',
@@ -545,7 +547,22 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
       });
     }
   });
+  /**
+   * There are bug in cariodhome and enthome that 
+   * submit button not work on dialog log
+   * therefore I have to handle via button click
+   */
+  const submitLoginInEntAndCardio = async () => {
+    if (router.asPath == "/cardiohome" || router.asPath == "/enthome") {
+      const isValid = await trigger(["email", "password"]); // Validate these fields
 
+      if (!isValid) {
+        return;
+      }
+
+      onLoginSubmit(getValues())
+    }
+  };
 
   return (
     <Fragment>
@@ -582,6 +599,15 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
               value={userType}
               row
               sx={{ justifyContent: 'space-between' }}
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                const target = e.target as HTMLInputElement;
+                if (target.value) {
+                  if (router.asPath == "/cardiohome" || router.asPath == '/enthome') {
+                    setShowRadioError(false)
+                    setUserType(() => target.value as 'patient' | 'doctors' | 'pharmacist')
+                  }
+                }
+              }}
               onChange={(e) => {
                 setShowRadioError(false)
                 setUserType(() => e.target.value as 'patient' | 'doctors' | 'pharmacist')
@@ -696,8 +722,12 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
         </div>
         <button
           className="btn btn-primary w-100 btn-lg login-btn"
-          type="submit"
-
+          type={router.asPath == "/cardiohome" || router.asPath == '/enthome' ? 'button' : "submit"}
+          onClick={() => {
+            if (router.asPath == "/cardiohome" || router.asPath == '/enthome') {
+              submitLoginInEntAndCardio()
+            }
+          }}
         >
           Login
         </button>
@@ -706,11 +736,6 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
           <span className="span-or">or</span>
         </div>
         <div className="row form-row social-login">
-          {/* <div className="col-6">
-                          <Button className="btn-facebook w-100">
-                            <i className="fab fa-facebook-f me-1" /> Login
-                          </Button>
-                        </div> */}
           <div className="col-12">
             <Button sx={{
               backgroundColor: '#dd4b39',

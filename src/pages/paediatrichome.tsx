@@ -23,10 +23,7 @@ import TestimonialSection from '@/components/paediatricSections/TestimonialSecti
 import BlogSection from '@/components/paediatricSections/BlogSection';
 import MobileDownloadSection from '@/components/paediatricSections/MobileDownloadSection';
 import Footer from '@/components/eyeCareSections/Footer';
-import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import isJsonString from '@/helpers/isJson';
 import getClinicsStatus from '@/helpers/getClinicsStatus';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import { LazyLoadWrapper } from '.';

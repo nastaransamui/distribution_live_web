@@ -85,7 +85,7 @@ const Header: FC = () => {
   }
 
   useEffect(() => {
-    const handleRouteChange = (url: string) => {
+    const handleRouteChange = () => {
       if (maxWidth991) {
         var root = document.getElementsByTagName("html")[0];
         if (root.classList.contains('menu-opened')) {
@@ -161,7 +161,12 @@ const Header: FC = () => {
     <header className={`header ${getHeaderClass()}`} style={{ ...style, ...muiVar }}>
       <div className='container'>
         <nav className="navbar navbar-expand-lg header-nav">
-          <div className={`navbar-header col-lg-${userProfile == null ? '1' : userProfile?.roleName == "doctors" ? '2' : '1'}`}>
+          <div className={`navbar-header col-lg-${userProfile == null ?
+            '1' :
+            userProfile?.roleName == "doctors" ?
+              '2' :
+              '1'
+            }`}>
 
 
             {
@@ -417,11 +422,8 @@ const MainDiv: FC<MainDivProps> = (({ children }) => {
   return (
     <div
       className={`main-menu-wrapper col-lg-${userProfile == null
-        ? router.pathname !== '/home' &&
-          router.pathname !== '/home3' &&
-          router.pathname !== '/home4'
-          ? '8'
-          : '9'
+        ?
+        '8'
         : userProfile?.roleName === "doctors"
           ? router.pathname !== '/login' && router.pathname !== '/register'
             ? '8'
@@ -462,9 +464,6 @@ const ConditionComponent: FC = (() => {
             if (conditionOpen) {
               setConditionOpen(false)
             }
-            // if (clinicsOpen) {
-            //   setClinicsOpen(false)
-            // }
           }}>
           Conditions<i id="conditionChevron" className={`fas ${conditionOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`} /></Link>
 
@@ -524,9 +523,8 @@ const AuthDiv: FC<AuthDivProps> = (({ children }) => {
     <div
       className={
         `main-menu-wrapper col-lg-${userProfile == null ?
-          router.pathname !== '/home' &&
-            router.pathname !== '/home3' &&
-            router.pathname !== '/home4' ? '3' : '2' :
+
+          '3' :
           (userProfile?.roleName == "doctors") ?
             (router.pathname !== '/login' &&
               router.pathname !== '/register') ?
@@ -973,17 +971,25 @@ const ClinicMenu: FC<ClinicMenuProps> = (({ }) => {
           router.pathname == '/homecare'
           ? "active" : ""}`} >
         {
-          !allClinicsDeactivate &&
-          <Link
-            href=""
-            id="clinicsAnchor"
-            onClick={(e) => {
-              e.preventDefault();
-              setClinicsOpen(!clinicsOpen)
-            }}>
-            Clinics
-            <i id="clinicsChevron" className={`fas ${clinicsOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`} />
-          </Link>
+          !allClinicsDeactivate ?
+            <Link
+              href=""
+              id="clinicsAnchor"
+              onClick={(e) => {
+                e.preventDefault();
+                setClinicsOpen(!clinicsOpen)
+              }}>
+              Clinics
+              <i id="clinicsChevron" className={`fas ${clinicsOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`} />
+            </Link> :
+            <Link
+              href=""
+              id="clinicsAnchor"
+              onClick={(e) => {
+                e.preventDefault();
+              }}>
+              Clinics
+            </Link>
         }
 
         <ul

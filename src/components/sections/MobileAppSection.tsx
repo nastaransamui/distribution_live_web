@@ -23,7 +23,7 @@ const MobileAppSection: FC = (() => {
                 <div className="app-content">
                   <div className="app-header aos" data-aos="fade-up">
                     <h5>Working for Your Better Health.</h5>
-                    <h2>Download the Doccure App today!</h2>
+                    <h2>Download the Health Care App today!</h2>
                   </div>
                   <div className="app-scan aos" data-aos="fade-up">
                     <p>Scan the QR code to get the app now</p>

@@ -64,7 +64,7 @@ const Specialities: FC = (() => {
                               <img src={src} className="img-fluid" alt='' id={spec.imageId} />
                             </div>
                             <div className="specialist-info">
-                              <Link href="#" aria-label={spec.specialities}>
+                              <Link href="/doctors/search" aria-label={spec.specialities}>
                                 {
                                   spec.specialities.length <= 13 ? <h3>{spec.specialities}</h3> :
                                     <Tooltip title={spec.specialities} arrow>
@@ -75,7 +75,7 @@ const Specialities: FC = (() => {
                               <p>{spec.users_id.length} Doctors</p>
                             </div>
                             <div className="specialist-nav ms-auto">
-                              <Link href="#" aria-label='specialists'><i className="fas fa-long-arrow-alt-right" /></Link>
+                              <Link href="/doctors/search" aria-label='specialists'><i className="fas fa-long-arrow-alt-right" /></Link>
                             </div>
                           </div>
                         </div>

@@ -5694,6 +5694,20 @@ table .table-hover tbody tr:hover td {
     drop-shadow(0 0 0 var(--secondaryMain))
     drop-shadow(0 0 0 var(--secondaryMain)) drop-shadow(0 0 0 var(--bgPaper));
 }
+.img-crimson {
+  filter: brightness(1000%) grayscale(100%) opacity(0.1)
+    drop-shadow(0 0 0 crimson)
+    drop-shadow(0 0 0 crimson)
+    drop-shadow(0 0 0 crimson)
+    drop-shadow(0 0 0 crimson) drop-shadow(0 0 0 var(--bgPaper));
+}
+.img-green {
+  filter: brightness(1000%) grayscale(100%) opacity(0.1)
+    drop-shadow(0 0 0 #00FF00)
+    drop-shadow(0 0 0 #00FF00)
+    drop-shadow(0 0 0 #00FF00)
+    drop-shadow(0 0 0 #00FF00) drop-shadow(0 0 0 var(--bgPaper));
+}
 
 .shapeFill {
   filter: brightness(1000%) grayscale(100%) opacity(0.1)
@@ -24626,8 +24640,7 @@ span.call-duration.float-end {
 }
 
 .clinics-section .clinic-item:hover .clinics-card .clinics-img:after {
-  /* background: rgba(45, 226, 253, 0.9); */
-  background: var(--secondaryMain);
+  background: var(--bgDefault);
   opacity: 0.9;
   transition: all 0.5s;
   height: 254px;
@@ -24671,8 +24684,7 @@ span.call-duration.float-end {
 }
 .clinics-section .clinics-card .clinics-img:after {
   content: "";
-  /* background: rgba(28, 91, 144, 0.9); */
-  background: var(--secondaryLight);
+  background: var(--color);
   opacity: 0.9;
   position: absolute;
   top: 0;
@@ -25526,7 +25538,9 @@ span.call-duration.float-end {
 }
 
 .clinic-specialities .special-box:hover {
-  background-color: var(--secondaryLight);
+  background-color: var(--bgDefault);
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.3), 
+  0px 15px 12px rgba(0, 0, 0, 0.22);
   -webkit-transition: all 0.7s;
   -ms-transition: all 0.7s;
   transition: all 0.7s;
@@ -25825,8 +25839,8 @@ span.call-duration.float-end {
   color: #ffffff;
   font-weight: 700;
   font-size: 14px;
-  width: 25px;
-  height: 25px;
+  width: 35px;
+  height: 35px;
   position: absolute;
   top: 10px;
   right: 20px;
@@ -25840,7 +25854,7 @@ span.call-duration.float-end {
   background-color: var(--bgDefault);
   padding: 0;
   box-shadow: 0px -6px 54px rgba(152, 152, 152, 0.25);
-  border-radius: 0;
+  border-radius: 0px 0px 10px 10px;
 }
 
 .book-section .book-best-doctors .doctors-body .inner-section {
@@ -25968,9 +25982,16 @@ span.call-duration.float-end {
   font-size: 11px;
   color: var(--secondaryLight);
 }
-
+.book-section .book-best-doctors .data-info-crimson {
+  font-weight: 400;
+  font-size: 11px;
+  color: crimson;
+}
 @media (max-width: 479.98px) {
   .book-section .book-best-doctors .data-info {
+    font-size: 10px;
+  }
+  .book-section .book-best-doctors .data-info-crimson {
     font-size: 10px;
   }
 }
@@ -27548,7 +27569,7 @@ span.call-duration.float-end {
   .testimonial-card
   .testmonial-user-coments
   p {
-  color: #6b7280;
+  color: var(--color);
   font-size: 14px;
   line-height: 20px;
   display: -webkit-box;
@@ -27873,6 +27894,7 @@ span.call-duration.float-end {
     var(--primaryLight) 100%
   ) !important;
   color: var(--bgDefault);
+  border-radius: 8px;
 }
 
 .main-wrapper.home-ten
@@ -29576,11 +29598,11 @@ span.call-duration.float-end {
   color: #ffaf14;
 }
 
-.our-doctors-card.eye-doc .doctors-body .rating span {
+/* .our-doctors-card.eye-doc .doctors-body .rating span {
   font-size: 14px;
   color: var(--color);
   margin: 0 0 0 8px;
-}
+} */
 
 @media (max-width: 991.98px) {
   .our-doctors-card.eye-doc {
@@ -31202,7 +31224,7 @@ span.call-duration.float-end {
   .blog-inner-right-fourt
   .blog-inner-right-fourt-care
   a:hover {
-  color: #0e82fd;
+  color: var(--secondaryMain);
 }
 
 .main-wrapper.home-twelve
@@ -32027,7 +32049,7 @@ span.call-duration.float-end {
 
 .main-wrapper.home-twelve .blog-section-fourteen .blog-btn-sec .btn-view:hover {
   box-shadow: inset 220px 0 0 0 var(--bgDefault);
-  color: var(--primaryDark);
+  color: var(--secondaryMain);
 }
 
 .main-wrapper.home-twelve .choose-us-fourteen {
@@ -38463,6 +38485,7 @@ span.call-duration.float-end {
   border-radius: 50%;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
   border: 2px solid #ffffff;
+  margin: 0px 5px 0px 5px;
 }
 
 @media (max-width: 767.98px) {
@@ -38572,7 +38595,7 @@ span.call-duration.float-end {
 
 .main-reviewimages img {
   opacity: 0.3;
-  border-radius: 5px px 0px 0px;
+  border-radius: 5px 5px 0px 0px;
 }
 
 #slide-experts .active.center .main-reviewimages img,
@@ -43582,7 +43605,7 @@ svg.feather {
   border: 1px solid var(--secondaryMain);
 }
 .d-inline-block {
-  color: var(--color);
+  color: #000;
 }
 
 .rbc-toolbar button {
