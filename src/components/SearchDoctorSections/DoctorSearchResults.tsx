@@ -49,7 +49,7 @@ import ListItem from '@mui/material/ListItem'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SyncIcon from '@mui/icons-material/Sync';
 import Zoom from '@mui/material/Zoom';
-import { AvailableType, formatNumberWithCommas } from '../DoctorDashboardSections/ScheduleTiming';
+import { AvailableType, formatNumberWithCommas, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack'
 import Dialog from '@mui/material/Dialog';
@@ -81,7 +81,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
-import { ProfileImageStyledBadge } from '../DoctorDashboardSections/MyPtients';
 import { loadStylesheet } from '@/pages/_app';
 import { getCookies, setCookie } from 'cookies-next';
 import { makeStyles } from 'tss-react/mui';
@@ -768,11 +767,12 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
           <Grid item xl={3} lg={2} md={2.87} sm={2} xs={12} >
             <CardMedia className={classes.ListCard}>
               <Link href={`/doctors/profile/${btoa(doctor?._id)}`} aria-label='doctor single'>
-                <ProfileImageStyledBadge
+                <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
                   variant="dot"
                   online={doctor.online as boolean}
+                  idle={doctor?.lastLogin?.idle}
                 >
                   <Avatar
                     className={classes.ListAvatar}
@@ -783,7 +783,7 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
                   >
                     <img className="img-fluid" src={doctors_profile} alt="" />
                   </Avatar>
-                </ProfileImageStyledBadge>
+                </StyledBadge>
               </Link>
               <ul className="clinic-gallery" >
                 {doctor && doctor.clinicImages &&
@@ -1136,11 +1136,12 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
           </span>
         </Tooltip>
         <Link href={`/doctors/profile/${btoa(doctor?._id)}`} aria-label='doctor single'>
-          <ProfileImageStyledBadge
+          <StyledBadge
             overlap="circular"
             anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
             variant="dot"
             online={doctor.online as boolean}
+            idle={doctor?.lastLogin?.idle}
           >
             <Avatar
               className={classes.gridMainAvatar}
@@ -1152,7 +1153,7 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
             >
               <img className="img-fluid" src={doctors_profile} alt="" />
             </Avatar>
-          </ProfileImageStyledBadge>
+          </StyledBadge>
         </Link>
         <CardContent className={classes.gridCardContain}>
           <Typography component='div' variant="body2" color="text.secondary">

@@ -185,6 +185,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
+                  idle={row?.doctorProfile?.lastLogin?.idle}
                   online={online}
                 >
                   <Avatar alt="" src={`${profileImage}`} >

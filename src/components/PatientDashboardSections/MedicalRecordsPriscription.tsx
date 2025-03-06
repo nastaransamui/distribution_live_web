@@ -334,6 +334,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
+                  idle={row?.doctorProfile?.lastLogin?.idle}
                   online={online}
                 >
                   <Avatar alt="" src={`${profileImage}`} >
@@ -378,9 +379,11 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
                   online={online}
+                  idle={row?.patientProfile?.lastLogin?.idle}
                 >
                   <Avatar alt="" src={profileImage} />
-                </StyledBadge></Link>
+                </StyledBadge>
+              </Link>
               <Link onClick={(e) => e.preventDefault()} href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`} >{`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}</Link></>
           )
         }

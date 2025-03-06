@@ -77,13 +77,14 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 
 export const StyledBadge = styled(Badge, {
-  shouldForwardProp: (prop) => prop !== 'online'
+  shouldForwardProp: (prop) => prop !== 'online' && prop !== 'idle'
 })
-  <{ online: boolean }>(({ theme, online }) => {
+  <{ online: boolean, idle?: boolean }>(({ theme, online, idle }) => {
+
     return {
       '& .MuiBadge-badge': {
-        backgroundColor: online ? '#44b700' : 'crimson',
-        color: online ? '#44b700' : 'crimson',
+        backgroundColor: idle ? '#ffa812' : online ? '#44b700' : 'crimson',
+        color: idle ? '#ffa812' : online ? '#44b700' : 'crimson',
         boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
         '&::after': {
           position: 'absolute',
@@ -2414,6 +2415,7 @@ const ReservationsComponent: FC = () => {
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
                   online={online}
+                  idle={row?.patientProfile?.lastLogin?.idle}
                 >
                   <Avatar alt="" src={`${profileImage}`} >
                     <img src={patient_profile} alt="" className="avatar avatar-in-schedule-table" />

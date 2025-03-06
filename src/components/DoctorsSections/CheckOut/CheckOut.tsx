@@ -30,7 +30,7 @@ import Rating from '@mui/material/Rating';
 
 import GooglePayButton from '@google-pay/button-react'
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
-import { formatNumberWithCommas, LoadingComponent, TimeType } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { formatNumberWithCommas, LoadingComponent, StyledBadge, TimeType } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { Terms } from '@/components/TermsSections/TermsDetails';
 import { FiThumbsUp } from 'react-icons/fi';
 import Box from '@mui/material/Box';
@@ -593,20 +593,28 @@ const Checkout: FC = (() => {
                   <div className="card-body">
                     <div className="booking-doc-info">
                       <Link target="_blank" aria-label='booking-doc' rel="noopener noreferrer" href={`/doctors/profile/${btoa(checkoutData?.doctorId as string)}`} className="booking-doc-img">
-                        <Avatar sx={{
-                          width: 'auto',
-                          height: 'auto',
-                          transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
-                          "&:hover": {
-                            boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
-                            transform: "scale(1.15)",
-                          },
-
-                        }} variant="square" alt="" src={checkoutData?.doctorProfile?.profileImage}
-                          key={checkoutData?.doctorProfile?.profileImage}
+                        <StyledBadge
+                          overlap="circular"
+                          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                          variant="dot"
+                          online={checkoutData?.doctorProfile?.online as boolean}
+                          idle={checkoutData?.doctorProfile?.lastLogin?.idle}
                         >
-                          <img className="img-fluid" src={doctors_profile} alt="" />
-                        </Avatar>
+                          <Avatar sx={{
+                            width: 'auto',
+                            height: 'auto',
+                            transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
+                            "&:hover": {
+                              boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+                              transform: "scale(1.15)",
+                            },
+
+                          }} variant="square" alt="" src={checkoutData?.doctorProfile?.profileImage}
+                            key={checkoutData?.doctorProfile?.profileImage}
+                          >
+                            <img className="img-fluid" src={doctors_profile} alt="" />
+                          </Avatar>
+                        </StyledBadge>
                       </Link>
                       <div className="booking-info">
                         <h4>

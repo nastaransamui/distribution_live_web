@@ -124,6 +124,7 @@ const Rates: FC = () => {
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
                   online={row?.authorProfile?.online}
+                  idle={row?.authorProfile?.lastLogin?.idle}
                 >
                   <Avatar alt="" src={`${row?.authorProfile?.profileImage}`} >
                     <img src={roleName == "doctors" ? doctors_profile : patient_profile} alt="" className="avatar" />

@@ -272,7 +272,8 @@ const PatientReviews: FC<PatientReviewsType> = (({ profile }) => {
                       {
                         authorReviews.map((reviews: ReviewTypes, index: number) => {
                           const { createdAt, updatedAt } = reviews;
-                          const online = reviews?.role == 'doctors' ? reviews?.doctorProfile?.online : reviews?.patientProfile?.online
+                          const online = reviews?.role == 'doctors' ? reviews?.patientProfile?.online : reviews?.doctorProfile?.online
+                          const idle = reviews?.role == 'doctors' ? reviews?.patientProfile?.idle : reviews?.doctorProfile?.idle
                           const profileImage = reviews?.doctorProfile?.profileImage;
                           const authorName = reviews?.doctorProfile?.fullName;
                           const formattedDate =
@@ -287,6 +288,7 @@ const PatientReviews: FC<PatientReviewsType> = (({ profile }) => {
                                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                                   variant="dot"
                                   online={online!}
+                                  idle={idle}
                                   style={{ width: 58, height: 58 }}
                                 >
                                   <Avatar style={{ width: 58, height: 58 }} alt="" src={`${profileImage}`} >

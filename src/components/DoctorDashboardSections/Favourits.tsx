@@ -119,6 +119,7 @@ const Favourits: FC = (() => {
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
                   online={online}
+                  idle={row?.lastLogin?.idle}
                 >
                   <Avatar alt="" src={`${profileImage}`} >
                     <img src={patient_profile} alt="" className="avatar avatar-in-schedule-table" />

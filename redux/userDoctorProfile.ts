@@ -42,6 +42,7 @@ export interface UserDoctorProfileTypeValue {
     date: Date;
     ipAddr: string;
     userAgent: string;
+    idle?: boolean;
   };
   lastName: string;
   lastUpdate: Date;
@@ -100,6 +101,7 @@ export interface UserDoctorProfileType {
       date: Date;
       ipAddr: string;
       userAgent: string;
+      idle?: boolean;
     };
     lastName: string;
     lastUpdate: Date;

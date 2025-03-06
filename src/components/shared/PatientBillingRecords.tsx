@@ -464,6 +464,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
                   online={row?.doctorProfile?.online}
+                  idle={row?.doctorProfile?.lastLogin?.idle}
                 >
                   <Avatar alt="" src={`${row?.doctorProfile?.profileImage}`} >
                     <img src={doctors_profile} alt="" className="avatar avatar-in-schedule-table" />
@@ -509,6 +510,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
                   online={online}
+                  idle={row?.patientProfile?.lastLogin?.idle}
                 >
                   <Avatar alt="" src={profileImage} />
                 </StyledBadge>

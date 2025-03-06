@@ -255,6 +255,7 @@ const AvailableTiming: FC = (() => {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant="dot"
                 online={editValues?.patientProfile?.online as boolean}
+                idle={editValues?.patientProfile?.lastLogin?.idle}
               >
                 <Avatar alt="" src={`${editValues?.patientProfile?.profileImage}`} >
                   <img src={patient_profile} alt="" className="avatar" />

@@ -451,7 +451,7 @@ const Invoices: FC = (() => {
       },
       {
         field: 'doctorProfile.fullName',
-        headerName: 'Patient Name',
+        headerName: 'Doctor Name',
         width: 250,
         headerAlign: 'center',
         searchAble: false,
@@ -466,7 +466,7 @@ const Invoices: FC = (() => {
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           const profileImage = row?.doctorProfile?.profileImage == '' ? doctors_profile : row?.doctorProfile?.profileImage
-          const online = row?.doctorProfile?.online || false
+
           return (
             <>
               <Link aria-label='profile' className=" mx-2" target='_blank' href={`/doctors/profile/${btoa(row?.doctorId)}`} >
@@ -474,7 +474,8 @@ const Invoices: FC = (() => {
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
-                  online={online}
+                  online={row?.doctorStatus?.online}
+                  idle={row?.doctorStatus?.lastLogin?.idle}
                 >
                   <Avatar alt="" src={profileImage} />
                 </StyledBadge>

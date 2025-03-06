@@ -119,6 +119,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
                   online={online}
+                  idle={row?.patientProfile?.lastLogin?.idle}
                 >
                   <Avatar alt="" src={profileImage} />
                 </StyledBadge></Link>

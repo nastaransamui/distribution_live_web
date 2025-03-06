@@ -18,6 +18,13 @@ export interface BookingDoctorProfile {
   address1: string;
   address2: string;
   city: string;
+  idle?: boolean;
+  lastLogin: {
+    date: Date;
+    ipAddr: string;
+    userAgent: string;
+    idle?: boolean;
+  },
   country: string;
   fullName: string;
   online: boolean;

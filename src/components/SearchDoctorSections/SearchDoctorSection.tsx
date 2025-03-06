@@ -114,6 +114,7 @@ export interface DoctorProfileType {
     date: Date;
     ipAddr: string;
     userAgent: string;
+    idle?: boolean;
   };
 
 }

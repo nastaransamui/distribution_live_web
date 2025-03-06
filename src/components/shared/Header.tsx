@@ -1,18 +1,18 @@
 
 
 /* eslint-disable @next/next/no-img-element */
-import { FC, useState, useEffect, Fragment, ReactNode } from 'react';
+import { FC, useState, useEffect, Fragment, ReactNode, useRef, useCallback, useMemo } from 'react';
 import FeatherIcon from 'feather-icons-react';
 import Link from 'next/link';
 
 //next 
 
 import { useRouter } from 'next/router';
-import { deleteCookie, getCookie } from 'cookies-next';
+import { deleteCookie, getCookie, setCookie } from 'cookies-next';
 
 import { patient_profile, doctors_profile, logo } from '@/public/assets/imagepath';
 import useScssVar from '@/hooks/useScssVar';
-
+import _ from 'lodash'
 //Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
@@ -28,6 +28,17 @@ import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import { toast } from 'react-toastify';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import Avatar from '@mui/material/Avatar'
+import { StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
+import ActivityDetector from 'react-activity-detector';
+import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
+import { updateHomeUserId } from '@/redux/homeUserId';
+import { updateHomeServices } from '@/redux/homeServices';
+import { updateHomeRoleName } from '@/redux/homeRoleName';
+import { updateHomeIAT } from '@/redux/homeIAT';
+import { updateHomeExp } from '@/redux/homeExp';
+import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
+import { updateUserPatientProfile } from '@/redux/userPatientProfile';
+const MINUTES_FOR_IDLE = 20;
 
 const Header: FC = () => {
   const theme = useTheme();
@@ -157,6 +168,84 @@ const Header: FC = () => {
       root.classList.toggle('menu-opened')
     }
   };
+  const homeSocketRef = useRef(homeSocket);
+  const userProfileRef = useRef(userProfile);
+
+  // Update refs whenever values change
+  useEffect(() => {
+    homeSocketRef.current = homeSocket;
+    userProfileRef.current = userProfile;
+  }, [homeSocket, userProfile]);
+
+  const throttledOnActive = useMemo(() =>
+    _.throttle(() => {
+      const homeSocket = homeSocketRef.current;
+      const userProfile = userProfileRef.current;
+
+
+      if (userProfile?.idle && homeSocket.current) {
+        homeSocket.current.emit('updateUserStatus', {
+          userId: userProfile?._id,
+          idleStatus: false,
+          onlineStatus: userProfile?.online
+        });
+
+        homeSocket.current.once('updateUserStatusReturn', (msg: { status: number, accessToken: string }) => {
+          if (msg.status === 200) {
+            const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken);
+
+            setCookie('homeAccessToken', accessToken);
+            setCookie('user_id', user_id);
+            setCookie('services', services);
+            setCookie('roleName', roleName);
+            setCookie('iat', iat);
+            setCookie('exp', exp);
+
+            dispatch(updateHomeAccessToken(accessToken));
+            dispatch(updateHomeUserId(user_id));
+            dispatch(updateHomeServices(services));
+            dispatch(updateHomeRoleName(roleName));
+            dispatch(updateHomeIAT(iat));
+            dispatch(updateHomeExp(exp));
+
+            roleName === 'patient' ? dispatch(updateUserDoctorProfile(userProfile)) : dispatch(updateUserPatientProfile(userProfile));
+          }
+        });
+      }
+    }, 2000),
+    [dispatch] // Empty dependency array ensures `throttle` is created once
+  );
+
+  const onActive = () => {
+    throttledOnActive(); // Now it always uses the latest values
+  };
+  const onIdle = () => {
+    if (homeSocket.current) {
+      if (typeof userProfile?.lastLogin?.idle == 'undefined' || !userProfile?.lastLogin?.idle) {
+        homeSocket.current.emit('updateUserStatus', { userId: userProfile?._id, idleStatus: true, onlineStatus: userProfile?.online })
+        homeSocket.current.once('updateUserStatusReturn', (msg: { status: number, accessToken: string }) => {
+
+          if (msg.status == 200) {
+            const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken);
+            setCookie('homeAccessToken', accessToken);
+            setCookie('user_id', user_id);
+            setCookie('services', services);
+            setCookie('roleName', roleName);
+            setCookie('iat', iat);
+            setCookie('exp', exp);
+            dispatch(updateHomeAccessToken(accessToken))
+            dispatch(updateHomeUserId(user_id));
+            dispatch(updateHomeServices(services));
+            dispatch(updateHomeRoleName(roleName));
+            dispatch(updateHomeIAT(iat));
+            dispatch(updateHomeExp(exp))
+            roleName == 'patient' ? dispatch(updateUserDoctorProfile(userProfile)) : dispatch(updateUserPatientProfile(userProfile))
+
+          }
+        })
+      }
+    }
+  }
   return (
     <header className={`header ${getHeaderClass()}`} style={{ ...style, ...muiVar }}>
       <div className='container'>
@@ -181,7 +270,12 @@ const Header: FC = () => {
               </Link>
             }
           </div>
-
+          {userProfile !== null &&
+            <ActivityDetector
+              enabled={true}
+              timeout={MINUTES_FOR_IDLE * 60 * 1000}
+              onIdle={onIdle}
+              onActive={onActive} name="default" />}
 
           {
             maxWidth991 ?
@@ -713,9 +807,17 @@ const DoctorAfterLogin: FC<AfterLoginType> = (({ logOut }) => {
       <li className="nav-item dropdown has-arrow logged-item">
         <Link href="#" className="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-label='dropdown'>
           <span className="user-img">
-            <Avatar alt="" src={`${userProfile?.profileImage}`} key={userProfile?.profileImage}>
-              <img src={doctors_profile} alt="" className="rounded-circle" />
-            </Avatar>
+            <StyledBadge
+              overlap="circular"
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              variant="dot"
+              online={userProfile?.online!}
+              idle={userProfile?.lastLogin?.idle}
+            >
+              <Avatar alt="" src={`${userProfile?.profileImage}`} key={userProfile?.profileImage}>
+                <img src={patient_profile} alt="" className="rounded-circle" />
+              </Avatar>
+            </StyledBadge>
           </span>
         </Link>
         <div className="dropdown-menu dropdown-menu-end">
@@ -823,6 +925,7 @@ const PatientAfterLogin: FC<AfterLoginType> = (({ logOut }) => {
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
 
+
   return (
     <ul className="nav header-navbar-rht">
       <HeaderCart />
@@ -830,9 +933,18 @@ const PatientAfterLogin: FC<AfterLoginType> = (({ logOut }) => {
       <li className="nav-item dropdown has-arrow logged-item">
         <Link href="#" className="dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-label='dropdown'>
           <span className="user-img">
-            <Avatar alt="" src={`${userProfile?.profileImage}`} key={userProfile?.profileImage}>
-              <img src={patient_profile} alt="" className="rounded-circle" />
-            </Avatar>
+
+            <StyledBadge
+              overlap="circular"
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              variant="dot"
+              online={userProfile?.online!}
+              idle={userProfile?.lastLogin?.idle}
+            >
+              <Avatar alt="" src={`${userProfile?.profileImage}`} key={userProfile?.profileImage}>
+                <img src={patient_profile} alt="" className="rounded-circle" />
+              </Avatar>
+            </StyledBadge>
           </span>
         </Link>
         <div className="dropdown-menu dropdown-menu-end">

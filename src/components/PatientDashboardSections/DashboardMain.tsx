@@ -97,10 +97,6 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
 
   useEffect(() => {
     if (homeSocket?.current !== undefined) {
-      // //Get vital Sign on change database
-      // homeSocket.current.on('getVitalSignFromAdmin', (msg: any) => {
-      //   // setvitalSign(msg)
-      // })
       let userId = userProfile?._id
       // Get vital sing on entrance of page
       homeSocket.current.emit('getVitalSign', { userId, limit: 1, skip: 0, sort: { date: -1 } })

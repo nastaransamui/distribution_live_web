@@ -17,7 +17,7 @@ import Stack from '@mui/material/Stack';
 
 import { patient_profile } from '@/public/assets/imagepath';
 import { AppointmentReservationType } from '../DoctorsSections/CheckOut/PaymentSuccess';
-import { PatientProfile, ProfileImageStyledBadge } from './MyPtients';
+import { PatientProfile } from './MyPtients';
 
 //liberies
 import { toast } from 'react-toastify';
@@ -256,6 +256,7 @@ const Appointment: FC = (() => {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant="dot"
                 online={editValues?.patientProfile?.online as boolean}
+                idle={editValues?.patientProfile?.lastLogin?.idle}
               >
                 <Avatar alt="" src={`${editValues?.patientProfile?.profileImage}`} >
                   <img src={patient_profile} alt="" className="avatar" />
@@ -400,11 +401,12 @@ const DoctorAppointmentShowBox: FC<DoctorAppointmentShowBoxType> = (({ myAppoint
           return (
             <div className="appointment-list" key={index}>
               <div className="profile-info-widget" >
-                <ProfileImageStyledBadge
+                <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
                   variant="dot"
                   online={online as boolean}
+                  idle={patientProfile?.lastLogin?.idle}
                 >
                   <Link aria-label="patient"
                     href={`/doctors/dashboard/patient-profile/${btoa(patientId)}`}
@@ -429,7 +431,7 @@ const DoctorAppointmentShowBox: FC<DoctorAppointmentShowBoxType> = (({ myAppoint
                       <img className="img-fluid" src={patient_profile} alt="" />
                     </Avatar>
                   </Link>
-                </ProfileImageStyledBadge>
+                </StyledBadge>
                 <div className="profile-det-info">
                   <h3>
                     <Link aria-label="patient" style={{ color: theme.palette.secondary.main }} href={`/doctors/dashboard/patient-profile/${btoa(patientId)}`}>{patientName}</Link>

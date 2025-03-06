@@ -24,7 +24,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip'
 import { useTheme } from '@mui/material'
-import { getSelectedBackgroundColor } from "@/components/DoctorDashboardSections/ScheduleTiming"
+import { getSelectedBackgroundColor, StyledBadge } from "@/components/DoctorDashboardSections/ScheduleTiming"
 
 
 const PatientDashboardSidebar: FC = (() => {
@@ -222,10 +222,18 @@ const PatientDashboardSidebar: FC = (() => {
             <div className="profile-sidebar">
               <div className="widget-profile pro-widget-content">
                 <div className="profile-info-widget">
-                  <Link href="#" className={`booking-doc-img ${homeSideBarOpen ? "booking-doc-img-open" : 'booking-doc-img-close'}`} aria-label='book'>
-                    <Avatar alt="" src={`${userProfile?.profileImage}`} className={`sidebar-avatar ${homeSideBarOpen ? 'sidebar-avatar-open' : 'sidebar-avatar-close'}`}>
-                      <img src={patient_profile} alt="" />
-                    </Avatar>
+                  <Link href="#" onClick={(e) => e.preventDefault()} className={`booking-doc-img ${homeSideBarOpen ? "booking-doc-img-open" : 'booking-doc-img-close'}`} aria-label='book'>
+                    <StyledBadge
+                      overlap="circular"
+                      anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                      variant="dot"
+                      online={userProfile?.online!}
+                      idle={userProfile?.lastLogin?.idle}
+                    >
+                      <Avatar className={`sidebar-avatar ${homeSideBarOpen ? 'sidebar-avatar-open' : 'sidebar-avatar-close'}`} alt="" src={`${userProfile?.profileImage}`} key={userProfile?.profileImage}>
+                        <img src={patient_profile} alt="" className="rounded-circle" />
+                      </Avatar>
+                    </StyledBadge>
                   </Link>
                   <div className={`${homeSideBarOpen ? 'profile-det-info-open' : "profile-det-info-close"}`}>
                     <OverflowTooltip text={`${userProfile?.gender == "" ? "" : `${userProfile?.gender}. `} ${userProfile?.fullName}`} />
@@ -242,17 +250,17 @@ const PatientDashboardSidebar: FC = (() => {
                         as="h5"
                       />
                       <OverflowTooltip
-                        text={`${`City: ${userProfile?.city}` || 'City: -----'}`}
+                        text={`${userProfile?.city !== "" ? `City: ${userProfile?.city}` : 'City: -----'}`}
                         as="h6"
                         className="mb-0 line-height-22"
                       />
                       <OverflowTooltip
-                        text={`${`State: ${userProfile?.state}` || 'State: -----'}`}
+                        text={`${userProfile?.state !== "" ? `State: ${userProfile?.state}` : 'State: -----'}`}
                         as="h6"
                         className="mb-0 line-height-22"
                       />
                       <OverflowTooltip
-                        text={`${`Country: ${userProfile?.country}` || 'Country: -----'}`}
+                        text={`${userProfile?.country !== "" ? `Country: ${userProfile?.country}` : 'Country: -----'}`}
                         as="h6"
                         className="mb-0 line-height-22"
                       />

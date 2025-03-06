@@ -7,8 +7,9 @@ import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDocto
 import Rating from '@mui/material/Rating';
 import Avatar from '@mui/material/Avatar';
 import { BookingDoctorProfile } from './BookingPage';
-import { ProfileImageStyledBadge } from '@/components/DoctorDashboardSections/MyPtients';
+
 import { FiThumbsUp } from 'react-icons/fi';
+import { StyledBadge } from '@/components/DoctorDashboardSections/ScheduleTiming';
 
 
 const Summary: FC<{ profile: BookingDoctorProfile }> = (({ profile }) => {
@@ -20,11 +21,12 @@ const Summary: FC<{ profile: BookingDoctorProfile }> = (({ profile }) => {
         <div className="card">
           <div className="card-body">
             <div className="booking-doc-info">
-              <ProfileImageStyledBadge
+              <StyledBadge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
                 variant="dot"
                 online={profile.online as boolean}
+                idle={profile.lastLogin?.idle}
               >
                 <Avatar sx={{
                   width: '70px',
@@ -41,7 +43,7 @@ const Summary: FC<{ profile: BookingDoctorProfile }> = (({ profile }) => {
                 >
                   <img className="img-fluid" src={doctors_profile} alt="" />
                 </Avatar>
-              </ProfileImageStyledBadge>
+              </StyledBadge>
               <div className="booking-info">
                 <h1 style={{ fontSize: '18px' }}>
                   <Link href={`/doctors/profile/${btoa(profile?._id)}`} target='_blank'>

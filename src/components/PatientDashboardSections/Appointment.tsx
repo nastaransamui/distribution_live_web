@@ -18,7 +18,6 @@ import Stack from '@mui/material/Stack';
 
 import { doctors_profile } from '@/public/assets/imagepath';
 import { AppointmentReservationType } from '../DoctorsSections/CheckOut/PaymentSuccess';
-import { PatientProfile, ProfileImageStyledBadge } from '@/components/DoctorDashboardSections/MyPtients';
 
 //liberies
 import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
@@ -252,6 +251,7 @@ const Appointment: FC = (() => {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant="dot"
                 online={editValues?.doctorProfile?.online as boolean}
+                idle={editValues?.doctorProfile?.lastLogin?.idle}
               >
                 <Avatar alt="" src={`${editValues?.doctorProfile?.profileImage}`} >
                   <img src={doctors_profile} alt="" className="avatar" />
@@ -340,11 +340,12 @@ const PatientAppointmentShowBox: FC<PatientAppointmentShowBoxType> = (({ myAppoi
           return (
             <div className="appointment-list" key={index}>
               <div className="profile-info-widget" >
-                <ProfileImageStyledBadge
+                <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
                   variant="dot"
                   online={online as boolean}
+                  idle={doctorProfile?.lastLogin?.idle}
                 >
                   <Link aria-label="patient"
                     href={`/doctors/profile/${btoa(doctorId)}`}
@@ -370,7 +371,7 @@ const PatientAppointmentShowBox: FC<PatientAppointmentShowBoxType> = (({ myAppoi
                       <img className="img-fluid" src={doctors_profile} alt="" />
                     </Avatar>
                   </Link>
-                </ProfileImageStyledBadge>
+                </StyledBadge>
                 <div className="profile-det-info">
                   <h3>
                     <Link aria-label="patient" style={{ color: theme.palette.secondary.main }} href={`/doctors/profile/${btoa(doctorId)}`} target='_blank'>{doctorName}</Link>

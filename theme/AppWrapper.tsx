@@ -71,17 +71,13 @@ const AppWrapper = ({ children }: ChildrenProps) => {
   const homeThemeType = useSelector((state: AppState) => state.homeThemeType.value)
   const homeLoadingBar = useSelector((state: AppState) => state.homeLoadingBar.value)
   const homeFormSubmit = useSelector((state: AppState) => state.homeFormSubmit.value)
-  const bestDoctorsData = useSelector((state: AppState) => state.bestDoctorsData)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
   const userData = useSelector((state: AppState) => state.userData.value)
-  const clinicStatus = useSelector((state: AppState) => state.clinicStatus.value)
   const homeAccessToken = useSelector((state: AppState) => state.homeAccessToken.value)
-  const specialities = useSelector((state: AppState) => state.specialities.value)
   const homeUserId = useSelector((state: AppState) => state.homeUserId.value)
-  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [homeTheme, setHomeTheme] = useState({
     ...appTheme(homeThemeName as string,
       homeThemeType as PaletteMode,
@@ -160,7 +156,6 @@ const AppWrapper = ({ children }: ChildrenProps) => {
         socket.current.on('getUserProfileFromAdmin', async (msg: string) => {
           //Handle update token
           var { accessToken, user_id, services, roleName, iat, exp, userProfile: newUserProfile } = verifyHomeAccessToken(msg)
-
 
           const { isActive } = newUserProfile;
           // console.log({ accessToken, user_id, services, roleName, iat, exp, newUserProfile, isActive, userProfile })
@@ -337,10 +332,13 @@ const AppWrapper = ({ children }: ChildrenProps) => {
   }, [dispatch]);
 
 
+
+
   const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
   return (
     <Fragment >
       <ThemeProvider theme={homeTheme}>
+
         <StylesProvider jss={jss}>
           <CssBaseline />
           <Backdrop

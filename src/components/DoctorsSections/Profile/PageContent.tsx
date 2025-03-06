@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
-import { ProfileImageStyledBadge } from '@/components/DoctorDashboardSections/MyPtients';
 import { loadStylesheet } from '@/pages/_app';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
@@ -26,7 +25,7 @@ import { LoginBox } from '@/components/AuthSections/LoginSection';
 import CloseIcon from '@mui/icons-material/Close';
 import { Transition } from '@/components/shared/Dialog';
 import { FiCalendar, FiClock, FiDollarSign, FiInfo, FiThumbsUp } from 'react-icons/fi';
-import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { formatNumberWithCommas, StyledBadge } from '@/components/DoctorDashboardSections/ScheduleTiming';
 
 const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
   const { muiVar, bounce } = useScssVar();
@@ -155,11 +154,12 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
               <div className="doc-info-left">
                 <div className="doctor-img">
 
-                  <ProfileImageStyledBadge
+                  <StyledBadge
                     overlap="circular"
                     anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
                     variant="dot"
                     online={profile.online as boolean}
+                    idle={profile?.lastLogin?.idle}
                   >
                     <Avatar sx={{
                       width: 'fit-content',
@@ -175,7 +175,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                     >
                       <img className="img-fluid" src={doctors_profile} alt="" />
                     </Avatar>
-                  </ProfileImageStyledBadge>
+                  </StyledBadge>
                 </div>
                 <div className="doc-info-cont">
                   <h1 className="doc-name">Dr. {profile?.firstName} {" "} {profile?.lastName}</h1>

@@ -91,6 +91,7 @@ const PatientSidebarDoctorDashboard: FC<DoctorPatientProfileTypes> = (({ doctorP
                       anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
                       variant="dot"
                       online={doctorPatientProfile?.online}
+                      idle={doctorPatientProfile?.lastLogin?.idle}
                     >
                       <Avatar alt="" src={`${doctorPatientProfile?.profileImage}`} className={`sidebar-avatar ${homeSideBarOpen ? 'sidebar-avatar-open' : 'sidebar-avatar-close'}`}>
                         <img src={patient_profile} alt="" />

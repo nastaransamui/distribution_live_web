@@ -403,6 +403,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                         doctorReviews.map((reviews: ReviewTypes, index: number) => {
                           const { createdAt, updatedAt } = reviews;
                           const online = reviews?.role == 'doctors' ? reviews?.doctorProfile?.online : reviews?.patientProfile?.online
+                          const idle = reviews?.role == 'doctors' ? reviews?.patientProfile?.idle : reviews?.doctorProfile?.idle
                           const profileImage = reviews?.role == 'doctors' ? reviews?.doctorProfile?.profileImage : reviews?.patientProfile?.profileImage;
                           const authorName = reviews?.role == 'doctors' ? reviews?.doctorProfile?.fullName : reviews?.patientProfile?.fullName;
                           const formattedDate =
@@ -417,6 +418,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                                   variant="dot"
                                   online={online!}
+                                  idle={idle}
                                   style={{ width: 58, height: 58 }}
                                 >
                                   <Avatar style={{ width: 58, height: 58 }} alt="" src={`${profileImage}`} >
@@ -426,7 +428,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
 
                                 <div className="comment-body">
                                   <div className="meta-data">
-                                    <span className="comment-author">{reviews?.role == 'doctors' ? 'Dr.' : `${reviews?.patientProfile?.gender} `}{authorName}</span>
+                                    <span className="comment-author">{reviews?.role == 'doctors' ? 'Dr.' : `${reviews?.patientProfile?.gender !== "" && `${reviews?.patientProfile?.gender}. `}`}{authorName}</span>
 
                                     <span className="comment-date">{`#${reviews?.id}`}</span>
                                     <span className="comment-date">{formattedDate}</span>
@@ -602,6 +604,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                                     reviews?.replies.map((replies: RepliesType, index: number) => {
                                       const { createdAt: repliesCreatedAt } = replies;
                                       const repliesOnline = replies?.role == 'doctors' ? replies?.doctorProfile?.online : replies?.patientProfile?.online
+                                      const repliesIdle = replies?.role == 'doctors' ? replies?.doctorProfile?.idle : replies?.patientProfile?.idle
                                       const repliesProfileImage = replies?.role == 'doctors' ? replies?.doctorProfile?.profileImage : replies?.patientProfile?.profileImage;
                                       const repliesAuthorName = replies?.role == 'doctors' ? replies?.doctorProfile?.fullName : replies?.patientProfile?.fullName;
                                       const repliesFormattedDate = `Reviewed ${dayjs(repliesCreatedAt).fromNow()}`;
@@ -613,6 +616,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                                               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                                               variant="dot"
                                               online={repliesOnline!}
+                                              idle={repliesIdle}
                                               style={{ width: 58, height: 58 }}
                                             >
                                               <Avatar style={{ width: 58, height: 58 }} alt="" src={`${repliesProfileImage}`} >
@@ -623,7 +627,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                                               <div className="meta-data">
                                                 <span style={{ display: 'flex', alignItems: "center" }}>
                                                   <span className="comment-author">
-                                                    {repliesAuthorName}
+                                                    {replies?.role == 'doctors' ? 'Dr.' : `${replies?.patientProfile?.gender !== "" && `${replies?.patientProfile?.gender}. `}`} {repliesAuthorName}
                                                   </span>
                                                   {
                                                     replies?.authorId == reviews?.doctorId &&

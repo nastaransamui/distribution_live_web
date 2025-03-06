@@ -690,7 +690,7 @@ const Invoices: FC = (() => {
           const { row } = params;
           const { patientProfile } = row
           const profileImage = patientProfile?.profileImage == '' ? patient_profile : patientProfile?.profileImage
-          const online = patientProfile?.online || false
+
           return (
             <>
               <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
@@ -698,7 +698,8 @@ const Invoices: FC = (() => {
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
-                  online={online}
+                  online={row?.patientStatus?.online}
+                  idle={row?.patientStatus?.lastLogin?.idle}
                 >
                   <Avatar alt="" src={profileImage} />
                 </StyledBadge>
