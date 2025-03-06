@@ -78,7 +78,7 @@ const BlogSection: FC = (() => {
               <div className="card blog-inner-fourt-all">
                 <div className="card-body blog-inner-fourt-main">
                   <div className="blog-inner-right-fourt">
-                    <Link href="blog-details">
+                    <Link href="/blog">
                       <div className="blog-inner-right-img">
                         <img
                           src={VetBlog01}
@@ -96,7 +96,7 @@ const BlogSection: FC = (() => {
                       </div>
                     </Link>
                     <Link
-                      href="blog-details"
+                      href="/blog"
                       className="blog-inner-right-fourt-care"
                     >
                       What You Might Not Know About The Best Dog Food in India
@@ -128,7 +128,7 @@ const BlogSection: FC = (() => {
               <div className="card blog-inner-fourt-all">
                 <div className="card-body blog-inner-fourt-main">
                   <div className="blog-inner-right-fourt">
-                    <Link href="blog-details">
+                    <Link href="/blog">
                       <div className="blog-inner-right-img">
                         <img
                           src={VetBlog02}
@@ -146,7 +146,7 @@ const BlogSection: FC = (() => {
                       </div>
                     </Link>
                     <Link
-                      href="blog-details"
+                      href="/blog"
                       className="blog-inner-right-fourt-care"
                     >
                       How to Care for Rabbits in the Winter
@@ -177,7 +177,7 @@ const BlogSection: FC = (() => {
               <div className="card blog-inner-fourt-all">
                 <div className="card-body blog-inner-fourt-main">
                   <div className="blog-inner-right-fourt">
-                    <Link href="blog-details">
+                    <Link href="/blog">
                       <div className="blog-inner-right-img">
                         <img
                           src={VetBlog03}
@@ -195,7 +195,7 @@ const BlogSection: FC = (() => {
                       </div>
                     </Link>
                     <Link
-                      href="blog-details"
+                      href="/blog"
                       className="blog-inner-right-fourt-care"
                     >
                       Why Cat Scratches?
@@ -226,7 +226,7 @@ const BlogSection: FC = (() => {
               <div className="card blog-inner-fourt-all">
                 <div className="card-body blog-inner-fourt-main">
                   <div className="blog-inner-right-fourt">
-                    <Link href="blog-details">
+                    <Link href="/blog">
                       <div className="blog-inner-right-img">
                         <img
                           src={VetBlog02}
@@ -244,7 +244,7 @@ const BlogSection: FC = (() => {
                       </div>
                     </Link>
                     <Link
-                      href="blog-details"
+                      href="/blog"
                       className="blog-inner-right-fourt-care"
                     >
                       What You Might Not Know About The Best Dog Food in India
@@ -280,7 +280,7 @@ const BlogSection: FC = (() => {
             className="blog-btn-sec text-center aos aos-init aos-animate"
             data-aos="fade-up"
           >
-            <Link href="search" className="btn btn-primary btn-view">
+            <Link href="/blog" className="btn btn-primary btn-view">
               Read More Articles
             </Link>
           </div>

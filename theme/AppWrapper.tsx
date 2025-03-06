@@ -105,7 +105,7 @@ const AppWrapper = ({ children }: ChildrenProps) => {
 
       newSocket.on('connect', () => {
         dispatch(updateHomeSocket({ current: newSocket })); //update homeSocket to the new socket.
-        console.log('Socket connected');
+        // console.log('Socket connected');
         socket.current.on('getThemeFromAdmin', (msg: { homeThemeName: string, homeThemeType: string, homeActivePage: string }) => {
           const body = document.getElementById('body');
           if (body) {
@@ -160,8 +160,11 @@ const AppWrapper = ({ children }: ChildrenProps) => {
         socket.current.on('getUserProfileFromAdmin', async (msg: string) => {
           //Handle update token
           var { accessToken, user_id, services, roleName, iat, exp, userProfile: newUserProfile } = verifyHomeAccessToken(msg)
+
+
           const { isActive } = newUserProfile;
-          if (accessToken == '' || accessToken !== newUserProfile?.accessToken || !isActive) {
+          // console.log({ accessToken, user_id, services, roleName, iat, exp, newUserProfile, isActive, userProfile })
+          if (accessToken == '' || accessToken !== userProfile?.accessToken || !isActive) {
             //Logut users
             if (getCookie('homeAccessToken')) {
               deleteCookie('homeAccessToken')
@@ -178,7 +181,7 @@ const AppWrapper = ({ children }: ChildrenProps) => {
                 transition: bounce,
                 onClose: () => {
                   toast.dismiss('connectionError')
-                  // router.reload();
+                  router.reload();
                 }
               });
             }
@@ -280,6 +283,8 @@ const AppWrapper = ({ children }: ChildrenProps) => {
       return newSocket;
     };
 
+
+
     if (!socket.current) {
       // console.log('Creating new socket');
       socket.current = createSocket();
@@ -290,14 +295,18 @@ const AppWrapper = ({ children }: ChildrenProps) => {
         socket.current = createSocket();
       } else {
         // console.log('Socket was already connected');
+        socket.current.emit('getLastReviewsFromAdmin',)
+        socket.current.emit('getBestDoctorsFromAdmin',)
+        socket.current.emit('getBestCardiologyDoctorsFromAdmin')
+        socket.current.emit('getBestOphthalmologyDoctorsFromAdmin',)
       }
     }
 
 
     const handleRouteChange = (url: string) => {
       if (socket.current) {
-        socket.current.disconnect();
-        socket.current = null;
+        // socket.current.disconnect();
+        // socket.current = null;
       }
     };
 
@@ -308,11 +317,11 @@ const AppWrapper = ({ children }: ChildrenProps) => {
       router.events.off('routeChangeStart', handleRouteChange);
       if (socket.current) {
         // console.log('Cleanup: disconnecting socket');
-        socket.current.disconnect();
+        // socket.current.disconnect();
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, homeAccessToken, homeUserId, userData]);
+  }, [dispatch, homeAccessToken, homeUserId, userData, router.asPath]);
   useEffect(() => {
     const loadData = async () => {
       try {

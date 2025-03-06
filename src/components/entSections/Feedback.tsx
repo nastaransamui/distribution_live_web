@@ -39,7 +39,7 @@ const Feedback: FC = (() => {
                   </div>
                   <h3>Consult top doctors online for any health concern</h3>
                   <p>Connect within 60secs</p>
-                  <Link href="#">Signup Now</Link>
+                  <Link href="/register">Signup Now</Link>
                 </div>
               </div>
             </div>

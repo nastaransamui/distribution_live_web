@@ -47,16 +47,21 @@ import Awards from '@/shared/Awards';
 import Membership from '@/shared/Membership';
 import Registrations from '@/shared/Registrations';
 
-import chunkString from '@/helpers/chunkString';
 import isJsonString from '@/helpers/isJson';
 
 
 
 import { toast } from 'react-toastify';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
 import CurrencyAutocomplete from '@/shared/CurrencyAutocomplete';
 import dataGridStyle from '../shared/dataGridStyle';
+import { updateHomeUserId } from '@/redux/homeUserId';
+import { updateHomeServices } from '@/redux/homeServices';
+import { updateHomeRoleName } from '@/redux/homeRoleName';
+import { updateHomeIAT } from '@/redux/homeIAT';
+import { updateHomeExp } from '@/redux/homeExp';
+import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
+import { updateUserPatientProfile } from '@/redux/userPatientProfile';
 
 export interface SpecialitiesType {
   _id: string;
@@ -332,6 +337,7 @@ const ProfileSetting: FC = (() => {
       data.deletedImages = [...deletedImages]
     }
     dispatch(updateHomeFormSubmit(true))
+    data.fullName = `${data.firstName} ${data.lastName}`
     homeSocket.current.emit('profileUpdate', data)
     homeSocket.current.once('profileUpdateReturn', (msg: any) => {
       if (msg?.status !== 200) {
@@ -349,89 +355,34 @@ const ProfileSetting: FC = (() => {
           }
         });
       } else if (msg?.status == 200) {
-        switch (true) {
-          //AccessToken length is equal or less that 4095
-          case msg?.accessToken.length <= 4095:
-            switch (true) {
-              case isJsonString(getCookie('homeAccessToken') as string):
-                const { length } = JSON.parse(getCookie('homeAccessToken') as string)
-                for (var i = 0; i < parseInt(length); i++) {
-                  deleteCookie(`${i}`);
-                }
-                dispatch(updateHomeAccessToken(msg?.accessToken))
-                setCookie('homeAccessToken', msg?.accessToken);
-                var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-                dispatch(updateUserProfile(userProfile))
-                toast.info('Profile update successfully.', {
-                  position: "bottom-center",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  transition: bounce,
-                  onClose: () => {
-                    dispatch(updateHomeFormSubmit(false))
-                  }
-                });
-                break;
+        const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
+        setCookie('homeAccessToken', accessToken);
+        setCookie('user_id', user_id);
+        setCookie('services', services);
+        setCookie('roleName', roleName);
+        setCookie('iat', iat);
+        setCookie('exp', exp);
+        dispatch(updateHomeAccessToken(accessToken))
+        dispatch(updateHomeUserId(user_id));
+        dispatch(updateHomeServices(services));
+        dispatch(updateHomeRoleName(roleName));
+        dispatch(updateHomeIAT(iat));
+        dispatch(updateHomeExp(exp))
+        roleName == 'patient' ? dispatch(updateUserDoctorProfile(userProfile)) : dispatch(updateUserPatientProfile(userProfile))
+        toast.info('Profile update successfully.', {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          transition: bounce,
+          onClose: () => {
+            dispatch(updateHomeFormSubmit(false))
+          }
+        });
 
-              default:
-                dispatch(updateHomeAccessToken(msg?.accessToken))
-                setCookie('homeAccessToken', msg?.accessToken);
-                var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-                dispatch(updateUserProfile(userProfile))
-                toast.info('Profile update successfully.', {
-                  position: "bottom-center",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  transition: bounce,
-                  onClose: () => {
-                    dispatch(updateHomeFormSubmit(false))
-                    setImages([])
-                    setDeletedImages([])
-                    setUploadImage(doctors_profile)
-                  }
-                });
-                break;
-            }
-            break;
-
-          default:
-            const result = chunkString(msg?.accessToken, 4095)
-            if (result !== null) {
-              setCookie('homeAccessToken', { isSplit: true, length: result.length });
-              for (let index = 0; index < result.length; index++) {
-                const element = result[index];
-                setCookie(`${index}`, element)
-              }
-              var { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-              dispatch(updateHomeAccessToken(msg?.accessToken))
-              dispatch(updateUserProfile(userProfile))
-              toast.info('Profile update successfully.', {
-                position: "bottom-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                transition: bounce,
-                onClose: () => {
-                  dispatch(updateHomeFormSubmit(false))
-                  setImages([])
-                  setDeletedImages([])
-                  setUploadImage(doctors_profile)
-                }
-              });
-            }
-            break;
-        }
       }
     })
   }

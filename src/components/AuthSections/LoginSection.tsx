@@ -237,56 +237,7 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
                 router.reload();
               }
             });
-            // switch (true) {
-            //   //AccessToken length is equal or less that 4095
-            //   case msg?.accessToken.length <= 4095:
-            //     dispatch(updateHomeAccessToken(msg?.accessToken))
-            //     setCookie('homeAccessToken', msg?.accessToken);
-            //     dispatch(updateUserProfile(userProfile))
-            //     toast.info('Login successfully', {
-            //       position: "bottom-center",
-            //       autoClose: 5000,
-            //       hideProgressBar: false,
-            //       closeOnClick: true,
-            //       pauseOnHover: true,
-            //       draggable: true,
-            //       progress: undefined,
-            //       transition: bounce,
-            //       onClose: () => {
-            //         dispatch(updateHomeFormSubmit(false))
-            //         reset()
-            //         router.reload();
-            //       }
-            //     });
-            //     break;
-            //   default:
-            //     const result = chunkString(msg?.accessToken, 4095)
-            //     if (result !== null) {
-            //       setCookie('homeAccessToken', { isSplit: true, length: result.length });
-            //       for (let index = 0; index < result.length; index++) {
-            //         const element = result[index];
-            //         setCookie(`${index}`, element)
-            //       }
-            //       dispatch(updateHomeAccessToken(msg?.accessToken))
-            //       dispatch(updateUserProfile(userProfile))
-            //       toast.info('Login successfully', {
-            //         position: "bottom-center",
-            //         autoClose: 5000,
-            //         hideProgressBar: false,
-            //         closeOnClick: true,
-            //         pauseOnHover: true,
-            //         draggable: true,
-            //         progress: undefined,
-            //         transition: bounce,
-            //         onClose: () => {
-            //           dispatch(updateHomeFormSubmit(false))
-            //           // reset()
-            //           router.reload();
-            //         }
-            //       });
-            //     }
-            //     break;
-            // }
+
           }
         })
       }
@@ -462,57 +413,7 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
                 router.reload();
               }
             });
-            // const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-            // switch (true) {
-            //   //AccessToken length is equal or less that 4095
-            //   case msg?.accessToken.length <= 4095:
-            //     dispatch(updateHomeAccessToken(msg?.accessToken))
-            //     setCookie('homeAccessToken', msg?.accessToken);
-            //     dispatch(updateUserProfile(userProfile))
-            //     toast.info('Login successfully', {
-            //       position: "bottom-center",
-            //       autoClose: 5000,
-            //       hideProgressBar: false,
-            //       closeOnClick: true,
-            //       pauseOnHover: true,
-            //       draggable: true,
-            //       progress: undefined,
-            //       transition: bounce,
-            //       onClose: () => {
-            //         dispatch(updateHomeFormSubmit(false))
-            //         reset()
-            //         router.reload();
-            //       }
-            //     });
-            //     break;
-            //   default:
-            //     const result = chunkString(msg?.accessToken, 4095)
-            //     if (result !== null) {
-            //       setCookie('homeAccessToken', { isSplit: true, length: result.length });
-            //       for (let index = 0; index < result.length; index++) {
-            //         const element = result[index];
-            //         setCookie(`${index}`, element)
-            //       }
-            //       dispatch(updateHomeAccessToken(msg?.accessToken))
-            //       dispatch(updateUserProfile(userProfile))
-            //       toast.info('Login successfully', {
-            //         position: "bottom-center",
-            //         autoClose: 5000,
-            //         hideProgressBar: false,
-            //         closeOnClick: true,
-            //         pauseOnHover: true,
-            //         draggable: true,
-            //         progress: undefined,
-            //         transition: bounce,
-            //         onClose: () => {
-            //           dispatch(updateHomeFormSubmit(false))
-            //           // reset()
-            //           router.reload();
-            //         }
-            //       });
-            //     }
-            //     break;
-            // }
+
           }
         })
       } catch (error: any) {

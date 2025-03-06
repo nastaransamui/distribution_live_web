@@ -86,6 +86,7 @@ const PharmacySection: FC = (() => {
                     <div className="doctor-amount">
                       <Link
                         href="#"
+                        onClick={(e) => e.preventDefault()}
                         className="fav-icon fav-icon-fifteen"
                       >
                         <VscHeart className="feather-heart" />
@@ -96,7 +97,8 @@ const PharmacySection: FC = (() => {
                     </div>
                   </div>
                   <div className="doc-content-fift">
-                    <Link href="#">Otogesic Ear Drops</Link>
+                    <Link href="#"
+                      onClick={(e) => e.preventDefault()}>Otogesic Ear Drops</Link>
                     <p>
                       <span>Sold by:</span> ERIS LIFESCIENCES LTD
                     </p>
@@ -113,7 +115,7 @@ const PharmacySection: FC = (() => {
                       <h3>
                         $25.00<span className="ms-2">$35.00</span>
                       </h3>
-                      <Link href="add-prescription">Add to Cart</Link>
+                      <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
                     </div>
                   </div>
                 </div>
@@ -133,6 +135,7 @@ const PharmacySection: FC = (() => {
                     <div className="doctor-amount">
                       <Link
                         href="#"
+                        onClick={(e) => e.preventDefault()}
                         className="fav-icon fav-icon-fifteen"
                       >
                         <VscHeart className="feather-heart" />
@@ -143,7 +146,8 @@ const PharmacySection: FC = (() => {
                     </div>
                   </div>
                   <div className="doc-content-fift">
-                    <Link href="#">Himalaya Bresol</Link>
+                    <Link href="#"
+                      onClick={(e) => e.preventDefault()}>Himalaya Bresol</Link>
                     <p>
                       <span>Sold by:</span>THE HIMALAYA DRUG
                     </p>
@@ -160,7 +164,7 @@ const PharmacySection: FC = (() => {
                       <h3>
                         $85.00<span className="ms-2">$65.00</span>
                       </h3>
-                      <Link href="add-prescription">Add to Cart</Link>
+                      <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
                     </div>
                   </div>
                 </div>
@@ -180,6 +184,7 @@ const PharmacySection: FC = (() => {
                     <div className="doctor-amount">
                       <Link
                         href="#"
+                        onClick={(e) => e.preventDefault()}
                         className="fav-icon fav-icon-fifteen"
                       >
                         <VscHeart className="feather-heart" />
@@ -190,7 +195,8 @@ const PharmacySection: FC = (() => {
                     </div>
                   </div>
                   <div className="doc-content-fift">
-                    <Link href="#">Boiron, ThroatCalm</Link>
+                    <Link href="#"
+                      onClick={(e) => e.preventDefault()}>Boiron, ThroatCalm</Link>
                     <p>
                       <span>Sold by:</span> BOIRON
                     </p>
@@ -207,7 +213,7 @@ const PharmacySection: FC = (() => {
                       <h3>
                         $55.00<span className="ms-2">$95.00</span>
                       </h3>
-                      <Link href="add-prescription">Add to Cart</Link>
+                      <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
                     </div>
                   </div>
                 </div>
@@ -227,6 +233,7 @@ const PharmacySection: FC = (() => {
                     <div className="doctor-amount">
                       <Link
                         href="#"
+                        onClick={(e) => e.preventDefault()}
                         className="fav-icon fav-icon-fifteen"
                       >
                         <VscHeart className="feather-heart" />
@@ -237,7 +244,8 @@ const PharmacySection: FC = (() => {
                     </div>
                   </div>
                   <div className="doc-content-fift">
-                    <Link href="#">Otogesic Ear Drops</Link>
+                    <Link href="#"
+                      onClick={(e) => e.preventDefault()}>Otogesic Ear Drops</Link>
                     <p>
                       <span>Sold by:</span> ERIS LIFESCIENCES LTD
                     </p>
@@ -254,7 +262,7 @@ const PharmacySection: FC = (() => {
                       <h3>
                         $25.00<span className="ms-2">$35.00</span>
                       </h3>
-                      <Link href="add-prescription">Add to Cart</Link>
+                      <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
                     </div>
                   </div>
                 </div>

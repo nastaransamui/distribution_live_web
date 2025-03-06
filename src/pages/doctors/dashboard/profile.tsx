@@ -109,7 +109,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
         const data = await res.json();
 
-
         if (data.error) {
           deleteCookie('homeAccessToken', ctx);
           deleteCookie('user_id', ctx);

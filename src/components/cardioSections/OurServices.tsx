@@ -142,17 +142,13 @@ const OurServices: FC = (() => {
                         <div className="col-md-6 col-sm-12 col-lg-4" key={index}>
                           <div className="listing-card">
                             <div className="listing-img">
-                              <Link href={
-                                bestDoctors?.[index]?.fullName ? `/doctors/profile/${btoa(bestDoctors?.[index]?._id)}` : `/doctors/search`
-                              } aria-label="search">
-                                <img src={doctor.img} className="img-fluid" alt="#" />
-                              </Link>
+
+                              <img src={doctor.img} className="img-fluid" alt="#" />
+
                               <div className="fav-item">
                                 <Link href="#" onClick={(e) => e.preventDefault()} className="fav-icon" aria-label="fav" style={{ height: bestDoctors?.[index] ? '35px' : '30px', width: bestDoctors?.[index] ? '35px' : '30px' }}>
                                   {
                                     bestDoctors?.[index] ?
-                                      // Bug fix login button not trigger
-                                      // <i className="fa fa-heart" />
                                       <FavButton doctor={bestDoctors?.[index]} index={index} />
                                       : <i className="fa fa-heart" />
                                   }

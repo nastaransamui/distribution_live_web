@@ -64,7 +64,7 @@ const Contact: FC = (() => {
                     <span>Get solution about health</span>
                   </li>
                 </ul>
-                <Link href="patient/booking2">Book an Appointment</Link>
+                <Link href="/doctors/search">Book an Appointment</Link>
               </div>
             </div>
             <div className="col-lg-5">

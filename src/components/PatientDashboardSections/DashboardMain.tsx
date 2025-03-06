@@ -32,7 +32,7 @@ export interface VitalSignTypes {
 
 const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) => {
   const { muiVar, bounce } = useScssVar();
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -196,6 +196,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                       placeholder={values?.heartRate == undefined || values?.heartRate == 0 ? '--' : ''}
                       InputProps={{
                         disableUnderline: true,
+                        autoComplete: 'off'
                       }}
                       inputProps={{
                         style: {
@@ -231,6 +232,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                       placeholder={values?.bodyTemp == undefined || values?.bodyTemp == 0 ? '--' : ''}
                       InputProps={{
                         disableUnderline: true,
+                        autoComplete: 'off'
                       }}
                       sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} /> <sub>C</sub></h6>
                 </div>
@@ -260,6 +262,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                       placeholder={values?.weight == undefined || values?.weight == 0 ? '--' : ''}
                       InputProps={{
                         disableUnderline: true,
+                        autoComplete: 'off'
                       }}
                       sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} />
                     <sub>Kg</sub>
@@ -291,6 +294,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                       placeholder={values?.height == undefined || values?.height == 0 ? '--' : ''}
                       InputProps={{
                         disableUnderline: true,
+                        autoComplete: 'off'
                       }}
                       sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} />
                     <sub>cm</sub>

@@ -22530,6 +22530,7 @@ span.call-duration.float-end {
 .doctor-widget .average-rating {
   font-size: 14px;
   font-weight: 500;
+  color: var(--color);
 }
 
 @media (max-width: 767.98px) {
@@ -31016,7 +31017,9 @@ span.call-duration.float-end {
   box-shadow: 0px 20px 50px rgba(51, 65, 85, 0.05);
   transform: translateY(-10px);
 }
-
+.main-wrapper.home-twelve .services-section-fourteen .our-services-list:hover h2{
+  color: var(--secondaryMain)
+}
 .main-wrapper.home-twelve
   .services-section-fourteen
   .our-services-list:hover
@@ -32043,13 +32046,13 @@ span.call-duration.float-end {
 
 .main-wrapper.home-twelve .blog-section-fourteen .blog-btn-sec .btn-view {
   border: 1px solid var(--primaryLight);
-  line-height: 10px;
+  line-height: 7px;
   color: #000;
 }
 
 .main-wrapper.home-twelve .blog-section-fourteen .blog-btn-sec .btn-view:hover {
   box-shadow: inset 220px 0 0 0 var(--bgDefault);
-  color: var(--secondaryMain);
+  color: var(--secondaryMain) !important;
 }
 
 .main-wrapper.home-twelve .choose-us-fourteen {
@@ -37601,6 +37604,8 @@ span.call-duration.float-end {
   border: none;
   box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.03);
   border-radius: 0;
+  padding: 10px;
+  border-radius: 8px;
 }
 
 .treatment-section-sixteen
@@ -43605,7 +43610,7 @@ svg.feather {
   border: 1px solid var(--secondaryMain);
 }
 .d-inline-block {
-  color: #000;
+  color: var(--color);
 }
 
 .rbc-toolbar button {

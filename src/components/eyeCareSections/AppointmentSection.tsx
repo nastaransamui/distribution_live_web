@@ -268,7 +268,7 @@ const AppointmentSection: FC = (() => {
                           views={['hours', 'minutes']}
                           onChange={(value) => {
                             if (value && dayjs.isDayjs(value)) {
-                              console.log("Selected Time:", value.format('HH:mm'));
+                              // console.log("Selected Time:", value.format('HH:mm'));
                             }
                           }}
                           slotProps={{

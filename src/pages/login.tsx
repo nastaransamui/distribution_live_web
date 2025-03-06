@@ -54,6 +54,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       if (hasCookie('homeThemeName', ctx)) {
         store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
       }
+
       if (hasCookie('homeAccessToken', ctx)) {
         const roleName = getCookie('roleName', ctx)
         if (!roleName) {

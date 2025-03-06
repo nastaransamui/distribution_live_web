@@ -134,6 +134,7 @@ const ProfileSetting: FC = (() => {
       });
     }
     dispatch(updateHomeFormSubmit(true))
+    data.fullName = `${data.firstName} ${data.lastName}`
     homeSocket.current.emit('profileUpdate', data)
     homeSocket.current.once('profileUpdateReturn', (msg: any) => {
       if (msg?.status !== 200) {

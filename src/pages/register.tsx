@@ -12,10 +12,8 @@ import { AppState } from '@/redux/store'
 import { connect } from 'react-redux';
 import Footer from '@/components/sections/Footer';
 import RegisterSection from '@/components/AuthSections/RegisterSection';
-import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
-import { updateUserProfile } from '@/redux/userProfile';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
-import isJsonString from '@/helpers/isJson';
+
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import { updateHomeExp } from '@/redux/homeExp';
 import { updateHomeIAT } from '@/redux/homeIAT';

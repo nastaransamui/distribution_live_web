@@ -34,7 +34,13 @@ import { updateUserProfile } from '@/redux/userProfile';
 import { setCookie } from 'cookies-next';
 import router from 'next/router';
 import Typography from '@mui/material/Typography';
-import chunkString from '@/helpers/chunkString';
+import { updateHomeUserId } from '@/redux/homeUserId';
+import { updateHomeServices } from '@/redux/homeServices';
+import { updateHomeRoleName } from '@/redux/homeRoleName';
+import { updateHomeIAT } from '@/redux/homeIAT';
+import { updateHomeExp } from '@/redux/homeExp';
+import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
+import { updateUserPatientProfile } from '@/redux/userPatientProfile';
 
 export interface FormType {
   firstName: string;
@@ -44,6 +50,7 @@ export interface FormType {
   password: string;
   repeatPassword?: string;
   userType?: string;
+  fullName?: string;
 }
 
 const RegisterSection: FC = (() => {
@@ -87,7 +94,7 @@ const RegisterSection: FC = (() => {
       email: '',
       password: '',
       repeatPassword: '',
-      userType: ""
+      userType: "",
     }
   })
 
@@ -95,6 +102,7 @@ const RegisterSection: FC = (() => {
     delete data.repeatPassword;
     data.email = data.email.toLowerCase();
     dispatch(updateHomeFormSubmit(true))
+    data.fullName = `${data.firstName} ${data.lastName}`
     homeSocket.current.emit('registerFormSubmit', data)
     homeSocket.current.once('registerFormReturn', (msg: any) => {
       if (msg?.status !== 200) {
@@ -226,11 +234,12 @@ const RegisterSection: FC = (() => {
         homeSocket.current.emit('googleLoginSubmit', data)
         homeSocket.current.once('googleLoginReturn', (msg: any) => {
           setUserType('')
+
           if (msg?.status !== 200) {
             //Handle logout other users
             if (msg?.status == 410) {
               toast.error(() => (
-                <div>
+                <div style={muiVar}>
                   <Typography align='center' >{msg.reason}</Typography>
                   <br />
                   <div style={{ display: 'flex', gap: 5 }}>
@@ -250,7 +259,7 @@ const RegisterSection: FC = (() => {
                       }}
                       variant='contained'
                       fullWidth
-                      size='small'
+                      size="small"
                       sx={{ bgcolor: "primary.main" }}>
                       Logout others
                     </Button>
@@ -258,14 +267,13 @@ const RegisterSection: FC = (() => {
                       fullWidth
                       onClick={() => { toast.dismiss() }}
                       variant='contained'
+                      className="btn btn-primary submit-btn"
                       sx={{
                         bgcolor: "secondary.main",
                         "&:hover": {
                           bgcolor: 'secondary.dark'
                         }
-                      }}>
-                      close
-                    </Button>
+                      }}>close</Button>
                   </div>
                 </div>
               ), {
@@ -300,56 +308,35 @@ const RegisterSection: FC = (() => {
             }
           } else if (msg?.status == 200) {
             const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-            switch (true) {
-              //AccessToken length is equal or less that 4095
-              case msg?.accessToken.length <= 4095:
-                dispatch(updateHomeAccessToken(msg?.accessToken))
-                setCookie('homeAccessToken', msg?.accessToken);
-                dispatch(updateUserProfile(userProfile))
-                toast.info('Login successfully', {
-                  position: "bottom-center",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  transition: bounce,
-                  onClose: () => {
-                    dispatch(updateHomeFormSubmit(false))
-                    reset()
-                    router.reload();
-                  }
-                });
-                break;
-              default:
-                const result = chunkString(msg?.accessToken, 4095)
-                if (result !== null) {
-                  setCookie('homeAccessToken', { isSplit: true, length: result.length });
-                  for (let index = 0; index < result.length; index++) {
-                    const element = result[index];
-                    setCookie(`${index}`, element)
-                  }
-                  dispatch(updateHomeAccessToken(msg?.accessToken))
-                  dispatch(updateUserProfile(userProfile))
-                  toast.info('Login successfully', {
-                    position: "bottom-center",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    transition: bounce,
-                    onClose: () => {
-                      dispatch(updateHomeFormSubmit(false))
-                      // reset()
-                      router.reload();
-                    }
-                  });
-                }
-                break;
-            }
+            setCookie('homeAccessToken', accessToken);
+            setCookie('user_id', user_id);
+            setCookie('services', services);
+            setCookie('roleName', roleName);
+            setCookie('iat', iat);
+            setCookie('exp', exp);
+            dispatch(updateHomeAccessToken(accessToken))
+            dispatch(updateHomeUserId(user_id));
+            dispatch(updateHomeServices(services));
+            dispatch(updateHomeRoleName(roleName));
+            dispatch(updateHomeIAT(iat));
+            dispatch(updateHomeExp(exp))
+            roleName == 'patient' ? dispatch(updateUserDoctorProfile(userProfile)) : dispatch(updateUserPatientProfile(userProfile))
+            toast.info('Login successfully', {
+              position: "bottom-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              transition: bounce,
+              onClose: () => {
+                dispatch(updateHomeFormSubmit(false))
+                reset()
+                router.reload();
+              }
+            });
+
           }
         })
       } catch (error: any) {
