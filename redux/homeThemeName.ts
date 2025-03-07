@@ -1,16 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { AnyAction, PayloadAction } from '@reduxjs/toolkit';
-import { HYDRATE } from 'next-redux-wrapper';
+import { createSlice } from "@reduxjs/toolkit";
+import type { AnyAction, PayloadAction } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
 export interface HomeThemeNameState {
   value: string;
 }
 
 const initialState: HomeThemeNameState = {
-  value: 'grayscale',
+  value: "geenNature",
 };
 
 export const homeThemeNameSlice = createSlice({
-  name: 'homeThemeName',
+  name: "homeThemeName",
   initialState,
   reducers: {
     updateHomeThemeName: (state, action: PayloadAction<any>) => {

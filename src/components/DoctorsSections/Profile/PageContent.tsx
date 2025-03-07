@@ -52,6 +52,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
     return (
       <Tooltip arrow title={!userProfile ? 'Login in to add to favorit.' : `${isFav ? 'Remove' : 'Add'} doctor to favorite.`}>
         <IconButton
+          disabled={userProfile?._id == profile?._id}
           disableFocusRipple
           disableRipple
           aria-label="add to favorites"

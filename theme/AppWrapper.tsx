@@ -322,14 +322,17 @@ const AppWrapper = ({ children }: ChildrenProps) => {
       try {
         await createBrowserDb(); // Ensure db is created
         const data = await browserDb.clinicStatusBrowserTable.toArray();
-        dispatch(updateClinicStatus(data));
+        if (data.length !== 0) {
+          dispatch(updateClinicStatus(data));
+        }
       } catch (error) {
         console.error('Error loading data:', error);
       }
     };
 
     loadData();
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
 

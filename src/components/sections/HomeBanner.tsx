@@ -31,8 +31,6 @@ import { useRouter } from "next/router";
 import { BestDoctorsType } from "@/redux/bestDoctorsData";
 import Tooltip from '@mui/material/Tooltip'
 import Skeleton from '@mui/material/Skeleton'
-import TouchBallLoading from 'react-loadingg/lib/TouchBallLoading';
-
 
 
 

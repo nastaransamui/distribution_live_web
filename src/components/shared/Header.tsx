@@ -1064,7 +1064,6 @@ const ClinicMenu: FC<ClinicMenuProps> = (({ }) => {
       setAllClinicsDeactivate(() => true)
     }
   }, [clinicStatus])
-
   return (
     <ClickAwayListener
       onClickAway={() => {
