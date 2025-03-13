@@ -68,6 +68,10 @@ const BillCheckOut: FC = (() => {
     currencyCode: '',
     countryCode: '',
   })
+  const [showInfoWidget, setShowInfoWidget] = useState<boolean>(true);
+  const [showPaymentWidget, setShowPaymentWidget] = useState<boolean>(false);
+  const [updateMyInfo, setUpdateMyInfo] = useState<boolean>(false);
+
   const [singleBill, setSingleBill] = useState<BillingTypeWithDoctorPatientProfile>();
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
@@ -111,19 +115,32 @@ const BillCheckOut: FC = (() => {
               })
               if (singleBill && singleBill.length > 0) {
                 setSingleBill(singleBill[0])
-                setValue('paymentToken', singleBill[0]?.paymentToken)
-                setValue('paymentType', singleBill[0]?.paymentType)
-                if (singleBill[0]?.paymentToken !== '' || singleBill[0]?.paymentType !== '') {
-                  setValue('paymentConfirm', true);
-                  setValue("terms", true)
+
+                if (singleBill[0].status == "Paid" && singleBill[0].paymentToken !== '') {
+                  dispatch(updateHomeFormSubmit(true))
+                  toast.info('This bill payed already.', {
+                    position: "bottom-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    transition: bounce,
+                    onClose: () => {
+                      dispatch(updateHomeFormSubmit(false))
+                      router.push(`/patient/payment-success/${btoa(singleBill[0]?._id!)}`)
+                    }
+                  });
+                } else {
+                  setPaymentInfo({
+                    totalPriceStatus: 'FINAL',
+                    totalPriceLabel: 'Total',
+                    totalPrice: Number(singleBill[0].total).toFixed(2),
+                    currencyCode: singleBill[0]?.currencySymbol || 'THB',
+                    countryCode: singleBill[0]?.doctorProfile?.currency[0]?.iso2,
+                  })
                 }
-                setPaymentInfo({
-                  totalPriceStatus: 'FINAL',
-                  totalPriceLabel: 'Total',
-                  totalPrice: Number(singleBill[0].total).toFixed(2),
-                  currencyCode: singleBill[0]?.currencySymbol || 'THB',
-                  countryCode: singleBill[0]?.doctorProfile?.currency[0]?.iso2,
-                })
               }
 
             }
@@ -189,20 +206,27 @@ const BillCheckOut: FC = (() => {
 
   }, [clearErrors, setError, watch])
 
-  const submitPaymentOnly = (paymentToken: string, paymentType: string,) => {
-    dispatch(updateHomeFormSubmit(true))
+  const paymentConfirmed = () => {
     delete singleBill?.doctorProfile;
     delete singleBill?.patientProfile;
+    dispatch(updateHomeFormSubmit(true))
     if (homeSocket?.current) {
-      homeSocket.current.emit(`updateBillingPayment`, {
+      const newProfileInfo = {
+        email: getValues('email'),
+        firstName: getValues('firstName'),
+        lastName: getValues('lastName'),
+        mobileNumber: getValues('mobileNumber')
+      }
+      const serverParams = {
         ...singleBill,
-        paymentToken: paymentToken,
-        paymentType: paymentType,
+        paymentToken: getValues('paymentToken'),
+        paymentType: getValues('paymentType'),
         paymentDate: new Date(),
         status: "Paid"
-      })
+      }
+      homeSocket.current.emit(`updateBillingPayment`, { serverParams, updateMyInfo, newProfileInfo })
       homeSocket.current.once(`updateBillingPaymentReturn`, (msg: { status: number, newBilling: BillingType, reason?: string, message?: string }) => {
-        const { status, newBilling, reason, message } = msg;
+        const { status, reason, message } = msg;
 
         if (status !== 200) {
           toast.error(reason || message || `${status} : You don't have correct access for this`, {
@@ -219,6 +243,7 @@ const BillCheckOut: FC = (() => {
             }
           });
         } else {
+          const { newBilling } = msg;
           toast.info('Payment done Successfully.', {
             position: "bottom-center",
             autoClose: 5000,
@@ -230,6 +255,7 @@ const BillCheckOut: FC = (() => {
             transition: bounce,
             onClose: () => {
               dispatch(updateHomeFormSubmit(false))
+              router.push(`/patient/payment-success/${btoa(newBilling?._id!)}`)
             }
           });
         }
@@ -238,61 +264,8 @@ const BillCheckOut: FC = (() => {
   }
 
   const onFormSubmit = (data: any) => {
-    const { paymentConfirm } = data
-    if (!paymentConfirm) {
-      setError('paymentConfirm', { type: 'required', message: "This field is required" })
-    } else {
-      dispatch(updateHomeFormSubmit(true))
-      if (singleBill?.status == 'Paid') {
-        router.push(`/patient/payment-success/${btoa(singleBill?._id!)}`)
-      } else {
-        delete data?.patientProfile;
-        delete data?.doctorProfile;
-        if (homeSocket?.current) {
-          homeSocket.current.emit(`updateBillingPayment`, {
-            ...singleBill,
-            paymentToken: data.paymentToken,
-            paymentType: data.paymentType,
-            paymentDate: new Date(),
-            status: "Paid"
-          })
-          homeSocket.current.once(`updateBillingPaymentReturn`, (msg: { status: number, newBilling: BillingType, reason?: string, message?: string }) => {
-            const { status, newBilling, reason, message } = msg;
-
-            if (status !== 200) {
-              toast.error(reason || message || `${status} : You don't have correct access for this`, {
-                position: "bottom-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                transition: bounce,
-                onClose: () => {
-                  dispatch(updateHomeFormSubmit(false))
-                }
-              });
-            } else {
-              toast.info('Payment done Successfully.', {
-                position: "bottom-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                transition: bounce,
-                onClose: () => {
-                  dispatch(updateHomeFormSubmit(false))
-                  router.push(`/patient/payment-success/${btoa(newBilling?._id!)}`)
-                }
-              });
-            }
-          })
-        }
-      }
-    }
+    setShowInfoWidget(false)
+    setShowPaymentWidget(true)
   }
 
   return (
@@ -321,8 +294,18 @@ const BillCheckOut: FC = (() => {
                 </div>
                 <div className="card-body">
                   <form noValidate onSubmit={handleSubmit(onFormSubmit)}>
-                    <div className="info-widget">
-                      <h4 className="card-title">Personal Information</h4>
+                    <div className={`info-widget ${showInfoWidget ? 'info-widget-active' : 'info-widget-hide'}`}>
+                      <span style={{ display: 'flex', alignItems: "center", justifyContent: "space-between" }}>
+                        <h4 className="card-title">Personal Information</h4>
+                        <FormControlLabel
+                          sx={{ marginBottom: '25px', color: 'secondary.main' }}
+                          control={<Checkbox
+                            checked={updateMyInfo}
+                            onChange={() => { setUpdateMyInfo(!updateMyInfo) }}
+                          />}
+                          label="Update my profile with new information"
+                        />
+                      </span>
                       <div className="row">
                         <div className="col-md-6 col-sm-12">
                           <div className="form-group card-label">
@@ -430,69 +413,6 @@ const BillCheckOut: FC = (() => {
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="payment-widget">
-
-
-                      <div className="filter-grid">
-                        <h4>
-                          <Link
-                            data-bs-toggle="collapse"
-                            href="/doctors/check-out#collapseone"
-                          >
-                            {watch('paymentConfirm') ? `Paid already` : watch('terms') ? `Payment Method ` : `Accept Terms for payment`}
-                          </Link>
-                        </h4>
-                        {!watch('paymentConfirm') &&
-                          <div id="collapseone"
-                            className={`collapse ${watch('paymentConfirm') ? 'hide' : watch('terms') ? 'show' : 'hide'}`}>
-                            <div className="filter-collapse" style={{ paddingLeft: 5 }}>
-                              <GooglePayButton
-                                environment="TEST"
-                                paymentRequest={{
-                                  apiVersion: 2,
-                                  apiVersionMinor: 0,
-                                  allowedPaymentMethods: [
-                                    {
-                                      type: 'CARD',
-                                      parameters: {
-                                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                                        allowedCardNetworks: ['MASTERCARD', 'VISA'],
-                                      },
-                                      tokenizationSpecification: {
-                                        type: 'PAYMENT_GATEWAY',
-                                        parameters: {
-                                          gateway: 'example',
-                                          gatewayMerchantId: 'exampleGatewayMerchantId',
-                                        },
-                                      },
-                                    },
-                                  ],
-                                  merchantInfo: {
-                                    merchantId: '12345678901234567890',
-                                    merchantName: 'Demo Merchant',
-                                  },
-                                  transactionInfo: paymentInfo,
-                                }}
-                                onCancel={reason => { console.log(reason) }}
-                                onLoadPaymentData={paymentRequest => {
-                                  const { paymentMethodData } = paymentRequest
-                                  const { tokenizationData } = paymentMethodData
-                                  const { token, type } = tokenizationData
-                                  setValue('paymentToken', token);
-                                  setValue('paymentType', type)
-                                  setValue('paymentConfirm', true)
-                                  clearErrors('paymentConfirm')
-                                  submitPaymentOnly(token, type,)
-                                }}
-                                buttonColor={theme.palette.mode == 'dark' ? 'black' : 'white'}
-                                buttonType='checkout'
-                              />
-                            </div>
-                          </div>
-                        }
-                      </div>
-
                       <div className="terms-accept">
                         <div className="custom-checkbox">
                           <FormControlLabel
@@ -517,20 +437,74 @@ const BillCheckOut: FC = (() => {
                           )}
                         </div>
                       </div>
-                      <div className="submit-section mt-4">
-                        <button
-                          disabled={getValues('paymentToken') == '' || !getValues('paymentConfirm') || getValues('paymentType') == ''}
-                          type="submit"
-                          className="btn btn-primary submit-btn">
-                          {
-                            getValues('paymentToken') == '' || !getValues('paymentConfirm') || getValues('paymentType') == '' ?
-                              watch('terms') ? `Make payment first` : `Accept Terms`
-                              : `View details`}
-                        </button>
-                        {errors.paymentConfirm && errors.paymentConfirm && (
-                          <FormHelperText sx={{ mt: 2 }} error={true}>Please make payment frist.</FormHelperText>
-                        )}
+                    </div>
+                    <div className={`payment-widget ${showPaymentWidget ? 'payment-widget-active' : 'payment-widget-hide'}`}>
+
+
+                      <div className="filter-grid">
+                        <h4>
+                          Payment Method
+                        </h4>
+
+                        <div>
+                          <div className="filter-collapse" style={{ paddingLeft: 5 }}>
+                            <GooglePayButton
+                              environment="TEST"
+                              paymentRequest={{
+                                apiVersion: 2,
+                                apiVersionMinor: 0,
+                                allowedPaymentMethods: [
+                                  {
+                                    type: 'CARD',
+                                    parameters: {
+                                      allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                                      allowedCardNetworks: ['MASTERCARD', 'VISA'],
+                                    },
+                                    tokenizationSpecification: {
+                                      type: 'PAYMENT_GATEWAY',
+                                      parameters: {
+                                        gateway: 'example',
+                                        gatewayMerchantId: 'exampleGatewayMerchantId',
+                                      },
+                                    },
+                                  },
+                                ],
+                                merchantInfo: {
+                                  merchantId: '12345678901234567890',
+                                  merchantName: 'Demo Merchant',
+                                },
+                                transactionInfo: paymentInfo,
+                              }}
+                              onCancel={reason => { console.log(reason) }}
+                              onLoadPaymentData={paymentRequest => {
+                                const { paymentMethodData } = paymentRequest
+                                const { tokenizationData } = paymentMethodData
+                                const { token, type } = tokenizationData
+                                setValue('paymentToken', token);
+                                setValue('paymentType', type)
+                                setValue('paymentConfirm', true)
+                                clearErrors('paymentConfirm')
+                                paymentConfirmed()
+                              }}
+                              buttonColor={theme.palette.mode == 'dark' ? 'black' : 'white'}
+                              buttonType='checkout'
+                            />
+                          </div>
+                        </div>
                       </div>
+
+                    </div>
+                    <div className="submit-section mt-4">
+                      {showInfoWidget && <button
+                        type="submit"
+                        className="btn btn-primary submit-btn">
+
+                        Make Payment
+                      </button>
+                      }
+                      {errors.paymentConfirm && errors.paymentConfirm && (
+                        <FormHelperText sx={{ mt: 2 }} error={true}>Please make payment frist.</FormHelperText>
+                      )}
                     </div>
                   </form>
                 </div>

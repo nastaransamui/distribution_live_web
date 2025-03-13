@@ -556,9 +556,7 @@ const Checkout: FC = (() => {
                         className="btn btn-primary submit-btn">
                         {checkoutData?.doctorId === userProfile?._id ?
                           `You can't reserve your own appointment.` :
-                          // getValues('paymentToken') == '' || !getValues('paymentConfirm') || getValues('paymentType') == '' ?
-                          //   watch('terms') ? `Make payment first` : `Accept Terms`
-                          //   : 
+
                           `Reserve`}
                       </button>}
                       {errors.paymentConfirm && errors.paymentConfirm && (
