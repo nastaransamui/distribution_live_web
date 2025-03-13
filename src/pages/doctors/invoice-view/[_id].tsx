@@ -7,11 +7,12 @@ import { hasCookie, getCookie, deleteCookie } from 'cookies-next';
 import { wrapper } from '@/redux/store'
 import { AppState } from '@/redux/store'
 import { connect } from 'react-redux';
-import Footer from '@/components/sections/Footer';
 import { updateHomeThemeName } from '@/redux/homeThemeName';
 import { updateHomeThemeType } from '@/redux/homeThemeType';
 import { updateUserData } from '@/redux/userData';
-import PaymentSuccess from '@/components/DoctorsSections/CheckOut/PaymentSuccess';
+import BreadCrumb from '@/components/shared/BreadCrumb';
+import Footer from '@/components/sections/Footer';
+import Invoice from '@/components/DoctorsSections/CheckOut/Invoice';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import { updateHomeExp } from '@/redux/homeExp';
@@ -21,9 +22,13 @@ import { updateHomeServices } from '@/redux/homeServices';
 import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
+import useScssVar from '@/hooks/useScssVar';
 
-const PaymentSuccessPage: NextPage = () => {
 
+const InvoiceViewPage: NextPage = (props: any) => {
+  const { homeRoleName } = props;
+  const { value: roleName } = homeRoleName
+  const { muiVar } = useScssVar();
   return (
     <>
       <Head>
@@ -36,17 +41,19 @@ const PaymentSuccessPage: NextPage = () => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
-      <div className="main-wrapper">
-        <PaymentSuccess />
-        <Footer />
-        <CookieConsentComponent />
-      </div>
+      <BreadCrumb title={`${roleName.charAt(0).toLocaleUpperCase()}${roleName.slice(1)} Invoice`}
+        subtitle={`${roleName.charAt(0).toLocaleUpperCase()}${roleName.slice(1)} Invoice`} />
+
+      <Invoice />
+      <Footer />
+      <CookieConsentComponent />
     </>
   )
 }
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx) => {
+    let props = {}
     try {
       const result = await fetch('http://ip-api.com/json/', {
         method: 'GET',
@@ -54,7 +61,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           'Accept': 'application/json',
         }
       })
-      let props = {}
       const userData = await result.json();
       if (userData['status'] == 'success') {
         store.dispatch(updateUserData(userData))
@@ -107,14 +113,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         roleName == 'patient' ?
           store.dispatch(updateUserPatientProfile(data)) :
           store.dispatch(updateUserDoctorProfile(data))
-      } else {
-        return {
-          ...props,
-          redirect: {
-            destination: `/login`,
-            permanent: false,
-          },
-        }
       }
 
       return {
@@ -122,7 +120,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       }
     } catch (error) {
       console.log(error)
-      let props = {}
       if (hasCookie('homeThemeType', ctx)) {
         store.dispatch(updateHomeThemeType(getCookie('homeThemeType', ctx)))
       }
@@ -178,4 +175,4 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     }
   })
 
-export default connect((state: AppState) => state)(PaymentSuccessPage);
+export default connect((state: AppState) => state)(InvoiceViewPage);

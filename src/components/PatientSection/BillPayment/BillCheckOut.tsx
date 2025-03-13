@@ -39,7 +39,7 @@ import { BillingDetailsArrayType, BillingType } from '@/components/DoctorDashboa
 import { Terms } from '@/components/TermsSections/TermsDetails';
 import { FiThumbsUp } from 'react-icons/fi';
 import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
-import { UserPatientProfileType } from '@/redux/userPatientProfile';
+import { UserPatientProfileTypeValue } from '@/redux/userPatientProfile';
 import Box from '@mui/material/Box';
 import dataGridStyle from '@/components/shared/dataGridStyle';
 
@@ -53,7 +53,7 @@ export interface GoogleInfoType {
 
 export interface BillingTypeWithDoctorPatientProfile extends BillingType {
   doctorProfile?: DoctorProfileType;
-  patientProfile?: UserPatientProfileType;
+  patientProfile?: UserPatientProfileTypeValue;
 }
 const BillCheckOut: FC = (() => {
 
@@ -62,11 +62,11 @@ const BillCheckOut: FC = (() => {
   const [reload, setReload] = useState<boolean>(false)
   const [termsDialog, setTermsDialog] = useState<boolean>(false)
   const [paymentInfo, setPaymentInfo] = useState<any>({
-    totalPriceStatus: '',
-    totalPriceLabel: '',
-    totalPrice: '',
-    currencyCode: '',
-    countryCode: '',
+    totalPriceStatus: 'FINAL',
+    totalPriceLabel: 'Total',
+    totalPrice: '0',
+    currencyCode: 'THB',
+    countryCode: 'TH',
   })
   const [showInfoWidget, setShowInfoWidget] = useState<boolean>(true);
   const [showPaymentWidget, setShowPaymentWidget] = useState<boolean>(false);
@@ -93,10 +93,10 @@ const BillCheckOut: FC = (() => {
 
         if (homeSocket?.current) {
           homeSocket.current.emit(`getSingleBillingForPatient`, { billing_id: _id, patientId: userProfile?._id })
-          homeSocket.current.once(`getSingleBillingForPatientReturn`, (msg: { status: number, singleBill: BillingTypeWithDoctorProfile[], reason?: string }) => {
-            const { status, singleBill, reason } = msg;
+          homeSocket.current.once(`getSingleBillingForPatientReturn`, (msg: { status: number, singleBill: BillingTypeWithDoctorPatientProfile[], reason?: string, message?: string }) => {
+            const { status, reason, message } = msg;
             if (status !== 200) {
-              toast.error(reason || `Error ${status} find Bill`, {
+              toast.error(reason || message || `Error ${status} find Bill`, {
                 position: "bottom-center",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -104,45 +104,55 @@ const BillCheckOut: FC = (() => {
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
+                toastId: 'billError',
                 transition: bounce,
                 onClose: () => {
-                  router.back()
+                  toast.dismiss('billError')
+                  router.push('/')
                 }
               });
             } else {
-              homeSocket.current.once(`updateGetSingleBillingForPatientReturn`, () => {
-                setReload(!reload)
-              })
-              if (singleBill && singleBill.length > 0) {
-                setSingleBill(singleBill[0])
-
-                if (singleBill[0].status == "Paid" && singleBill[0].paymentToken !== '') {
-                  dispatch(updateHomeFormSubmit(true))
-                  toast.info('This bill payed already.', {
-                    position: "bottom-center",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    transition: bounce,
-                    onClose: () => {
-                      dispatch(updateHomeFormSubmit(false))
-                      router.push(`/patient/payment-success/${btoa(singleBill[0]?._id!)}`)
-                    }
-                  });
+              const { singleBill: newSingleBill } = msg;
+              if (newSingleBill && newSingleBill.length > 0) {
+                setSingleBill(newSingleBill[0])
+                setValue('email', newSingleBill[0]?.patientProfile?.userName)
+                setValue('firstName', newSingleBill[0]?.patientProfile?.firstName)
+                setValue('lastName', newSingleBill[0]?.patientProfile?.lastName)
+                setValue('mobileNumber', newSingleBill[0]?.patientProfile?.mobileNumber)
+                if (newSingleBill[0].status == "Paid" && newSingleBill[0].paymentToken !== '') {
+                  if (typeof singleBill == 'undefined') {
+                    dispatch(updateHomeFormSubmit(true))
+                    toast.info('This bill payed already.', {
+                      position: "bottom-center",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      transition: bounce,
+                      toastId: 'paidAlready',
+                      onClose: () => {
+                        toast.dismiss('paidAlready')
+                        dispatch(updateHomeFormSubmit(false))
+                        router.push(`/patient/payment-success/${btoa(newSingleBill[0]?._id!)}`)
+                      }
+                    });
+                  }
                 } else {
                   setPaymentInfo({
                     totalPriceStatus: 'FINAL',
                     totalPriceLabel: 'Total',
-                    totalPrice: Number(singleBill[0].total).toFixed(2),
-                    currencyCode: singleBill[0]?.currencySymbol || 'THB',
-                    countryCode: singleBill[0]?.doctorProfile?.currency[0]?.iso2,
+                    totalPrice: Number(newSingleBill[0].total).toFixed(2),
+                    currencyCode: newSingleBill[0]?.currencySymbol || 'THB',
+                    countryCode: newSingleBill[0]?.doctorProfile?.currency[0]?.iso2,
                   })
                 }
               }
 
+              homeSocket.current.once(`updateGetSingleBillingForPatientReturn`, () => {
+                setReload(!reload)
+              })
             }
           })
         }
@@ -157,7 +167,7 @@ const BillCheckOut: FC = (() => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [encryptId, homeSocket, reload, router])
+  }, [encryptId, homeSocket, reload,])
 
   const {
     register,
@@ -171,10 +181,10 @@ const BillCheckOut: FC = (() => {
     setError
   } = useForm({
     defaultValues: {
-      firstName: userProfile?.firstName,
-      lastName: userProfile?.lastName,
-      email: userProfile?.userName,
-      mobileNumber: userProfile?.mobileNumber,
+      firstName: singleBill?.patientProfile?.firstName,
+      lastName: singleBill?.patientProfile?.lastName,
+      email: singleBill?.patientProfile?.userName,
+      mobileNumber: singleBill?.patientProfile?.mobileNumber,
       terms: false,
       paymentConfirm: false,
       paymentToken: '',
@@ -573,9 +583,11 @@ const BillCheckOut: FC = (() => {
                         <Rating
                           name="read-only"
                           precision={0.5}
-                          value={singleBill?.doctorProfile?.rate_array.length == 0 ?
-                            0 :
-                            (singleBill?.doctorProfile && singleBill?.doctorProfile?.rate_array.reduce((acc, num) => acc + num, 0) / singleBill?.doctorProfile?.rate_array.length)}
+                          value={
+                            singleBill?.doctorProfile?.rate_array?.length
+                              ? singleBill.doctorProfile.rate_array.reduce((acc, num) => acc + num, 0) / singleBill.doctorProfile.rate_array.length
+                              : 0 // Ensuring it’s always a number
+                          }
                           readOnly
                           size='small' />
 
