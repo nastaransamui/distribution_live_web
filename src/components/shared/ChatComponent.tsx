@@ -1,11 +1,9 @@
+
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect, useState, MouseEvent, useMemo, useRef } from 'react'
-import useScssVar from '@/hooks/useScssVar'
+import { FC, Fragment } from 'react'
 import Link from 'next/link';
-import { doctor_17 } from '@/public/assets/imagepath';
-import CircularProgress from '@mui/material/CircularProgress'
+import { doctor_17, doctors_profile } from '@/public/assets/imagepath';
 import IconButton from '@mui/material/IconButton'
-import Close from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField'
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -17,648 +15,856 @@ import duration from 'dayjs/plugin/duration'
 import weekday from 'dayjs/plugin/weekday'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import CustomNoRowsOverlay from './CustomNoRowsOverlay';
-import Autocomplete from '@mui/material/Autocomplete';
-
-import parse from 'autosuggest-highlight/parse';
-import match from 'autosuggest-highlight/match'
-import throttle from 'lodash/throttle';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
 import { Avatar, useTheme } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
-import { StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
+import { LoadingComponent, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
 import DoctorsAutoComplete from './DoctorsAutoComplete';
-import { ChatDataType, ITEM_HEIGHT, menuOptions, MessageType, useChat } from '@/hooks/useChat';
+import { AttachmentType, ChatDataType, ChatUserType, ITEM_HEIGHT, menuOptions, MessageType, useChat } from '@/hooks/useChat';
 import { BootstrapDialog, Transition } from './Dialog';
+import UploadFile from '@mui/icons-material/UploadFile';
+import { toast } from 'react-toastify';
+import { DeleteForever, Send } from '@mui/icons-material';
+import { truncateString } from '../DoctorsSections/CheckOut/Invoice';
+import { decrypt } from '@/helpers/encryptDecrypt';
 
 export function escapeRegExp(value: string) {
   return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
 
-const ChatComponent: FC = (() => {
+export interface ChatComponentType {
+  userType: 'doctors' | 'patient';
+}
+
+const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
+
 
   dayjs.extend(relativeTime)
   dayjs.extend(duration)
   dayjs.extend(weekday)
   dayjs.extend(updateLocale)
-  const theme = useTheme();
-  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
-  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
-  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
-  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
 
   const {
     footerHeight,
-    searchInputWidth,
-    inputGroupRef,
-    allCurrentUserMessage,
-    setAllCurrentUserMessage,
     voiceCallActive,
-    setActiveChat,
-    currentUserId,
-    userChatData,
     voiceCallToggleFunction,
     videoCallActive,
     videoCallToggleFunction,
+    currentRoom,
+    callReceiverUserData
   } = useChat()
-
-  const { muiVar } = useScssVar();
-
-
-
 
 
   return (
     <Fragment>
       <div className="col-md-12 col-lg-12 col-xl-12">
         <div className="new-chat-window row g-0">
-
           <div style={{ minHeight: `calc(100vh + ${footerHeight}px)` }}
             className="new-chat-cont-left col-xl-4">
-            <div className="chat-header">
-              <span>Chats</span>
-            </div>
-            <div className="chat-search">
-              <div className="input-group" ref={inputGroupRef}>
-                <DoctorsAutoComplete
-                  name='searchString'
-                  optionFieldName='searchString'
-                  userType='doctors'
-                  width={searchInputWidth}
-                  userChatData={userChatData}
-                  currentUserId={currentUserId}
-                  setActiveChat={setActiveChat}
-                  setAllCurrentUserMessage={setAllCurrentUserMessage}
-                />
-              </div>
-            </div>
-            <div className="chat-users-list">
-              <div className="chat-scroll" >
-                {
-                  userChatData.length == 0 ?
-                    <div className='start-chat-div'>Start chat</div> : ""
-                }
-                <LeftSideChat />
-              </div>
-            </div>
+
+            <ChatLeftHeader />
+
+            <ChatLeftSearch userType={userType} />
+
+            <ChatLeftUsers />
           </div>
+
           <div
             style={{ minHeight: `calc(100vh + ${footerHeight}px)` }}
-            className={`new-chat-cont-right ${allCurrentUserMessage.length == 0 ? 'new-chat-cont-right-empty' : ''} col-xl-8`}>
-            <RightSideChatHeader />
-            <div className="chat-body">
-              <div
-                className={
-                  `chat-scroll 
-                ${allCurrentUserMessage.length == 0 ? 'chat-scroll-empty' : ''}
-                `}
-                style={{
-                  maxHeight: `calc(100vh - 10px)`,
-                  minHeight: `calc(100vh - 10px)`,
-                }}
-              >
-                <ul className={`list-unstyled ${allCurrentUserMessage.length == 0 ? 'chat-scroll-empty' : ''}`}>
-                  {
-                    allCurrentUserMessage.length == 0 ?
-                      <li >
-                        <CustomNoRowsOverlay text='No chat' />
-                      </li> :
-                      <MainChatBody />
-                  }
-                </ul>
-              </div>
-            </div>
-            <ChatFooter />
+            className={`new-chat-cont-right ${currentRoom == null ? 'new-chat-cont-right-empty' : ''} col-xl-8`}>
+            <ChatRightHeader />
+
+            <ChatRightBody />
+
+            <ChatRightFooter />
           </div>
         </div>
       </div>
       {voiceCallActive &&
-        <BootstrapDialog
-          TransitionComponent={Transition}
-          onClose={() => {
-
-          }}
-          aria-labelledby="edit_invoice_details"
-          open={voiceCallActive}>
-
-          <div className="modal-body">
-            <div className="call-box incoming-box">
-              <div className="call-wrapper">
-                <div className="call-inner">
-                  <div className="call-user">
-                    <img
-                      alt="User Image"
-                      src={doctor_17}
-                      className="call-avatar"
-                    />
-                    <h4>Dr. Darren Elder</h4>
-                    <span>Voice call Connecting...</span>
-                  </div>
-                  <div className="call-items">
-                    <Link
-                      href="#"
-                      className=" call-item call-end"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-                        setTimeout(() => {
-                          voiceCallToggleFunction()
-
-                        }, 500);
-                      }}
-                    >
-                      <i className="material-icons">call_end</i>
-                    </Link>
-                    <Link href="/voice-call" onClick={(e) => e.preventDefault()} style={{ pointerEvents: "none" }} className=" call-item call-start">
-                      <i className="material-icons">call</i>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Outgoing Call */}
-          </div>
-        </BootstrapDialog>
+        <CallDialog callType='Voice' open={voiceCallActive} toggleFunction={voiceCallToggleFunction} callReceiverUserData={callReceiverUserData} />
       }
       {videoCallActive &&
-        <BootstrapDialog
-          TransitionComponent={Transition}
-          onClose={() => {
-
-          }}
-          aria-labelledby="edit_invoice_details"
-          open={videoCallActive}>
-
-          <div className="modal-body">
-            <div className="call-box incoming-box">
-              <div className="call-wrapper">
-                <div className="call-inner">
-                  <div className="call-user">
-                    <img
-                      alt="User Image"
-                      src={doctor_17}
-                      className="call-avatar"
-                    />
-                    <h4>Dr. Darren Elder</h4>
-                    <span>Video call Connecting...</span>
-                  </div>
-                  <div className="call-items">
-                    <Link
-                      href="#"
-                      className=" call-item call-end"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-                        setTimeout(() => {
-                          videoCallToggleFunction()
-
-                        }, 500);
-                      }}
-                    >
-                      <i className="material-icons">call_end</i>
-                    </Link>
-                    <Link href="/voice-call" onClick={(e) => e.preventDefault()} style={{ pointerEvents: "none" }} className=" call-item call-start">
-                      <i className="material-icons">call</i>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Outgoing Call */}
-          </div>
-        </BootstrapDialog>
-      }
-
-    </Fragment >
-  )
-});
-
-export interface LeftSideChatType { }
-
-export const LeftSideChat: FC<LeftSideChatType> = (() => {
-
-  const {
-    userChatData,
-    setActiveChat,
-    setAllCurrentUserMessage,
-    activeChat,
-    currentUserId,
-    weekdays
-  } = useChat();
-
-
-  const onLeftUserClicked = (users: ChatDataType, index: number) => {
-    setActiveChat(() => index)
-    users?.messages.forEach(element => {
-      if (element.reciverId == currentUserId) {
-        element.read = true;
-        return element
-      }
-      return element
-    });
-    let currentUserMessage = users?.messages.filter((b) => {
-      if (b.reciverId == currentUserId || b.senderId == currentUserId) {
-        return b;
-      }
-    })
-    if (currentUserMessage.length > 0) {
-      setAllCurrentUserMessage((prevState) => {
-        let newState = [...currentUserMessage]
-        return newState.sort((a: MessageType, b: MessageType) => new Date(a?.time).valueOf() - new Date(b?.time).valueOf())
-      })
-    } else {
-      setAllCurrentUserMessage((prevState) => {
-        return []
-      })
-    }
-  }
-
-  return (
-    <Fragment>
-      {
-        userChatData
-          .sort((a, b) => new Date(b?.messages[0]?.time).valueOf() - new Date(a?.messages[0]?.time).valueOf())
-          .map((users, index) => {
-            let hasMessage = users?.messages?.length > 0
-            let numberOfNotRead = users?.messages.filter((a) => a.reciverId == currentUserId && !a.read).length
-            let unreadMessagesLength = hasMessage ? numberOfNotRead == 0 ? '' : numberOfNotRead : ''
-            let diff: any = dayjs.duration(dayjs().diff(dayjs(users?.messages?.[0]?.time)))
-            const { years, days, hours } = diff['$d' as keyof typeof diff]
-            let dayName = weekdays[dayjs(users?.messages?.[0]?.time).weekday()]
-            let today = days == 0 && hours < 24
-            let thisWeek = days !== 0 && days <= 7
-            let thisYear = !thisWeek && years == 0
-            let userId = users.userData?.userId
-            let hasChat = users?.messages.filter((a) => a?.senderId == currentUserId || a?.reciverId == currentUserId).length > 0
-            if (hasChat) {
-              const todayValue = dayjs(users?.messages?.[0]?.time).format('HH:mm');
-              const thisWeekValue = <>{dayName}<br /> {dayjs(users?.messages?.[0]?.time).format('HH:mm')}</>;
-              const thisYearValue = <>{dayjs(users?.messages?.[0]?.time).format('MMM D ')}<br /> {dayjs(users?.messages?.[0]?.time).format('HH:mm')}</>;
-              const defaultValue = <>{dayjs(users?.messages?.[0]?.time).format('D MMM YY')}<br /> {dayjs(users?.messages?.[0]?.time).format('HH:mm')}</>
-              return (
-
-                <Link key={index} href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onLeftUserClicked(users, index)
-                  }}
-                  className={`media d-flex  ${activeChat !== null && activeChat == index ? 'read-chat active' : ''}`} >
-                  <div className="media-img-wrap">
-                    <div className={
-                      `avatar ${!users.userData?.online ? 'avatar-offline' : users.userData.idle ? 'avatar-away' : 'avatar-online'}`
-                    }>
-                      <img src={users.userData?.image} alt="User" className="avatar-img rounded-circle" />
-                    </div>
-                  </div>
-                  <div className="media-body flex-grow-1">
-                    <div>
-                      <div className="user-name">
-                        {users.userType == "doctors" && "Dr. "}{users.userData?.name}
-                        {userId}
-                      </div>
-                      <div className="user-last-chat">{users?.messages?.[0]?.['message']}</div>
-                    </div>
-                    <div>
-                      <div className="last-chat-time block">
-                        {
-                          today ? todayValue
-                            : thisWeek ? thisWeekValue
-                              : thisYear ? thisYearValue
-                                : defaultValue
-                        }
-                      </div>
-                      <div className="badge badge-success">{unreadMessagesLength}</div>
-                    </div>
-                  </div>
-                </Link>
-
-              )
-            }
-          })
+        <CallDialog callType='Video' open={videoCallActive} toggleFunction={videoCallToggleFunction} callReceiverUserData={callReceiverUserData} />
       }
     </Fragment>
   )
 })
 
-export const RightSideChatHeader: FC = (() => {
-  const theme = useTheme();
+export const ChatLeftHeader: FC = (() => {
+
+  return (
+    <div className="chat-header chat-header-with-small" >
+      <span>Chats</span>
+      <small>This chat is end to end encrypt and files are privates.</small>
+    </div>
+  )
+})
+
+export const ChatLeftSearch: FC<{ userType: "doctors" | "patient" }> = (({ userType }) => {
   const {
-    activeChat,
+    searchInputWidth,
+    inputGroupRef,
+  } = useChat()
+  return (
+    <div className="chat-search">
+      <div className="input-group" ref={inputGroupRef}>
+        <DoctorsAutoComplete
+          name='searchString'
+          optionFieldName='searchString'
+          userType={userType}
+          width={searchInputWidth}
+        />
+      </div>
+    </div>
+  )
+})
+
+export const ChatLeftUsers: FC = (() => {
+  const {
     userChatData,
+    isLoading,
+    currentUserId,
+    sortLatestMessage,
+  } = useChat()
+
+  return (
+    <Fragment>
+
+      <div className="chat-users-list">
+        <div className="chat-scroll" >
+          {
+            isLoading ? <LoadingComponent /> : userChatData.length == 0 &&
+              <div className='start-chat-div'>Start chat</div>
+          }
+          <Fragment>
+            {
+              sortLatestMessage(userChatData)
+                .filter((a) => a.messages.length > 0 || a.createrData.userId === currentUserId)
+                .map((chatData, index) => {
+
+                  let hasChat = chatData?.messages.some((a) => a?.senderId == currentUserId || a?.receiverId == currentUserId);
+
+                  if (hasChat) {
+
+                    return (
+
+                      <ChatLeftHasChat key={index} chatData={chatData} index={index} />
+
+                    )
+                  } else {
+                    return (
+                      <ChatLeftNoChat key={index} chatData={chatData} index={index} />
+                    )
+                  }
+                })
+            }
+          </Fragment>
+        </div>
+      </div>
+    </Fragment>
+  )
+})
+
+const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatData, index }) => {
+
+  const { onLeftUserClicked, currentRoomId, weekdays, currentUserId, downloadClick } = useChat();
+  let sortedMessages = [...chatData?.messages].sort((a, b) => b.timestamp - a.timestamp); // Sort in descending order
+  let lastMessage = sortedMessages[0];
+  let lastMessageTime = dayjs(lastMessage?.timestamp);
+  let today = lastMessageTime.isSame(dayjs(), 'day'); // Checks if the last message is from today
+  let thisWeek = lastMessageTime.isAfter(dayjs().subtract(7, 'days'), 'day'); // Checks if within the last 7 days
+  let thisYear = lastMessageTime.isSame(dayjs(), 'year'); // Checks if it's from the current year
+
+  let dayName = weekdays[lastMessageTime.weekday()];
+  const todayValue = lastMessageTime.format('HH:mm');
+  const thisWeekValue = <>{dayName}<br /> {lastMessageTime.format('HH:mm')}</>;
+  const thisYearValue = <>{lastMessageTime.format('MMM D ')}<br /> {lastMessageTime.format('HH:mm')}</>;
+  const defaultValue = <>{lastMessageTime.format('D MMM YY')}<br /> {lastMessageTime.format('HH:mm')}</>;
+  let numberOfNotRead = chatData?.messages.filter((a) => !a.read).length;
+  let unreadMessagesLength = (numberOfNotRead == 0 ? '' : numberOfNotRead);
+  const profileToShow = chatData.createrData.userId == currentUserId ? chatData.receiverData : chatData.createrData
+  return (
+    <Fragment key={index}>
+      <Link href="#"
+        onClick={(e) => {
+          e.preventDefault();
+          onLeftUserClicked(chatData)
+        }}
+        className={`media d-flex  ${currentRoomId !== null && currentRoomId == chatData.roomId ? 'read-chat active' : ''}`} >
+        <div className="media-img-wrap">
+          <StyledBadge
+            overlap="circular"
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            variant="dot"
+            online={profileToShow.online}
+            idle={profileToShow.idle}
+          >
+            <Avatar alt="" src={`${profileToShow?.profileImage}`} >
+              <img src={doctors_profile} alt="" className="avatar" />
+            </Avatar>
+          </StyledBadge>
+        </div>
+        <div className="media-body flex-grow-1">
+          <div>
+            <div className="user-name">
+              {profileToShow.roleName == "doctors" && "Dr. "}
+              {profileToShow?.fullName}
+
+            </div>
+            <span style={{ display: 'flex', alignItems: 'center', }}>
+              <div className="user-last-chat" >
+                {decrypt(lastMessage?.['message']!)}
+              </div>
+              <ReadStatusComponent lastMessage={lastMessage} />
+            </span>
+            <span style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+              {
+                lastMessage.attachment.length > 0 &&
+                lastMessage.attachment.map((attach, i) => {
+                  const isBlob = attach.src && attach.src.startsWith("blob:");
+                  return (
+                    <div className="chat-attachment chat-attachment-left-side" key={`${i} ${index}`} onClick={() => { downloadClick(attach) }} >
+                      {/* <img src={attach.isImage ? attach.src : getFileIcon(attach.type)} alt="Attachment" /> */}
+                      <img
+                        src={isBlob ? attach.src : getFileIcon(attach.type)} // Use icon/placeholder until blob is ready
+                        alt="Attachment"
+                      />
+                      <div className="user-last-chat" style={{ marginLeft: 3, paddingInline: 10 }}>{attach.name}</div>
+                    </div>
+                  )
+                })
+              }
+            </span>
+          </div>
+          <div>
+            <div className="last-chat-time block">
+              {
+                today ? todayValue
+                  : thisWeek ? thisWeekValue
+                    : thisYear ? thisYearValue
+                      : defaultValue
+              }
+            </div>
+            <div className="badge badge-success">{unreadMessagesLength}</div>
+          </div>
+        </div>
+      </Link>
+    </Fragment>
+  )
+})
+
+const ChatLeftNoChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatData, index }) => {
+
+  const { onLeftUserClicked, currentRoomId, currentUserId } = useChat();
+  let hasMessage = chatData?.messages?.length > 0;
+  let numberOfNotRead = chatData?.messages.filter((a) => !a.read).length;
+  let unreadMessagesLength = hasMessage ? (numberOfNotRead == 0 ? '' : numberOfNotRead) : '';
+
+  let sortedMessages = [...chatData?.messages].sort((a, b) => b.timestamp - a.timestamp); // Sort in descending order
+  let lastMessage = sortedMessages[0]; // Get the latest message
+  let lastMessageTime = dayjs(lastMessage?.timestamp);
+
+
+
+  const profileToShow = chatData.createrData.userId == currentUserId ? chatData.receiverData : chatData.createrData
+  return (
+    <Fragment key={index}>
+      <Link href="#"
+        onClick={(e) => {
+          e.preventDefault();
+          onLeftUserClicked(chatData)
+        }}
+        className={`media d-flex  ${currentRoomId !== null && currentRoomId == chatData.roomId ? 'read-chat active' : ''}`} >
+        <div className="media-img-wrap">
+          <StyledBadge
+            overlap="circular"
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            variant="dot"
+            online={profileToShow.online}
+            idle={profileToShow.idle}
+          >
+            <Avatar alt="" src={`${profileToShow?.profileImage}`} >
+              <img src={doctors_profile} alt="" className="avatar" />
+            </Avatar>
+          </StyledBadge>
+        </div>
+        <div className="media-body flex-grow-1">
+          <div>
+            <div className="user-name">
+              {profileToShow.roleName == "doctors" && "Dr. "}
+              {profileToShow?.fullName}
+            </div>
+            <div className="user-last-chat">{chatData?.messages?.[0]?.['message']}</div>
+          </div>
+          <div>
+            <div className="last-chat-time block">
+              {lastMessageTime.format('HH:mm')}
+            </div>
+            <div className="badge badge-success">{unreadMessagesLength}</div>
+          </div>
+        </div>
+      </Link>
+    </Fragment>
+  )
+})
+
+export const ChatRightHeader: FC = (() => {
+
+  const {
+    voiceCallToggleFunction,
+    videoCallToggleFunction,
+    currentUserId,
     handleClick,
     handleClose,
     anchorEl,
     open,
-    voiceCallToggleFunction,
-    videoCallToggleFunction
+    currentRoom,
+  } = useChat();
+  const theme = useTheme();
+  return (
+    <Fragment>
+      <div className="chat-header">
+        {
+          currentRoom !== null ?
+            <div className="media d-flex">
+              <div className="media-img-wrap flex-shrink-0">
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  variant="dot"
+                  online={
+                    currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData?.online : currentRoom.createrData?.online
+                  }
+                  idle={
+                    currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData?.idle : currentRoom.createrData?.idle
+                  }
+                >
+                  <Avatar alt="" src={`${currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData?.profileImage : currentRoom.createrData?.profileImage}`} >
+                    <img src={doctors_profile} alt="" className="avatar" />
+                  </Avatar>
+                </StyledBadge>
+              </div>
+              <div className="media-body flex-grow-1">
+                <div className="user-name">
+                  {`${currentRoom.createrData.userId == currentUserId ?
+                    currentRoom.receiverData?.fullName :
+                    currentRoom.createrData?.fullName
+                    }`}</div>
+                <div className="user-status">
+
+                  {
+                    currentRoom.createrData.userId == currentUserId ?
+                      <>
+                        {currentRoom.receiverData.idle ? 'Away' : currentRoom.receiverData.online ? 'online' : 'offline'}
+                      </> :
+                      <>
+                        {currentRoom.createrData.idle ? 'Away' : currentRoom.createrData.online ? 'online' : 'offline'}
+                      </>
+                  }
+                </div>
+              </div>
+            </div> :
+            <div className="media d-flex" style={{ color: theme.palette.text.color }}>
+              Select user to continue chat or search for new chat.
+            </div>
+        }
+        <div className="chat-options" style={{ justifyContent: currentRoom !== null ? 'space-between' : 'flex-end' }}>
+          {
+            currentRoom !== null &&
+            <>
+              <Link href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  voiceCallToggleFunction()
+                }}
+              >
+                <i className="material-icons">local_phone</i>
+              </Link>
+              <Link href="#" onClick={(e) => {
+                e.preventDefault();
+                videoCallToggleFunction()
+              }}>
+                <i className="material-icons">videocam</i>
+              </Link>
+            </>
+          }
+          <Link href="#" id="more_vert" onClick={(e) => {
+            e.preventDefault();
+            handleClick(e)
+          }}>
+            <i className="material-icons" >more_vert</i>
+          </Link>
+          <Menu
+            id="long-menu"
+            MenuListProps={{
+              'aria-labelledby': 'long-button',
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            slotProps={{
+              paper: {
+                style: {
+                  maxHeight: ITEM_HEIGHT * 4.5,
+                  width: '20ch',
+                }
+              }
+            }}
+          >
+            {menuOptions.map((option) => (
+              <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
+                {option}
+              </MenuItem>
+            ))}
+          </Menu>
+        </div>
+      </div>
+    </Fragment>
+  )
+})
+
+export const ChatRightBody: FC = (() => {
+  const { currentRoom } = useChat()
+
+  return (
+
+    <div className="chat-body">
+      <div
+        className={
+          `chat-scroll 
+      ${currentRoom == null ? 'chat-scroll-empty' : ''}
+      `}
+      >
+        <ul className={`list-unstyled ${currentRoom == null ? 'chat-scroll-empty' : ''}`}>
+          {
+            currentRoom == null ?
+              <li >
+                <CustomNoRowsOverlay text='No chat' />
+              </li> :
+              <Fragment>
+                {
+                  currentRoom.messages
+                    .map((mesage, index) => {
+                      return (
+                        <Fragment key={index} >
+                          <ChatRightBodyDateComponent mesage={mesage} index={index} />
+                          {
+                            mesage.message !== null && mesage.attachment.length == 0 ?
+                              <ChatRightMessageWithoutAttachment mesage={mesage} />
+
+                              :
+                              <ChatRightMessageWithAttachment mesage={mesage} />
+                          }
+                        </Fragment>
+                      )
+
+                    })
+                }
+              </Fragment>
+          }
+        </ul>
+      </div>
+    </div>
+  )
+})
+
+export const ChatRightFooter: FC = (() => {
+
+  const {
+    chatInputValue,
+    chatFooterRef,
+    setChatInputValue,
+    currentRoomId,
+    onSendButtonClick,
+    inputFileRef,
+    handleClickInputFile,
+    handleChangeInputFile,
+  } = useChat()
+  const theme = useTheme()
+  return (
+    <Fragment>
+      <div className="chat-footer" ref={chatFooterRef}>
+        <div className="input-group">
+
+          <ChatRightFooterShowAttachment />
+
+          <FormControl sx={{ width: "100%" }}>
+
+            <TextField
+              id="chat-input"
+              required
+              placeholder={currentRoomId == null ? "Select user to chat" : "Type something"}
+              disabled={currentRoomId == null}
+              value={chatInputValue.message == null ? '' : chatInputValue.message}
+              sx={{
+                width: "100%",
+                wordWrap: "break-word",
+                overflowWrap: "break-word",
+                whiteSpace: "pre-wrap",
+              }}
+              multiline
+              fullWidth
+              onChange={(e) => setChatInputValue((prevState) => ({ ...prevState, message: e.target.value }))}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  if (e.ctrlKey) {
+                    setChatInputValue((prevState) => ({ ...prevState, message: prevState.message + "\n" }))
+                  } else {
+                    e.preventDefault();
+                    onSendButtonClick();
+                  }
+                }
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      disableFocusRipple
+                      disableRipple
+                      disableTouchRipple
+                      disabled={currentRoomId == null}
+                      onClick={(e) => onSendButtonClick()}>
+                      <Send sx={{
+                        color: currentRoomId == null ? theme.palette.text.disabled : theme.palette.primary.main
+                      }} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <UploadFile
+                        sx={{
+                          color: currentRoomId == null
+                            ? theme.palette.text.disabled
+                            : theme.palette.primary.main,
+                          cursor: currentRoomId == null ? "unset" : "pointer",
+                        }}
+                        onClick={() => currentRoomId !== null && handleClickInputFile()}
+                      />
+                    </div>
+                    <input
+                      type="file"
+                      id="profile"
+                      accept="
+                        image/png,
+                        image/jpg,
+                        image/jpeg,
+                        application/msword,
+                        application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                        application/pdf,
+                        text/plain,
+                        application/vnd.ms-excel,
+                        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                        application/vnd.ms-powerpoint,
+                        application/vnd.openxmlformats-officedocument.presentationml.presentation,
+                        application/vnd.oasis.opendocument.text,
+                        application/vnd.oasis.opendocument.spreadsheet,
+                        application/vnd.oasis.opendocument.presentation,
+                        application/zip,
+                        application/x-rar-compressed,
+                        application/x-7z-compressed
+                      "
+                      ref={inputFileRef}
+                      multiple
+                      onChange={handleChangeInputFile}
+                      style={{ display: "none" }}
+                    />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </FormControl>
+
+        </div>
+      </div>
+    </Fragment>
+  )
+})
+
+
+export const ReadStatusComponent: FC<{ lastMessage: MessageType }> = (({ lastMessage }) => {
+
+  const theme = useTheme();
+
+  return (
+    <Fragment>
+      <i className="fa-solid fa-check" style={{
+        fontSize: 8,
+        color: lastMessage?.read ? theme.palette.primary.main : theme.palette.text.disabled,
+        marginLeft: 6
+      }}>
+
+      </i>
+      {
+        lastMessage?.read && <i className="fa-solid fa-check" style={{
+          fontSize: 8,
+          marginLeft: -10,
+          marginRight: 3,
+          color: theme.palette.primary.main
+        }}></i>
+      }
+
+    </Fragment>
+  )
+})
+
+export const ChatRightFooterShowAttachment: FC = (() => {
+  const {
+    chatInputValue,
+    setChatInputValue
   } = useChat();
 
   return (
-    <div className="chat-header">
+    <Fragment>
       {
-        activeChat !== null ?
-          <div className="media d-flex">
-            <div className="media-img-wrap flex-shrink-0">
-              <StyledBadge
-                overlap="circular"
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                variant="dot"
-                online={userChatData[activeChat]?.userData?.online}
-                idle={userChatData[activeChat]?.userData?.idle}
-              >
-                <Avatar alt="" src={`${userChatData[activeChat]?.userData?.image}`} />
-              </StyledBadge>
-            </div>
-            <div className="media-body flex-grow-1">
-              <div className="user-name">{`${userChatData[activeChat]?.userData?.name}`}</div>
-              <div className="user-status">
-                {userChatData[activeChat]?.userData?.idle ? 'away' : userChatData[activeChat]?.userData?.online ? `online` : `offline`}
+        chatInputValue.attachment?.length > 0 && (
+          <div className='chat-right-footer-show-attachment-div'>
+            {chatInputValue.attachment.map((file, index) => (
+              <div key={index} className='chat-right-footer-show-attachment-inner-div'>
+                <img
+                  src={file.isImage ? file.src : getFileIcon(file.type)}
+                  alt={file.name}
+                  className='chat-right-footer-show-attachment-img'
+                  onClick={() => window.open(file.src, "_blank")}
+                />
+                <IconButton
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: "-5px",
+                    right: "-5px",
+                    color: "white",
+                    width: "18px",
+                    height: "18px",
+                    padding: "2px",
+                  }}
+                  onClick={() => {
+                    setChatInputValue((prevState) => ({
+                      ...prevState,
+                      attachment: prevState.attachment.filter((_, i) => i !== index),
+                    }));
+                  }}
+                >
+                  <DeleteForever fontSize="small" sx={{ color: 'crimson' }} />
+                </IconButton>
+              </div>
+            ))}
+          </div>
+        )}
+    </Fragment>
+  )
+})
+
+export const ChatRightBodyDateComponent: FC<{ mesage: MessageType, index: number }> = (({ mesage, index }) => {
+
+  const { currentRoom, weekdays } = useChat();
+
+  let messageDate = dayjs(mesage?.timestamp);
+
+  let today = messageDate.isSame(dayjs(), 'day'); // Checks if the message is from today
+  let thisWeek = messageDate.isAfter(dayjs().subtract(7, 'days'), 'day'); // Checks if it's within the last 7 days
+  let thisYear = messageDate.isSame(dayjs(), 'year'); // Checks if it's in the current year
+
+  let dayName = weekdays[messageDate.weekday()];
+
+  return (
+    <Fragment>
+      {currentRoom !== null &&
+        (
+          index === 0 ||
+          !dayjs(currentRoom.messages[index - 1]?.timestamp).isSame(mesage?.timestamp, 'day')) &&
+        <li className="chat-date" style={{ marginTop: index == 0 ? 10 : 0 }}>
+          {
+            today ? 'Today'
+              : thisWeek ? <>{dayName}</>
+                : thisYear ? <>{dayjs(mesage?.timestamp).format('MMM D ')}</>
+                  : <>{dayjs(mesage?.timestamp).format('D MMM YY')}</>
+          }
+        </li>
+      }
+    </Fragment>
+  )
+})
+
+export const ChatRightMessageWithoutAttachment: FC<{ mesage: MessageType }> = (({ mesage }) => {
+
+  const { currentRoom, currentUserId, lastRef, lastRefMinusOne } = useChat();
+  let isSent = mesage.senderId == currentUserId;
+  let senderImage =
+    currentRoom?.createrData.userId == currentUserId ?
+      currentRoom?.receiverData?.profileImage :
+      currentRoom?.createrData?.profileImage;
+
+  return (
+    <Fragment>
+      {
+        currentRoom !== null &&
+        <li className={`media ${isSent ? 'sent' : 'received'} d-flex`}  >
+          <div className="avatar flex-shrink-0">
+            {!isSent && <img src={senderImage} alt="User" className="avatar-img rounded-circle" />}
+          </div>
+          <div className="media-body flex-grow-1">
+            <div className="msg-box" >
+              <div >
+                <p style={{ marginBottom: 'unset' }}
+                  ref={currentRoom.messages[currentRoom.messages.length - 1].message == mesage.message ? lastRef : lastRefMinusOne}>
+                  {decrypt(mesage.message!)}
+                </p>
+                <ul className="chat-msg-info">
+                  <li>
+                    <div className="chat-time" style={{ position: 'relative' }}>
+                      <ReadStatusComponent lastMessage={mesage} />
+                      <span>{dayjs(mesage.timestamp).format('HH:mm')}</span>
+                    </div>
+                  </li>
+                </ul>
               </div>
             </div>
-          </div> :
-          <div className="media d-flex" style={{ color: theme.palette.text.color }}>
-            Select user to continue chat or search for new chat.
+
           </div>
+        </li>
       }
-      <div className="chat-options" style={{ justifyContent: activeChat == null ? 'flex-end' : 'space-between' }}>
-        {
-          activeChat !== null &&
-          <>
-            <Link href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                voiceCallToggleFunction()
-              }}
-            >
-              <i className="material-icons">local_phone</i>
-            </Link>
-            <Link href="#" onClick={(e) => {
-              e.preventDefault();
-              videoCallToggleFunction()
-            }}>
-              <i className="material-icons">videocam</i>
-            </Link>
-          </>
-        }
-        <Link href="#" id="more_vert" onClick={(e) => {
-          e.preventDefault();
-          handleClick(e)
-        }}>
-          <i className="material-icons" >more_vert</i>
-        </Link>
-        <Menu
-          id="long-menu"
-          MenuListProps={{
-            'aria-labelledby': 'long-button',
-          }}
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          slotProps={{
-            paper: {
-              style: {
-                maxHeight: ITEM_HEIGHT * 4.5,
-                width: '20ch',
-              }
-            }
-          }}
-        >
-          {menuOptions.map((option) => (
-            <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
-              {option}
-            </MenuItem>
-          ))}
-        </Menu>
-      </div>
-    </div>
+    </Fragment>
   )
 })
 
-export const MainChatBody: FC = (() => {
-  const {
-    allCurrentUserMessage,
-    activeChat,
-    userChatData,
-    currentUserId,
-    weekdays,
-    ref,
-    ref1
-  } = useChat();
+export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType }> = (({ mesage }) => {
+
+  const { currentRoom, lastRef, lastRefMinusOne, currentUserId, downloadClick } = useChat();
+  let isSent = mesage.senderId == currentUserId;
+  let senderImage =
+    currentRoom?.createrData.userId == currentUserId ?
+      currentRoom?.receiverData?.profileImage :
+      currentRoom?.createrData?.profileImage;
 
   return (
-    <>
+    <Fragment>
       {
-        allCurrentUserMessage.map((mesage, i) => {
-          let isSent = mesage.senderId == currentUserId;
-          let senderImage: string = "";
-          if (activeChat !== null) {
-            senderImage = userChatData[activeChat]?.userData?.image
-          }
-          if (mesage.reciverId == currentUserId || mesage.senderId == currentUserId) {
-            let diff: any = dayjs.duration(dayjs().diff(dayjs(mesage?.time)))
-            const { years, days, hours } = diff['$d' as keyof typeof diff]
-            let dayName = weekdays[dayjs(mesage?.time).weekday()]
-            let today = days == 0 && hours < 24
-            let thisWeek = days !== 0 && days <= 7
-            let thisYear = !thisWeek && years == 0
-            return (
-              <Fragment key={i} >
-                {dayjs(allCurrentUserMessage[i - 1]?.time).get('date') !== dayjs(mesage?.time).get('date') &&
-                  <li className="chat-date">
-                    {
-                      today ? 'Today'
-                        : thisWeek ? <>{dayName}</>
-                          : thisYear ? <>{dayjs(mesage?.time).format('MMM D ')}</>
-                            : <>{dayjs(mesage?.time).format('D MMM YY')}</>
-                    }
-                  </li>
-                }
-                {mesage.message !== null && <li className={`media ${isSent ? 'sent' : 'received'} d-flex`}  >
-                  <div className="avatar flex-shrink-0">
-                    {!isSent && <img src={senderImage} alt="User" className="avatar-img rounded-circle" />}
-                  </div>
-                  <div className="media-body flex-grow-1">
-                    <div className="msg-box" style={{ maxWidth: "100%" }}>
-                      <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-                        <p style={{ marginBottom: 'unset' }}
-                          ref={allCurrentUserMessage[allCurrentUserMessage.length - 1].message == mesage.message ? ref : ref1}>
-                          {mesage.message}
-                        </p>
-                        <ul className="chat-msg-info">
-                          <li>
-                            <div className="chat-time">
-                              <span>{dayjs(mesage.time).format('HH:mm')}</span>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                    {Array.isArray(mesage.attachment) && <div className="msg-box">
-                      <div>
-                        <div className="chat-msg-attachments">
-                          {
-                            mesage.attachment.map((a, index) => {
-                              return (
-                                <div className="chat-attachment" key={index}>
-                                  <img src={a.src} alt="Attachment" />
-                                  <div className="chat-attach-caption">{a.name}</div>
-                                  <Link href={a.src} download={a.name} target='_blank' className="chat-attach-download">
-                                    <i className="fas fa-download"></i>
-                                  </Link>
-                                </div>
-                              )
-                            })
-                          }
+        currentRoom !== null &&
+        <li className={`media ${isSent ? 'sent' : 'received'} d-flex`}  >
+          <div className="avatar flex-shrink-0">
+            {!isSent && <img src={senderImage} alt="User" className="avatar-img rounded-circle" />}
+          </div>
+          <div className="media-body flex-grow-1">
+            <div className="msg-box">
+              <div>
+                <div className="chat-msg-attachments">
+                  {
+                    mesage.attachment.map((attach, index) => {
+                      const isBlob = attach.src && attach.src.startsWith("blob:");
+
+                      return (
+                        <div className="chat-attachment" key={index}>
+                          {/* <img src={attach.isImage ? attach.src : getFileIcon(attach.type)} alt="Attachment" /> */}
+                          <img
+                            src={isBlob ? attach.src : getFileIcon(attach.type)} // Use icon/placeholder until blob is ready
+                            alt="Attachment"
+                          />
+                          <div className="chat-attach-caption">{truncateString(attach.name, 5)}</div>
+
+                          <button
+                            className="chat-attach-download"
+                            onClick={() => downloadClick(attach)}
+                          >
+                            <i className="fas fa-download"></i>
+                          </button>
                         </div>
-                        <ul className="chat-msg-info">
-                          <li>
-                            <div className="chat-time">
-                              <span >{dayjs(mesage.time).format('HH:mm')}</span>
-                            </div>
-                          </li>
-                        </ul>
+                      )
+                    })
+                  }
+                </div>
+                <div >
+                  <p style={{ marginBottom: 'unset' }}
+                    ref={currentRoom.messages[currentRoom.messages.length - 1].message == mesage.message ? lastRef : lastRefMinusOne}>
+                    {decrypt(mesage.message!)}
+                  </p>
+                  <ul className="chat-msg-info">
+                    <li>
+                      <div className="chat-time" style={{ position: 'relative' }}>
+                        <ReadStatusComponent lastMessage={mesage} />
+                        <span >{dayjs(mesage.timestamp).format('HH:mm')}</span>
                       </div>
-                    </div>}
-                  </div>
-                </li>}
-              </Fragment>
-            )
-          }
-        })
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
       }
-    </>
+    </Fragment>
   )
 })
-
-export const ChatFooter: FC = (() => {
-
-  const {
-    chatFooterRef,
-    activeChat,
-    chatInputValue,
-    setChatInputValue,
-    userChatData,
-    currentUserId,
-    setAllCurrentUserMessage,
-    ref,
-
-  } = useChat();
+const getFileIcon = (fileType: string) => {
+  if (fileType.includes("pdf")) return "/assets/images/icons/pdf-icon.png";
+  if (fileType.includes("word")) return "/assets/images/icons/word-icon.png";
+  if (fileType.includes("excel")) return "/assets/images/icons/excel-icon.png";
+  if (fileType.includes("powerpoint")) return "/assets/images/icons/ppt-icon.png";
+  if (fileType.includes("text")) return "/assets/images/icons/txt-icon.png";
+  if (fileType.includes('zip')) return "/assets/images/icons/zip-icon.png"
+  return "/assets/images/icons/image-icon.png"; // Default icon
+};
 
 
-  const onButtonClick = (e: any) => {
-    if (e._reactName == 'onClick') {
-      if (chatInputValue !== '') {
-        userChatData[activeChat as number]?.messages.push({
-          senderId: currentUserId,
-          reciverId: userChatData[activeChat as number]?.userData?.userId,
-          message: chatInputValue,
-          time: new Date(),
-          read: false,
-          attachment: ''
-        })
-        setChatInputValue('')
-        setAllCurrentUserMessage((prevState) => {
-          let newState = [...userChatData[activeChat as number]?.messages]
-          return newState.sort((a: MessageType, b: MessageType) => new Date(a?.time).valueOf() - new Date(b?.time).valueOf())
-        })
-        setTimeout(() => {
-          ref.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-    } else if (e._reactName == 'onKeyDown') {
-      if (e.key == 'Enter' && chatInputValue !== '') {
-        userChatData[activeChat as number]?.messages.push({
-          senderId: currentUserId,
-          reciverId: userChatData[activeChat as number]?.userData?.userId,
-          message: chatInputValue,
-          time: new Date(),
-          read: false,
-          attachment: ''
-        })
-        setChatInputValue('')
-        setAllCurrentUserMessage((prevState) => {
-          let newState = [...userChatData[activeChat as number]?.messages]
-          return newState.sort((a: MessageType, b: MessageType) => new Date(a?.time).valueOf() - new Date(b?.time).valueOf())
-        })
-        setTimeout(() => {
-          ref.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-    }
-  }
+
+
+export interface CallDialogPropsType {
+  open: boolean;
+  toggleFunction: () => void;
+  callReceiverUserData: ChatUserType | null;
+  callType: "Video" | "Voice"
+}
+
+export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, callReceiverUserData, callType }) => {
 
   return (
-    <div className="chat-footer" ref={chatFooterRef}>
-      <div className="input-group">
+    <BootstrapDialog
+      TransitionComponent={Transition}
+      onClose={() => {
 
-        <FormControl sx={{ width: "100%" }}>
-          <TextField
-            id="chat-input"
-            required
-            placeholder={activeChat == null ? "Select user to chat" : "Type something"}
-            disabled={activeChat == null}
-            value={chatInputValue}
-            sx={{
-              width: "100%", // Takes full parent width
-              wordWrap: "break-word",
-              overflowWrap: "break-word",
-              whiteSpace: "pre-wrap",
-            }}
-            multiline
-            fullWidth
-            onChange={(e) => setChatInputValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                if (e.ctrlKey) {
-                  // Ctrl + Enter => Insert a new line
-                  setChatInputValue((prev) => prev + "\n");
-                } else {
-                  // Enter => Send the message
-                  e.preventDefault(); // Prevents new line on Enter
-                  onButtonClick(e);
-                }
-              }
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <button
-                    disabled={activeChat == null}
-                    aria-label="send"
-                    type="button"
-                    className="btn msg-send-btn "
-                    onClick={(e) => onButtonClick(e)}
-                  >
-                    <i className="fab fa-telegram-plane"></i>
-                  </button>
-                </InputAdornment>
-              ),
-              startAdornment: (
-                <InputAdornment position="start">
-                  <div className="btn-file btn" style={{ pointerEvents: activeChat == null ? 'none' : 'auto', }}>
-                    <i className="fa fa-paperclip"></i>
-                    <label style={{ display: "none" }} htmlFor="file">
-                      File
-                    </label>
-                    <input
-                      aria-label="File"
-                      disabled={activeChat == null}
-                      style={{ cursor: 'pointer' }}
-                      id="file"
-                      type="file"
-                    />
-                  </div>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </FormControl>
+      }}
+      aria-labelledby="edit_invoice_details"
+      open={open}>
 
+      <div className="modal-body">
+        <div className="call-box incoming-box">
+          <div className="call-wrapper">
+            <div className="call-inner">
+              <div className="call-user">
+                <img
+                  alt="User Image"
+                  src={callReceiverUserData?.profileImage}
+                  className="call-avatar"
+                />
+                <h4>{callReceiverUserData?.roleName == "doctors" && "Dr. "} {callReceiverUserData?.fullName}</h4>
+                <span>{callType} call Connecting...</span>
+              </div>
+              <div className="call-items">
+                <Link
+                  href="#"
+                  className=" call-item call-end"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+                    setTimeout(() => {
+                      toggleFunction()
+
+                    }, 500);
+                  }}
+                >
+                  <i className="material-icons">call_end</i>
+                </Link>
+                <Link href="/voice-call" onClick={(e) => e.preventDefault()} style={{ pointerEvents: "none" }} className=" call-item call-start">
+                  <i className="material-icons">call</i>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </BootstrapDialog>
   )
 })
-
 
 export default ChatComponent;

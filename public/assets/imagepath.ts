@@ -342,6 +342,7 @@ export const doctor_17_aspect = "/assets/images/doctors/doctor-17_aspect.webp";
 export const doctor_18 = "/assets/images/doctors/doctor-18.webp";
 export const doctors_profile =
   "/assets/images/doctors/doctors_profile_small.webp";
+export const Image_placeholder = "/assets/images/icons/image-icon.png";
 export const IMG_sp_02 = "/assets/images/specialities-05.webp";
 export const IMG_sp_03 = "/assets/images/specialities-04.webp";
 export const IMG_sp_04 = "/assets/images/specialities-01.webp";

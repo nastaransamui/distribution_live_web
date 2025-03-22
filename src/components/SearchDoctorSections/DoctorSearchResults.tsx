@@ -326,7 +326,6 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
   }, [totalDoctors, displayType]);
 
   useEffect(() => {
-    // loadStylesheet('/css/react-virtualized-styles.min.css')
     loadStylesheet('/css/yet-another-react-lightbox-styles.css')
   }, [])
 

@@ -17,14 +17,42 @@ import { useTheme } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography'
-import { UserDoctorProfileType } from "@/redux/userDoctorProfile";
 import { useSelector } from "react-redux";
 import { AppState } from "@/redux/store";
 import { StyledBadge } from "../DoctorDashboardSections/ScheduleTiming";
 import { doctors_profile } from "@/public/assets/imagepath";
-import { ChatDataType, MessageType } from "@/hooks/useChat";
+import { ChatDataType, useChat } from "@/hooks/useChat";
+import { makeStyles } from 'tss-react/mui';
 
+const chatAutocompleteStyles = makeStyles<{}>()((theme) => {
 
+  return {
+    formControl: {
+      backgroundColor: theme.palette.background.default,
+      border: `1px solid ${theme.palette.secondary.main}`,
+      borderRadius: '50px',
+      color: theme.palette.text.color,
+      padding: `5px 10px 3px 36px`,
+    },
+    formControlOpen: {
+      paddingLeft: '36px',
+      backgroundColor: theme.palette.background.default,
+      borderBottomColor: 'transparent',
+      borderRadius: `15px 15px 0px 0px`
+    },
+    autoCompleteClass: {
+      // "& .MuiInput-root.MuiInputBase-sizeSmall .MuiInput-input": {
+      //   "&::placeholder": {
+      //     color: theme.palette.text.color,
+      //   },
+      // },
+      // "& .MuiAutocomplete-input::placeholder": {
+      //   color: "blue",
+      // },
+      zIndex: 1301,
+    }
+  }
+})
 
 
 interface PartType {
@@ -35,21 +63,28 @@ export interface DoctorsAutoCompleteType {
   name: string;
   optionFieldName: string;
   userType: 'doctors' | 'patient';
-  userChatData: ChatDataType[];
-  currentUserId: string;
   width: number;
-  setActiveChat: React.Dispatch<React.SetStateAction<number | null>>;
-  setAllCurrentUserMessage: React.Dispatch<React.SetStateAction<MessageType[]>>;
 }
 
-export interface AutocompleteUserProfileType extends UserDoctorProfileType {
+export interface AutocompleteDoctorUserProfileType {
+  createdAt: Date;
+  fullName: string;
+  lastLogin?: {
+    date: Date;
+    ipAddr: string;
+    userAgent: string;
+    idle?: boolean;
+  };
+  online: boolean;
+  profileImage: string;
+  roleName: 'doctors' | 'patient';
+  _id: string;
   searchString: string;
   subtitle: string;
 }
 export function escapeRegExp(value: string) {
   return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
-
 
 const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
   props: DoctorsAutoCompleteType
@@ -58,11 +93,19 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
     name,
     optionFieldName,
     userType,
+    width,
+  } = props
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+
+  const {
     userChatData,
     currentUserId,
-    setActiveChat,
-    setAllCurrentUserMessage,
-    width } = props
+    setCurrentRoomId,
+    sortLatestMessage
+  } = useChat();
 
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [inputValue, setInputValue] = useState("")
@@ -71,7 +114,7 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
   const [openOption, setOpenOption] = useState<boolean>(false);
   const [loadingOption, setLoadingOption] = useState<boolean>(openOption)
 
-  const theme = useTheme();
+  const { classes, theme } = chatAutocompleteStyles({})
 
   const fetch = useMemo(
     () =>
@@ -85,7 +128,7 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
                 {
                   status: number,
                   message?: string,
-                  users: AutocompleteUserProfileType[]
+                  users: AutocompleteDoctorUserProfileType[]
                 }) => {
                 if (msg?.status !== 200) {
                   newOptions = [...newOptions, { error: true, errorMessage: msg.message, _id: msg.status }];
@@ -117,7 +160,6 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
       active = false;
     };
   }, [fetch, homeSocket, inputValue])
-
 
   return (
     <Fragment>
@@ -161,51 +203,49 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
               }
           }
         }}
-        onChange={(event: any, newValue: any | null, details?: string) => {
+        onChange={(event: any, newValue: AutocompleteDoctorUserProfileType | null, details?: string) => {
           switch (details) {
             case 'selectOption':
               if (newValue !== null) {
-                let selectedIndex = userChatData.findIndex((a) => a.userData.name == newValue.fullName)
-                if (selectedIndex !== -1) {
-                  let hasChat = userChatData[selectedIndex]?.messages.filter((a) => a?.senderId == currentUserId || a?.reciverId == currentUserId).length > 0
+                const userId1 = newValue._id;
+                const userId2 = currentUserId;
+                const roomId = [userId1, userId2].sort().join('');
 
-                  if (hasChat) {
-                    setActiveChat(() => selectedIndex)
-                    let c = userChatData[selectedIndex]?.messages.filter((a) => a?.senderId == currentUserId || a?.reciverId == currentUserId)
-                    setAllCurrentUserMessage((prevState) => {
-                      let newState = [...c]
-                      return newState.sort((a: MessageType, b: MessageType) => new Date(a?.time).valueOf() - new Date(b?.time).valueOf())
-                    })
-                  } else {
-                    setActiveChat(() => selectedIndex)
-                    userChatData[selectedIndex]?.messages.push({
-                      senderId: currentUserId,
-                      reciverId: userChatData[selectedIndex]?.userData?.userId,
-                      message: null,
-                      time: new Date(),
-                      read: true,
-                      attachment: ''
-                    })
-                    setAllCurrentUserMessage((prevState) => {
-                      return [{
-                        senderId: currentUserId,
-                        reciverId: userChatData[selectedIndex]?.userData?.userId,
-                        message: null,
-                        time: new Date(),
-                        read: true,
-                        attachment: ''
-                      }]
-                    })
+                let selectedIndex = sortLatestMessage(userChatData).findIndex((a) => a.roomId == roomId)
+
+                setCurrentRoomId(roomId)
+                if (selectedIndex == -1) {
+                  const roomData: ChatDataType = {
+                    roomId: roomId,
+                    participants: [currentUserId!, newValue._id],
+                    createrData: {
+                      userId: currentUserId!,
+                      fullName: userProfile?.fullName!,
+                      profileImage: userProfile?.profileImage!,
+                      online: userProfile?.online!,
+                      idle: userProfile?.lastLogin?.idle || false,
+                      roleName: userProfile?.roleName as 'doctors' | 'patient'
+                    },
+                    receiverData: {
+                      userId: newValue._id,
+                      fullName: newValue.fullName,
+                      profileImage: newValue.profileImage,
+                      online: newValue.online,
+                      idle: newValue?.lastLogin?.idle || false,
+                      roleName: newValue?.roleName
+                    },
+                    messages: []
                   }
-
+                  if (homeSocket.current) {
+                    homeSocket.current.emit('inviteUserToRoom', roomData)
+                  }
                 }
-                // setInputValue(newInputValue);
                 setLoadingOption(() => false)
                 setValue(() => {
-                  return newValue['fullName' as keyof typeof newValue]
+                  return null;
                 })
                 setInputValue(() => {
-                  return newValue['fullName' as keyof typeof newValue]
+                  return ""
                 })
               }
               setLoadingOption(false)
@@ -215,22 +255,6 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
 
         }}
 
-        // onInputChange={(event: any, newInputValue, reason: string) => {
-        //   event
-        //   switch (reason) {
-        //     case 'input':
-        //       setValue(() => {
-        //         return null
-        //       })
-        //       setInputValue(() => {
-        //         return newInputValue
-        //       })
-        //       break;
-        //     case 'reset':
-        //       setOptions([])
-        //       break;
-        //   }
-        // }}
         onInputChange={(event, newInputValue, reason) => {
           switch (reason) {
             case 'input':
@@ -258,12 +282,14 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
               </div>
               <TextField
                 {...params}
+
                 size='small'
                 variant="standard"
                 type="text"
                 InputProps={{
                   disableUnderline: true,
                   ...params.InputProps,
+
                   endAdornment: (
                     <Fragment>
                       {loadingOption ? (
@@ -289,7 +315,9 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
                     </Fragment>
                   ),
                 }}
-                className={openOption ? "form-control form-control-open" : "form-control "}
+                // className={openOption ? "form-control form-control-open" : "form-control "}
+                className={openOption ? `${classes.formControl} ${classes.formControlOpen}` : classes.formControl}
+
                 placeholder="Search"
                 autoComplete='off' />
             </Fragment>
@@ -300,7 +328,10 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
           const parts = parse(Array.isArray(option[optionFieldName]) ? option['arrayField'] : option[optionFieldName], matches);
           return (
             <li {...props} key={option._id + JSON.stringify(props)}
-              style={{ borderBottom: `1px solid ${theme.palette.primary.main}`, borderTop: `1px solid ${theme.palette.primary.main}` }}>
+              style={{
+                borderBottom: `1px solid ${theme.palette.primary.main}`,
+                borderTop: `1px solid ${theme.palette.primary.main}`,
+              }}>
               {
                 option?.error
                   ?
@@ -345,25 +376,19 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
             </li>
           )
         }}
-        sx={{
-          "& .MuiInput-root.MuiInputBase-sizeSmall .MuiInput-input": {
-            padding: `6px 4px 3px 0`,
-          },
-
-          zIndex: 1301,
-        }}
+        className={classes.autoCompleteClass}
         disablePortal
         slotProps={{
           paper: {
             sx: {
-              backgroundColor: "background.default",
+              backgroundColor: theme.palette.background.default,
               borderRadius: "0px 0px 8px 8px",
               marginTop: '-13px',
-              marginLeft: '-37px',
               width: `${width}px`,
+              marginLeft: `-37px`,
               paddingTop: '15px',
               border: `1px solid`,
-              borderColor: 'secondary.main'
+              borderColor: 'secondary.main',
             },
           },
         }}

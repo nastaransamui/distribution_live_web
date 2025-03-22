@@ -122,7 +122,8 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
                   idle={row?.patientProfile?.lastLogin?.idle}
                 >
                   <Avatar alt="" src={profileImage} />
-                </StyledBadge></Link>
+                </StyledBadge>
+              </Link>
               <Link href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`} >{`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}</Link></>
           )
         }

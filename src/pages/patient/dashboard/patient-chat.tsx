@@ -51,7 +51,7 @@ const PatientChatPage: NextPage = (props: any) => {
           <div className="row">
             <PatientDashboardSidebar />
             <ChatProvider>
-              <ChatComponent />
+              <ChatComponent userType='doctors' />
             </ChatProvider>
           </div>
         </div>

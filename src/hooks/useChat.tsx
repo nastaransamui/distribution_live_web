@@ -1,34 +1,49 @@
 import React, { createContext, RefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { IMG02, IMG03, IMG04, PatientImg1, PatientImg2, PatientImg4, PatientImg5, IMG09, IMG010, PatientImg3, patient_profile } from '@/public/assets/imagepath';
+import _ from 'lodash'
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime'
 import duration from 'dayjs/plugin/duration'
 import weekday from 'dayjs/plugin/weekday'
 import updateLocale from 'dayjs/plugin/updateLocale'
+import { useSelector } from "react-redux";
+import { AppState } from "@/redux/store";
+import { toast } from "react-toastify";
+import useScssVar from "./useScssVar";
+import { Image_placeholder } from "@/public/assets/imagepath";
 export interface AttachmentType {
   src: string;
   name: string;
+  isImage: boolean;
+  type: string;
+  id: string;
+}
+
+export interface ChatUserType {
+  userId: string;
+  fullName: string;
+  profileImage: string;
+  online: boolean;
+  idle: boolean;
+  roleName: 'doctors' | 'patient'
 }
 
 
 export interface MessageType {
   senderId: string;
-  reciverId: string;
-  time: Date;
+  receiverId: string;
+  timestamp: number;
   message: null | string;
   read: boolean;
-  attachment: string | AttachmentType[];
+  attachment: AttachmentType[];
+  roomId: string;
 }
 
 export interface ChatDataType {
-  userType: 'doctors' | 'patient';
-  userData: {
-    userId: string;
-    name: string;
-    image: string;
-    online: boolean;
-    idle: boolean;
-  };
+  _id?: string;
+  roomId: string;
+  participants: string[];
+  createrData: ChatUserType,
+  receiverData: ChatUserType;
   messages: MessageType[]
 }
 
@@ -46,26 +61,37 @@ interface ChatContextType {
   footerHeight: number;
   inputGroupRef: RefObject<HTMLDivElement>;
   chatFooterRef: RefObject<HTMLDivElement>;
-  ref: RefObject<HTMLDivElement>;
-  ref1: RefObject<HTMLDivElement>;
-  allCurrentUserMessage: MessageType[];
-  setAllCurrentUserMessage: React.Dispatch<React.SetStateAction<MessageType[]>>;
-  chatInputValue: string;
-  setChatInputValue: React.Dispatch<React.SetStateAction<string>>;
-  activeChat: number | null;
-  setActiveChat: React.Dispatch<React.SetStateAction<number | null>>;
+  lastRef: RefObject<HTMLDivElement>;
+  lastRefMinusOne: RefObject<HTMLDivElement>;
+  inputFileRef: RefObject<HTMLInputElement>;
+  chatInputValue: MessageType;
+  setChatInputValue: React.Dispatch<React.SetStateAction<MessageType>>;
   anchorEl: HTMLElement | null;
   setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+  isLoading: boolean;
   open: boolean;
   handleClick: (event: React.MouseEvent<HTMLElement>) => void;
   handleClose: () => void;
+  makeAllMessageRead: (roomId: string) => void;
   userChatData: ChatDataType[];
-  currentUserId: string;
+  setUserChatData: React.Dispatch<React.SetStateAction<ChatDataType[]>>;
+  currentUserId: string | undefined;
+  currentRoomId: string | null;
+  setCurrentRoomId: React.Dispatch<React.SetStateAction<string | null>>;
+  currentRoom: ChatDataType | null;
+  setCurrentRoom: React.Dispatch<React.SetStateAction<ChatDataType | null>>;
   weekdays: string[];
   voiceCallActive: boolean;
   voiceCallToggleFunction: () => void;
   videoCallActive: boolean;
   videoCallToggleFunction: () => void;
+  sortLatestMessage: (userChatData: ChatDataType[]) => ChatDataType[];
+  onLeftUserClicked: (chatData: ChatDataType) => void;
+  onSendButtonClick: () => void;
+  handleClickInputFile: () => void;
+  handleChangeInputFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  callReceiverUserData: ChatUserType | null;
+  downloadClick: (attach: AttachmentType) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
@@ -75,24 +101,152 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   dayjs.extend(duration)
   dayjs.extend(weekday)
   dayjs.extend(updateLocale)
-  const inputGroupRef = useRef<HTMLDivElement>(null);
+  const { bounce } = useScssVar();
+  const inputGroupRef = useRef<HTMLInputElement>(null);
   const chatFooterRef = useRef<HTMLDivElement>(null);
-  const ref = useRef<HTMLDivElement>(null);
-  const ref1 = useRef<HTMLDivElement>(null);
+  const lastRef = useRef<HTMLDivElement>(null);
+  const lastRefMinusOne = useRef<HTMLDivElement>(null);
+
+  const inputFileRef = useRef<HTMLInputElement>(null)
   const [footerHeight, setFooterHeight] = useState<number>(0)
   const [searchInputWidth, setSearchInputWidth] = useState<number>(0);
   const [voiceCallActive, setVoiceCallActive] = useState<boolean>(false)
   const [videoCallActive, setVideoCallActive] = useState<boolean>(false)
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  const [reload, setReload] = useState<boolean>(false)
+  const [currentRoomId, setCurrentRoomId] = useState<string | null>(null)
+  const [currentRoom, setCurrentRoom] = useState<ChatDataType | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [userChatData, setUserChatData] = useState<ChatDataType[]>([])
+  const [callReceiverUserData, setCallReceiverUserData] = useState<ChatUserType | null>(null)
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  let weekdays: string[] = dayjs.updateLocale('en', {}).weekdays as string[]
+  const currentUserId = userProfile?._id
+
 
   const voiceCallToggleFunction = () => {
     setVoiceCallActive((prev) => !prev);
+    if (currentRoom !== null) {
+      const callReceiver = currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData : currentRoom.createrData;
+      setCallReceiverUserData((prevState) => {
+        if (prevState == null) {
+          return callReceiver;
+        } else {
+          return null;
+        }
+      })
+    }
   };
 
   const videoCallToggleFunction = () => {
     setVideoCallActive((prev) => !prev);
+    if (currentRoom !== null) {
+      const callReceiver = currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData : currentRoom.createrData;
+      setCallReceiverUserData((prevState) => {
+        if (prevState == null) {
+          return callReceiver;
+        } else {
+          return null;
+        }
+      })
+    }
   };
 
 
+  useEffect(() => {
+    let active = true;
+    if (active && homeSocket.current) {
+      homeSocket.current.emit('getUserRooms', { userId: userProfile?._id })
+      homeSocket.current.once('getUserRoomsReturn', async (msg: { status: number, reason?: string, message?: string, userRooms: ChatDataType[] }) => {
+        const { status, reason, message } = msg;
+        if (status !== 200) {
+          toast.error(reason || message || `Error ${status} find Doctor`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+            }
+          });
+        } else {
+          const { userRooms } = msg;
+          // Process attachments before updating the state to get private images
+          const updatedRooms = await Promise.all(userRooms.map(async (room) => {
+            const updatedMessages = await Promise.all(room.messages.map(async (msg) => ({
+              ...msg,
+              attachment: await Promise.all(
+                msg.attachment.map(async (a) => ({
+                  ...a,
+                  src: a.id !== "" ? await getChatFile(a.id, userProfile?._id!) : a.src,
+                }))
+              ),
+            })));
+
+            return { ...room, messages: updatedMessages };
+          }));
+          setUserChatData((prevState) => {
+            const newState = [...prevState];
+
+            updatedRooms.forEach((room) => {
+              const existingRoomIndex = _.findIndex(newState, { _id: room._id });
+              if (existingRoomIndex === -1) {
+                // Room does not exist, add it
+                newState.push(room);
+              } else {
+                // Room exists, compare receiverData and createrData
+                const existingRoom = newState[existingRoomIndex];
+                if (
+                  !_.isEqual(existingRoom.receiverData, room.receiverData) ||
+                  !_.isEqual(existingRoom.createrData, room.createrData) ||
+                  !_.isEqual(existingRoom.messages, room.messages)
+                ) {
+                  // Update the receiverData and createrData if they are different
+                  newState[existingRoomIndex] = {
+                    ...existingRoom,
+                    receiverData: room.receiverData,
+                    createrData: room.createrData,
+                    messages: room.messages
+                  };
+                }
+              }
+            });
+
+            return newState;
+          });
+          setIsLoading(false)
+          homeSocket.current.once(`updateGetUserRooms`, () => {
+            setReload(!reload)
+          })
+        }
+      })
+    }
+    return () => {
+      active = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeSocket, reload, userProfile?._id])
+
+  const getChatFile = async (fileId: string, userId: string): Promise<string> => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_adminUrl}/api/chat/file/${fileId}?userId=${userId}`
+    );
+    if (!response.ok) return Image_placeholder;
+
+    const blob = await response.blob();
+
+    return URL.createObjectURL(blob);
+  };
+  //Resize chatfooter and search
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
@@ -111,334 +265,310 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => resizeObserver.disconnect(); // Cleanup on unmount
   }, []);
 
-  const [allCurrentUserMessage, setAllCurrentUserMessage] = useState<MessageType[]>([])
-  const [chatInputValue, setChatInputValue] = useState<string>("")
+  const [chatInputValue, setChatInputValue] = useState<MessageType>({
+    senderId: currentUserId!,
+    receiverId: '',
+    timestamp: new Date().getTime(),
+    message: null,
+    read: false,
+    attachment: [],
+    roomId: ""
+  })
 
 
-  const [activeChat, setActiveChat] = useState<number | null>(null)
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  //Update messages when read from reciever
+  useEffect(() => {
+    if (!currentRoomId || userChatData.length === 0) return;
+
+    const currentRoomData = userChatData.find((a) => a.roomId === currentRoomId);
+    if (!currentRoomData) return;
+
+    if (_.isEqual(currentRoom, currentRoomData)) return; // Prevent duplicate updates
+
+    const lastMessage = currentRoomData.messages[currentRoomData.messages.length - 1];
+    if (lastMessage?.receiverId === currentUserId && homeSocket.current) {
+      homeSocket.current.emit('makeAllMessageRead', { roomId: currentRoomData.roomId });
+    }
+
+    setCurrentRoom((prev) => (_.isEqual(prev, currentRoomData) ? prev : currentRoomData));
+
+  }, [currentRoomId, userChatData, currentUserId]);
+
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const userChatData: ChatDataType[] = useMemo(() => {
-    // return []
-    return [
-      {
-        userType: 'doctors',
-        userData: {
-          userId: '2',
-          name: 'Megan Bird',
-          image: IMG02,
-          online: true,
-          idle: true,
-        },
-        messages: [
-          {
-            senderId: '2',
-            reciverId: '1',
-            message: 'I\'ll call you later',
-            time: new Date('2023-08-22 09:20:13.577+07:00'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'doctors',
-        userData: {
-          userId: '3',
-          name: 'Alvin Boykin',
-          image: IMG03,
-          online: false,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '1',
-            reciverId: '3',
-            message: 'Hello. What can I do for you?',
-            time: new Date('2023-08-19T17:30:13.577+07:00'),
-            read: false,
-            attachment: ''
-          },
-          {
-            senderId: '3',
-            reciverId: '1',
-            message: 'I\'m just looking around. Will you tell me something about yourself?',
-            time: new Date('2023-08-18T10:20:13.577+07:00'),
-            read: false,
-            attachment: [
-              {
-                src: IMG010,
-                name: 'placeholder.webp'
-              },
-              {
-                src: IMG09,
-                name: 'placeholder.webp'
-              },
-            ]
-          },
-          {
-            senderId: '3',
-            reciverId: '1',
-            message: 'Are you there? That time!',
-            time: new Date('Mon Aug 17 2023 08:39:16'),
-            read: false,
-            attachment: ''
-          },
-          {
-            senderId: '1',
-            reciverId: '3',
-            message: 'Where?',
-            time: new Date('2023-08-19T17:25:13.577+07:00'),
-            read: false,
-            attachment: ''
-          },
-          {
-            senderId: '1',
-            reciverId: '3',
-            message: 'OK, my name is Limingqiang. I like singing, playing basketballand so on.',
-            time: new Date('2023-08-19T19:20:13.577+07:00'),
-            read: false,
-            attachment: [
-              {
-                src: IMG010,
-                name: 'placeholder.webp'
-              },
-            ]
-          },
-          {
-            senderId: '3',
-            reciverId: '1',
-            message: `You wait for notice.
-            Consectetuorem ipsum dolor sit?
-            Ok?`,
-            time: new Date('2023-08-19T17:20:13.577+07:00'),
-            read: false,
-            attachment: ''
-          },
-          {
-            senderId: '3',
-            reciverId: '1',
-            message: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.`,
-            time: new Date('2023-08-19T17:20:13.577+07:00'),
-            read: false,
-            attachment: ''
-          },
-          {
-            senderId: '1',
-            reciverId: '3',
-            message: `Lorem ipsum dollar sit`,
-            time: new Date('2023-08-19T17:20:13.577+07:00'),
-            read: false,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'patient',
-        userData: {
-          userId: '4',
-          name: 'Kelsi Schultz',
-          image: IMG04,
-          online: true,
-          idle: true,
-        },
-        messages: [
-          {
-            senderId: '4',
-            reciverId: '3',
-            message: 'Thats very good UI design',
-            time: new Date('Mon Aug 21 2023 17:39:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'patient',
-        userData: {
-          userId: '5',
-          name: 'Sherri McCarthy',
-          image: IMG04,
-          online: false,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '5',
-            reciverId: '3',
-            message: 'Yesterday i completed the task',
-            time: new Date('Tue Aug 23 2023 12:31:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'patient',
-        userData: {
-          userId: '6',
-          name: 'Roger Loyd',
-          image: PatientImg1,
-          online: false,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'What is the major functionality?',
-            time: new Date('Tue Aug 17 2023 02:39:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'patient',
-        userData: {
-          userId: '7',
-          name: 'Francis Giordano',
-          image: PatientImg2,
-          online: false,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'This has allowed me to showcase not only my technical skills',
-            time: new Date('Tue Aug 22 2023 11:39:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'patient',
-        userData: {
-          userId: '8',
-          name: 'Kate Mason',
-          image: PatientImg4,
-          online: true,
-          idle: true,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'Let\'s talk briefly in the evening.',
-            time: new Date('Tue Jul 10 2023 10:59:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'patient',
-        userData: {
-          userId: '9',
-          name: 'Glenn Johnson',
-          image: PatientImg5,
-          online: true,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'Do you have any collections? If so, what of?',
-            time: new Date('Tue Aug 18 2023 13:29:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'doctors',
-        userData: {
-          userId: '10',
-          name: 'Megan Smith',
-          image: PatientImg3,
-          online: true,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'Connect the two modules with in 1 day.',
-            time: new Date('Tue Aug 12 2023 08:39:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-      {
-        userType: 'doctors',
-        userData: {
-          userId: '11',
-          name: 'Monty Smith',
-          image: PatientImg2,
-          online: true,
-          idle: false,
-        },
-        messages: [
-          {
-            senderId: '',
-            reciverId: '3',
-            message: 'Connect the two modules with in 1 day.',
-            time: new Date('Tue Jul 12 2022 23:39:16'),
-            read: true,
-            attachment: ''
-          },
-        ]
-      },
-
-    ]
-  }, [])
-
 
   useEffect(() => {
-    setTimeout(() => {
-      ref.current?.scrollIntoView({ behavior: 'smooth' });
+    if (currentRoomId !== null) {
+      setTimeout(() => {
+        lastRef.current?.scrollIntoView({ behavior: 'smooth' });
 
-    }, 100);
-  }, [activeChat, userChatData])
+      }, 100);
+    }
+  }, [currentRoomId, chatInputValue])
 
-  let weekdays: string[] = dayjs.updateLocale('en', {}).weekdays as string[]
-  const currentUserId = '1'
+  const sortLatestMessage: (userChatData: ChatDataType[]) => ChatDataType[] = (userChatData) => {
+    return [...userChatData].sort((a, b) => {
+      let lastMessageA = a?.messages?.length
+        ? a.messages.reduce((latest, msg) => (msg.timestamp > latest.timestamp ? msg : latest), a.messages[0])
+        : null;
+
+      let lastMessageB = b?.messages?.length
+        ? b.messages.reduce((latest, msg) => (msg.timestamp > latest.timestamp ? msg : latest), b.messages[0])
+        : null;
+
+      return (lastMessageB?.timestamp || 0) - (lastMessageA?.timestamp || 0);
+    });
+  };
+
+  const makeAllMessageRead = (roomId: string) => {
+    if (roomId !== "" && homeSocket.current) {
+      if (currentRoom !== null) {
+        if (currentRoom.messages.length !== 0) {
+          const lastMessageReciverId = currentRoom.messages[currentRoom.messages.length - 1].receiverId
+          if (lastMessageReciverId == currentUserId) {
+            homeSocket.current.emit('makeAllMessageRead', { roomId: roomId })
+          }
+        }
+      }
+    }
+  }
+
+
+  const onLeftUserClicked = (chatData: ChatDataType) => {
+    setCurrentRoomId(() => chatData.roomId)
+    makeAllMessageRead(chatData.roomId)
+  }
+
+
+  const onSendButtonClick = () => {
+    if (
+      (chatInputValue.message == null || chatInputValue.message.trim() === '') &&
+      chatInputValue.attachment.length == 0
+    ) return;
+    const receiverId = currentRoom?.createrData.userId === currentUserId
+      ? currentRoom?.receiverData?.userId
+      : currentRoom?.createrData?.userId;
+    const messageData: MessageType & { attachmentFiles: any[] } = {
+      senderId: currentUserId!,
+      receiverId: receiverId!,
+      timestamp: new Date().getTime(),
+      message: chatInputValue.message,
+      read: false,
+      attachment: chatInputValue.attachment,
+      roomId: currentRoomId!,
+      attachmentFiles: []
+    };
+
+    let uploadPromise = new Promise(async (uploadResolve) => {
+      let uploadAttachResolve: any;
+      let uploadAttachPromise = new Promise((r) => { uploadAttachResolve = r; });
+
+      if (chatInputValue.attachment.length > 0) {
+        let totalFiles = chatInputValue.attachment.length;
+        let processedFiles = 0;
+
+        chatInputValue.attachment.forEach((fileData) => {
+          fetch(fileData.src) // Convert blob URL to file
+            .then(res => res.blob())
+            .then(blob => {
+              let reader = new FileReader();
+              reader.onload = function () {
+                let buffer = new Uint8Array(reader.result as ArrayBuffer);
+
+                messageData.attachmentFiles.push({
+                  attachFile: buffer,
+                  attachFileName: fileData.name,
+                  attachFileExtentionNoDot: fileData.name.split('.').pop(),
+                  attachFileType: fileData.type || "application/octet-stream",
+                });
+
+                processedFiles++;
+                if (processedFiles === totalFiles) {
+                  uploadAttachResolve(true);
+                }
+              };
+              reader.readAsArrayBuffer(blob);
+            });
+        });
+      } else {
+        uploadAttachResolve(true);
+      }
+
+      Promise.all([uploadAttachPromise])
+        .then(() => uploadResolve(true))
+        .catch((_err) => { });
+    });
+
+    Promise.resolve(uploadPromise).then(async () => {
+
+
+      if (homeSocket.current) {
+        homeSocket.current.emit("sendMessage", messageData);
+        setTimeout(() => {
+          lastRefMinusOne.current?.scrollIntoView({ behavior: 'smooth' });
+
+        }, 100);
+      }
+    });
+    setChatInputValue({
+      senderId: currentUserId!,
+      receiverId: '',
+      timestamp: new Date().getTime(),
+      message: null,
+      read: false,
+      attachment: [],
+      roomId: ''
+    });
+  }
+  //Join all rooms at entrance
+  useEffect(() => {
+    if (homeSocket.current) {
+      userChatData.map((data) => {
+        homeSocket.current.emit("joinRoom", data.roomId);
+      })
+    }
+  }, [userChatData]);
+
+  useEffect(() => {
+    let isActive = true;
+    if (isActive && homeSocket.current) {
+      homeSocket.current.on("receiveMessage", (messageData: MessageType) => {
+        // setCurrentRoomId(messageData.roomId)
+        setUserChatData((prevState) => {
+          let newState = [...prevState];
+          const chatIndex = newState.findIndex(chat => chat.roomId === messageData.roomId);
+          if (chatIndex !== -1) {
+            newState[chatIndex].messages.push(messageData);
+          }
+          return newState
+        })
+        if (currentRoomId == messageData.roomId) {
+          setTimeout(() => {
+            // lastRef.current?.scrollIntoView({ behavior: 'smooth' });
+            lastRefMinusOne.current?.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      })
+    }
+    return () => {
+      isActive = false;
+    }
+  }, [homeSocket])
+
+
+
+  const handleClickInputFile = () => {
+    if (inputFileRef.current !== null) {
+      inputFileRef.current.click()
+    }
+
+  }
+
+
+  const handleChangeInputFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+
+    const files: File[] = Array.from(e.target.files);
+    const maxFiles = 5;
+
+    setChatInputValue((prevState) => {
+      const currentAttachments = prevState.attachment || [];
+
+      // Ensure we don't exceed maxFiles
+      if (files.length + currentAttachments.length > maxFiles) {
+        toast.error(`You can upload up to ${maxFiles} files`, {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        return prevState; // Return previous state to prevent changes
+      }
+
+      // Filter out files >2MB
+      const validFiles = files.filter((file) => file.size <= 2000000);
+
+      if (validFiles.length !== files.length) {
+        toast.error(`Some files exceed 2MB size limit`, {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+
+      return {
+        ...prevState,
+        attachment: [
+          ...currentAttachments, // Preserve previous attachments
+          ...validFiles.map((file) => ({
+            name: file.name,
+            src: URL.createObjectURL(file),
+            isImage: file.type.startsWith("image/"),
+            type: file.type,
+            id: ''
+          })),
+        ],
+      };
+    });
+  };
+
+  const downloadClick = (attach: AttachmentType) => {
+    const link = document.createElement("a");
+    link.href = attach.src;
+    link.download = attach.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+
   return (
     <ChatContext.Provider value={{
       searchInputWidth,
       inputGroupRef,
       footerHeight,
       chatFooterRef,
-      ref,
-      ref1,
-      allCurrentUserMessage,
-      setAllCurrentUserMessage,
+      lastRef,
+      lastRefMinusOne,
       chatInputValue,
       setChatInputValue,
-      activeChat,
-      setActiveChat,
       anchorEl,
       setAnchorEl,
       open,
       handleClick,
       handleClose,
+      makeAllMessageRead,
       userChatData,
+      setUserChatData,
       currentUserId,
       weekdays,
       voiceCallActive,
       voiceCallToggleFunction,
       videoCallActive,
       videoCallToggleFunction,
+      isLoading,
+      sortLatestMessage,
+      currentRoomId,
+      setCurrentRoomId,
+      currentRoom,
+      setCurrentRoom,
+      onLeftUserClicked,
+      onSendButtonClick,
+      inputFileRef,
+      handleClickInputFile,
+      handleChangeInputFile,
+      callReceiverUserData,
+      downloadClick
     }}>
       {children}
     </ChatContext.Provider>
