@@ -1,4 +1,4 @@
-import React, { createContext, RefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, RefObject, useContext, useEffect, MouseEvent, useRef, useState } from "react";
 import _ from 'lodash'
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -92,6 +92,13 @@ interface ChatContextType {
   handleChangeInputFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
   callReceiverUserData: ChatUserType | null;
   downloadClick: (attach: AttachmentType) => void;
+  deleteButtonClicked: (e: MouseEvent<HTMLButtonElement>) => void;
+  deleteConfirmationShow: boolean;
+  setDeleteConfirmationShow: React.Dispatch<React.SetStateAction<boolean>>;
+  deleteSubmited: () => void;
+  setDeleteType: React.Dispatch<React.SetStateAction<string | number | null>>;
+  showSnackBar: { show: boolean, text: string };
+  setShowSnakBar: React.Dispatch<React.SetStateAction<{ show: boolean, text: string }>>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
@@ -110,20 +117,22 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const inputFileRef = useRef<HTMLInputElement>(null)
   const [footerHeight, setFooterHeight] = useState<number>(0)
   const [searchInputWidth, setSearchInputWidth] = useState<number>(0);
-  const [voiceCallActive, setVoiceCallActive] = useState<boolean>(false)
-  const [videoCallActive, setVideoCallActive] = useState<boolean>(false)
-  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
-  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
-  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
-  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
-  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  const [voiceCallActive, setVoiceCallActive] = useState<boolean>(false);
+  const [videoCallActive, setVideoCallActive] = useState<boolean>(false);
+  const [deleteConfirmationShow, setDeleteConfirmationShow] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false)
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(null)
   const [currentRoom, setCurrentRoom] = useState<ChatDataType | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [userChatData, setUserChatData] = useState<ChatDataType[]>([])
   const [callReceiverUserData, setCallReceiverUserData] = useState<ChatUserType | null>(null)
-
+  const [deleteType, setDeleteType] = useState<string | number | null>(null);
+  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
+  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
+  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
+  const [showSnackBar, setShowSnakBar] = useState<{ show: boolean, text: string }>({ show: false, text: '' })
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   let weekdays: string[] = dayjs.updateLocale('en', {}).weekdays as string[]
@@ -194,34 +203,64 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             return { ...room, messages: updatedMessages };
           }));
+          // setUserChatData((prevState) => {
+          //   const newState = [...prevState];
+
+          //   updatedRooms.forEach((room) => {
+          //     const existingRoomIndex = _.findIndex(newState, { _id: room._id });
+          //     if (existingRoomIndex === -1) {
+          //       // Room does not exist, add it
+          //       newState.push(room);
+          //     } else {
+          //       // Room exists, compare receiverData and createrData
+          //       const existingRoom = newState[existingRoomIndex];
+          //       if (
+          //         !_.isEqual(existingRoom.receiverData, room.receiverData) ||
+          //         !_.isEqual(existingRoom.createrData, room.createrData) ||
+          //         !_.isEqual(existingRoom.messages, room.messages)
+          //       ) {
+          //         // Update the receiverData and createrData if they are different
+          //         newState[existingRoomIndex] = {
+          //           ...existingRoom,
+          //           receiverData: room.receiverData,
+          //           createrData: room.createrData,
+          //           messages: room.messages
+          //         };
+          //       }
+          //     }
+          //   });
+
+          //   return newState;
+          // });
           setUserChatData((prevState) => {
-            const newState = [...prevState];
+            const newState = updatedRooms.map((room) => {
+              const existingRoom = prevState.find((r) => r._id === room._id);
 
-            updatedRooms.forEach((room) => {
-              const existingRoomIndex = _.findIndex(newState, { _id: room._id });
-              if (existingRoomIndex === -1) {
-                // Room does not exist, add it
-                newState.push(room);
-              } else {
-                // Room exists, compare receiverData and createrData
-                const existingRoom = newState[existingRoomIndex];
-                if (
-                  !_.isEqual(existingRoom.receiverData, room.receiverData) ||
-                  !_.isEqual(existingRoom.createrData, room.createrData) ||
-                  !_.isEqual(existingRoom.messages, room.messages)
-                ) {
-                  // Update the receiverData and createrData if they are different
-                  newState[existingRoomIndex] = {
-                    ...existingRoom,
-                    receiverData: room.receiverData,
-                    createrData: room.createrData,
-                    messages: room.messages
-                  };
-                }
+              if (!existingRoom) {
+                return room; // New room
               }
-            });
 
-            return newState;
+              // Update room if data has changed
+              if (
+                !_.isEqual(existingRoom.receiverData, room.receiverData) ||
+                !_.isEqual(existingRoom.createrData, room.createrData) ||
+                !_.isEqual(existingRoom.messages, room.messages)
+              ) {
+                return {
+                  ...existingRoom,
+                  receiverData: room.receiverData,
+                  createrData: room.createrData,
+                  messages: room.messages
+                };
+              }
+
+              return existingRoom; // No changes, return the existing room
+            });
+            const finalResult = newState.filter((room) => updatedRooms.some((r) => r._id === room._id))
+            // const isDeletedCurrentRoom = finalResult.some((a) => a.roomId !== currentRoomId)
+            // console.log(isDeletedCurrentRoom && currentRoom !== null)
+            // Ensure removed rooms are also removed from the state
+            return finalResult;
           });
           setIsLoading(false)
           homeSocket.current.once(`updateGetUserRooms`, () => {
@@ -275,7 +314,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     roomId: ""
   })
 
+  // clear on delete room
+  useEffect(() => {
 
+    if (currentRoom !== null && currentRoomId !== null) {
+      if (currentRoom.createrData.userId !== currentUserId) {
+        const isCurrentRoomDelete = !userChatData.some((room) => room.roomId === currentRoomId);
+        if (isCurrentRoomDelete) {
+          setCurrentRoom(null)
+          setCurrentRoomId(null)
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userChatData,])
   //Update messages when read from reciever
   useEffect(() => {
     if (!currentRoomId || userChatData.length === 0) return;
@@ -292,7 +344,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setCurrentRoom((prev) => (_.isEqual(prev, currentRoomData) ? prev : currentRoomData));
 
-  }, [currentRoomId, userChatData, currentUserId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRoomId, userChatData, currentUserId, homeSocket]);
 
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -303,12 +356,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    if (currentRoomId !== null) {
-      setTimeout(() => {
-        lastRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // if (currentRoomId !== null) {
+    //   setTimeout(() => {
+    //     lastRef.current?.scrollIntoView({ behavior: 'smooth' });
 
-      }, 100);
-    }
+    //   }, 100);
+    // }
   }, [currentRoomId, chatInputValue])
 
   const sortLatestMessage: (userChatData: ChatDataType[]) => ChatDataType[] = (userChatData) => {
@@ -409,10 +462,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (homeSocket.current) {
         homeSocket.current.emit("sendMessage", messageData);
-        setTimeout(() => {
-          lastRefMinusOne.current?.scrollIntoView({ behavior: 'smooth' });
+        console.log()
+        // setTimeout(() => {
+        //   lastRefMinusOne.current?.scrollIntoView({ behavior: 'smooth' });
 
-        }, 100);
+        // }, 100);
       }
     });
     setChatInputValue({
@@ -432,13 +486,16 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         homeSocket.current.emit("joinRoom", data.roomId);
       })
     }
-  }, [userChatData]);
+  }, [homeSocket, userChatData]);
 
   useEffect(() => {
     let isActive = true;
     if (isActive && homeSocket.current) {
-      homeSocket.current.on("receiveMessage", (messageData: MessageType) => {
-        // setCurrentRoomId(messageData.roomId)
+      homeSocket.current.once("receiveMessage", (messageData: MessageType) => {
+
+        // if (messageData.roomId === currentRoomId && messageData.receiverId === currentUserId) {
+        //   console.log('theyre same should be read')
+        // }
         setUserChatData((prevState) => {
           let newState = [...prevState];
           const chatIndex = newState.findIndex(chat => chat.roomId === messageData.roomId);
@@ -447,18 +504,18 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
           return newState
         })
-        if (currentRoomId == messageData.roomId) {
-          setTimeout(() => {
-            // lastRef.current?.scrollIntoView({ behavior: 'smooth' });
-            lastRefMinusOne.current?.scrollIntoView({ behavior: 'smooth' });
-          }, 100);
-        }
+        // if (currentRoomId == messageData.roomId) {
+        //   setTimeout(() => {
+        //     // lastRef.current?.scrollIntoView({ behavior: 'smooth' });
+        //     lastRefMinusOne.current?.scrollIntoView({ behavior: 'smooth' });
+        //   }, 100);
+        // }
       })
     }
     return () => {
       isActive = false;
     }
-  }, [homeSocket])
+  }, [currentRoomId, homeSocket])
 
 
 
@@ -532,6 +589,74 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
 
+  const deleteButtonClicked = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    e.stopPropagation();
+    setDeleteConfirmationShow(true)
+  }
+
+  const deleteSubmited = () => {
+    if (homeSocket.current && deleteType !== null) {
+      const roomId = typeof deleteType == "string" ? deleteType : currentRoomId;
+      const serverDeleteType = typeof deleteType == "string" ? "room" : "message"
+      homeSocket.current.emit('deleteChat',
+        {
+          deleteType: serverDeleteType,
+          currentUserId,
+          roomId,
+          valueToSearch: deleteType
+        })
+      homeSocket.current.once("deleteChatReturn", async (msg: { status: number, reason?: string, message?: string }) => {
+        const { status, reason, message } = msg;
+        if (status !== 200) {
+
+          setDeleteConfirmationShow(false)
+          setDeleteType(null)
+          toast.error(reason || message || `Error ${status} find Doctor`, {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: bounce,
+            onClose: () => {
+            }
+          });
+        } else {
+          // clear current room id on delete
+          if (serverDeleteType == "room" && roomId === currentRoomId) {
+            setCurrentRoomId(null);
+            setCurrentRoom(null)
+          }
+          setDeleteConfirmationShow(false)
+          setDeleteType(null)
+          setShowSnakBar(() => {
+            return {
+              text: message || "Delete Succefully",
+              show: true,
+            }
+          })
+          // toast.info(message, {
+          //   position: "bottom-center",
+          //   autoClose: 5000,
+          //   hideProgressBar: false,
+          //   closeOnClick: true,
+          //   pauseOnHover: true,
+          //   draggable: true,
+          //   progress: undefined,
+          //   transition: bounce,
+          //   onClose: () => {
+
+          //   }
+          // });
+        }
+      })
+    }
+  }
+
+
   return (
     <ChatContext.Provider value={{
       searchInputWidth,
@@ -568,7 +693,14 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       handleClickInputFile,
       handleChangeInputFile,
       callReceiverUserData,
-      downloadClick
+      downloadClick,
+      deleteButtonClicked,
+      deleteConfirmationShow,
+      setDeleteConfirmationShow,
+      deleteSubmited,
+      setDeleteType,
+      showSnackBar,
+      setShowSnakBar
     }}>
       {children}
     </ChatContext.Provider>

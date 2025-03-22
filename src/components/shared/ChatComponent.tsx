@@ -15,18 +15,20 @@ import duration from 'dayjs/plugin/duration'
 import weekday from 'dayjs/plugin/weekday'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import CustomNoRowsOverlay from './CustomNoRowsOverlay';
-import { Avatar, useTheme } from '@mui/material';
-import { useSelector } from 'react-redux';
-import { AppState } from '@/redux/store';
+import { useTheme } from '@mui/material';
+import Avatar from '@mui/material/Avatar'
+import DialogContent from '@mui/material/DialogContent'
+import Stack from '@mui/material/Stack'
 import { LoadingComponent, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
 import DoctorsAutoComplete from './DoctorsAutoComplete';
-import { AttachmentType, ChatDataType, ChatUserType, ITEM_HEIGHT, menuOptions, MessageType, useChat } from '@/hooks/useChat';
-import { BootstrapDialog, Transition } from './Dialog';
+import { ChatDataType, ChatUserType, ITEM_HEIGHT, menuOptions, MessageType, useChat } from '@/hooks/useChat';
+import { BootstrapDialog, BootstrapDialogTitle, Transition } from './Dialog';
 import UploadFile from '@mui/icons-material/UploadFile';
-import { toast } from 'react-toastify';
+import Snackbar from '@mui/material/Snackbar'
 import { DeleteForever, Send } from '@mui/icons-material';
 import { truncateString } from '../DoctorsSections/CheckOut/Invoice';
 import { decrypt } from '@/helpers/encryptDecrypt';
+import useScssVar from '@/hooks/useScssVar';
 
 export function escapeRegExp(value: string) {
   return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -37,7 +39,7 @@ export interface ChatComponentType {
 }
 
 const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
-
+  const { muiVar } = useScssVar()
 
   dayjs.extend(relativeTime)
   dayjs.extend(duration)
@@ -51,7 +53,13 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
     videoCallActive,
     videoCallToggleFunction,
     currentRoom,
-    callReceiverUserData
+    callReceiverUserData,
+    deleteConfirmationShow,
+    setDeleteConfirmationShow,
+    deleteSubmited,
+    setDeleteType,
+    showSnackBar,
+    setShowSnakBar
   } = useChat()
 
 
@@ -86,6 +94,67 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
       {videoCallActive &&
         <CallDialog callType='Video' open={videoCallActive} toggleFunction={videoCallToggleFunction} callReceiverUserData={callReceiverUserData} />
       }
+
+      {deleteConfirmationShow && <BootstrapDialog
+        TransitionComponent={Transition}
+        onClose={(event, reason) => {
+          if (reason == 'backdropClick') return false;
+          document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+
+          setTimeout(() => {
+            setDeleteConfirmationShow(false)
+          }, 500);
+        }}
+        aria-labelledby="edit_invoice_details"
+        open={deleteConfirmationShow}
+      >
+        <BootstrapDialogTitle
+          id="edit_invoice_details" onClose={() => {
+            document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+
+            setTimeout(() => {
+              setDeleteConfirmationShow(false)
+              setDeleteType(null)
+            }, 500);
+          }}>
+          <Stack>
+            <span>Delete</span>
+
+          </Stack>
+        </BootstrapDialogTitle>
+        <DialogContent dividers>
+          <h4 className="modal-title" style={{ display: 'flex', justifyContent: 'center' }}>Delete</h4>
+          <p className="mb-4" style={{ display: 'flex', justifyContent: 'center' }}>Are you sure to delete  this record?</p>
+          <span style={{ ...muiVar, display: 'flex', justifyContent: 'center' }}><button type="button" className="btnLogin mx-1"
+            onClick={() => {
+              deleteSubmited()
+            }}>Delete </button>
+            <button type="button" className="btnLogout" style={muiVar}
+              onClick={() => {
+                document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+
+                setTimeout(() => {
+                  setDeleteConfirmationShow(false)
+                  setDeleteType(null)
+                }, 500);
+
+              }}>Cancell</button>
+          </span>
+        </DialogContent>
+      </BootstrapDialog>}
+      {showSnackBar.show && <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        open={showSnackBar.show}
+        onClose={() => setShowSnakBar({ show: false, text: "" })}
+        autoHideDuration={1000}
+        sx={{
+          "& .MuiPaper-root": {
+            bgcolor: 'background.paper',
+            color: "text.color"
+          }
+        }}
+        message={showSnackBar.text}
+      />}
     </Fragment>
   )
 })
@@ -183,6 +252,7 @@ const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatD
   let numberOfNotRead = chatData?.messages.filter((a) => !a.read).length;
   let unreadMessagesLength = (numberOfNotRead == 0 ? '' : numberOfNotRead);
   const profileToShow = chatData.createrData.userId == currentUserId ? chatData.receiverData : chatData.createrData
+
   return (
     <Fragment key={index}>
       <Link href="#"
@@ -191,6 +261,7 @@ const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatD
           onLeftUserClicked(chatData)
         }}
         className={`media d-flex  ${currentRoomId !== null && currentRoomId == chatData.roomId ? 'read-chat active' : ''}`} >
+        <DeleteMessageButton deleteType={chatData.roomId} />
         <div className="media-img-wrap">
           <StyledBadge
             overlap="circular"
@@ -213,7 +284,7 @@ const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatD
             </div>
             <span style={{ display: 'flex', alignItems: 'center', }}>
               <div className="user-last-chat" >
-                {decrypt(lastMessage?.['message']!)}
+                {lastMessage?.["message"] && decrypt(lastMessage["message"])}
               </div>
               <ReadStatusComponent lastMessage={lastMessage} />
             </span>
@@ -224,11 +295,12 @@ const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatD
                   const isBlob = attach.src && attach.src.startsWith("blob:");
                   return (
                     <div className="chat-attachment chat-attachment-left-side" key={`${i} ${index}`} onClick={() => { downloadClick(attach) }} >
-                      {/* <img src={attach.isImage ? attach.src : getFileIcon(attach.type)} alt="Attachment" /> */}
-                      <img
-                        src={isBlob ? attach.src : getFileIcon(attach.type)} // Use icon/placeholder until blob is ready
-                        alt="Attachment"
-                      />
+                      {isBlob &&
+                        <img
+                          src={attach.isImage ? attach.src : getFileIcon(attach.type)} // Use icon/placeholder until blob is ready
+                          alt="Attachment"
+                        />
+                      }
                       <div className="user-last-chat" style={{ marginLeft: 3, paddingInline: 10 }}>{attach.name}</div>
                     </div>
                   )
@@ -250,6 +322,22 @@ const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatD
         </div>
       </Link>
     </Fragment>
+  )
+})
+
+const DeleteMessageButton: FC<{ deleteType: string | number }> = (({ deleteType }) => {
+  const { deleteButtonClicked, setDeleteType } = useChat();
+  return (
+    <IconButton
+      disableFocusRipple
+      disableRipple
+      disableTouchRipple
+      className='delete-whole-chat' onClick={(e) => {
+        deleteButtonClicked(e)
+        setDeleteType(deleteType)
+      }}>
+      <DeleteForever sx={{ fontSize: 16, color: 'crimson' }} />
+    </IconButton>
   )
 })
 
@@ -275,6 +363,7 @@ const ChatLeftNoChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatDa
           onLeftUserClicked(chatData)
         }}
         className={`media d-flex  ${currentRoomId !== null && currentRoomId == chatData.roomId ? 'read-chat active' : ''}`} >
+        <DeleteMessageButton deleteType={chatData.roomId} />
         <div className="media-img-wrap">
           <StyledBadge
             overlap="circular"
@@ -707,9 +796,10 @@ export const ChatRightMessageWithoutAttachment: FC<{ mesage: MessageType }> = ((
           <div className="media-body flex-grow-1">
             <div className="msg-box" >
               <div >
+                {currentUserId === mesage.senderId && <DeleteMessageButton deleteType={mesage.timestamp} />}
                 <p style={{ marginBottom: 'unset' }}
                   ref={currentRoom.messages[currentRoom.messages.length - 1].message == mesage.message ? lastRef : lastRefMinusOne}>
-                  {decrypt(mesage.message!)}
+                  {mesage.message && decrypt(mesage.message)}
                 </p>
                 <ul className="chat-msg-info">
                   <li>
@@ -750,17 +840,19 @@ export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType }> = (({ m
             <div className="msg-box">
               <div>
                 <div className="chat-msg-attachments">
+                  {currentUserId === mesage.senderId && <DeleteMessageButton deleteType={mesage.timestamp} />}
                   {
                     mesage.attachment.map((attach, index) => {
                       const isBlob = attach.src && attach.src.startsWith("blob:");
 
                       return (
                         <div className="chat-attachment" key={index}>
-                          {/* <img src={attach.isImage ? attach.src : getFileIcon(attach.type)} alt="Attachment" /> */}
-                          <img
-                            src={isBlob ? attach.src : getFileIcon(attach.type)} // Use icon/placeholder until blob is ready
-                            alt="Attachment"
-                          />
+                          {isBlob &&
+                            <img
+                              src={attach.isImage ? attach.src : getFileIcon(attach.type)} // Use icon/placeholder until blob is ready
+                              alt="Attachment"
+                            />
+                          }
                           <div className="chat-attach-caption">{truncateString(attach.name, 5)}</div>
 
                           <button
@@ -777,7 +869,7 @@ export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType }> = (({ m
                 <div >
                   <p style={{ marginBottom: 'unset' }}
                     ref={currentRoom.messages[currentRoom.messages.length - 1].message == mesage.message ? lastRef : lastRefMinusOne}>
-                    {decrypt(mesage.message!)}
+                    {mesage.message && decrypt(mesage.message)}
                   </p>
                   <ul className="chat-msg-info">
                     <li>

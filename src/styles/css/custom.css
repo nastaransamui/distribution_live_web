@@ -19344,6 +19344,11 @@ call-btn:focus {
   min-height: calc(100vh - 324px);
   max-height: calc(100vh - 324px);
   overflow-y: auto;
+  
+}
+.chat-users-list .chat-scroll{
+  
+  box-shadow: inset -1px 0 0 var(--secondaryMain);
 }
 
 .chat-window .chat-cont-right {
@@ -19843,6 +19848,7 @@ call-btn:focus {
   width: 100%;
   margin: 0 -1px;
   padding: 4px 0;
+  position: relative;
 }
 
 .chat-msg-attachments > div {
@@ -46212,7 +46218,9 @@ svg.feather {
 .new-chat-cont-left .chat-header,
 .new-chat-cont-right .chat-header {
   background-color: var(--bgPaper);
-  border: 1px solid var(--secondaryMain);
+  border-top: 1px solid var(--secondaryMain);
+  border-right: 1px solid var(--secondaryMain);
+  border-bottom: 1px solid var(--secondaryMain);
   min-height: 72px;
   padding: 0 15px;
   display: flex;
@@ -46230,6 +46238,7 @@ svg.feather {
 .new-chat-cont-left .chat-search {
   background-color: var(--bgPaper);
   border-bottom: 1px solid var(--secondaryMain);
+  border-right: 1px solid var(--secondaryMain);
   padding: 10px 15px;
   width: 100%;
 }
@@ -46269,6 +46278,8 @@ svg.feather {
   text-align: left;
   align-items: flex-start;
   padding: 10px 15px;
+  border-right: 1px solid var(--secondaryMain);
+  border-top: 1px solid var(--secondaryMain);
 }
 .new-chat-cont-left .chat-header span {
   font-size: 20px;
@@ -46296,6 +46307,37 @@ svg.feather {
   -webkit-transition: all 0.2s ease 0s;
   -ms-transition: all 0.2s ease 0s;
   transition: all 0.2s ease 0s;
+  position: relative;
+}
+
+.new-chat-window .new-chat-cont-left .chat-users-list a.media .delete-whole-chat,
+.chat-msg-attachments .delete-whole-chat,
+.msg-box div .delete-whole-chat{
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: 0px;
+  z-index: 4;
+  height: 100%;
+  background-color: var(--bgPaper);
+  border-radius: 0px;
+  visibility: hidden;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease-in-out;
+}
+.msg-box div .delete-whole-chat{
+  background-color: var(--primaryMain);
+}
+/* On Hover, Show with Animation */
+.new-chat-window .new-chat-cont-left .chat-users-list a.media:hover .delete-whole-chat,
+.chat-msg-attachments:hover .delete-whole-chat,
+.msg-box div:hover .delete-whole-chat {
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0s; 
+  max-width: 10%;
 }
 
 .new-chat-window .new-chat-cont-left .chat-users-list a.media:last-child {
@@ -46379,15 +46421,43 @@ svg.feather {
 .new-chat-window .new-chat-cont-right .chat-body {
   background-color: var(--bgDefault);
   border-right: 1px solid var(--secondaryMain);
-  border-left: 1px solid var(--secondaryMain);
+  /* border-left: 1px solid var(--secondaryMain); */
 }
 
-.new-chat-window .chat-scroll {
+.chat-users-list .chat-scroll {
   max-height: calc(100vh - 10px);
   min-height: calc(100vh - 10px);
   overflow-y: auto;
 }
 
+.chat-body .chat-scroll{
+  max-height: calc(100vh - 10px);
+  min-height: calc(100vh - 10px);
+  display: flex;
+  flex-direction: column-reverse; /* Keeps the latest message at the bottom */
+  overflow-y: auto;
+
+}
+
+/* Webkit-based browsers (Chrome, Edge, Safari) */
+.new-chat-window .chat-scroll::-webkit-scrollbar {
+  width: 0px; /* Hides scrollbar width */
+  background: transparent; /* Transparent scrollbar background */
+}
+
+.new-chat-window .chat-scroll::-webkit-scrollbar-thumb {
+  background: transparent; /* Transparent scrollbar thumb */
+}
+
+/* Firefox */
+.new-chat-window .chat-scroll {
+  scrollbar-width: none; /* Hides scrollbar in Firefox */
+}
+
+/* Edge and IE */
+.new-chat-window .chat-scroll {
+  -ms-overflow-style: none; /* Hides scrollbar in IE & Edge */
+}
 .new-chat-window .new-chat-cont-right .chat-body ul.list-unstyled {
   width: 100%;
   margin: 0 auto;
@@ -46528,12 +46598,17 @@ svg.feather {
 .new-chat-window .new-chat-cont-right .chat-footer {
   background-color: var(--bgPaper);
   position: relative;
-  border: 1px solid var(--secondaryMain);
+  border-top: 1px solid var(--secondaryMain);
+  border-right: 1px solid var(--secondaryMain);
+  border-bottom: 1px solid var(--secondaryMain);
+  box-shadow: inset 1px 0 0 var(--secondaryMain);
+  margin-left: -1px;
   padding: 10px 15px;
 }
 
 .new-chat-window .new-chat-cont-left .chat-users-list a.media:hover {
   background-color: var(--bgDefault);
+  border-right: 1px solid var(--secondaryMain);
 }
 
 .new-chat-window
@@ -46545,7 +46620,9 @@ svg.feather {
   .last-chat-time {
   color: var(--color);
 }
-
+.new-chat-window .new-chat-cont-left .chat-users-list a.media.active:hover{
+  border-right: transparent;
+}
 .new-chat-window .new-chat-cont-left .chat-users-list a.media.active {
   background-color: var(--bgDefault);
 }
