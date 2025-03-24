@@ -1,8 +1,8 @@
 
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import Link from 'next/link';
-import { doctor_17, doctors_profile } from '@/public/assets/imagepath';
+import { doctors_profile } from '@/public/assets/imagepath';
 import IconButton from '@mui/material/IconButton'
 import TextField from '@mui/material/TextField'
 import FormControl from '@mui/material/FormControl';
@@ -15,7 +15,8 @@ import duration from 'dayjs/plugin/duration'
 import weekday from 'dayjs/plugin/weekday'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import CustomNoRowsOverlay from './CustomNoRowsOverlay';
-import { useTheme } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import DialogContent from '@mui/material/DialogContent'
 import Stack from '@mui/material/Stack'
@@ -29,7 +30,9 @@ import { DeleteForever, Send } from '@mui/icons-material';
 import { truncateString } from '../DoctorsSections/CheckOut/Invoice';
 import { decrypt } from '@/helpers/encryptDecrypt';
 import useScssVar from '@/hooks/useScssVar';
-
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import EditIcon from '@mui/icons-material/Edit';
+import _ from 'lodash';
 export function escapeRegExp(value: string) {
   return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
@@ -45,7 +48,7 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
   dayjs.extend(duration)
   dayjs.extend(weekday)
   dayjs.extend(updateLocale)
-
+  const minWidth768 = useMediaQuery('(min-width:768px)');
   const {
     footerHeight,
     voiceCallActive,
@@ -67,9 +70,11 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
     <Fragment>
       <div className="col-md-12 col-lg-12 col-xl-12">
         <div className="new-chat-window row g-0">
-          <div style={{ minHeight: `calc(100vh + ${footerHeight}px)` }}
-            className="new-chat-cont-left col-xl-4">
-
+          <div style={{ minHeight: minWidth768 ? `calc(100vh + ${footerHeight}px)` : '131px' }}
+            className="new-chat-cont-left col-xl-4 col-md-4">
+            {!minWidth768 &&
+              <MobileShowSearchButton />
+            }
             <ChatLeftHeader />
 
             <ChatLeftSearch userType={userType} />
@@ -79,7 +84,7 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
 
           <div
             style={{ minHeight: `calc(100vh + ${footerHeight}px)` }}
-            className={`new-chat-cont-right ${currentRoom == null ? 'new-chat-cont-right-empty' : ''} col-xl-8`}>
+            className={`new-chat-cont-right ${currentRoom == null ? 'new-chat-cont-right-empty' : ''} col-xl-8 col-md-8`}>
             <ChatRightHeader />
 
             <ChatRightBody />
@@ -156,6 +161,40 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
         message={showSnackBar.text}
       />}
     </Fragment>
+  )
+})
+
+const MobileShowSearchButton: FC = (() => {
+
+  const onClick = () => {
+
+    const chatLeft = document.querySelector(".new-chat-cont-left");
+    if (chatLeft) {
+      chatLeft.classList.toggle("new-chat-cont-left-active");
+    }
+    const chatScrol = document.querySelector('.chat-scroll');
+    if (chatScrol) {
+      chatScrol.classList.toggle('chat-scroll-active')
+    }
+    const chatUserList = document.querySelector('.chat-users-list');
+    if (chatUserList) {
+      chatUserList.classList.toggle('chat-users-list-active')
+    }
+
+  }
+  return (
+    <IconButton
+      disableFocusRipple
+      disableRipple
+      disableTouchRipple
+      sx={{
+        position: 'absolute',
+        right: 4,
+        top: 14
+      }}
+      onClick={onClick}>
+      <ManageSearchIcon sx={{ color: "secondary.main" }} />
+    </IconButton>
   )
 })
 
@@ -325,19 +364,53 @@ const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatD
   )
 })
 
-const DeleteMessageButton: FC<{ deleteType: string | number }> = (({ deleteType }) => {
-  const { deleteButtonClicked, setDeleteType } = useChat();
+const DeleteMessageButton: FC<{ deleteType: string | number, mesage?: MessageType }> = (({ deleteType, mesage }) => {
+  const { deleteButtonClicked, setDeleteType, setEditChatInputValue, setIsEdit, isEdit } = useChat();
   return (
-    <IconButton
-      disableFocusRipple
-      disableRipple
-      disableTouchRipple
-      className='delete-whole-chat' onClick={(e) => {
-        deleteButtonClicked(e)
-        setDeleteType(deleteType)
-      }}>
-      <DeleteForever sx={{ fontSize: 16, color: 'crimson' }} />
-    </IconButton>
+    <span className='delete-whole-chat'>
+      <IconButton
+        disableFocusRipple
+        disableRipple
+        disableTouchRipple
+
+        onClick={(e) => {
+          deleteButtonClicked(e)
+          setDeleteType(deleteType)
+        }}>
+        <DeleteForever sx={{ fontSize: 16, color: 'crimson' }} />
+      </IconButton>
+      <IconButton
+        disableFocusRipple
+        disableRipple
+        disableTouchRipple
+        onClick={(e) => {
+          if (mesage) {
+            if (!isEdit) {
+              setIsEdit(true)
+              setEditChatInputValue(() => {
+                return {
+                  ...mesage,
+                  message: mesage.message ? decrypt(mesage.message) : ""
+                }
+              })
+            } else {
+              setIsEdit(false);
+              setTimeout(() => {
+                setIsEdit(true)
+                setEditChatInputValue(() => {
+                  return {
+                    ...mesage,
+                    message: mesage.message ? decrypt(mesage.message) : ""
+                  }
+                })
+              }, 50);
+            }
+
+          }
+        }}>
+        <EditIcon sx={{ fontSize: 16, color: "secondary.main" }} />
+      </IconButton>
+    </span>
   )
 })
 
@@ -539,10 +612,10 @@ export const ChatRightBody: FC = (() => {
                           <ChatRightBodyDateComponent mesage={mesage} index={index} />
                           {
                             mesage.message !== null && mesage.attachment.length == 0 ?
-                              <ChatRightMessageWithoutAttachment mesage={mesage} />
+                              <ChatRightMessageWithoutAttachment mesage={mesage} index={index} />
 
                               :
-                              <ChatRightMessageWithAttachment mesage={mesage} />
+                              <ChatRightMessageWithAttachment mesage={mesage} index={index} />
                           }
                         </Fragment>
                       )
@@ -565,9 +638,14 @@ export const ChatRightFooter: FC = (() => {
     setChatInputValue,
     currentRoomId,
     onSendButtonClick,
+    onEditButtonClick,
     inputFileRef,
     handleClickInputFile,
     handleChangeInputFile,
+    isEdit,
+    setEditChatInputValue,
+    editChatInputValue,
+    onCancelEdit
   } = useChat()
   const theme = useTheme()
   return (
@@ -584,7 +662,11 @@ export const ChatRightFooter: FC = (() => {
               required
               placeholder={currentRoomId == null ? "Select user to chat" : "Type something"}
               disabled={currentRoomId == null}
-              value={chatInputValue.message == null ? '' : chatInputValue.message}
+              value={
+                isEdit ?
+                  editChatInputValue.message == null ? "" : editChatInputValue.message :
+                  chatInputValue.message == null ? '' : chatInputValue.message
+              }
               sx={{
                 width: "100%",
                 wordWrap: "break-word",
@@ -593,14 +675,28 @@ export const ChatRightFooter: FC = (() => {
               }}
               multiline
               fullWidth
-              onChange={(e) => setChatInputValue((prevState) => ({ ...prevState, message: e.target.value }))}
+              onChange={(e) => {
+                if (isEdit) {
+                  setEditChatInputValue((prevState) => ({ ...prevState, message: e.target.value }))
+                } else {
+                  setChatInputValue((prevState) => ({ ...prevState, message: e.target.value }))
+                }
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   if (e.ctrlKey) {
-                    setChatInputValue((prevState) => ({ ...prevState, message: prevState.message + "\n" }))
+                    if (isEdit) {
+                      setEditChatInputValue((prevState) => ({ ...prevState, message: prevState.message + "\n" }))
+                    } else {
+                      setChatInputValue((prevState) => ({ ...prevState, message: prevState.message + "\n" }))
+                    }
                   } else {
                     e.preventDefault();
-                    onSendButtonClick();
+                    if (isEdit) {
+                      onEditButtonClick();
+                    } else {
+                      onSendButtonClick();
+                    }
                   }
                 }
               }}
@@ -612,25 +708,45 @@ export const ChatRightFooter: FC = (() => {
                       disableRipple
                       disableTouchRipple
                       disabled={currentRoomId == null}
-                      onClick={(e) => onSendButtonClick()}>
-                      <Send sx={{
-                        color: currentRoomId == null ? theme.palette.text.disabled : theme.palette.primary.main
-                      }} />
+                      onClick={(e) => {
+                        if (isEdit) {
+                          onEditButtonClick();
+                        } else {
+                          onSendButtonClick();
+                        }
+                      }}>
+                      {
+                        isEdit ?
+                          <EditIcon sx={{
+                            color: currentRoomId == null ? theme.palette.text.disabled : theme.palette.primary.main
+                          }} /> :
+                          <Send sx={{
+                            color: currentRoomId == null ? theme.palette.text.disabled : theme.palette.primary.main
+                          }} />
+                      }
                     </IconButton>
                   </InputAdornment>
                 ),
                 startAdornment: (
                   <InputAdornment position="start">
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <UploadFile
-                        sx={{
-                          color: currentRoomId == null
-                            ? theme.palette.text.disabled
-                            : theme.palette.primary.main,
-                          cursor: currentRoomId == null ? "unset" : "pointer",
-                        }}
-                        onClick={() => currentRoomId !== null && handleClickInputFile()}
-                      />
+                      {
+                        isEdit ?
+
+                          <DeleteForever sx={{ color: 'crimson', cursor: 'pointer' }} onClick={(e) => {
+                            onCancelEdit()
+                          }} />
+                          :
+                          <UploadFile
+                            sx={{
+                              color: currentRoomId == null
+                                ? theme.palette.text.disabled
+                                : theme.palette.primary.main,
+                              cursor: currentRoomId == null ? "unset" : "pointer",
+                            }}
+                            onClick={() => currentRoomId !== null && handleClickInputFile()}
+                          />
+                      }
                     </div>
                     <input
                       type="file"
@@ -681,7 +797,8 @@ export const ReadStatusComponent: FC<{ lastMessage: MessageType }> = (({ lastMes
       <i className="fa-solid fa-check" style={{
         fontSize: 8,
         color: lastMessage?.read ? theme.palette.primary.main : theme.palette.text.disabled,
-        marginLeft: 6
+        marginRight: 6,
+        // marginLeft: 6
       }}>
 
       </i>
@@ -701,46 +818,86 @@ export const ReadStatusComponent: FC<{ lastMessage: MessageType }> = (({ lastMes
 export const ChatRightFooterShowAttachment: FC = (() => {
   const {
     chatInputValue,
-    setChatInputValue
+    setChatInputValue,
+    isEdit,
+    editChatInputValue,
   } = useChat();
-
+  const theme = useTheme()
+  const [cloneEditMessage, setCloneEditMessage] = useState<string>("")
+  useEffect(() => {
+    if (isEdit) {
+      if (cloneEditMessage === "") {
+        setCloneEditMessage(editChatInputValue.message!)
+      }
+    } else {
+      setCloneEditMessage('')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editChatInputValue, isEdit])
   return (
     <Fragment>
       {
-        chatInputValue.attachment?.length > 0 && (
-          <div className='chat-right-footer-show-attachment-div'>
-            {chatInputValue.attachment.map((file, index) => (
-              <div key={index} className='chat-right-footer-show-attachment-inner-div'>
-                <img
-                  src={file.isImage ? file.src : getFileIcon(file.type)}
-                  alt={file.name}
-                  className='chat-right-footer-show-attachment-img'
-                  onClick={() => window.open(file.src, "_blank")}
-                />
-                <IconButton
-                  size="small"
-                  sx={{
-                    position: "absolute",
-                    top: "-5px",
-                    right: "-5px",
-                    color: "white",
-                    width: "18px",
-                    height: "18px",
-                    padding: "2px",
-                  }}
-                  onClick={() => {
-                    setChatInputValue((prevState) => ({
-                      ...prevState,
-                      attachment: prevState.attachment.filter((_, i) => i !== index),
-                    }));
-                  }}
-                >
-                  <DeleteForever fontSize="small" sx={{ color: 'crimson' }} />
-                </IconButton>
-              </div>
-            ))}
-          </div>
-        )}
+        isEdit ?
+          <>
+            {
+              editChatInputValue.message !== "" && (
+                <div className='chat-right-footer-show-attachment-div' style={{ minWidth: '100%' }}>
+                  <div className='' style={{
+                    width: "100%",
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
+                    whiteSpace: "pre-wrap",
+                    border: `1px solid ${theme.palette.primary.main}`,
+                    borderRadius: "5px",
+                    padding: 10,
+                    display: "block",
+                    overflow: "hidden",
+                  }}>
+                    {cloneEditMessage}
+                  </div>
+                </div>
+              )
+            }
+          </> :
+          <>
+            {
+              chatInputValue.attachment?.length > 0 && (
+                <div className='chat-right-footer-show-attachment-div'>
+                  {chatInputValue.attachment.map((file, index) => (
+                    <div key={index} className='chat-right-footer-show-attachment-inner-div'>
+                      <img
+                        src={file.isImage ? file.src : getFileIcon(file.type)}
+                        alt={file.name}
+                        className='chat-right-footer-show-attachment-img'
+                        onClick={() => window.open(file.src, "_blank")}
+                      />
+                      <IconButton
+                        size="small"
+                        sx={{
+                          position: "absolute",
+                          top: "-5px",
+                          right: "-5px",
+                          color: "white",
+                          width: "18px",
+                          height: "18px",
+                          padding: "2px",
+                        }}
+                        onClick={() => {
+                          setChatInputValue((prevState) => ({
+                            ...prevState,
+                            attachment: prevState.attachment.filter((_, i) => i !== index),
+                          }));
+                        }}
+                      >
+                        <DeleteForever fontSize="small" sx={{ color: 'crimson' }} />
+                      </IconButton>
+                    </div>
+                  ))}
+                </div>
+              )
+            }
+          </>
+      }
     </Fragment>
   )
 })
@@ -776,9 +933,9 @@ export const ChatRightBodyDateComponent: FC<{ mesage: MessageType, index: number
   )
 })
 
-export const ChatRightMessageWithoutAttachment: FC<{ mesage: MessageType }> = (({ mesage }) => {
+export const ChatRightMessageWithoutAttachment: FC<{ mesage: MessageType, index: number }> = (({ mesage, index }) => {
 
-  const { currentRoom, currentUserId, lastRef, lastRefMinusOne } = useChat();
+  const { currentRoom, currentUserId, lastRef } = useChat();
   let isSent = mesage.senderId == currentUserId;
   let senderImage =
     currentRoom?.createrData.userId == currentUserId ?
@@ -796,16 +953,17 @@ export const ChatRightMessageWithoutAttachment: FC<{ mesage: MessageType }> = ((
           <div className="media-body flex-grow-1">
             <div className="msg-box" >
               <div >
-                {currentUserId === mesage.senderId && <DeleteMessageButton deleteType={mesage.timestamp} />}
-                <p style={{ marginBottom: 'unset' }}
-                  ref={currentRoom.messages[currentRoom.messages.length - 1].message == mesage.message ? lastRef : lastRefMinusOne}>
+                {currentUserId === mesage.senderId &&
+                  <DeleteMessageButton deleteType={mesage.timestamp} mesage={mesage} />
+                }
+                <p style={{ marginBottom: 'unset' }}>
                   {mesage.message && decrypt(mesage.message)}
                 </p>
                 <ul className="chat-msg-info">
                   <li>
                     <div className="chat-time" style={{ position: 'relative' }}>
                       <ReadStatusComponent lastMessage={mesage} />
-                      <span>{dayjs(mesage.timestamp).format('HH:mm')}</span>
+                      <span ref={index == (currentRoom!.messages.length - 1) ? lastRef : null}>{dayjs(mesage.timestamp).format('HH:mm')}</span>
                     </div>
                   </li>
                 </ul>
@@ -819,9 +977,9 @@ export const ChatRightMessageWithoutAttachment: FC<{ mesage: MessageType }> = ((
   )
 })
 
-export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType }> = (({ mesage }) => {
+export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType, index: number }> = (({ mesage, index }) => {
 
-  const { currentRoom, lastRef, lastRefMinusOne, currentUserId, downloadClick } = useChat();
+  const { currentRoom, lastRef, currentUserId, downloadClick } = useChat();
   let isSent = mesage.senderId == currentUserId;
   let senderImage =
     currentRoom?.createrData.userId == currentUserId ?
@@ -839,8 +997,9 @@ export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType }> = (({ m
           <div className="media-body flex-grow-1">
             <div className="msg-box">
               <div>
+                {currentUserId === mesage.senderId && <DeleteMessageButton deleteType={mesage.timestamp} />}
                 <div className="chat-msg-attachments">
-                  {currentUserId === mesage.senderId && <DeleteMessageButton deleteType={mesage.timestamp} />}
+
                   {
                     mesage.attachment.map((attach, index) => {
                       const isBlob = attach.src && attach.src.startsWith("blob:");
@@ -867,15 +1026,14 @@ export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType }> = (({ m
                   }
                 </div>
                 <div >
-                  <p style={{ marginBottom: 'unset' }}
-                    ref={currentRoom.messages[currentRoom.messages.length - 1].message == mesage.message ? lastRef : lastRefMinusOne}>
+                  <p style={{ marginBottom: 'unset' }}>
                     {mesage.message && decrypt(mesage.message)}
                   </p>
                   <ul className="chat-msg-info">
                     <li>
                       <div className="chat-time" style={{ position: 'relative' }}>
                         <ReadStatusComponent lastMessage={mesage} />
-                        <span >{dayjs(mesage.timestamp).format('HH:mm')}</span>
+                        <span ref={index == (currentRoom!.messages.length - 1) ? lastRef : null}>{dayjs(mesage.timestamp).format('HH:mm')}</span>
                       </div>
                     </li>
                   </ul>

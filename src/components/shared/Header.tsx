@@ -138,7 +138,10 @@ const Header: FC = () => {
         case "/home4":
           return { background: theme.palette.primary.light };
         default:
-          return { background: maxWidth991 ? theme.palette.background.default : "" };
+          return {
+            background: maxWidth991 ? theme.palette.background.default : "",
+
+          };
       }
     };
 
@@ -247,7 +250,7 @@ const Header: FC = () => {
     }
   }
   return (
-    <header className={`header ${getHeaderClass()}`} style={{ ...style, ...muiVar }}>
+    <header className={`header ${getHeaderClass()}`} style={{ ...style, ...muiVar, zIndex: 1302 }}>
       <div className='container'>
         <nav className="navbar navbar-expand-lg header-nav">
           <div className={`navbar-header col-lg-${userProfile == null ?

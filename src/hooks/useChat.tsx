@@ -62,10 +62,13 @@ interface ChatContextType {
   inputGroupRef: RefObject<HTMLDivElement>;
   chatFooterRef: RefObject<HTMLDivElement>;
   lastRef: RefObject<HTMLDivElement>;
-  lastRefMinusOne: RefObject<HTMLDivElement>;
   inputFileRef: RefObject<HTMLInputElement>;
   chatInputValue: MessageType;
   setChatInputValue: React.Dispatch<React.SetStateAction<MessageType>>;
+  editChatInputValue: MessageType;
+  setEditChatInputValue: React.Dispatch<React.SetStateAction<MessageType>>;
+  isEdit: boolean;
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
   anchorEl: HTMLElement | null;
   setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
   isLoading: boolean;
@@ -88,6 +91,8 @@ interface ChatContextType {
   sortLatestMessage: (userChatData: ChatDataType[]) => ChatDataType[];
   onLeftUserClicked: (chatData: ChatDataType) => void;
   onSendButtonClick: () => void;
+  onEditButtonClick: () => void;
+  onCancelEdit: () => void;
   handleClickInputFile: () => void;
   handleChangeInputFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
   callReceiverUserData: ChatUserType | null;
@@ -112,7 +117,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const inputGroupRef = useRef<HTMLInputElement>(null);
   const chatFooterRef = useRef<HTMLDivElement>(null);
   const lastRef = useRef<HTMLDivElement>(null);
-  const lastRefMinusOne = useRef<HTMLDivElement>(null);
 
   const inputFileRef = useRef<HTMLInputElement>(null)
   const [footerHeight, setFooterHeight] = useState<number>(0)
@@ -131,12 +135,32 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+  const currentUserId = userProfile?._id
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [showSnackBar, setShowSnakBar] = useState<{ show: boolean, text: string }>({ show: false, text: '' })
+  const [chatInputValue, setChatInputValue] = useState<MessageType>({
+    senderId: currentUserId!,
+    receiverId: '',
+    timestamp: new Date().getTime(),
+    message: null,
+    read: false,
+    attachment: [],
+    roomId: ""
+  })
+  const [editChatInputValue, setEditChatInputValue] = useState<MessageType>({
+    senderId: currentUserId!,
+    receiverId: '',
+    timestamp: new Date().getTime(),
+    message: null,
+    read: false,
+    attachment: [],
+    roomId: ""
+  })
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   let weekdays: string[] = dayjs.updateLocale('en', {}).weekdays as string[]
-  const currentUserId = userProfile?._id
+
 
 
   const voiceCallToggleFunction = () => {
@@ -203,35 +227,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             return { ...room, messages: updatedMessages };
           }));
-          // setUserChatData((prevState) => {
-          //   const newState = [...prevState];
-
-          //   updatedRooms.forEach((room) => {
-          //     const existingRoomIndex = _.findIndex(newState, { _id: room._id });
-          //     if (existingRoomIndex === -1) {
-          //       // Room does not exist, add it
-          //       newState.push(room);
-          //     } else {
-          //       // Room exists, compare receiverData and createrData
-          //       const existingRoom = newState[existingRoomIndex];
-          //       if (
-          //         !_.isEqual(existingRoom.receiverData, room.receiverData) ||
-          //         !_.isEqual(existingRoom.createrData, room.createrData) ||
-          //         !_.isEqual(existingRoom.messages, room.messages)
-          //       ) {
-          //         // Update the receiverData and createrData if they are different
-          //         newState[existingRoomIndex] = {
-          //           ...existingRoom,
-          //           receiverData: room.receiverData,
-          //           createrData: room.createrData,
-          //           messages: room.messages
-          //         };
-          //       }
-          //     }
-          //   });
-
-          //   return newState;
-          // });
           setUserChatData((prevState) => {
             const newState = updatedRooms.map((room) => {
               const existingRoom = prevState.find((r) => r._id === room._id);
@@ -246,6 +241,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 !_.isEqual(existingRoom.createrData, room.createrData) ||
                 !_.isEqual(existingRoom.messages, room.messages)
               ) {
+                // setTimeout(() => {
+                //   lastRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+                // }, 100);
                 return {
                   ...existingRoom,
                   receiverData: room.receiverData,
@@ -257,8 +256,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
               return existingRoom; // No changes, return the existing room
             });
             const finalResult = newState.filter((room) => updatedRooms.some((r) => r._id === room._id))
-            // const isDeletedCurrentRoom = finalResult.some((a) => a.roomId !== currentRoomId)
-            // console.log(isDeletedCurrentRoom && currentRoom !== null)
+
             // Ensure removed rooms are also removed from the state
             return finalResult;
           });
@@ -304,15 +302,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => resizeObserver.disconnect(); // Cleanup on unmount
   }, []);
 
-  const [chatInputValue, setChatInputValue] = useState<MessageType>({
-    senderId: currentUserId!,
-    receiverId: '',
-    timestamp: new Date().getTime(),
-    message: null,
-    read: false,
-    attachment: [],
-    roomId: ""
-  })
+
 
   // clear on delete room
   useEffect(() => {
@@ -355,14 +345,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAnchorEl(null);
   };
 
-  useEffect(() => {
-    // if (currentRoomId !== null) {
-    //   setTimeout(() => {
-    //     lastRef.current?.scrollIntoView({ behavior: 'smooth' });
-
-    //   }, 100);
-    // }
-  }, [currentRoomId, chatInputValue])
 
   const sortLatestMessage: (userChatData: ChatDataType[]) => ChatDataType[] = (userChatData) => {
     return [...userChatData].sort((a, b) => {
@@ -462,14 +444,62 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (homeSocket.current) {
         homeSocket.current.emit("sendMessage", messageData);
-        console.log()
-        // setTimeout(() => {
-        //   lastRefMinusOne.current?.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+          lastRef.current?.scrollIntoView({ behavior: 'smooth' });
 
-        // }, 100);
+        }, 100);
       }
     });
     setChatInputValue({
+      senderId: currentUserId!,
+      receiverId: '',
+      timestamp: new Date().getTime(),
+      message: null,
+      read: false,
+      attachment: [],
+      roomId: ''
+    });
+  }
+
+  const onCancelEdit = () => {
+    setIsEdit(false)
+    setEditChatInputValue({
+      senderId: currentUserId!,
+      receiverId: '',
+      timestamp: new Date().getTime(),
+      message: null,
+      read: false,
+      attachment: [],
+      roomId: ''
+    });
+  }
+
+  const onEditButtonClick = () => {
+    if (
+      (editChatInputValue.message == null || editChatInputValue.message.trim() === '') &&
+      editChatInputValue.attachment.length == 0
+    ) return;
+    const receiverId = currentRoom?.createrData.userId === currentUserId
+      ? currentRoom?.receiverData?.userId
+      : currentRoom?.createrData?.userId;
+    const messageData: MessageType & { attachmentFiles: any[] } = {
+      senderId: currentUserId!,
+      receiverId: receiverId!,
+      timestamp: editChatInputValue.timestamp,
+      message: editChatInputValue.message,
+      read: false,
+      attachment: editChatInputValue.attachment,
+      roomId: currentRoomId!,
+      attachmentFiles: []
+    };
+
+
+    if (homeSocket.current) {
+      homeSocket.current.emit("editMessage", messageData);
+    }
+
+    setIsEdit(false)
+    setEditChatInputValue({
       senderId: currentUserId!,
       receiverId: '',
       timestamp: new Date().getTime(),
@@ -493,9 +523,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (isActive && homeSocket.current) {
       homeSocket.current.once("receiveMessage", (messageData: MessageType) => {
 
-        // if (messageData.roomId === currentRoomId && messageData.receiverId === currentUserId) {
-        //   console.log('theyre same should be read')
-        // }
         setUserChatData((prevState) => {
           let newState = [...prevState];
           const chatIndex = newState.findIndex(chat => chat.roomId === messageData.roomId);
@@ -504,18 +531,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
           return newState
         })
-        // if (currentRoomId == messageData.roomId) {
-        //   setTimeout(() => {
-        //     // lastRef.current?.scrollIntoView({ behavior: 'smooth' });
-        //     lastRefMinusOne.current?.scrollIntoView({ behavior: 'smooth' });
-        //   }, 100);
-        // }
       })
     }
     return () => {
       isActive = false;
     }
-  }, [currentRoomId, homeSocket])
+  }, [homeSocket])
 
 
 
@@ -523,7 +544,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (inputFileRef.current !== null) {
       inputFileRef.current.click()
     }
-
   }
 
 
@@ -638,19 +658,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
               show: true,
             }
           })
-          // toast.info(message, {
-          //   position: "bottom-center",
-          //   autoClose: 5000,
-          //   hideProgressBar: false,
-          //   closeOnClick: true,
-          //   pauseOnHover: true,
-          //   draggable: true,
-          //   progress: undefined,
-          //   transition: bounce,
-          //   onClose: () => {
-
-          //   }
-          // });
         }
       })
     }
@@ -664,7 +671,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       footerHeight,
       chatFooterRef,
       lastRef,
-      lastRefMinusOne,
       chatInputValue,
       setChatInputValue,
       anchorEl,
@@ -689,6 +695,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setCurrentRoom,
       onLeftUserClicked,
       onSendButtonClick,
+      onEditButtonClick,
+      onCancelEdit,
       inputFileRef,
       handleClickInputFile,
       handleChangeInputFile,
@@ -700,7 +708,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       deleteSubmited,
       setDeleteType,
       showSnackBar,
-      setShowSnakBar
+      setShowSnakBar,
+      editChatInputValue,
+      setEditChatInputValue,
+      isEdit,
+      setIsEdit,
     }}>
       {children}
     </ChatContext.Provider>

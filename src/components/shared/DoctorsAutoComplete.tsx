@@ -13,7 +13,7 @@ import IconButton from '@mui/material/IconButton'
 import Close from '@mui/icons-material/Close'
 import Grid from '@mui/material/Grid';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useTheme } from '@mui/material';
+import { Popper, useTheme } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography'
@@ -41,15 +41,16 @@ const chatAutocompleteStyles = makeStyles<{}>()((theme) => {
       borderRadius: `15px 15px 0px 0px`
     },
     autoCompleteClass: {
-      // "& .MuiInput-root.MuiInputBase-sizeSmall .MuiInput-input": {
-      //   "&::placeholder": {
-      //     color: theme.palette.text.color,
-      //   },
-      // },
-      // "& .MuiAutocomplete-input::placeholder": {
-      //   color: "blue",
-      // },
       zIndex: 1301,
+      [theme.breakpoints.down(992)]: {
+        zIndex: 1199,
+      },
+    },
+    popperClass: {
+      zIndex: 13,
+      [theme.breakpoints.down(992)]: {
+        zIndex: 1100,
+      },
     }
   }
 })
@@ -176,6 +177,7 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
         getOptionLabel={(option) => {
           return option.error ? '' : typeof option === 'string' ? option : option[optionFieldName]
         }}
+        // open
         open={openOption}
         onOpen={() => {
           setOpenOption(true);
@@ -378,6 +380,9 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
         }}
         className={classes.autoCompleteClass}
         disablePortal
+        PopperComponent={(props) => (
+          <Popper {...props} className={classes.popperClass} />
+        )}
         slotProps={{
           paper: {
             sx: {
@@ -389,6 +394,9 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
               paddingTop: '15px',
               border: `1px solid`,
               borderColor: 'secondary.main',
+              [theme.breakpoints.down(992)]: {
+                borderTop: `1px solid transparent`
+              },
             },
           },
         }}
