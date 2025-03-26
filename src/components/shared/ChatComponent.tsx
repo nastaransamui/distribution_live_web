@@ -154,8 +154,8 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
         autoHideDuration={1000}
         sx={{
           "& .MuiPaper-root": {
-            bgcolor: 'background.paper',
-            color: "text.color"
+            bgcolor: 'primary.main',
+            color: "background.paper"
           }
         }}
         message={showSnackBar.text}

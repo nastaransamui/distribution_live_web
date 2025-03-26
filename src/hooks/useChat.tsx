@@ -161,21 +161,207 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const open = Boolean(anchorEl);
   let weekdays: string[] = dayjs.updateLocale('en', {}).weekdays as string[]
 
+  // Declare peerConnection and remoteStream with types
+  const peerConnection = useRef<RTCPeerConnection | null>(null); // Type it correctly as RTCPeerConnection or null
+  const localStream = useRef<MediaStream | null>(null); // MediaStream or null for the local stream
+  const remoteStream = useRef<MediaStream | null>(null); // MediaStream or null for the remote stream
+
+  useEffect(() => {
+    if (!homeSocket?.current) return;
+
+    // Store the current homeSocket reference in a variable
+    const socket = homeSocket.current;
+
+    socket.on("offer", async (data: { offer: RTCSessionDescriptionInit }) => {
+      if (!peerConnection.current) return;
+      await peerConnection.current.setRemoteDescription(new RTCSessionDescription(data.offer));
+      const answer = await peerConnection.current.createAnswer();
+      await peerConnection.current.setLocalDescription(answer);
+      socket.emit("answer", { answer });
+    });
+
+    socket.on("answer", async (data: { answer: RTCSessionDescriptionInit }) => {
+      if (!peerConnection.current) return;
+      await peerConnection.current.setRemoteDescription(new RTCSessionDescription(data.answer));
+    });
+
+    socket.on("ice-candidate", (data: { candidate: RTCIceCandidateInit }) => {
+      if (!peerConnection.current) return;
+      peerConnection.current.addIceCandidate(new RTCIceCandidate(data.candidate));
+    });
+
+    // Cleanup function
+    return () => {
+      socket.off("offer");
+      socket.off("answer");
+      socket.off("ice-candidate");
+    };
+  }, [homeSocket]);
+
+  const createPeerConnection = () => {
+    const pc = new RTCPeerConnection({
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "turn:your-turn-server", username: "user", credential: "password" },
+      ],
+    });
+
+    pc.onicecandidate = (event) => {
+      if (event.candidate && homeSocket.current) {
+        homeSocket.current.emit("ice-candidate", { candidate: event.candidate });
+      }
+    };
+
+    pc.ontrack = (event) => {
+      if (remoteStream.current) {
+        remoteStream.current.addTrack(event.track);
+      }
+    };
+
+    return pc;
+  };
+  const startCall = async () => {
+    try {
+      // Request permission for microphone
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      // If permission is granted, you can now use the microphone
+      localStream.current = stream;
+      remoteStream.current = new MediaStream();
+
+      // Set up the peer connection
+      peerConnection.current = createPeerConnection();
+      localStream.current.getTracks().forEach(track => {
+        peerConnection.current?.addTrack(track, localStream.current!);
+      });
+
+      const offer = await peerConnection.current.createOffer();
+      await peerConnection.current.setLocalDescription(offer);
+
+      homeSocket.current.emit("offer", { offer });
+      // Notify the other party about the incoming call
+      if (currentRoom !== null) {
+        const callReceiver =
+          currentRoom.createrData.userId === currentUserId
+            ? currentRoom.receiverData
+            : currentRoom.createrData;
+
+        homeSocket.current.emit("incoming-voice-call", {
+          receiverId: callReceiver.userId,
+          callerId: currentUserId,
+          roomId: currentRoomId
+        });
+      }
+    } catch (error: any) {
+      if (error.name === "NotAllowedError") {
+        console.error("Microphone permission denied by the user.");
+        toast.error("Microphone permission denied. Please allow access.");
+      } else if (error.name === "NotFoundError") {
+        console.error("No microphone device found.");
+        toast.error("No microphone device found.");
+      } else {
+        console.error("Error accessing microphone:", error);
+        toast.error("An error occurred while accessing the microphone.");
+      }
+    }
+  };
+
+  const endCall = () => {
+    peerConnection.current?.close();
+    peerConnection.current = null;
+    localStream.current?.getTracks().forEach((track) => track.stop());
+    remoteStream.current?.getTracks().forEach((track) => track.stop());
+    setVoiceCallActive(false);
+
+    // Emit end-voice-call to notify both users
+    if (currentRoom !== null) {
+      const callReceiver =
+        currentRoom.createrData.userId === currentUserId
+          ? currentRoom.receiverData
+          : currentRoom.createrData;
+
+      homeSocket.current.emit("end-voice-call", {
+        roomId: currentRoom.roomId,
+        receiverId: callReceiver.userId,
+        callerId: currentUserId,
+      });
+    }
+  };
+
 
 
   const voiceCallToggleFunction = () => {
-    setVoiceCallActive((prev) => !prev);
+    setVoiceCallActive((prev) => {
+      const newState = !prev;
+      if (newState) {
+        startCall();
+      } else {
+        endCall();
+      }
+      return false;
+    });
+
     if (currentRoom !== null) {
-      const callReceiver = currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData : currentRoom.createrData;
-      setCallReceiverUserData((prevState) => {
-        if (prevState == null) {
-          return callReceiver;
-        } else {
-          return null;
-        }
-      })
+      const callReceiver = currentRoom.createrData.userId === currentUserId ? currentRoom.receiverData : currentRoom.createrData;
+      setCallReceiverUserData((prevState) => (prevState == null ? callReceiver : null));
     }
   };
+
+  useEffect(() => {
+    if (!homeSocket?.current) return;
+
+    const socket = homeSocket.current;
+
+    socket.on("incoming-voice-call", (data: { receiverId: string; callerId: string, roomId: string }) => {
+
+      if (data.receiverId === currentUserId) {
+        const { roomId } = data;
+        setCurrentRoomId(() => roomId)
+        const roomData = userChatData.filter((a) => a.roomId == roomId)
+        if (roomData.length > 0) {
+          const callReceiver = roomData[0].createrData.userId == currentUserId ? roomData[0].receiverData : roomData[0].createrData;
+          setCallReceiverUserData(() => callReceiver)
+        }
+        setTimeout(() => {
+          setVoiceCallActive(true)
+        }, 500);
+        // Optionally, auto-accept or show a prompt to accept the call
+      }
+      if (data.callerId === currentUserId) {
+        if (currentRoom !== null) {
+          const callReceiver = currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData : currentRoom.createrData;
+          setCallReceiverUserData(() => callReceiver)
+
+          setTimeout(() => {
+            setVoiceCallActive(true)
+          }, 500);
+        }
+      }
+    });
+
+    socket.on("end-voice-call", (data: { receiverId: string; callerId: string, roomId: string }) => {
+      if (data.roomId === currentRoomId) {
+        // Close the connection and reset state if the call ends
+        peerConnection.current?.close();
+        peerConnection.current = null;
+        localStream.current?.getTracks().forEach((track) => track.stop());
+        remoteStream.current?.getTracks().forEach((track) => track.stop());
+        setVoiceCallActive(false);
+        setCallReceiverUserData(null);
+        setShowSnakBar(() => {
+          return {
+            text: "The call has ended.",
+            show: true,
+          }
+        })
+      }
+    });
+
+    return () => {
+      socket.off("incoming-voice-call");
+      socket.off("end-voice-call");
+    };
+  }, [homeSocket, currentUserId, userChatData, currentRoomId, currentRoom]);
 
   const videoCallToggleFunction = () => {
     setVideoCallActive((prev) => !prev);
