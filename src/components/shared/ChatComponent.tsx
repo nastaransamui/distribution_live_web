@@ -68,6 +68,8 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
 
   return (
     <Fragment>
+
+      <audio id="remoteAudio" autoPlay playsInline />
       <div className="col-md-12 col-lg-12 col-xl-12">
         <div className="new-chat-window row g-0">
           <div style={{ minHeight: minWidth768 ? `calc(100vh + ${footerHeight}px)` : '131px' }}
@@ -94,10 +96,10 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
         </div>
       </div>
       {voiceCallActive &&
-        <CallDialog callType='Voice' open={voiceCallActive} toggleFunction={voiceCallToggleFunction} callReceiverUserData={callReceiverUserData} />
+        <CallDialog callType='Voice' open={voiceCallActive} toggleFunction={voiceCallToggleFunction} />
       }
       {videoCallActive &&
-        <CallDialog callType='Video' open={videoCallActive} toggleFunction={videoCallToggleFunction} callReceiverUserData={callReceiverUserData} />
+        <CallDialog callType='Video' open={videoCallActive} toggleFunction={videoCallToggleFunction} />
       }
 
       {deleteConfirmationShow && <BootstrapDialog
@@ -1062,11 +1064,18 @@ const getFileIcon = (fileType: string) => {
 export interface CallDialogPropsType {
   open: boolean;
   toggleFunction: () => void;
-  callReceiverUserData: ChatUserType | null;
   callType: "Video" | "Voice"
 }
 
-export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, callReceiverUserData, callType }) => {
+export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, callType }) => {
+
+  const {
+    callReceiverUserData,
+    currentUserId,
+    incomingCall,
+    acceptVoiceCall,
+  } = useChat();
+  const isRecive = incomingCall?.receiverId == currentUserId
 
   return (
     <BootstrapDialog
@@ -1076,7 +1085,6 @@ export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, cal
       }}
       aria-labelledby="edit_invoice_details"
       open={open}>
-
       <div className="modal-body">
         <div className="call-box incoming-box">
           <div className="call-wrapper">
@@ -1105,7 +1113,13 @@ export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, cal
                 >
                   <i className="material-icons">call_end</i>
                 </Link>
-                <Link href="/voice-call" onClick={(e) => e.preventDefault()} style={{ pointerEvents: "none" }} className=" call-item call-start">
+                <Link href="/voice-call" onClick={(e) => {
+                  e.preventDefault()
+
+                  if (isRecive) {
+                    acceptVoiceCall();
+                  }
+                }} style={{ pointerEvents: isRecive ? 'auto' : "none" }} className=" call-item call-start">
                   <i className="material-icons">call</i>
                 </Link>
               </div>
