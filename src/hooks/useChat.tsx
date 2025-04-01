@@ -377,7 +377,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           setChatInputValue(updatedChatInputValue);
           homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue })
-        }, 5000);
+        }, 20 * 1000);
       }
     })
   }, [currentUserId, homeSocket, userChatData, missedCallTimeout])

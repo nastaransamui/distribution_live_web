@@ -41,10 +41,10 @@ import { EmotionCache } from '@emotion/react';
 import AppWrapper from '@/theme/AppWrapper';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
-
-export interface MyAppProps extends AppProps {
-  emotionCache?: EmotionCache;
-}
+import { AppCacheProvider } from '@mui/material-nextjs/v13-pagesRouter'
+// export interface MyAppProps extends AppProps {
+//   emotionCache?: EmotionCache;
+// }
 
 
 const clientSideEmotionCache = createEmotionCache();
@@ -58,7 +58,7 @@ export const loadStylesheet = (href: string) => {
   document.head.appendChild(link);
 };
 
-const App = ({ Component, ...rest }: MyAppProps) => {
+const App = ({ Component, ...rest }: AppProps) => {
   const { store, props } = wrapper.useWrappedStore(rest);
   const { router, emotionCache = clientSideEmotionCache, pageProps } = props;
   useEffect(() => {
@@ -79,8 +79,17 @@ const App = ({ Component, ...rest }: MyAppProps) => {
 
   return (
     <>
+      <AppCacheProvider {...props}>
+        <Provider store={store}>
+          <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
+            <AppWrapper>
+              <Component {...pageProps} key={router.route} router={router} />
+            </AppWrapper>
+          </GoogleOAuthProvider>
+        </Provider>
+      </AppCacheProvider>
       {/* CacheProvider break in production */}
-      {
+      {/* {
         process.env.NODE_ENV == 'development' ?
           <CacheProvider value={emotionCache}>
             <Provider store={store}>
@@ -92,17 +101,15 @@ const App = ({ Component, ...rest }: MyAppProps) => {
             </Provider>
           </CacheProvider >
           :
-          <CacheProvider value={emotionCache}>
-            <Provider store={store}>
-              <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
-                <AppWrapper>
-                  <Component {...pageProps} key={router.route} router={router} />
-                </AppWrapper>
-              </GoogleOAuthProvider>
-            </Provider>
-          </CacheProvider>
+          <Provider store={store}>
+            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
+              <AppWrapper>
+                <Component {...pageProps} key={router.route} router={router} />
+              </AppWrapper>
+            </GoogleOAuthProvider>
+          </Provider>
 
-      }
+      } */}
     </>
   )
 }
