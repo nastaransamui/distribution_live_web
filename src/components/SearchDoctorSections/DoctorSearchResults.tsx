@@ -37,8 +37,7 @@ import { DoctorListSearchSkeleton, DoctorGridSearchSkeleton } from '@/shared/Doc
 
 import CustomNoRowsOverlay from '@/shared/CustomNoRowsOverlay';
 import DoctorTopSearchSkeleton from '../shared/DoctorTopSearchSkeleton';
-import { styled, Theme } from '@mui/material/styles';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
+import { styled, } from '@mui/material/styles';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Divider from '@mui/material/Divider';

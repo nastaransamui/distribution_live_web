@@ -10,12 +10,23 @@ import { AppState } from "@/redux/store";
 import { toast } from "react-toastify";
 import useScssVar from "./useScssVar";
 import { Image_placeholder } from "@/public/assets/imagepath";
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { loadStylesheet } from "@/pages/_app";
 export interface AttachmentType {
   src: string;
   name: string;
   isImage: boolean;
   type: string;
   id: string;
+}
+export interface CallType {
+  isVoiceCall: boolean;
+  isVideoCall: boolean;
+  startTimeStamp: number;
+  finishTimeStamp: number | null;
+  isMissedCall: boolean;
+  isRejected: boolean;
+  isAnswered: boolean;
 }
 
 export interface ChatUserType {
@@ -35,6 +46,7 @@ export interface MessageType {
   message: null | string;
   read: boolean;
   attachment: AttachmentType[];
+  calls: CallType[];
   roomId: string;
 }
 
@@ -85,6 +97,7 @@ interface ChatContextType {
   setCurrentRoom: React.Dispatch<React.SetStateAction<ChatDataType | null>>;
   weekdays: string[];
   voiceCallActive: boolean;
+  setVoiceCallActive: React.Dispatch<React.SetStateAction<boolean>>;
   voiceCallToggleFunction: () => void;
   videoCallActive: boolean;
   videoCallToggleFunction: () => void;
@@ -96,6 +109,7 @@ interface ChatContextType {
   handleClickInputFile: () => void;
   handleChangeInputFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
   callReceiverUserData: ChatUserType | null;
+  setCallReceiverUserData: React.Dispatch<React.SetStateAction<ChatUserType | null>>
   downloadClick: (attach: AttachmentType) => void;
   deleteButtonClicked: (e: MouseEvent<HTMLButtonElement>) => void;
   deleteConfirmationShow: boolean;
@@ -107,6 +121,7 @@ interface ChatContextType {
   acceptVoiceCall: () => void;
   incomingCall: { offer: RTCSessionDescriptionInit, receiverId: string, callerId: string, roomId: string } | null;
   setIncomingCall: React.Dispatch<React.SetStateAction<{ offer: RTCSessionDescriptionInit, receiverId: string, callerId: string, roomId: string } | null>>;
+  minWidth768: boolean
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
@@ -120,7 +135,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const inputGroupRef = useRef<HTMLInputElement>(null);
   const chatFooterRef = useRef<HTMLDivElement>(null);
   const lastRef = useRef<HTMLDivElement>(null);
-
+  const minWidth768 = useMediaQuery('(min-width:768px)');
   const inputFileRef = useRef<HTMLInputElement>(null)
   const [footerHeight, setFooterHeight] = useState<number>(0)
   const [searchInputWidth, setSearchInputWidth] = useState<number>(0);
@@ -149,6 +164,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     message: null,
     read: false,
     attachment: [],
+    calls: [],
     roomId: ""
   })
   const [editChatInputValue, setEditChatInputValue] = useState<MessageType>({
@@ -158,6 +174,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     message: null,
     read: false,
     attachment: [],
+    calls: [],
     roomId: ""
   })
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -167,6 +184,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const sendMessageAudioRef = useRef<HTMLAudioElement | null>(null);
   const makeCallAudioRef = useRef<HTMLAudioElement | null>(null);
   const reciveMessageAudioRef = useRef<HTMLAudioElement | null>(null);
+  const missedCallTimeout = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    loadStylesheet('/css/yet-another-react-lightbox-styles.css')
+  }, [])
   useEffect(() => {
     if (typeof window !== 'undefined') {
       reciveMessageAudioRef.current = new Audio("/sound/recive-message.mp3");
@@ -183,16 +204,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const configuration = useMemo(() => {
     return { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] }
   }, [])
-
-  const voiceCallToggleFunction = () => {
-
-    if (!voiceCallActive) {
-      makeVoiceCall();
-    } else {
-      endVoiceCall();
-    }
-
-  };
   const createPeerConnection = () => {
     const pc = new RTCPeerConnection(configuration);
     pc.onicecandidate = (event) => {
@@ -206,95 +217,130 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         homeSocket.current.emit("newIceCandidate", { candidate: event.candidate, callerId, receiverId, roomId: currentRoomId });
       }
     }
-
     pc.ontrack = (event) => {
-      console.log("ontrack", event)
-      console.log("onTRACK", !remoteStream.current)
-      // Only create remoteStream if it's null
-      if (!remoteStream.current) {
-        remoteStream.current = new MediaStream();
-      }
-      event.streams[0].getTracks().forEach(track => {
-        track.enabled = true;
-        if (track.kind === "audio") {
-          track.applyConstraints({ advanced: [{ autoGainControl: false, echoCancellation: false }] });
+      if (event.streams.length > 0) {
+        const audioElement = document.getElementById("remoteAudio") as HTMLAudioElement;
+        if (audioElement) {
+          audioElement.srcObject = event.streams[0];
+          audioElement.onloadedmetadata = () => {
+            audioElement.play().catch((err) => console.error("Audio play error:", err));
+          };
         }
-        remoteStream.current?.addTrack(track);
-        console.log("Track added to remoteStream:", track);
-      });
-
-      console.log("Total tracks in remoteStream:", remoteStream.current?.getTracks().length);
-      // if (!remoteStream.current) {
-      // remoteStream.current = new MediaStream();
-      const audioElement = document.getElementById("remoteAudio") as HTMLAudioElement;
-      console.log(audioElement)
-      if (audioElement) {
-        audioElement.srcObject = remoteStream.current;
-        audioElement.play().catch((err) => console.error("Audio play error:", err));
       }
-      // }
-      // event.streams[0].getTracks().forEach(track => {
-      //   track.enabled = true;
-      //   remoteStream.current?.addTrack(track);
-      // });
-      event.streams[0].getTracks().forEach(track => {
-        console.log("Track Info - Kind:", track.kind, "Enabled:", track.enabled, "Muted:", track.muted);
-      });
     }
     return pc;
   }
 
-  const makeVoiceCall = async () => {
+  const openMediaDevices = async (constraints: { video?: boolean, audio?: boolean }) => {
     try {
-      // Request permission for microphone
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // If permission is granted, you can now use the microphone
-      localStream.current = stream;
-      remoteStream.current = new MediaStream();
-      // Set up the peer connection
-      peerConnection.current = createPeerConnection();
-      localStream.current.getTracks().forEach(track => {
-        console.log("getTracks", track)
-        track.enabled = true;
-        peerConnection.current?.addTrack(track, localStream.current!);
-
-      })
-      const offer = await peerConnection.current.createOffer();
-      await peerConnection.current.setLocalDescription(offer);
-      const callerId = currentUserId;
-      const receiverId = currentRoom?.createrData.userId == callerId ? currentRoom?.receiverData.userId : currentRoom?.createrData.userId
-      homeSocket.current.emit("makeVoiceCall", { offer, callerId, receiverId, roomId: currentRoomId });
-      if (currentRoom !== null) {
-        const callReceiver = currentRoom.createrData.userId === currentUserId ? currentRoom.receiverData : currentRoom.createrData;
-        setCallReceiverUserData((prevState) => (prevState == null ? callReceiver : null));
-        setTimeout(() => {
-          setVoiceCallActive(true)
-          if (makeCallAudioRef && makeCallAudioRef.current !== null) {
-            makeCallAudioRef.current.loop = true;
-            makeCallAudioRef.current.play();
-          }
-        }, 500);
-      }
-
+      return await navigator.mediaDevices.getUserMedia(constraints);
     } catch (error: any) {
       if (error.name === "NotAllowedError") {
-        console.error("Microphone permission denied by the user.");
         toast.error("Microphone permission denied. Please allow access.");
       } else if (error.name === "NotFoundError") {
-        console.error("No microphone device found.");
         toast.error("No microphone device found.");
       } else {
-        console.error("Error accessing microphone:", error);
         toast.error("An error occurred while accessing the microphone.");
       }
+
     }
+
   }
 
+  const voiceCallToggleFunction = () => {
+
+    if (!voiceCallActive) {
+      makeVoiceCall();
+    } else {
+      endVoiceCall();
+    }
+
+  };
+
+  //IceCandidate
   useEffect(() => {
     if (!homeSocket?.current) return;
     const socket = homeSocket.current;
-    socket.on('receiveVoiceCall', async (data: { offer: RTCSessionDescriptionInit, callerId: string, receiverId: string, roomId: string }) => {
+
+    socket.on("iceCandidate", async (data: { candidate: any, callerId: string, receiverId: string, roomId: string }) => {
+      if (peerConnection.current !== null) {
+        try {
+          // // Added comment: Ensure remote description is set before adding ICE candidate.
+          if (peerConnection.current.remoteDescription !== null) {
+            await peerConnection.current.addIceCandidate(data.candidate); // // ICE candidate added
+          }
+        } catch (err) {
+          console.error("Error adding received ice candidate", err);
+
+        }
+      }
+
+    })
+  }, [homeSocket, peerConnection])
+
+  const makeVoiceCall = async () => {
+    try {
+      const stream = await openMediaDevices({ audio: true });
+      if (stream) {
+        localStream.current = stream;
+        remoteStream.current = new MediaStream();
+        peerConnection.current = createPeerConnection();
+        localStream.current.getTracks().forEach(track => {
+          track.enabled = true;
+          peerConnection.current?.addTrack(track, localStream.current!);
+
+        })
+        const offer = await peerConnection.current.createOffer();
+        await peerConnection.current.setLocalDescription(offer);
+        const callerId = currentUserId;
+        const receiverId =
+          currentRoom?.createrData.userId == callerId ?
+            currentRoom?.receiverData.userId :
+            currentRoom?.createrData.userId;
+        const messageData: MessageType = {
+          senderId: currentUserId!,
+          receiverId: receiverId!,
+          timestamp: new Date().getTime(),
+          message: chatInputValue.message,
+          read: false,
+          attachment: chatInputValue.attachment,
+          roomId: currentRoomId!,
+          calls: [
+            {
+              isVoiceCall: true,
+              isVideoCall: false,
+              startTimeStamp: new Date().getTime(),
+              finishTimeStamp: null,
+              isMissedCall: false,
+              isRejected: false,
+              isAnswered: false,
+            }
+          ],
+        };
+        setChatInputValue(messageData)
+        homeSocket.current.emit("makeVoiceCall", { offer, callerId, receiverId, roomId: currentRoomId, messageData });
+        if (currentRoom !== null) {
+          const callReceiver = currentRoom.createrData.userId === currentUserId ? currentRoom.receiverData : currentRoom.createrData;
+          setCallReceiverUserData((prevState) => (prevState == null ? callReceiver : null));
+          setTimeout(() => {
+            setVoiceCallActive(true)
+            if (makeCallAudioRef && makeCallAudioRef.current !== null) {
+              makeCallAudioRef.current.loop = true;
+              makeCallAudioRef.current.play();
+            }
+          }, 500);
+        }
+      }
+    } catch (error: any) {
+      toast.error(error.toString())
+    }
+  }
+  useEffect(() => {
+    if (!homeSocket?.current) return;
+    const socket = homeSocket.current;
+    socket.on('receiveVoiceCall', async (data: { offer: RTCSessionDescriptionInit, callerId: string, receiverId: string, roomId: string, messageData: MessageType }) => {
       setIncomingCall(data);
+      setChatInputValue(data.messageData)
       setVoiceCallActive(true);
       if (data.receiverId === currentUserId) {
         const { roomId } = data;
@@ -314,15 +360,98 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             makeCallAudioRef.current.play();
           }
         }, 500);
+
+        // Clear any existing timeout before setting a new one
+        if (missedCallTimeout.current) {
+          clearTimeout(missedCallTimeout.current);
+        }
+
+        // Set a timeout to show "missed call" only if not accepted
+        missedCallTimeout.current = setTimeout(() => {
+          const updatedChatInputValue = {
+            ...data.messageData,
+            calls: data.messageData.calls.map((call, index) =>
+              index === 0 ? { ...call, isMissedCall: true } : call
+            ),
+          };
+
+          setChatInputValue(updatedChatInputValue);
+          homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue })
+        }, 5000);
       }
     })
-  }, [currentUserId, homeSocket, userChatData])
+  }, [currentUserId, homeSocket, userChatData, missedCallTimeout])
+
+  const acceptVoiceCall = async () => {
+    if (incomingCall == null) return;
+    if (!homeSocket?.current) return;
+    try {
+
+      const stream = await openMediaDevices({ audio: true });
+      if (stream) {
+
+        localStream.current = stream;
+        remoteStream.current = new MediaStream();
+        peerConnection.current = createPeerConnection();
+        localStream.current.getTracks().forEach(track => {
+          track.enabled = true;
+          peerConnection.current?.addTrack(track, localStream.current!);
+        })
+        const { offer, callerId, receiverId, roomId } = incomingCall;
+        peerConnection.current.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await peerConnection.current.createAnswer();
+        await peerConnection.current.setLocalDescription(answer);
+        const updatedChatInputValue = {
+          ...chatInputValue,
+          calls: chatInputValue.calls.map((call, index) =>
+            index === 0 ? { ...call, isAnswered: true } : call
+          ),
+        };
+
+        setChatInputValue(updatedChatInputValue);
+        homeSocket.current.emit("answerCall", { answer, callerId, receiverId, roomId, messageData: updatedChatInputValue });
+        if (makeCallAudioRef && makeCallAudioRef.current !== null) {
+          makeCallAudioRef.current.pause();
+        }
+        setIncomingCall(null)
+        // Clear missed call timeout if the call is accepted
+        if (missedCallTimeout.current) {
+          clearTimeout(missedCallTimeout.current);
+          missedCallTimeout.current = null;
+        }
+      }
+    } catch (error) {
+      toast.error
+    }
+  }
+
+  useEffect(() => {
+    if (!homeSocket?.current) return;
+    const socket = homeSocket.current;
+    socket.on("confirmCall", async (data: { answer: any, callerId: string, receiverId: string, roomId: string }) => {
+      try {
+        await peerConnection.current?.setRemoteDescription(new RTCSessionDescription(data.answer));
+        if (makeCallAudioRef && makeCallAudioRef.current !== null) {
+          makeCallAudioRef.current.pause();
+        }
+      } catch (error: any) {
+        toast.error(error.toString())
+      }
+    })
+  }, [homeSocket])
 
   const endVoiceCall = () => {
     if (!homeSocket?.current) return;
-    homeSocket.current.emit('endVoiceCall', { roomId: currentRoomId })
-  }
+    const updatedChatInputValue = {
+      ...chatInputValue,
+      calls: chatInputValue.calls.map((call, index) =>
+        index === 0 ? { ...call, finishTimeStamp: new Date().getTime() } : call
+      ),
+    };
 
+    setChatInputValue(updatedChatInputValue);
+    homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue, })
+  }
   useEffect(() => {
     if (!homeSocket?.current) return;
     const socket = homeSocket.current;
@@ -346,88 +475,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       })
     })
   }, [homeSocket])
-
-
-  const acceptVoiceCall = async () => {
-    if (incomingCall == null) return;
-    if (!homeSocket?.current) return;
-    try {
-      // Request microphone permission
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      localStream.current = stream;
-      // **Add local audio track (fixes issue of caller not hearing receiver)**
-      localStream.current.getTracks().forEach(track => {
-        track.enabled = true;
-        peerConnection.current?.addTrack(track, localStream.current!);
-      });
-    } catch (error: any) {
-      if (error.name === "NotAllowedError") {
-        console.error("Microphone permission denied by the user.");
-        toast.error("Microphone permission denied. Please allow access.");
-        return; // Stop execution if permission is denied
-      } else if (error.name === "NotFoundError") {
-        console.error("No microphone device found.");
-        toast.error("No microphone device found.");
-        return; // Stop execution if no microphone is found
-      } else {
-        console.error("Error accessing microphone:", error);
-        toast.error("An error occurred while accessing the microphone.");
-        return;
-      }
-    }
-    const { offer, callerId, receiverId, roomId } = incomingCall;
-    peerConnection.current = createPeerConnection();
-    // Set the remote description with the received offer before creating an answer
-    peerConnection.current.setRemoteDescription(new RTCSessionDescription(offer));
-
-    const answer = await peerConnection.current.createAnswer();
-    await peerConnection.current.setLocalDescription(answer);
-    homeSocket.current.emit("answerCall", { answer, callerId, receiverId, roomId });
-    if (makeCallAudioRef && makeCallAudioRef.current !== null) {
-      makeCallAudioRef.current.pause();
-    }
-    setIncomingCall(null)
-  }
-
-  useEffect(() => {
-    if (!homeSocket?.current) return;
-    const socket = homeSocket.current;
-    socket.on("confirmCall", async (data: { answer: any, callerId: string, receiverId: string, roomId: string }) => {
-      // Whenreceive the answer from the callee, set the remote description to complete the handshake.
-      // await peerConnection.current?.setRemoteDescription(new RTCSessionDescription(data.answer));
-      // if (makeCallAudioRef && makeCallAudioRef.current !== null) {
-      //   makeCallAudioRef.current.pause();
-      // }
-      console.log("Received confirmCall data:", data);
-      if (!peerConnection.current) {
-        console.error("Peer connection is null");
-        return;
-      }
-
-      try {
-        await peerConnection.current.setRemoteDescription(new RTCSessionDescription(data.answer));
-        console.log("Remote description set successfully");
-        if (makeCallAudioRef && makeCallAudioRef.current !== null) {
-          makeCallAudioRef.current.pause();
-        }
-      } catch (error) {
-        console.error("Error setting remote description:", error);
-      }
-    })
-    socket.on("iceCandidate", async (data: { candidate: any, callerId: string, receiverId: string, roomId: string }) => {
-      if (peerConnection.current) {
-        try {
-          // // Added comment: Ensure remote description is set before adding ICE candidate.
-          await peerConnection.current.addIceCandidate(data.candidate); // // ICE candidate added
-        } catch (err) {
-          console.error("Error adding received ice candidate", err); // // Catch error if ICE candidate is added before remote description is set
-          // // Optionally: queue ICE candidates here until the remote description is set
-        }
-      }
-    })
-  }, [homeSocket])
-
-
   const videoCallToggleFunction = () => {
     setVideoCallActive((prev) => !prev);
     if (currentRoom !== null) {
@@ -574,19 +621,26 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!currentRoomId || userChatData.length === 0) return;
 
     const currentRoomData = userChatData.find((a) => a.roomId === currentRoomId);
+
     if (!currentRoomData) return;
 
     if (_.isEqual(currentRoom, currentRoomData)) return; // Prevent duplicate updates
 
     const lastMessage = currentRoomData.messages[currentRoomData.messages.length - 1];
-    if (lastMessage?.receiverId === currentUserId && homeSocket.current) {
-      homeSocket.current.emit('makeAllMessageRead', { roomId: currentRoomData.roomId });
-    }
+    if (lastMessage) {
+      if (!lastMessage.read) {
+        if (lastMessage?.receiverId === currentUserId) {
+          if (!lastMessage.read && homeSocket.current) {
+            homeSocket.current.emit('makeOneMessageRead', { lastMessage });
+          }
+        }
 
+      }
+    }
     setCurrentRoom((prev) => (_.isEqual(prev, currentRoomData) ? prev : currentRoomData));
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentRoomId, userChatData, currentUserId, homeSocket]);
+
+  }, [currentRoomId, userChatData, currentUserId, homeSocket, currentRoom]);
 
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -628,6 +682,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const onLeftUserClicked = (chatData: ChatDataType) => {
     setCurrentRoomId(() => chatData.roomId)
     makeAllMessageRead(chatData.roomId)
+    if (!minWidth768) {
+      const chatLeft = document.querySelector(".new-chat-cont-left");
+      if (chatLeft) {
+        chatLeft.classList.remove("new-chat-cont-left-active");
+      }
+      const chatScrol = document.querySelector('.chat-scroll');
+      if (chatScrol) {
+        chatScrol.classList.remove('chat-scroll-active')
+      }
+      const chatUserList = document.querySelector('.chat-users-list');
+      if (chatUserList) {
+        chatUserList.classList.remove('chat-users-list-active')
+      }
+    }
   }
 
 
@@ -647,7 +715,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       read: false,
       attachment: chatInputValue.attachment,
       roomId: currentRoomId!,
-      attachmentFiles: []
+      attachmentFiles: [],
+      calls: [],
     };
 
     let uploadPromise = new Promise(async (uploadResolve) => {
@@ -708,6 +777,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       message: null,
       read: false,
       attachment: [],
+      calls: [],
       roomId: ''
     });
   }
@@ -721,6 +791,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       message: null,
       read: false,
       attachment: [],
+      calls: [],
       roomId: ''
     });
   }
@@ -741,7 +812,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       read: false,
       attachment: editChatInputValue.attachment,
       roomId: currentRoomId!,
-      attachmentFiles: []
+      attachmentFiles: [],
+      calls: [],
     };
 
 
@@ -757,6 +829,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       message: null,
       read: false,
       attachment: [],
+      calls: [],
       roomId: ''
     });
   }
@@ -990,6 +1063,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       voiceCallActive,
       voiceCallToggleFunction,
       videoCallActive,
+      setVoiceCallActive,
       videoCallToggleFunction,
       isLoading,
       sortLatestMessage,
@@ -1005,6 +1079,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       handleClickInputFile,
       handleChangeInputFile,
       callReceiverUserData,
+      setCallReceiverUserData,
       downloadClick,
       deleteButtonClicked,
       deleteConfirmationShow,
@@ -1020,6 +1095,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       acceptVoiceCall,
       incomingCall,
       setIncomingCall,
+      minWidth768
     }}>
       {children}
     </ChatContext.Provider>

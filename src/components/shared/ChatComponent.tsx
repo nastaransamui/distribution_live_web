@@ -15,14 +15,15 @@ import duration from 'dayjs/plugin/duration'
 import weekday from 'dayjs/plugin/weekday'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import CustomNoRowsOverlay from './CustomNoRowsOverlay';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import PhoneForwardedIcon from '@mui/icons-material/PhoneForwarded';
+import PhoneCallbackIcon from '@mui/icons-material/PhoneCallback';
 import { useTheme } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import DialogContent from '@mui/material/DialogContent'
 import Stack from '@mui/material/Stack'
 import { LoadingComponent, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
 import DoctorsAutoComplete from './DoctorsAutoComplete';
-import { ChatDataType, ChatUserType, ITEM_HEIGHT, menuOptions, MessageType, useChat } from '@/hooks/useChat';
+import { AttachmentType, ChatDataType, ITEM_HEIGHT, menuOptions, MessageType, useChat } from '@/hooks/useChat';
 import { BootstrapDialog, BootstrapDialogTitle, Transition } from './Dialog';
 import UploadFile from '@mui/icons-material/UploadFile';
 import Snackbar from '@mui/material/Snackbar'
@@ -33,6 +34,9 @@ import useScssVar from '@/hooks/useScssVar';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import EditIcon from '@mui/icons-material/Edit';
 import _ from 'lodash';
+import PhoneMissedIcon from '@mui/icons-material/PhoneMissed';
+import { loadStylesheet } from '@/pages/_app';
+import Lightbox from 'yet-another-react-lightbox';
 export function escapeRegExp(value: string) {
   return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
@@ -41,14 +45,14 @@ export interface ChatComponentType {
   userType: 'doctors' | 'patient';
 }
 
+dayjs.extend(relativeTime)
+dayjs.extend(duration)
+dayjs.extend(weekday)
+dayjs.extend(updateLocale)
 const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
   const { muiVar } = useScssVar()
 
-  dayjs.extend(relativeTime)
-  dayjs.extend(duration)
-  dayjs.extend(weekday)
-  dayjs.extend(updateLocale)
-  const minWidth768 = useMediaQuery('(min-width:768px)');
+
   const {
     footerHeight,
     voiceCallActive,
@@ -56,13 +60,13 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
     videoCallActive,
     videoCallToggleFunction,
     currentRoom,
-    callReceiverUserData,
     deleteConfirmationShow,
     setDeleteConfirmationShow,
     deleteSubmited,
     setDeleteType,
     showSnackBar,
-    setShowSnakBar
+    setShowSnakBar,
+    minWidth768
   } = useChat()
 
 
@@ -277,7 +281,7 @@ export const ChatLeftUsers: FC = (() => {
 
 const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatData, index }) => {
 
-  const { onLeftUserClicked, currentRoomId, weekdays, currentUserId, downloadClick } = useChat();
+  const { onLeftUserClicked, currentRoomId, weekdays, currentUserId, downloadClick, voiceCallToggleFunction, setCurrentRoomId } = useChat();
   let sortedMessages = [...chatData?.messages].sort((a, b) => b.timestamp - a.timestamp); // Sort in descending order
   let lastMessage = sortedMessages[0];
   let lastMessageTime = dayjs(lastMessage?.timestamp);
@@ -327,7 +331,7 @@ const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatD
               <div className="user-last-chat" >
                 {lastMessage?.["message"] && decrypt(lastMessage["message"])}
               </div>
-              <ReadStatusComponent lastMessage={lastMessage} />
+              {lastMessage.calls.length == 0 && <ReadStatusComponent lastMessage={lastMessage} />}
             </span>
             <span style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
               {
@@ -335,19 +339,59 @@ const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatD
                 lastMessage.attachment.map((attach, i) => {
                   const isBlob = attach.src && attach.src.startsWith("blob:");
                   return (
-                    <div className="chat-attachment chat-attachment-left-side" key={`${i} ${index}`} onClick={() => { downloadClick(attach) }} >
-                      {isBlob &&
-                        <img
-                          src={attach.isImage ? attach.src : getFileIcon(attach.type)} // Use icon/placeholder until blob is ready
-                          alt="Attachment"
-                        />
-                      }
-                      <div className="user-last-chat" style={{ marginLeft: 3, paddingInline: 10 }}>{attach.name}</div>
-                    </div>
+                    <span key={`${i} ${index}`}>
+                      <div className="chat-attachment chat-attachment-left-side" onClick={() => { downloadClick(attach) }} >
+                        {isBlob &&
+                          <img
+                            src={attach.isImage ? attach.src : getFileIcon(attach.type)} // Use icon/placeholder until blob is ready
+                            alt="Attachment"
+                          />
+                        }
+                        <div className="user-last-chat" style={{ marginLeft: 3, paddingInline: 10 }}>{attach.name}</div>
+                      </div>
+                    </span>
                   )
                 })
               }
             </span>
+            {
+              lastMessage.calls.length > 0 &&
+              lastMessage.calls.map((call, i) => {
+                let isSent = lastMessage.senderId == currentUserId;
+
+                return (
+                  <div key={`${i} ${index}`} style={{ display: 'flex', alignItems: 'center', }}>
+                    {
+                      isSent ?
+                        <Avatar sx={{ backgroundColor: "background.default", height: 30, width: 30, marginRight: '8px' }} onClick={(e) => {
+                          if (currentRoomId !== null) {
+                            voiceCallToggleFunction();
+                          }
+                        }}>
+                          {
+                            call.isMissedCall ?
+                              <PhoneMissedIcon sx={{ color: "secondary.main", fontSize: 16, }} /> :
+                              <PhoneForwardedIcon sx={{ color: 'secondary.main', fontSize: 16, }} />
+                          }
+
+                        </Avatar> :
+                        <Avatar sx={{ backgroundColor: "background.default", height: 30, width: 30, marginRight: '8px' }} onClick={(e) => {
+                          if (currentRoomId !== null) {
+                            voiceCallToggleFunction();
+                          }
+                        }}>
+                          {
+                            call.isMissedCall ?
+                              <PhoneMissedIcon sx={{ color: "secondary.main", fontSize: 16, }} /> :
+                              <PhoneCallbackIcon sx={{ color: 'secondary.main', fontSize: 16, }} />
+                          }
+                        </Avatar>
+                    }
+                    <ReadStatusComponent lastMessage={lastMessage} />
+                  </div>
+                )
+              })
+            }
           </div>
           <div>
             <div className="last-chat-time block">
@@ -588,10 +632,10 @@ export const ChatRightHeader: FC = (() => {
 })
 
 export const ChatRightBody: FC = (() => {
-  const { currentRoom } = useChat()
+  const { currentRoom } = useChat();
+
 
   return (
-
     <div className="chat-body">
       <div
         className={
@@ -613,10 +657,12 @@ export const ChatRightBody: FC = (() => {
                         <Fragment key={index} >
                           <ChatRightBodyDateComponent mesage={mesage} index={index} />
                           {
-                            mesage.message !== null && mesage.attachment.length == 0 ?
-                              <ChatRightMessageWithoutAttachment mesage={mesage} index={index} />
-
-                              :
+                            mesage.calls.length !== 0 &&
+                            <ChatRightMessageWithCall mesage={mesage} index={index} />
+                          }
+                          {
+                            mesage.attachment.length == 0 ?
+                              mesage.calls.length == 0 && <ChatRightMessageWithoutAttachment mesage={mesage} index={index} /> :
                               <ChatRightMessageWithAttachment mesage={mesage} index={index} />
                           }
                         </Fragment>
@@ -650,6 +696,7 @@ export const ChatRightFooter: FC = (() => {
     onCancelEdit
   } = useChat()
   const theme = useTheme()
+
   return (
     <Fragment>
       <div className="chat-footer" ref={chatFooterRef}>
@@ -739,15 +786,25 @@ export const ChatRightFooter: FC = (() => {
                             onCancelEdit()
                           }} />
                           :
-                          <UploadFile
-                            sx={{
-                              color: currentRoomId == null
-                                ? theme.palette.text.disabled
-                                : theme.palette.primary.main,
-                              cursor: currentRoomId == null ? "unset" : "pointer",
-                            }}
+                          <IconButton
+                            disableFocusRipple
+                            disableRipple
+                            disableTouchRipple
+                            sx={{ paddingLeft: 0 }}
+                            disabled={currentRoomId == null || chatInputValue.attachment.length === 5}
                             onClick={() => currentRoomId !== null && handleClickInputFile()}
-                          />
+                          >
+                            <UploadFile
+
+                              sx={{
+                                color: currentRoomId == null || chatInputValue.attachment.length === 5
+                                  ? theme.palette.text.disabled
+                                  : theme.palette.primary.main,
+                                cursor: currentRoomId == null ? "unset" : "pointer",
+                              }}
+
+                            />
+                          </IconButton>
                       }
                     </div>
                     <input
@@ -981,6 +1038,9 @@ export const ChatRightMessageWithoutAttachment: FC<{ mesage: MessageType, index:
 
 export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType, index: number }> = (({ mesage, index }) => {
 
+  const [openImage, setOpenImage] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+  const [Images, setImages] = useState<AttachmentType[]>([]);
   const { currentRoom, lastRef, currentUserId, downloadClick } = useChat();
   let isSent = mesage.senderId == currentUserId;
   let senderImage =
@@ -1018,9 +1078,23 @@ export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType, index: nu
 
                           <button
                             className="chat-attach-download"
-                            onClick={() => downloadClick(attach)}
+                            onClick={() => {
+                              if (!attach.isImage) {
+                                downloadClick(attach);
+                              } else {
+                                // Filter only images and find the correct index in the filtered list
+                                const imageAttachments = mesage.attachment.filter((a) => a.isImage);
+                                const newIndex = imageAttachments.findIndex((a) => a.src === attach.src);
+
+                                setImages(imageAttachments);
+                                setImageIndex(newIndex);
+                                setOpenImage(true);
+                              }
+                            }}
                           >
-                            <i className="fas fa-download"></i>
+                            {
+                              attach.isImage ? <i className="fa-solid fa-magnifying-glass"></i> : <i className="fas fa-download"></i>
+                            }
                           </button>
                         </div>
                       )
@@ -1042,6 +1116,113 @@ export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType, index: nu
                 </div>
               </div>
             </div>
+          </div>
+        </li>
+      }
+
+      <Lightbox
+        open={openImage}
+        close={() => setOpenImage(false)}
+        slides={Images.filter(img => img.isImage).map(img => ({
+          src: img.src,
+          type: "image", // Ensuring it meets the expected type
+        }))}
+        index={imageIndex}
+      />
+    </Fragment>
+  )
+})
+
+export const ChatRightMessageWithCall: FC<{ mesage: MessageType, index: number }> = (({ mesage, index }) => {
+
+  const { currentRoom, currentUserId, lastRef, voiceCallToggleFunction } = useChat();
+  let isSent = mesage.senderId == currentUserId;
+  const isVoiceCall = mesage.calls[0]?.isVoiceCall
+  const isMissedCall = mesage.calls[0]?.isMissedCall
+  let senderImage =
+    currentRoom?.createrData.userId == currentUserId ?
+      currentRoom?.receiverData?.profileImage :
+      currentRoom?.createrData?.profileImage;
+
+  const startTime = mesage?.calls[0]?.startTimeStamp;
+  const finishTime = mesage?.calls[0]?.finishTimeStamp ?? startTime;
+
+  const callDuration = dayjs.duration(finishTime - startTime);
+  const totalSeconds = callDuration.asSeconds();
+  const totalMinutes = callDuration.asMinutes();
+  const totalHours = callDuration.asHours();
+
+  let formattedDuration = "";
+
+  if (totalSeconds < 60) {
+    formattedDuration = `${Math.floor(totalSeconds)} sec`;
+  } else if (totalSeconds < 3600) {
+    formattedDuration = `${Math.floor(totalMinutes)} min ${Math.floor(totalSeconds % 60)} sec`;
+  } else {
+    formattedDuration = `${Math.floor(totalHours)} hr ${Math.floor(totalMinutes % 60)} min`;
+  }
+
+  return (
+    <Fragment>
+      {
+        currentRoom !== null &&
+        <li className={`media ${isSent ? 'sent' : 'received'} d-flex`}  >
+          <div className="avatar flex-shrink-0">
+            {!isSent && <img src={senderImage} alt="User" className="avatar-img rounded-circle" />}
+          </div>
+          <div className="media-body flex-grow-1">
+            <div className="msg-box" >
+              <div >
+                {currentUserId === mesage.senderId &&
+                  <DeleteMessageButton deleteType={mesage.timestamp} mesage={mesage} />
+                }
+
+                {
+                  isSent ?
+                    <>
+                      {
+                        isVoiceCall ? <Avatar sx={{ backgroundColor: "background.default", cursor: 'pointer' }} onClick={(e) => {
+                          voiceCallToggleFunction()
+                        }}>
+                          {
+                            isMissedCall ?
+                              <PhoneMissedIcon sx={{ color: "secondary.main" }} /> :
+                              <PhoneForwardedIcon sx={{ color: 'secondary.main' }} />
+                          }
+                        </Avatar> : <>video call</>
+                      }
+                    </> :
+                    <>
+                      {
+                        isVoiceCall ?
+                          <Avatar sx={{ backgroundColor: "background.default", cursor: 'pointer' }} onClick={(e) => {
+                            voiceCallToggleFunction()
+                          }}>
+                            {
+                              isMissedCall ?
+                                <PhoneMissedIcon sx={{ color: "secondary.main" }} /> :
+                                <PhoneCallbackIcon sx={{ color: 'secondary.main' }} />
+                            }
+                          </Avatar> :
+                          <>video Call </>
+                      }
+                    </>
+                }
+
+                <span>
+                  {formattedDuration}
+                </span>
+                <ul className="chat-msg-info">
+                  <li>
+                    <div className="chat-time" style={{ position: 'relative' }}>
+                      <ReadStatusComponent lastMessage={mesage} />
+                      <span ref={index == (currentRoom!.messages.length - 1) ? lastRef : null}>{dayjs(mesage.timestamp).format('HH:mm')}</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
           </div>
         </li>
       }

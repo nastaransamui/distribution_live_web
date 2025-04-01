@@ -46724,6 +46724,10 @@ svg.feather {
   border-right: 1px solid var(--secondaryMain);
 }
 
+.new-chat-window .new-chat-cont-left .chat-users-list a.media:hover .MuiAvatar-root{
+  background-color: var(--bgPaper);
+}
+
 .new-chat-window
   .new-chat-cont-left
   .chat-users-list
@@ -46738,6 +46742,9 @@ svg.feather {
 }
 .new-chat-window .new-chat-cont-left .chat-users-list a.media.active {
   background-color: var(--bgDefault);
+}
+.new-chat-window .new-chat-cont-left .chat-users-list a.media.active .MuiAvatar-root{
+  background-color: var(--bgPaper);
 }
 
 .start-chat-div {
