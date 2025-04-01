@@ -631,7 +631,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!lastMessage.read) {
         if (lastMessage?.receiverId === currentUserId) {
           if (!lastMessage.read && homeSocket.current) {
-            homeSocket.current.emit('makeOneMessageRead', { lastMessage });
+            homeSocket.current.emit('makeOneMessageRead', lastMessage);
           }
         }
 
