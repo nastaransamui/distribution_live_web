@@ -92,13 +92,15 @@ const App = ({ Component, ...rest }: MyAppProps) => {
             </Provider>
           </CacheProvider >
           :
-          <Provider store={store}>
-            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
-              <AppWrapper>
-                <Component {...pageProps} key={router.route} router={router} />
-              </AppWrapper>
-            </GoogleOAuthProvider>
-          </Provider>
+          <CacheProvider value={emotionCache}>
+            <Provider store={store}>
+              <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
+                <AppWrapper>
+                  <Component {...pageProps} key={router.route} router={router} />
+                </AppWrapper>
+              </GoogleOAuthProvider>
+            </Provider>
+          </CacheProvider>
 
       }
     </>
