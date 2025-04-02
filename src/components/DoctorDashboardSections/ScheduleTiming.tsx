@@ -18,8 +18,8 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button'
-import { styled, useTheme, darken, lighten, Theme } from '@mui/material/styles';
-import { makeStyles } from 'tss-react/mui';
+import { styled, useTheme, darken, lighten } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import SwipeableViews from 'react-swipeable-views';
 import AppBar from '@mui/material/AppBar';
@@ -71,7 +71,7 @@ import CustomPagination from '../shared/CustomPagination';
 import { useTimeSlot } from '@/hooks/useTimeSlot';
 import FormHelperText from '@mui/material/FormHelperText';
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, globalFilterFunctions } from '../shared/CustomToolbar';
-import dataGridStyle from '../shared/dataGridStyle';
+
 import InputAdornment from '@mui/material/InputAdornment';
 
 
@@ -564,30 +564,18 @@ const ScheduleTiming: FC = (() => {
 
 
 
-const confirmdeleteToastStyle = makeStyles<{}>()((theme) => {
-  return {
-    mainDiv: {
-      display: 'flex',
-      gap: '5px',
-    },
-    deleteButton: {
-      backgroundColor: theme.palette.primary.main,
-    },
-    cancelButton: {
-      backgroundColor: theme.palette.secondary.main,
-    }
-  }
-})
+
 const ConfirmDeleteToast: FC<{ deleteDb: Function }> = (({ deleteDb }) => {
   const { muiVar } = useScssVar();
-  const { classes } = confirmdeleteToastStyle({});
+  const theme = useTheme();
   return (
     <div style={muiVar}>
       <Typography align="center">Are you sure to delete this whole time slot?</Typography>
       <br />
-      <div className={classes.mainDiv}>
+      <div style={{ display: 'flex', gap: '5px' }}>
         <Button
-          className={`btnDelete btn-primary submit-btn ${classes.deleteButton}`}
+          className={`btnDelete btn-primary submit-btn `}
+          sx={{ backgroundColor: theme.palette.primary.main }}
           onClick={() => {
             deleteDb();
             toast.dismiss('delete-confirm');
@@ -602,7 +590,8 @@ const ConfirmDeleteToast: FC<{ deleteDb: Function }> = (({ deleteDb }) => {
           fullWidth
           onClick={() => toast.dismiss('delete-confirm')}
           variant="contained"
-          className={`btn btn-primary submit-btn ${classes.cancelButton}`} >
+          className={`btn btn-primary submit-btn `}
+          sx={{ backgroundColor: theme.palette.secondary.main, }} >
           Cancel
         </Button>
       </div>
@@ -2285,7 +2274,7 @@ const updatePeriodCheckState = (newAvailableSlotFromDb: AvailableType[], period:
   }, {});
 
 const ReservationsComponent: FC = () => {
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const {
     rowCount,
     rows,
@@ -2547,7 +2536,7 @@ const ReservationsComponent: FC = () => {
           <div className="card">
             <div className="card-body">
               <div className="table-responsive">
-                <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                <Box sx={{ minHeight: boxMinHeight }} className="dataGridOuterBox">
                   <LoadingComponent boxMinHeight={boxMinHeight} />
                 </Box>
               </div>
@@ -2555,8 +2544,8 @@ const ReservationsComponent: FC = () => {
           </div> :
           <div className="card">
             <div ref={dataGridRef} className="tab-content schedule-cont">
-              <Box className={classes.dataGridOuterBox} >
-                <Typography className={classes.totalTypo}
+              <Box className="dataGridOuterBox" >
+                <Typography className="totalTypo"
                   variant='h5' align='center' gutterBottom >
                   {
                     rowCount !== 0 ?
@@ -2637,7 +2626,6 @@ const ReservationsComponent: FC = () => {
                     pageSizeOptions={[5, 10]}
                     showCellVerticalBorder
                     showColumnVerticalBorder
-                    className={classes.dataGrid}
                     sx={{
                       "&.MuiDataGrid-root .MuiDataGrid-row": {
                         backgroundColor:
@@ -2652,6 +2640,16 @@ const ReservationsComponent: FC = () => {
                           ),
                         }
                       },
+                      "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                        marginTop: "1em",
+                        marginBottom: "1em"
+                      },
+                      "& .MuiDataGrid-footerContainer": {
+                        [theme.breakpoints.only("xs")]: {
+                          justifyContent: 'center',
+                          marginBottom: '2px'
+                        }
+                      }
                     }}
                   />
                 </div>

@@ -19,7 +19,7 @@ import Avatar from '@mui/material/Avatar';
 import { doctors_profile, patient_profile } from '@/public/assets/imagepath';
 import Stack from '@mui/material/Stack';
 import RenderExpandableCell from '../shared/RenderExpandableCell';
-import dataGridStyle from '../shared/dataGridStyle';
+import { useTheme } from '@mui/material/styles';
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -32,7 +32,7 @@ const Rates: FC = () => {
   const dataGridRef = useRef<any>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false)
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
   const [rowsCount, setRowsCount] = useState<number>(0)
 
@@ -493,7 +493,7 @@ const Rates: FC = () => {
             <div className="card">
               <div className="card-body">
                 <div className="table-responsive">
-                  <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                  <Box sx={{ minHeight: boxMinHeight }} className="dataGridOuterBox">
                     <LoadingComponent boxMinHeight={boxMinHeight} />
                   </Box>
                 </div>
@@ -501,8 +501,8 @@ const Rates: FC = () => {
             </div> :
             <div className="card">
               <div ref={dataGridRef} className="tab-content schedule-cont">
-                <Box className={classes.dataGridOuterBox} >
-                  <Typography className={classes.totalTypo}
+                <Box className="dataGridOuterBox" >
+                  <Typography className="totalTypo"
                     variant='h5' align='center' gutterBottom >
                     {
                       rowsCount !== 0 ?
@@ -583,7 +583,6 @@ const Rates: FC = () => {
                       pageSizeOptions={[5, 10]}
                       showCellVerticalBorder
                       showColumnVerticalBorder
-                      className={classes.dataGrid}
                       sx={{
                         "&.MuiDataGrid-root .MuiDataGrid-row": {
                           backgroundColor:
@@ -598,6 +597,16 @@ const Rates: FC = () => {
                             ),
                           }
                         },
+                        "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                          marginTop: "1em",
+                          marginBottom: "1em"
+                        },
+                        "& .MuiDataGrid-footerContainer": {
+                          [theme.breakpoints.only("xs")]: {
+                            justifyContent: 'center',
+                            marginBottom: '2px'
+                          }
+                        }
                       }}
                     />
                   </div>

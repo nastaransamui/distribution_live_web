@@ -27,7 +27,7 @@ import DialogContent from '@mui/material/DialogContent';
 
 import { BootstrapDialog, Transition, BootstrapDialogTitle } from '../shared/Dialog';
 import { PatientProfile } from '../DoctorDashboardSections/MyPtients';
-import dataGridStyle from '../shared/dataGridStyle';
+import { useTheme } from '@mui/material/styles';
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -190,7 +190,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
   dayjs.extend(timezone)
   const { muiVar, bounce } = useScssVar();
   const router = useRouter();
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
   const dataGridRef = useRef<any>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -727,7 +727,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
           <div className="card">
             <div className="card-body">
               <div className="table-responsive">
-                <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                <Box sx={{ minHeight: boxMinHeight }} className="dataGridOuterBox">
                   <LoadingComponent boxMinHeight={boxMinHeight} />
                 </Box>
               </div>
@@ -735,8 +735,8 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
           </div> :
           <div className="card">
             <div ref={dataGridRef} className="tab-content schedule-cont">
-              <Box className={classes.dataGridOuterBox} >
-                <Typography className={classes.totalTypo}
+              <Box className="dataGridOuterBox" >
+                <Typography className="totalTypo"
                   variant='h5' align='center' gutterBottom >
                   {
                     rowCount !== 0 ?
@@ -818,7 +818,6 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                     pageSizeOptions={[5, 10]}
                     showCellVerticalBorder
                     showColumnVerticalBorder
-                    className={classes.dataGrid}
                     sx={{
                       "&.MuiDataGrid-root .MuiDataGrid-row": {
                         backgroundColor:
@@ -833,6 +832,17 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                           ),
                         }
                       },
+                      "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                        marginTop: "1em",
+                        marginBottom: "1em"
+                      },
+                      "& .MuiDataGrid-footerContainer": {
+                        [theme.breakpoints.only("xs")]: {
+                          justifyContent: 'center',
+                          marginBottom: '2px'
+                        }
+                      }
+
                     }}
                   />
                 </div>

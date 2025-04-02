@@ -42,9 +42,10 @@ import AppWrapper from '@/theme/AppWrapper';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AppCacheProvider } from '@mui/material-nextjs/v13-pagesRouter'
-// export interface MyAppProps extends AppProps {
-//   emotionCache?: EmotionCache;
-// }
+import { StyledEngineProvider } from '@mui/material/styles';
+export interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
+}
 
 
 const clientSideEmotionCache = createEmotionCache();
@@ -58,7 +59,7 @@ export const loadStylesheet = (href: string) => {
   document.head.appendChild(link);
 };
 
-const App = ({ Component, ...rest }: AppProps) => {
+const App = ({ Component, ...rest }: MyAppProps) => {
   const { store, props } = wrapper.useWrappedStore(rest);
   const { router, emotionCache = clientSideEmotionCache, pageProps } = props;
   useEffect(() => {
@@ -79,15 +80,15 @@ const App = ({ Component, ...rest }: AppProps) => {
 
   return (
     <>
-      <AppCacheProvider {...props}>
-        <Provider store={store}>
-          <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
-            <AppWrapper>
-              <Component {...pageProps} key={router.route} router={router} />
-            </AppWrapper>
-          </GoogleOAuthProvider>
-        </Provider>
-      </AppCacheProvider>
+      {/* <AppCacheProvider {...props} > */}
+      <Provider store={store}>
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
+          <AppWrapper>
+            <Component {...pageProps} key={router.route} router={router} />
+          </AppWrapper>
+        </GoogleOAuthProvider>
+      </Provider>
+      {/* </AppCacheProvider> */}
       {/* CacheProvider break in production */}
       {/* {
         process.env.NODE_ENV == 'development' ?

@@ -20,15 +20,15 @@ import { doctors_profile } from '@/public/assets/imagepath';
 import { AppointmentReservationType } from '../DoctorsSections/CheckOut/PaymentSuccess';
 
 //liberies
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
+
 import { toast } from 'react-toastify';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 import dayjs from 'dayjs';
 import { formatNumberWithCommas, LoadingComponent, StyledBadge } from '@/components/DoctorDashboardSections/ScheduleTiming';
-import Chip from '@mui/material/Chip';
+
 import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection';
 import Grid from '@mui/material/Grid';
-import dataGridStyle from '../shared/dataGridStyle';
+
 
 export interface EditValueType {
   start: Date;
@@ -328,7 +328,7 @@ interface PatientAppointmentShowBoxType {
   handleShow: (data: AppointmentReservationExtendType) => void;
 }
 const PatientAppointmentShowBox: FC<PatientAppointmentShowBoxType> = (({ myAppointmentData, handleShow }) => {
-  const { theme } = dataGridStyle({});
+  const theme = useTheme();
   return (
     <>
       {

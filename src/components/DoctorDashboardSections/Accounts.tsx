@@ -20,7 +20,6 @@ import { formatNumberWithCommas, LoadingComponent } from './ScheduleTiming';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import dataGridStyle from '../shared/dataGridStyle';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
@@ -80,8 +79,7 @@ export interface BillingsTotalsType {
 
 const Accounts: FC = (() => {
   const { muiVar, bounce } = useScssVar();
-  const { classes, theme } = dataGridStyle({});
-
+  const theme = useTheme();
   const [edit, setEdit] = useState(false);
 
   const [bankData, setBankData] = useState<BankType>()
@@ -237,7 +235,7 @@ const Accounts: FC = (() => {
           <div className="card">
             <div className="card-body">
               <div className="table-responsive">
-                <Box sx={{ minHeight: "500px" }} className={classes.dataGridOuterBox}>
+                <Box sx={{ minHeight: "500px" }} className="dataGridOuterBox">
                   <LoadingComponent boxMinHeight="500px" />
                 </Box>
               </div>

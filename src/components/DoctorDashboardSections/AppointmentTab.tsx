@@ -24,7 +24,6 @@ import Pagination from '@mui/material/Pagination';
 import { LoadingComponent, StyledBadge, formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor } from './ScheduleTiming';
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';
-import dataGridStyle from '@/shared/dataGridStyle';
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import CustomPagination from '../shared/CustomPagination';
 import Box from '@mui/material/Box';
@@ -51,7 +50,7 @@ export interface PropType {
 
 const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, setIsLoading }) => {
 
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
@@ -402,14 +401,17 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
   return (
     <Fragment>
       {isLoading && dashAppointmentData.length == 0 ?
-        <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+        <Box sx={{ minHeight: boxMinHeight }}>
           <LoadingComponent boxMinHeight={boxMinHeight} />
         </Box> :
         <>
           <div className="card">
             <div ref={dataGridRef} className="tab-content schedule-cont">
-              <Box className={classes.dataGridOuterBox} >
-                <Typography className={classes.totalTypo}
+              <Box
+                className="dataGridOuterBox"
+              >
+                <Typography
+                  className="totalTypo"
                   variant='h5' align='center' gutterBottom >
                   {
                     total !== 0 ?
@@ -490,7 +492,6 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
                     pageSizeOptions={[5, 10]}
                     showCellVerticalBorder
                     showColumnVerticalBorder
-                    className={classes.dataGrid}
                     sx={{
                       "&.MuiDataGrid-root .MuiDataGrid-row": {
                         backgroundColor:
@@ -505,6 +506,16 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
                           ),
                         }
                       },
+                      "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                        marginTop: "1em",
+                        marginBottom: "1em"
+                      },
+                      "& .MuiDataGrid-footerContainer": {
+                        [theme.breakpoints.only("xs")]: {
+                          justifyContent: 'center',
+                          marginBottom: '2px'
+                        }
+                      }
                     }}
                   />
                 </div>

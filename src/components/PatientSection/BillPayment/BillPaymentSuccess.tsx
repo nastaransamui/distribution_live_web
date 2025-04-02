@@ -11,23 +11,22 @@ import { toast } from 'react-toastify';
 
 import { useTheme } from '@mui/material/styles';
 
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 
 import { BillingTypeWithDoctorProfile } from '@/components/DoctorDashboardSections/EditBilling';
 import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
-import StickyBox from 'react-sticky-box';
+
 import { BillingDetailsArrayType } from '@/components/DoctorDashboardSections/AddBilling';
 import { doctors_profile } from '@/public/assets/imagepath';
 import Avatar from '@mui/material/Avatar';
 import Rating from '@mui/material/Rating';
-import dataGridStyle from '@/components/shared/dataGridStyle';
+
 import Box from '@mui/material/Box';
 
 
 const BillPaymentSuccess: FC = (() => {
   const { muiVar, bounce } = useScssVar();
   const router = useRouter()
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
@@ -96,7 +95,7 @@ const BillPaymentSuccess: FC = (() => {
                       <div className="card">
                         <div className="card-body">
                           <div className="table-responsive">
-                            <Box sx={{ minHeight: '500px' }} className={classes.dataGridOuterBox}>
+                            <Box sx={{ minHeight: '500px' }} className="dataGridOuterBox">
                               <LoadingComponent boxMinHeight='500px' />
                             </Box>
                           </div>

@@ -11,22 +11,22 @@ import createEmotionServer from '@emotion/server/create-instance';
 import { AppType } from 'next/app';
 import { roboto } from '@/theme/appTheme';
 import createEmotionCache from '@/theme/createEmotionCache';
-// import { MyAppProps } from './_app';
+import { MyAppProps } from './_app';
 import Script from 'next/script';
 import { DocumentHeadTags, documentGetInitialProps } from '@mui/material-nextjs/v13-pagesRouter'
 
-// interface MyDocumentProps extends DocumentProps {
-//   emotionStyleTags: JSX.Element[];
-// }
+interface MyDocumentProps extends DocumentProps {
+  emotionStyleTags: JSX.Element[];
+}
 
-export default function MyDocument(props: any) {
+export default function MyDocument(props: MyDocumentProps) {
 
   return (
     <Html lang="en" className={roboto.className} id='htmlId'>
       <Head>
-        <DocumentHeadTags {...props} />
         <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
-        {/* {emotionStyleTags} */}
+        <DocumentHeadTags {...props} />
+        {props.emotionStyleTags}
       </Head>
       <body id='body'>
         <Main />
@@ -39,8 +39,41 @@ export default function MyDocument(props: any) {
     </Html>
   );
 }
-MyDocument.getInitialProps = async (ctx: any) => {
-  const finalProps = await documentGetInitialProps(ctx);
+MyDocument.getInitialProps = async (ctx: DocumentContext) => {
+  const emotionCache = createEmotionCache();
+  const { extractCriticalToChunks } = createEmotionServer(emotionCache);
+
+  const finalProps = await documentGetInitialProps(ctx, {
+    emotionCache,
+    plugins: [
+      {
+        enhanceApp: (App) => (props) => <App emotionCache={emotionCache} {...props} />,
+        resolveProps: async (initialProps) => {
+          const emotionStyles = extractCriticalToChunks(initialProps.html);
+          const emotionStyleTags = emotionStyles.styles.map((style) => {
+            return (
+
+              <style
+                data-emotion={`${style.key} ${style.ids.join(' ')}`}
+                key={style.key}
+                dangerouslySetInnerHTML={{ __html: style.css }}
+              />
+
+            )
+          });
+
+          return {
+            ...initialProps,
+            styles: [
+              ...(Array.isArray(initialProps.styles) ? initialProps.styles : []),
+              ...emotionStyleTags,
+            ],
+          };
+        },
+      },
+    ],
+  });
+
   return finalProps;
 };
 // MyDocument.getInitialProps = async (ctx: DocumentContext) => {

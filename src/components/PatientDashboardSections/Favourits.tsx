@@ -22,7 +22,7 @@ import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import preciseDiff from 'dayjs-precise-range'
-import dataGridStyle from '../shared/dataGridStyle';
+import { useTheme } from '@mui/material/styles';
 import { DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridFilterModel, GridRenderCellParams, GridRowId, GridRowParams, GridSortModel, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
@@ -48,7 +48,7 @@ const Favourits: FC = (() => {
   const [reload, setReload] = useState<boolean>(false)
   const dataGridRef = useRef<any>(null)
   const [rows, setRows] = useState<DoctorProfileType[]>([])
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
   const [total, setTotal] = useState<number>(0)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
@@ -572,7 +572,7 @@ const Favourits: FC = (() => {
             <div className="card">
               <div className="card-body">
                 <div className="table-responsive">
-                  <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                  <Box sx={{ minHeight: boxMinHeight }} className="dataGridOuterBox">
                     <LoadingComponent boxMinHeight={boxMinHeight} />
                   </Box>
                 </div>
@@ -580,8 +580,8 @@ const Favourits: FC = (() => {
             </div> :
             <div className="card">
               <div ref={dataGridRef} className="tab-content schedule-cont">
-                <Box className={classes.dataGridOuterBox} >
-                  <Typography className={classes.totalTypo}
+                <Box className="dataGridOuterBox" >
+                  <Typography className="totalTypo"
                     variant='h5' align='center' gutterBottom >
                     {
                       total !== 0 ?
@@ -662,7 +662,6 @@ const Favourits: FC = (() => {
                       pageSizeOptions={[5, 10]}
                       showCellVerticalBorder
                       showColumnVerticalBorder
-                      className={classes.dataGrid}
                       sx={{
                         "&.MuiDataGrid-root .MuiDataGrid-row": {
                           backgroundColor:
@@ -677,6 +676,16 @@ const Favourits: FC = (() => {
                             ),
                           }
                         },
+                        "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                          marginTop: "1em",
+                          marginBottom: "1em"
+                        },
+                        "& .MuiDataGrid-footerContainer": {
+                          [theme.breakpoints.only("xs")]: {
+                            justifyContent: 'center',
+                            marginBottom: '2px'
+                          }
+                        }
                       }}
                     />
                   </div>

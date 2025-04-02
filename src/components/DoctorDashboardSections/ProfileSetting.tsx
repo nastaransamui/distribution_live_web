@@ -54,7 +54,7 @@ import isJsonString from '@/helpers/isJson';
 import { toast } from 'react-toastify';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import CurrencyAutocomplete from '@/shared/CurrencyAutocomplete';
-import dataGridStyle from '../shared/dataGridStyle';
+
 import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateHomeServices } from '@/redux/homeServices';
 import { updateHomeRoleName } from '@/redux/homeRoleName';
@@ -242,7 +242,7 @@ function StyledDropzone(props: any) {
 const ProfileSetting: FC = (() => {
   const { muiVar, bounce } = useScssVar();
   const matches = useMediaQuery('(max-width:370px)');
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const [boxMinHeight, setBoxMinHeight] = useState<string>('300px')
 
   const [images, setImages] = useState<{ clinicImage: File, clinicImageName: string, random: string }[]>([]);

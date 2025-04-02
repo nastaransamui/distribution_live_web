@@ -34,7 +34,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
+
 import FormHelperText from '@mui/material/FormHelperText';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
@@ -44,7 +44,6 @@ import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
-import { invoicesStyles } from '../DoctorDashboardSections/Invoices';
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -87,7 +86,7 @@ const Dependent: FC = (() => {
   dayjs.extend(utc)
   dayjs.extend(timezone)
   const { bounce, muiVar } = useScssVar();
-  const { classes, theme } = invoicesStyles({});
+  const theme = useTheme();
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -669,7 +668,7 @@ const Dependent: FC = (() => {
             <div className="card">
               <div className="card-body">
                 <div className="table-responsive">
-                  <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                  <Box sx={{ minHeight: boxMinHeight }} className="dataGridOuterBox">
                     <LoadingComponent boxMinHeight={boxMinHeight} />
                   </Box>
                 </div>
@@ -677,9 +676,9 @@ const Dependent: FC = (() => {
             </div> :
             <div className="card">
               <div ref={dataGridRef} className="tab-content schedule-cont">
-                <Box className={classes.dataGridOuterBox} >
+                <Box className="dataGridOuterBox" >
                   <span style={{ position: "relative", display: 'block', marginBottom: '25px' }}>
-                    <Typography className={classes.totalTypo}
+                    <Typography className="totalTypo"
                       variant='h5' align='center' gutterBottom >
                       {
                         rowCount !== 0 ?
@@ -781,7 +780,6 @@ const Dependent: FC = (() => {
                       pageSizeOptions={[5, 10]}
                       showCellVerticalBorder
                       showColumnVerticalBorder
-                      className={classes.dataGrid}
                       sx={{
                         "&.MuiDataGrid-root .MuiDataGrid-row": {
                           backgroundColor:
@@ -796,6 +794,16 @@ const Dependent: FC = (() => {
                             ),
                           }
                         },
+                        "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                          marginTop: "1em",
+                          marginBottom: "1em"
+                        },
+                        "& .MuiDataGrid-footerContainer": {
+                          [theme.breakpoints.only("xs")]: {
+                            justifyContent: 'center',
+                            marginBottom: '2px'
+                          }
+                        }
                       }}
                     />
                   </div>

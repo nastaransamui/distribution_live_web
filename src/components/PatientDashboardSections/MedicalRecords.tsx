@@ -48,7 +48,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import { PatientProfile } from '../DoctorDashboardSections/MyPtients';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
-import dataGridStyle from '../shared/dataGridStyle';
+
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -128,7 +128,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
 
   const [docName, setDocName] = useState("")
   const inputFileRef = useRef<any>(null)
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
   const [isView, setIsView] = useState<boolean>(false);
   const dataGridRef = useRef<any>(null)
@@ -771,7 +771,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
           <div className="card">
             <div className="card-body">
               <div className="table-responsive">
-                <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                <Box sx={{ minHeight: boxMinHeight }} className="dataGridOuterBox">
                   <LoadingComponent boxMinHeight={boxMinHeight} />
                 </Box>
               </div>
@@ -779,9 +779,9 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
           </div> :
           <div className="card">
             <div ref={dataGridRef} className="tab-content schedule-cont">
-              <Box className={classes.dataGridOuterBox} >
+              <Box className="dataGridOuterBox" >
                 <span style={{ position: "relative" }}>
-                  <Typography className={classes.totalTypo}
+                  <Typography className="totalTypo"
                     variant='h5' align='center' gutterBottom >
                     {
                       rowCount !== 0 ?
@@ -870,7 +870,6 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                     pageSizeOptions={[5, 10]}
                     showCellVerticalBorder
                     showColumnVerticalBorder
-                    className={classes.dataGrid}
                     sx={{
                       "&.MuiDataGrid-root .MuiDataGrid-row": {
                         backgroundColor:
@@ -885,6 +884,16 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                           ),
                         }
                       },
+                      "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                        marginTop: "1em",
+                        marginBottom: "1em"
+                      },
+                      "& .MuiDataGrid-footerContainer": {
+                        [theme.breakpoints.only("xs")]: {
+                          justifyContent: 'center',
+                          marginBottom: '2px'
+                        }
+                      }
                     }}
                   />
                 </div>

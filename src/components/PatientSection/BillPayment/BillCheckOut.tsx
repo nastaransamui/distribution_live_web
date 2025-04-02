@@ -21,8 +21,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import { useTheme } from '@mui/material/styles';
 
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
-
 import { useForm, Controller } from 'react-hook-form';
 import { emailRegex } from '@/components/PatientDashboardSections/ChangePassword';
 import { MuiTelInput, matchIsValidTel } from 'mui-tel-input';
@@ -41,7 +39,7 @@ import { FiThumbsUp } from 'react-icons/fi';
 import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
 import { UserPatientProfileTypeValue } from '@/redux/userPatientProfile';
 import Box from '@mui/material/Box';
-import dataGridStyle from '@/components/shared/dataGridStyle';
+
 
 export interface GoogleInfoType {
   totalPriceStatus: string;
@@ -58,7 +56,7 @@ export interface BillingTypeWithDoctorPatientProfile extends BillingType {
 const BillCheckOut: FC = (() => {
 
   const router = useRouter()
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const [reload, setReload] = useState<boolean>(false)
   const [termsDialog, setTermsDialog] = useState<boolean>(false)
   const [paymentInfo, setPaymentInfo] = useState<any>({
@@ -287,7 +285,7 @@ const BillCheckOut: FC = (() => {
               <div className="card">
                 <div className="card-body">
                   <div className="table-responsive">
-                    <Box sx={{ minHeight: '500px' }} className={classes.dataGridOuterBox}>
+                    <Box sx={{ minHeight: '500px' }} className="dataGridOuterBox">
                       <LoadingComponent boxMinHeight='500px' />
                     </Box>
                   </div>
@@ -529,7 +527,7 @@ const BillCheckOut: FC = (() => {
               <div className="card">
                 <div className="card-body">
                   <div className="table-responsive">
-                    <Box sx={{ minHeight: '500px' }} className={classes.dataGridOuterBox}>
+                    <Box sx={{ minHeight: '500px' }} className="dataGridOuterBox">
                       <LoadingComponent boxMinHeight='500px' />
                     </Box>
                   </div>

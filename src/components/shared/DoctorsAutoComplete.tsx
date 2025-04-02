@@ -22,38 +22,9 @@ import { AppState } from "@/redux/store";
 import { StyledBadge } from "../DoctorDashboardSections/ScheduleTiming";
 import { doctors_profile } from "@/public/assets/imagepath";
 import { ChatDataType, useChat } from "@/hooks/useChat";
-import { makeStyles } from 'tss-react/mui';
 
-const chatAutocompleteStyles = makeStyles<{}>()((theme) => {
 
-  return {
-    formControl: {
-      backgroundColor: theme.palette.background.default,
-      border: `1px solid ${theme.palette.secondary.main}`,
-      borderRadius: '50px',
-      color: theme.palette.text.color,
-      padding: `5px 10px 3px 36px`,
-    },
-    formControlOpen: {
-      paddingLeft: '36px',
-      backgroundColor: theme.palette.background.default,
-      borderBottomColor: 'transparent',
-      borderRadius: `15px 15px 0px 0px`
-    },
-    autoCompleteClass: {
-      zIndex: 1301,
-      [theme.breakpoints.down(992)]: {
-        zIndex: 1199,
-      },
-    },
-    popperClass: {
-      zIndex: 13,
-      [theme.breakpoints.down(992)]: {
-        zIndex: 1100,
-      },
-    }
-  }
-})
+
 
 
 interface PartType {
@@ -114,8 +85,7 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
   const [options, setOptions] = useState<readonly any[]>([]);
   const [openOption, setOpenOption] = useState<boolean>(false);
   const [loadingOption, setLoadingOption] = useState<boolean>(openOption)
-
-  const { classes, theme } = chatAutocompleteStyles({})
+  const theme = useTheme();
 
   const fetch = useMemo(
     () =>
@@ -317,8 +287,8 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
                     </Fragment>
                   ),
                 }}
-                // className={openOption ? "form-control form-control-open" : "form-control "}
-                className={openOption ? `${classes.formControl} ${classes.formControlOpen}` : classes.formControl}
+                className={openOption ? `dr-autocomplete-form-control dr-autocomplete-form-control-open` : 'dr-autocomplete-form-control'}
+
 
                 placeholder="Search"
                 autoComplete='off' />
@@ -378,10 +348,20 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
             </li>
           )
         }}
-        className={classes.autoCompleteClass}
+        sx={{
+          zIndex: 1301,
+          [theme.breakpoints.down(992)]: {
+            zIndex: 1199,
+          },
+        }}
         disablePortal
         PopperComponent={(props) => (
-          <Popper {...props} className={classes.popperClass} />
+          <Popper {...props} sx={{
+            zIndex: 13,
+            [theme.breakpoints.down(992)]: {
+              zIndex: 1100,
+            },
+          }} />
         )}
         slotProps={{
           paper: {

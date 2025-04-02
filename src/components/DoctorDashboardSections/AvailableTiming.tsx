@@ -18,7 +18,7 @@ import { patient_profile } from '@/public/assets/imagepath';
 import Typography from '@mui/material/Typography';
 import { loadStylesheet } from '@/pages/_app';
 import Chip from '@mui/material/Chip';
-import dataGridStyle from '../shared/dataGridStyle';
+import { useTheme } from '@mui/material/styles';
 import _ from 'lodash'
 export interface EditValueType {
   start: Date;
@@ -38,7 +38,7 @@ export interface EditValueType {
 const agendaDays = 3;
 const AvailableTiming: FC = (() => {
   const { muiVar, bounce } = useScssVar();
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const [currentDay, setCurrentDay] = useState(new Date());
   const [currentView, setCurrentView] = useState<View>(Views.DAY);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -188,7 +188,7 @@ const AvailableTiming: FC = (() => {
           isLoading ?
             < div className="card">
               <div className="card-body" style={{ height: '100vh' }}>
-                <Box sx={{ minHeight: "90vh", bgcolor: `${theme.palette.background.default} !important` }} className={classes.dataGridOuterBox}>
+                <Box sx={{ minHeight: "90vh", bgcolor: `${theme.palette.background.default} !important` }} className="dataGridOuterBox">
                   <LoadingComponent boxMinHeight="500px" />
                 </Box>
               </div>
@@ -285,17 +285,6 @@ const AvailableTiming: FC = (() => {
                       <span className="title">#{editValues?.id}</span>
                       <span className="text">{dayjs(editValues?.start).format('DD MMM YYYY')}</span>
                     </div>
-                    {/* <div className="col-md-6">
-                      <div className="text-end">
-                        <button
-                          type="button"
-                          className="btnLogin"
-                          id="topup_status"
-                        >
-                          Confirmed
-                        </button>
-                      </div>
-                    </div> */}
                   </div>
                 </div>
               </li>

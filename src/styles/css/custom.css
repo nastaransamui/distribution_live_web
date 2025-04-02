@@ -46780,3 +46780,63 @@ svg.feather {
   object-fit: cover;
   cursor: pointer;
 }
+.dr-autocomplete-form-control{
+  background-color: var(--bgDefault);
+  border: 1px solid var(--secondaryMain);
+  border-radius: 50px;
+  color: var(--color);
+  padding: 5px 10px 3px 36px;
+}
+.dr-autocomplete-form-control-open{
+  padding-left: 36px;
+  background-color: var(--bgDefault);
+  border-bottom-color: transparent;
+  border-radius: 15px 15px 0px 0px;
+}
+
+.totalTypo{
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+.typographyFont {
+  font-size: 14px !important;
+}
+
+/* Small screens (sm: 600px and up) */
+@media (min-width: 600px) {
+  .typographyFont {
+    font-size: 17px !important;
+  }
+}
+
+/* Medium screens (md: 900px and up) */
+@media (min-width: 900px) {
+  .typographyFont {
+    font-size: 16px !important;
+  }
+}
+
+/* Large screens (lg: 1200px and up) */
+@media (min-width: 1200px) {
+  .typographyFont {
+    font-size: 16px !important;
+  }
+}
+
+/* Extra-large screens (xl: 1536px and up) */
+@media (min-width: 1536px) {
+  .typographyFont {
+    font-size: 18px !important;
+  }
+}
+
+.dataGridOuterBox{
+  height: auto;
+  background-color: var(--bgPaper);
+  border-radius: 16px;
+  margin-bottom: 16px;
+  margin-top: 16px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  padding: 16px;
+  transition: all 1s linear;
+}

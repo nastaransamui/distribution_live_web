@@ -28,7 +28,6 @@ import Chip from '@mui/material/Chip';
 import DeleteForever from '@mui/icons-material/DeleteForever';
 import { BootstrapDialog, BootstrapDialogTitle, Transition } from './Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import dataGridStyle from './dataGridStyle';
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from './CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -300,7 +299,7 @@ PrintBillComponent.displayName = "PrintBillComponent"
 const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: string | undefined, doctorId?: string | undefined }> = (({ userType, patientId, doctorId }) => {
   const { bounce, muiVar } = useScssVar();
   const router = useRouter();
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const [rows, setRows] = useState<BillingType[] | []>([])
   const dispatch = useDispatch();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
@@ -1046,7 +1045,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
           <div className="card">
             <div className="card-body">
               <div className="table-responsive">
-                <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                <Box sx={{ minHeight: boxMinHeight }} className="dataGridOuterBox">
                   <LoadingComponent boxMinHeight={boxMinHeight} />
                 </Box>
               </div>
@@ -1054,8 +1053,8 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
           </div> :
           <div className="card">
             <div ref={dataGridRef} className="tab-content schedule-cont">
-              <Box className={classes.dataGridOuterBox} >
-                <Typography className={classes.totalTypo}
+              <Box className="dataGridOuterBox" >
+                <Typography className="totalTypo"
                   variant='h5' align='center' gutterBottom >
                   {
                     rowCount !== 0 ?
@@ -1159,7 +1158,6 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                     pageSizeOptions={[5, 10]}
                     showCellVerticalBorder
                     showColumnVerticalBorder
-                    className={classes.dataGrid}
                     sx={{
                       "&.MuiDataGrid-root .MuiDataGrid-row": {
                         backgroundColor:
@@ -1174,6 +1172,16 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                           ),
                         }
                       },
+                      "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                        marginTop: "1em",
+                        marginBottom: "1em"
+                      },
+                      "& .MuiDataGrid-footerContainer": {
+                        [theme.breakpoints.only("xs")]: {
+                          justifyContent: 'center',
+                          marginBottom: '2px'
+                        }
+                      }
                     }}
                   />
                 </div>

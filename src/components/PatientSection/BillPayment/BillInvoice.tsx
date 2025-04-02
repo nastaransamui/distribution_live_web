@@ -20,7 +20,7 @@ import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfileP
 import { PatientProfile } from '@/components/DoctorDashboardSections/MyPtients';
 import { BillingDetailsArrayType } from '@/components/DoctorDashboardSections/AddBilling';
 import Box from '@mui/material/Box';
-import dataGridStyle from '@/components/shared/dataGridStyle';
+
 export interface BillingTypeWithDoctorProfileAndPatientProfile extends BillingTypeWithDoctorProfile {
   patientProfile: PatientProfile
 }
@@ -37,7 +37,7 @@ const BillInvoice: FC = (() => {
   const invoiceFooterRef = useRef<HTMLDivElement>(null);
   const { muiVar, bounce } = useScssVar();
   const router = useRouter()
-  const { classes } = dataGridStyle({});
+
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
@@ -175,7 +175,7 @@ const BillInvoice: FC = (() => {
                   <div className="card">
                     <div className="card-body">
                       <div className="table-responsive">
-                        <Box sx={{ minHeight: '500px' }} className={classes.dataGridOuterBox}>
+                        <Box sx={{ minHeight: '500px' }} className="dataGridOuterBox">
                           <LoadingComponent boxMinHeight='500px' />
                         </Box>
                       </div>

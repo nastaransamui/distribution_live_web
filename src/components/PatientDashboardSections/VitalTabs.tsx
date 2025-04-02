@@ -1,9 +1,9 @@
 import useScssVar from '@/hooks/useScssVar';
 import React, { FC, Fragment, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { PatientProfile } from '../DoctorDashboardSections/MyPtients';
+
 import { AppState } from '@/redux/store';
 import { useSelector } from 'react-redux';
-import dataGridStyle from '../shared/dataGridStyle';
+import { useTheme } from '@mui/material/styles';
 import { DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridFilterModel, GridRenderCellParams, GridRowId, GridRowParams, GridSortModel, GridValueGetterParams } from '@mui/x-data-grid';
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import { VitalTypeObject } from './ClinicalSignsHistory';
@@ -20,7 +20,6 @@ import Stack from '@mui/material/Stack';
 import dayjs from 'dayjs';
 import DeleteForever from '@mui/icons-material/DeleteForever';
 import { BootstrapDialog, BootstrapDialogTitle, Transition } from '../shared/Dialog';
-import { Dashboard1, Dashboard2, Dashboard5, Dashboard6 } from '@/public/assets/imagepath';
 import Image, { StaticImageData } from 'next/image';
 import FormHelperText from '@mui/material/FormHelperText'
 import DialogContent from '@mui/material/DialogContent'
@@ -60,7 +59,7 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
   const { muiVar, bounce } = useScssVar();
   const [edit, setEdit] = useState(false);
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false);
@@ -384,7 +383,7 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
           <div className="card">
             <div className="card-body">
               <div className="table-responsive">
-                <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                <Box sx={{ minHeight: boxMinHeight }} className="dataGridOuterBox">
                   <LoadingComponent boxMinHeight={boxMinHeight} />
                 </Box>
               </div>
@@ -392,9 +391,9 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
           </div> :
           <div className="card">
             <div ref={dataGridRef} className="tab-content schedule-cont">
-              <Box className={classes.dataGridOuterBox} >
+              <Box className="dataGridOuterBox" >
                 <span style={{ position: "relative" }}>
-                  <Typography className={classes.totalTypo}
+                  <Typography className="totalTypo"
                     variant='h5' align='center' gutterBottom >
                     {
                       rowCount !== 0 ?
@@ -499,7 +498,6 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
                     pageSizeOptions={[5, 10]}
                     showCellVerticalBorder
                     showColumnVerticalBorder
-                    className={classes.dataGrid}
                     sx={{
                       "&.MuiDataGrid-root .MuiDataGrid-row": {
                         backgroundColor:
@@ -514,6 +512,16 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
                           ),
                         }
                       },
+                      "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                        marginTop: "1em",
+                        marginBottom: "1em"
+                      },
+                      "& .MuiDataGrid-footerContainer": {
+                        [theme.breakpoints.only("xs")]: {
+                          justifyContent: 'center',
+                          marginBottom: '2px'
+                        }
+                      }
                     }}
                   />
                 </div>

@@ -4,12 +4,12 @@ import TextField from '@mui/material/TextField'
 import InputAdornment from "@mui/material/InputAdornment";
 import { useTheme } from '@mui/material';
 import { useRouter } from 'next/router';
-import dataGridStyle from '../shared/dataGridStyle';
+
 
 
 const SearchSection: FC = (() => {
   const { muiVar } = useScssVar();
-  const { theme } = dataGridStyle({});
+  const theme = useTheme();
   const router = useRouter()
 
   return (

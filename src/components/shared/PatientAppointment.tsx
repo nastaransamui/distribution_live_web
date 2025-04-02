@@ -24,7 +24,7 @@ import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
 import { useReactToPrint } from 'react-to-print';
 import { PrintInvoiceComponent } from '../DoctorDashboardSections/Invoices';
-import dataGridStyle from './dataGridStyle';
+import { useTheme } from '@mui/material/styles';
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from './CustomToolbar';
 import { isNotNull } from './PatientBillingRecords';
 
@@ -32,7 +32,7 @@ import { isNotNull } from './PatientBillingRecords';
 const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string }> = (({ userType, patientId }) => {
   const { muiVar, bounce } = useScssVar();
 
-  const { classes, theme } = dataGridStyle({});
+  const theme = useTheme();
   const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
   const dataGridRef = useRef<any>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -584,7 +584,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
             <div className="card">
               <div className="card-body">
                 <div className="table-responsive">
-                  <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                  <Box sx={{ minHeight: boxMinHeight }} className="dataGridOuterBox">
                     <LoadingComponent boxMinHeight={boxMinHeight} />
                   </Box>
                 </div>
@@ -592,8 +592,8 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
             </div> :
             <div className="card">
               <div ref={dataGridRef} className="tab-content schedule-cont">
-                <Box className={classes.dataGridOuterBox} >
-                  <Typography className={classes.totalTypo}
+                <Box className="dataGridOuterBox" >
+                  <Typography className="totalTypo"
                     variant='h5' align='center' gutterBottom >
                     {
                       rowCount !== 0 ?
@@ -675,7 +675,6 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                       pageSizeOptions={[5, 10]}
                       showCellVerticalBorder
                       showColumnVerticalBorder
-                      className={classes.dataGrid}
                       sx={{
                         "&.MuiDataGrid-root .MuiDataGrid-row": {
                           backgroundColor:
@@ -690,6 +689,16 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                             ),
                           }
                         },
+                        "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                          marginTop: "1em",
+                          marginBottom: "1em"
+                        },
+                        "& .MuiDataGrid-footerContainer": {
+                          [theme.breakpoints.only("xs")]: {
+                            justifyContent: 'center',
+                            marginBottom: '2px'
+                          }
+                        }
                       }}
                     />
                   </div>

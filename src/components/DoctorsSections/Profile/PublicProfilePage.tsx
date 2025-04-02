@@ -12,7 +12,6 @@ import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDocto
 import DoctorPublicProfilePageTab from './DoctorPublicProfilePageTab';
 import Box from '@mui/material/Box';
 import { LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
-import dataGridStyle from '@/components/shared/dataGridStyle';
 
 
 export const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
@@ -23,7 +22,7 @@ const PublicProfilePage: FC = (() => {
   const { bounce, muiVar } = useScssVar();
   const encryptID = searchParams.get('_id')
   const router = useRouter()
-  const { classes } = dataGridStyle({})
+
   const [profile, setProfile] = useState<DoctorProfileType | null>(null);
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [reload, setReload] = useState<boolean>(false)
@@ -78,7 +77,7 @@ const PublicProfilePage: FC = (() => {
                 <div className="card  animate__animated animate__backInUp">
                   <div className="card-body">
                     <div className="table-responsive">
-                      <Box sx={{ minHeight: "500px" }} className={classes.dataGridOuterBox}>
+                      <Box sx={{ minHeight: "500px" }} className="dataGridOuterBox">
                         <LoadingComponent boxMinHeight="500px" />
                       </Box>
                     </div>

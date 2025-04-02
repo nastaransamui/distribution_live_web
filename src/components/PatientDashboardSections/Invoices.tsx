@@ -21,7 +21,7 @@ import CustomPagination from '../shared/CustomPagination';
 import { useReactToPrint } from 'react-to-print';
 import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection';
 import { formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
-import { invoicesStyles } from '../DoctorDashboardSections/Invoices';
+import { useTheme } from '@mui/material/styles';
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -259,7 +259,7 @@ PrintInvoiceComponent.displayName = "PrintInvoiceComponent"
 
 const Invoices: FC = (() => {
   const { bounce } = useScssVar();
-  const { classes, theme } = invoicesStyles({});
+  const theme = useTheme()
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -742,7 +742,18 @@ const Invoices: FC = (() => {
             <div className="card">
               <div className="card-body">
                 <div className="table-responsive">
-                  <Box sx={{ minHeight: boxMinHeight }} className={classes.dataGridOuterBox}>
+                  <Box sx={{
+                    minHeight: boxMinHeight,
+                    height: 'auto',
+                    backgroundColor: theme.palette.background.paper,
+                    borderRadius: "16px",
+                    marginBottom: "16px",
+                    marginTop: "16px",
+                    boxShadow: 'rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px',
+                    padding: "16px",
+                    transition: 'all 1s linear',
+
+                  }} >
                     <LoadingComponent boxMinHeight={boxMinHeight} />
                   </Box>
                 </div>
@@ -750,8 +761,20 @@ const Invoices: FC = (() => {
             </div> :
             <div className="card">
               <div ref={dataGridRef} className="tab-content schedule-cont">
-                <Box className={classes.dataGridOuterBox} >
-                  <Typography className={classes.totalTypo}
+                <Box sx={{
+                  height: 'auto',
+                  backgroundColor: theme.palette.background.paper,
+                  borderRadius: "16px",
+                  marginBottom: "16px",
+                  marginTop: "16px",
+                  boxShadow: 'rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px',
+                  padding: "16px",
+                  transition: 'all 1s linear',
+                }} >
+                  <Typography sx={{
+                    paddingTop: "5px !important",
+                    paddingBottom: "5px !important",
+                  }}
                     variant='h5' align='center' gutterBottom >
                     {
                       rowCount !== 0 ?
@@ -831,7 +854,6 @@ const Invoices: FC = (() => {
                       pageSizeOptions={[5, 10]}
                       showCellVerticalBorder
                       showColumnVerticalBorder
-                      className={classes.dataGrid}
                       sx={{
                         "&.MuiDataGrid-root .MuiDataGrid-row": {
                           backgroundColor:
@@ -846,6 +868,16 @@ const Invoices: FC = (() => {
                             ),
                           }
                         },
+                        "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                          marginTop: "1em",
+                          marginBottom: "1em"
+                        },
+                        "& .MuiDataGrid-footerContainer": {
+                          [theme.breakpoints.only("xs")]: {
+                            justifyContent: 'center',
+                            marginBottom: '2px'
+                          }
+                        }
                       }}
                     />
                   </div>

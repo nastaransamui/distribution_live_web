@@ -26,7 +26,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import { formatNumberWithCommas, LoadingComponent, StyledBadge } from './ScheduleTiming';
 import Chip from '@mui/material/Chip';
-import dataGridStyle from '../shared/dataGridStyle';
+import { useTheme } from '@mui/material/styles';
 export interface EditValueType {
   start: Date;
   end: Date;
@@ -65,7 +65,7 @@ const Appointment: FC = (() => {
     setPage(value);
   };
 
-  const { theme } = dataGridStyle({});
+  const theme = useTheme();
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -332,50 +332,6 @@ const Appointment: FC = (() => {
                 <span className="text">{formatNumberWithCommas(editValues?.total!)} {" "} {editValues?.currencySymbol || "THB"}</span>
               </li>
             </ul>
-            {/* <ul className="info-details" style={muiVar}>
-              <li>
-                <div className="details-header">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <span className="title">{editValues?.invoiceId}</span>
-                      <span className="text">{editValues?.selectedDate}</span>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="text-end">
-                        <button
-                          type="button"
-                          className="btnLogin"
-                          id="topup_status"
-                        >
-                          Confirmed
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <span className="title">Status:</span>
-                <span className="text">
-                  <Chip
-                    color={
-                      editValues?.doctorPaymentStatus == 'Paid' ? 'success' :
-                        editValues?.doctorPaymentStatus == 'Awaiting Request' ? 'error' :
-                          'primary'}
-                    label={`${editValues?.doctorPaymentStatus}`}
-                    size="small"
-                    sx={{ color: theme.palette.primary.contrastText }} />
-                </span>
-              </li>
-              <li>
-                <span className="title">Confirm Date:</span>
-                <span className="text">{dayjs(editValues?.createdDate).format('DD MMM YYYY - HH:mm')}</span>
-              </li>
-              <li>
-                <span className="title">Paid Amount</span>
-                <span className="text">{formatNumberWithCommas(editValues?.timeSlot?.total!)} {" "} {editValues?.timeSlot?.currencySymbol || "THB"}</span>
-              </li>
-            </ul> */}
           </DialogContent>
         </BootstrapDialog>
       }
@@ -389,7 +345,7 @@ interface DoctorAppointmentShowBoxType {
 }
 
 const DoctorAppointmentShowBox: FC<DoctorAppointmentShowBoxType> = (({ myAppointmentData, handleShow }) => {
-  const { theme } = dataGridStyle({});
+  const theme = useTheme();
   return (
     <>
       {

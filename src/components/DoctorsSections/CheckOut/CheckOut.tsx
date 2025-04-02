@@ -34,7 +34,7 @@ import { formatNumberWithCommas, LoadingComponent, StyledBadge, TimeType } from 
 import { Terms } from '@/components/TermsSections/TermsDetails';
 import { FiThumbsUp } from 'react-icons/fi';
 import Box from '@mui/material/Box';
-import dataGridStyle from '@/components/shared/dataGridStyle';
+import { useTheme } from '@mui/material/styles';
 import { BookingDoctorProfile } from '../Booking/BookingPage';
 import CountdownTimer from '@/components/shared/CountdownTimer';
 
@@ -64,7 +64,7 @@ export interface CheckoutDataType {
 const Checkout: FC = (() => {
 
   const router = useRouter()
-  const { classes, theme } = dataGridStyle({})
+  const theme = useTheme();
   const [reload, setReload] = useState<boolean>(false)
   const [termsDialog, setTermsDialog] = useState<boolean>(false)
   const [checkoutData, setCheckoutData] = useState<CheckoutDataType>();
@@ -334,7 +334,7 @@ const Checkout: FC = (() => {
               <>
                 <div className="card-body">
                   <div className="table-responsive">
-                    <Box sx={{ minHeight: '500px' }} className={classes.dataGridOuterBox}>
+                    <Box sx={{ minHeight: '500px' }} className="dataGridOuterBox">
                       <LoadingComponent boxMinHeight='500px' />
                     </Box>
                   </div>
@@ -575,7 +575,7 @@ const Checkout: FC = (() => {
             <div className='card'>
               <div className="card-body">
                 <div className="table-responsive">
-                  <Box sx={{ minHeight: '500px' }} className={classes.dataGridOuterBox}>
+                  <Box sx={{ minHeight: '500px' }} className='dataGridOuterBox'>
                     <LoadingComponent boxMinHeight='500px' />
                   </Box>
                 </div>
