@@ -20058,12 +20058,8 @@ chat-attachment-list li {
   height: auto;
   text-align: center;
   min-width: 300px;
-  padding-top: 50px;
 }
 
-.call-box .call-wrapper .call-user {
-  margin-bottom: 30px;
-}
 
 .call-box .call-wrapper .call-user h4 {
   font-size: 24px;
@@ -20108,7 +20104,7 @@ chat-attachment-list li {
   line-height: 0;
   border-radius: 100%;
   margin: 30px 20px 0;
-  padding: 20px;
+  padding: 10px;
 }
 
 .call-box .call-wrapper .call-items .call-item.call-start {
@@ -20118,7 +20114,7 @@ chat-attachment-list li {
   line-height: 0;
   border-radius: 100%;
   margin: 30px 20px 0;
-  padding: 20px;
+  padding: 10px;
 }
 
 .call-box.incoming-box .call-wrapper .call-items .call-item.call-start,
@@ -46839,4 +46835,60 @@ svg.feather {
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
   padding: 16px;
   transition: all 1s linear;
+}
+
+/* .recording .audio-recorder-timer    {
+  color: var(--color) !important;
+}
+
+.recording .audio-recorder-mic{
+    filter: brightness(1000%) grayscale(100%) opacity(0.1)
+    drop-shadow(0 0 0 var(--color)) drop-shadow(0 0 0 var(--color))
+    drop-shadow(0 0 0 var(--color)) drop-shadow(0 0 0 var(--color))
+    drop-shadow(0 0 0 var(--color));
+}
+
+.recording .audio-recorder-options[data-testid="ar_cancel"] {
+  filter: brightness(1000%) grayscale(100%) opacity(0.1)
+    drop-shadow(0 0 0 var(--primaryMain)) drop-shadow(0 0 0 var(--primaryMain))
+    drop-shadow(0 0 0 var(--primaryMain)) drop-shadow(0 0 0 var(--primaryMain))
+    drop-shadow(0 0 0 var(--primaryMain));
+}
+
+.recording .audio-recorder-options[data-testid="ar_pause"] {
+    filter: brightness(1000%) grayscale(100%) opacity(0.1)
+    drop-shadow(0 0 0 var(--secondaryMain))
+    drop-shadow(0 0 0 var(--secondaryMain))
+    drop-shadow(0 0 0 var(--secondaryMain))
+    drop-shadow(0 0 0 var(--secondaryMain))
+    drop-shadow(0 0 0 var(--secondaryMain));
+}
+.recording{
+  background-color: var(--bgPaper) !important;
+  box-shadow: 0 2px 5px var(--bgDefault) ;
+}
+.audio-recorder:not(.recording) img{
+  opacity: 0;
+}
+.audio-recorder:not(.recording) {
+  background-image: url('/assets/images/record.png');
+  background-size: cover; 
+  width: 50px !important;
+  height: 50px; 
+  border: none; 
+
+} */
+.recorder-container {
+  padding-top: 10px;
+}
+
+.recorder-container .buttons  {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.call-items{
+  display: flex;
+  justify-content: space-around !important;
 }

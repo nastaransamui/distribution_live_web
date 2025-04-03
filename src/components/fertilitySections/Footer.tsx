@@ -4,7 +4,7 @@ import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import { logo } from '../../../public/assets/imagepath'
 //Mui
-
+import packageJson from "../../../package.json";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -195,6 +195,7 @@ const Footer: FC = (() => {
                 <div className="col-md-6 col-lg-6">
                   <div className="copyright-text">
                     <p className="mb-0"> Copyright © 2023 All Rights Reserved</p>
+                    <small style={{ display: 'flex', justifyContent: 'flex-start' }}> v:{packageJson.version}</small>
                   </div>
                 </div>
                 <div className="col-md-6 col-lg-6">

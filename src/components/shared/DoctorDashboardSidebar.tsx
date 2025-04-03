@@ -28,6 +28,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { isNotNull } from './PatientBillingRecords';
 import Tooltip from '@mui/material/Tooltip';
+import Version from './Version';
 
 export const DrawerHeader = styled('div', { shouldForwardProp: (prop) => prop !== 'open' })<{
   open: boolean;
@@ -438,6 +439,7 @@ const DoctorDashboardSidebar: FC = (() => {
           <button className={`${homeSideBarOpen ? 'side-bar-toggle-button-open' : 'side-bar-toggle-button-close'}`}
             aria-label="side-bar-toggle-button" onClick={handlesidebar}></button>
         </List>
+        <Version />
       </Drawer>
     </Fragment>
   )

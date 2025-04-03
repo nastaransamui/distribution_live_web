@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useEffect, useState } from 'react'
 import Link from 'next/link';
-import { doctors_profile } from '@/public/assets/imagepath';
+import { doctors_profile, patient_profile } from '@/public/assets/imagepath';
 import IconButton from '@mui/material/IconButton'
 import TextField from '@mui/material/TextField'
 import FormControl from '@mui/material/FormControl';
@@ -35,8 +35,14 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import EditIcon from '@mui/icons-material/Edit';
 import _ from 'lodash';
 import PhoneMissedIcon from '@mui/icons-material/PhoneMissed';
-import { loadStylesheet } from '@/pages/_app';
+import { LiveAudioVisualizer } from 'react-audio-visualize';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import Lightbox from 'yet-another-react-lightbox';
+
 export function escapeRegExp(value: string) {
   return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
@@ -51,7 +57,6 @@ dayjs.extend(weekday)
 dayjs.extend(updateLocale)
 const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
   const { muiVar } = useScssVar()
-
 
   const {
     footerHeight,
@@ -996,6 +1001,10 @@ export const ChatRightMessageWithoutAttachment: FC<{ mesage: MessageType, index:
 
   const { currentRoom, currentUserId, lastRef } = useChat();
   let isSent = mesage.senderId == currentUserId;
+
+  const senderRole = currentRoom?.createrData.userId == currentUserId ?
+    currentRoom?.receiverData?.roleName :
+    currentRoom?.createrData?.roleName
   let senderImage =
     currentRoom?.createrData.userId == currentUserId ?
       currentRoom?.receiverData?.profileImage :
@@ -1007,7 +1016,16 @@ export const ChatRightMessageWithoutAttachment: FC<{ mesage: MessageType, index:
         currentRoom !== null &&
         <li className={`media ${isSent ? 'sent' : 'received'} d-flex`}  >
           <div className="avatar flex-shrink-0">
-            {!isSent && <img src={senderImage} alt="User" className="avatar-img rounded-circle" />}
+            {!isSent && <img
+              src={senderImage}
+              alt="User"
+              className="avatar-img rounded-circle"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = senderRole == "doctors" ? doctors_profile : patient_profile;
+              }}
+            />}
           </div>
           <div className="media-body flex-grow-1">
             <div className="msg-box" >
@@ -1042,6 +1060,9 @@ export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType, index: nu
   const [imageIndex, setImageIndex] = useState(0);
   const [Images, setImages] = useState<AttachmentType[]>([]);
   const { currentRoom, lastRef, currentUserId, downloadClick } = useChat();
+  const senderRole = currentRoom?.createrData.userId == currentUserId ?
+    currentRoom?.receiverData?.roleName :
+    currentRoom?.createrData?.roleName;
   let isSent = mesage.senderId == currentUserId;
   let senderImage =
     currentRoom?.createrData.userId == currentUserId ?
@@ -1054,7 +1075,16 @@ export const ChatRightMessageWithAttachment: FC<{ mesage: MessageType, index: nu
         currentRoom !== null &&
         <li className={`media ${isSent ? 'sent' : 'received'} d-flex`}  >
           <div className="avatar flex-shrink-0">
-            {!isSent && <img src={senderImage} alt="User" className="avatar-img rounded-circle" />}
+            {!isSent && <img
+              src={senderImage}
+              alt="User"
+              className="avatar-img rounded-circle"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = senderRole == "doctors" ? doctors_profile : patient_profile;
+              }}
+            />}
           </div>
           <div className="media-body flex-grow-1">
             <div className="msg-box">
@@ -1139,10 +1169,15 @@ export const ChatRightMessageWithCall: FC<{ mesage: MessageType, index: number }
   let isSent = mesage.senderId == currentUserId;
   const isVoiceCall = mesage.calls[0]?.isVoiceCall
   const isMissedCall = mesage.calls[0]?.isMissedCall
-  let senderImage =
+  const senderRole = currentRoom?.createrData.userId == currentUserId ?
+    currentRoom?.receiverData?.roleName :
+    currentRoom?.createrData?.roleName
+
+  const senderImage =
     currentRoom?.createrData.userId == currentUserId ?
       currentRoom?.receiverData?.profileImage :
       currentRoom?.createrData?.profileImage;
+
 
   const startTime = mesage?.calls[0]?.startTimeStamp;
   const finishTime = mesage?.calls[0]?.finishTimeStamp ?? startTime;
@@ -1162,13 +1197,23 @@ export const ChatRightMessageWithCall: FC<{ mesage: MessageType, index: number }
     formattedDuration = `${Math.floor(totalHours)} hr ${Math.floor(totalMinutes % 60)} min`;
   }
 
+
   return (
     <Fragment>
       {
         currentRoom !== null &&
         <li className={`media ${isSent ? 'sent' : 'received'} d-flex`}  >
           <div className="avatar flex-shrink-0">
-            {!isSent && <img src={senderImage} alt="User" className="avatar-img rounded-circle" />}
+            {!isSent && <img
+              src={senderImage}
+              alt="User"
+              className="avatar-img rounded-circle"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = senderRole == "doctors" ? doctors_profile : patient_profile;
+              }}
+            />}
           </div>
           <div className="media-body flex-grow-1">
             <div className="msg-box" >
@@ -1249,14 +1294,29 @@ export interface CallDialogPropsType {
 }
 
 export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, callType }) => {
-
+  const { muiVar } = useScssVar();
   const {
     callReceiverUserData,
     currentUserId,
     incomingCall,
     acceptVoiceCall,
+    chatInputValue,
+    fakeMediaRecorder,
+    setAudioBlob,
+    audioBlob,
+    recordingTime,
+    startRecording,
+    isRecording,
+    stopRecording,
+    togglePauseResume,
+    isPaused,
+    clearRecording,
+    handleDownload
   } = useChat();
   const isRecive = incomingCall?.receiverId == currentUserId
+  const theme = useTheme();
+  const senderRole = callReceiverUserData?.roleName
+  const isAnswer = chatInputValue?.calls?.[0]?.isAnswered
 
   return (
     <BootstrapDialog
@@ -1266,8 +1326,79 @@ export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, cal
       }}
       aria-labelledby="edit_invoice_details"
       open={open}>
-      <div className="modal-body">
+      <div className="modal-body" style={{ ...muiVar, }}>
         <div className="call-box incoming-box">
+
+          <div className="recorder-container">
+            <p>Recording Time: {recordingTime}s</p>
+
+            <div className="buttons">
+              <IconButton
+                disableFocusRipple
+                disableRipple
+                disableTouchRipple
+                disabled={isRecording}
+                onClick={startRecording}>
+                {/* 🎙 */}
+                <RadioButtonCheckedIcon sx={{ fontSize: 36, color: 'crimson' }} />
+              </IconButton>
+              <IconButton
+                disableFocusRipple
+                disableRipple
+                disableTouchRipple
+                disabled={!isRecording}
+                onClick={stopRecording}>
+                <StopCircleIcon sx={{ fontSize: 36, color: 'primary.main' }} />
+              </IconButton>
+              <IconButton
+                disableFocusRipple
+                disableRipple
+                disableTouchRipple
+                disabled={!isRecording}
+                onClick={togglePauseResume}>
+                {isPaused ?
+                  <PlayCircleIcon sx={{ fontSize: 36, color: "secondary.main" }} /> :
+                  <PauseCircleFilledIcon sx={{ fontSize: 36, color: "secondary.main" }} />}
+              </IconButton>
+            </div>
+
+            {fakeMediaRecorder && isRecording && (
+              <span style={{ textAlign: 'center', display: 'flex', padding: '10px 0px', width: '100%', justifyContent: 'center' }}>
+                <LiveAudioVisualizer
+                  mediaRecorder={fakeMediaRecorder}
+                  width={100}
+                  height={5}
+                  barColor={theme.palette.secondary.main}
+
+                />
+              </span>
+            )}
+            {audioBlob && (
+              <div className="audio-player">
+                <p>Recorded Audio:</p>
+                <span style={{ display: 'flex', justifyContent: "space-evenly" }}>
+                  <IconButton
+                    disableFocusRipple
+                    disableRipple
+                    disableTouchRipple
+                    disabled={!audioBlob}
+                    onClick={handleDownload}>
+                    <DownloadForOfflineIcon sx={{ fontSize: 36, color: 'primary.main' }} />
+                  </IconButton>
+                  <IconButton
+                    disableFocusRipple
+                    disableRipple
+                    disableTouchRipple
+                    disabled={!audioBlob}
+                    onClick={clearRecording}
+                    sx={{ color: "crimson", fontSize: 30 }}
+                  >
+                    🗑
+                  </IconButton>
+                </span>
+              </div>
+            )}
+          </div>
           <div className="call-wrapper">
             <div className="call-inner">
               <div className="call-user">
@@ -1275,10 +1406,24 @@ export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, cal
                   alt="User Image"
                   src={callReceiverUserData?.profileImage}
                   className="call-avatar"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.src = senderRole == "doctors" ? doctors_profile : patient_profile;
+                  }}
                 />
                 <h4>{callReceiverUserData?.roleName == "doctors" && "Dr. "} {callReceiverUserData?.fullName}</h4>
-                <span>{callType} call Connecting...</span>
+                <span>{callType} call {isAnswer ? "Connected" : "Connecting..."}</span>
               </div>
+              {fakeMediaRecorder && (
+                <LiveAudioVisualizer
+                  mediaRecorder={fakeMediaRecorder}
+                  width={100}
+                  height={35}
+                  barColor={theme.palette.primary.main}
+
+                />
+              )}
               <div className="call-items">
                 <Link
                   href="#"

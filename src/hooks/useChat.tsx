@@ -12,6 +12,7 @@ import useScssVar from "./useScssVar";
 import { Image_placeholder } from "@/public/assets/imagepath";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { loadStylesheet } from "@/pages/_app";
+import { useAudioRecorder } from "react-audio-voice-recorder";
 export interface AttachmentType {
   src: string;
   name: string;
@@ -121,7 +122,21 @@ interface ChatContextType {
   acceptVoiceCall: () => void;
   incomingCall: { offer: RTCSessionDescriptionInit, receiverId: string, callerId: string, roomId: string } | null;
   setIncomingCall: React.Dispatch<React.SetStateAction<{ offer: RTCSessionDescriptionInit, receiverId: string, callerId: string, roomId: string } | null>>;
-  minWidth768: boolean
+  minWidth768: boolean;
+  fakeMediaRecorder: MediaRecorder | null;
+
+  setAudioBlob: React.Dispatch<React.SetStateAction<Blob | null>>;
+  audioBlob: Blob | null;
+  startRecording: () => void;
+  stopRecording: () => void;
+  togglePauseResume: () => void;
+  recordingBlob?: Blob;
+  isRecording: boolean;
+  isPaused: boolean;
+  recordingTime: number;
+  mediaRecorder?: MediaRecorder;
+  clearRecording: () => void;
+  handleDownload: () => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
@@ -157,6 +172,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [showSnackBar, setShowSnakBar] = useState<{ show: boolean, text: string }>({ show: false, text: '' })
   const [incomingCall, setIncomingCall] = useState<{ offer: RTCSessionDescriptionInit, receiverId: string, callerId: string, roomId: string } | null>(null);
+  const [fakeMediaRecorder, setFakeMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [chatInputValue, setChatInputValue] = useState<MessageType>({
     senderId: currentUserId!,
     receiverId: '',
@@ -185,462 +202,23 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const makeCallAudioRef = useRef<HTMLAudioElement | null>(null);
   const reciveMessageAudioRef = useRef<HTMLAudioElement | null>(null);
   const missedCallTimeout = useRef<NodeJS.Timeout | null>(null);
-  useEffect(() => {
-    loadStylesheet('/css/yet-another-react-lightbox-styles.css')
-  }, [])
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      reciveMessageAudioRef.current = new Audio("/sound/recive-message.mp3");
-      makeCallAudioRef.current = new Audio('/sound/incoming-call.mp3')
-      sendMessageAudioRef.current = new Audio('/sound/send-message.mp3')
-    }
-  }, [])
+
+  let {
+    startRecording,
+    stopRecording,
+    togglePauseResume,
+    recordingBlob,
+    isRecording,
+    isPaused,
+    recordingTime,
+    mediaRecorder
+  } = useAudioRecorder();
 
   // Declare peerConnection and remoteStream with types
   const peerConnection = useRef<RTCPeerConnection | null>(null); // Type it correctly as RTCPeerConnection or null
   const localStream = useRef<MediaStream | null>(null); // MediaStream or null for the local stream
   const remoteStream = useRef<MediaStream | null>(null); // MediaStream or null for the remote stream
 
-  const configuration = useMemo(() => {
-    return { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] }
-  }, [])
-  const createPeerConnection = () => {
-    const pc = new RTCPeerConnection(configuration);
-    pc.onicecandidate = (event) => {
-      if (event.candidate && homeSocket.current) {
-        const callerId = currentUserId;
-        const receiverId =
-          currentRoom?.createrData.userId == callerId ?
-            currentRoom?.receiverData.userId :
-            currentRoom?.createrData.userId
-
-        homeSocket.current.emit("newIceCandidate", { candidate: event.candidate, callerId, receiverId, roomId: currentRoomId });
-      }
-    }
-    pc.ontrack = (event) => {
-      if (event.streams.length > 0) {
-        const audioElement = document.getElementById("remoteAudio") as HTMLAudioElement;
-        if (audioElement) {
-          audioElement.srcObject = event.streams[0];
-          audioElement.onloadedmetadata = () => {
-            audioElement.play().catch((err) => console.error("Audio play error:", err));
-          };
-        }
-      }
-    }
-    return pc;
-  }
-
-  const openMediaDevices = async (constraints: { video?: boolean, audio?: boolean }) => {
-    try {
-      return await navigator.mediaDevices.getUserMedia(constraints);
-    } catch (error: any) {
-      if (error.name === "NotAllowedError") {
-        toast.error("Microphone permission denied. Please allow access.");
-      } else if (error.name === "NotFoundError") {
-        toast.error("No microphone device found.");
-      } else {
-        toast.error("An error occurred while accessing the microphone.");
-      }
-
-    }
-
-  }
-
-  const voiceCallToggleFunction = () => {
-
-    if (!voiceCallActive) {
-      makeVoiceCall();
-    } else {
-      endVoiceCall();
-    }
-
-  };
-
-  //IceCandidate
-  useEffect(() => {
-    if (!homeSocket?.current) return;
-    const socket = homeSocket.current;
-
-    socket.on("iceCandidate", async (data: { candidate: any, callerId: string, receiverId: string, roomId: string }) => {
-      if (peerConnection.current !== null) {
-        try {
-          // // Added comment: Ensure remote description is set before adding ICE candidate.
-          if (peerConnection.current.remoteDescription !== null) {
-            await peerConnection.current.addIceCandidate(data.candidate); // // ICE candidate added
-          }
-        } catch (err) {
-          console.error("Error adding received ice candidate", err);
-
-        }
-      }
-
-    })
-  }, [homeSocket, peerConnection])
-
-  const makeVoiceCall = async () => {
-    try {
-      const stream = await openMediaDevices({ audio: true });
-      if (stream) {
-        localStream.current = stream;
-        remoteStream.current = new MediaStream();
-        peerConnection.current = createPeerConnection();
-        localStream.current.getTracks().forEach(track => {
-          track.enabled = true;
-          peerConnection.current?.addTrack(track, localStream.current!);
-
-        })
-        const offer = await peerConnection.current.createOffer();
-        await peerConnection.current.setLocalDescription(offer);
-        const callerId = currentUserId;
-        const receiverId =
-          currentRoom?.createrData.userId == callerId ?
-            currentRoom?.receiverData.userId :
-            currentRoom?.createrData.userId;
-        const messageData: MessageType = {
-          senderId: currentUserId!,
-          receiverId: receiverId!,
-          timestamp: new Date().getTime(),
-          message: chatInputValue.message,
-          read: false,
-          attachment: chatInputValue.attachment,
-          roomId: currentRoomId!,
-          calls: [
-            {
-              isVoiceCall: true,
-              isVideoCall: false,
-              startTimeStamp: new Date().getTime(),
-              finishTimeStamp: null,
-              isMissedCall: false,
-              isRejected: false,
-              isAnswered: false,
-            }
-          ],
-        };
-        setChatInputValue(messageData)
-        homeSocket.current.emit("makeVoiceCall", { offer, callerId, receiverId, roomId: currentRoomId, messageData });
-        if (currentRoom !== null) {
-          const callReceiver = currentRoom.createrData.userId === currentUserId ? currentRoom.receiverData : currentRoom.createrData;
-          setCallReceiverUserData((prevState) => (prevState == null ? callReceiver : null));
-          setTimeout(() => {
-            setVoiceCallActive(true)
-            if (makeCallAudioRef && makeCallAudioRef.current !== null) {
-              makeCallAudioRef.current.loop = true;
-              makeCallAudioRef.current.play();
-            }
-          }, 500);
-        }
-      }
-    } catch (error: any) {
-      toast.error(error.toString())
-    }
-  }
-  useEffect(() => {
-    if (!homeSocket?.current) return;
-    const socket = homeSocket.current;
-    socket.on('receiveVoiceCall', async (data: { offer: RTCSessionDescriptionInit, callerId: string, receiverId: string, roomId: string, messageData: MessageType }) => {
-      setIncomingCall(data);
-      setChatInputValue(data.messageData)
-      setVoiceCallActive(true);
-      if (data.receiverId === currentUserId) {
-        const { roomId } = data;
-        setCurrentRoomId(() => roomId)
-        const roomData = userChatData.find((a) => a.roomId === roomId);
-        if (roomData) {
-          const callReceiver =
-            roomData.createrData.userId == currentUserId ?
-              roomData.receiverData :
-              roomData.createrData;
-          setCallReceiverUserData(() => callReceiver)
-        }
-        setTimeout(() => {
-          setVoiceCallActive(true)
-          if (makeCallAudioRef && makeCallAudioRef.current !== null) {
-            makeCallAudioRef.current.loop = true;
-            makeCallAudioRef.current.play();
-          }
-        }, 500);
-
-        // Clear any existing timeout before setting a new one
-        if (missedCallTimeout.current) {
-          clearTimeout(missedCallTimeout.current);
-        }
-
-        // Set a timeout to show "missed call" only if not accepted
-        missedCallTimeout.current = setTimeout(() => {
-          const updatedChatInputValue = {
-            ...data.messageData,
-            calls: data.messageData.calls.map((call, index) =>
-              index === 0 ? { ...call, isMissedCall: true } : call
-            ),
-          };
-
-          setChatInputValue(updatedChatInputValue);
-          homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue })
-        }, 20 * 1000);
-      }
-    })
-  }, [currentUserId, homeSocket, userChatData, missedCallTimeout])
-
-  const acceptVoiceCall = async () => {
-    if (incomingCall == null) return;
-    if (!homeSocket?.current) return;
-    try {
-
-      const stream = await openMediaDevices({ audio: true });
-      if (stream) {
-
-        localStream.current = stream;
-        remoteStream.current = new MediaStream();
-        peerConnection.current = createPeerConnection();
-        localStream.current.getTracks().forEach(track => {
-          track.enabled = true;
-          peerConnection.current?.addTrack(track, localStream.current!);
-        })
-        const { offer, callerId, receiverId, roomId } = incomingCall;
-        peerConnection.current.setRemoteDescription(new RTCSessionDescription(offer));
-        const answer = await peerConnection.current.createAnswer();
-        await peerConnection.current.setLocalDescription(answer);
-        const updatedChatInputValue = {
-          ...chatInputValue,
-          calls: chatInputValue.calls.map((call, index) =>
-            index === 0 ? { ...call, isAnswered: true } : call
-          ),
-        };
-
-        setChatInputValue(updatedChatInputValue);
-        homeSocket.current.emit("answerCall", { answer, callerId, receiverId, roomId, messageData: updatedChatInputValue });
-        if (makeCallAudioRef && makeCallAudioRef.current !== null) {
-          makeCallAudioRef.current.pause();
-        }
-        setIncomingCall(null)
-        // Clear missed call timeout if the call is accepted
-        if (missedCallTimeout.current) {
-          clearTimeout(missedCallTimeout.current);
-          missedCallTimeout.current = null;
-        }
-      }
-    } catch (error) {
-      toast.error
-    }
-  }
-
-  useEffect(() => {
-    if (!homeSocket?.current) return;
-    const socket = homeSocket.current;
-    socket.on("confirmCall", async (data: { answer: any, callerId: string, receiverId: string, roomId: string }) => {
-      try {
-        await peerConnection.current?.setRemoteDescription(new RTCSessionDescription(data.answer));
-        if (makeCallAudioRef && makeCallAudioRef.current !== null) {
-          makeCallAudioRef.current.pause();
-        }
-      } catch (error: any) {
-        toast.error(error.toString())
-      }
-    })
-  }, [homeSocket])
-
-  const endVoiceCall = () => {
-    if (!homeSocket?.current) return;
-    const updatedChatInputValue = {
-      ...chatInputValue,
-      calls: chatInputValue.calls.map((call, index) =>
-        index === 0 ? { ...call, finishTimeStamp: new Date().getTime() } : call
-      ),
-    };
-
-    setChatInputValue(updatedChatInputValue);
-    homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue, })
-  }
-  useEffect(() => {
-    if (!homeSocket?.current) return;
-    const socket = homeSocket.current;
-    socket.on('endVoiceCall', () => {
-      if (makeCallAudioRef && makeCallAudioRef.current !== null) {
-        makeCallAudioRef.current.pause();
-      }
-      peerConnection.current?.close();
-      peerConnection.current = null;
-      localStream.current?.getTracks().forEach((track) => track.stop());
-      remoteStream.current?.getTracks().forEach((track) => track.stop());
-      remoteStream.current = null;
-      localStream.current = null;
-      setVoiceCallActive(false);
-      setCallReceiverUserData(null);
-      setShowSnakBar(() => {
-        return {
-          text: "The call has ended.",
-          show: true,
-        }
-      })
-    })
-  }, [homeSocket])
-  const videoCallToggleFunction = () => {
-    setVideoCallActive((prev) => !prev);
-    if (currentRoom !== null) {
-      const callReceiver = currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData : currentRoom.createrData;
-      setCallReceiverUserData((prevState) => {
-        if (prevState == null) {
-          return callReceiver;
-        } else {
-          return null;
-        }
-      })
-    }
-  };
-
-
-  useEffect(() => {
-    let active = true;
-    if (active && homeSocket.current) {
-      homeSocket.current.emit('getUserRooms', { userId: userProfile?._id })
-      homeSocket.current.once('getUserRoomsReturn', async (msg: { status: number, reason?: string, message?: string, userRooms: ChatDataType[] }) => {
-        const { status, reason, message } = msg;
-        if (status !== 200) {
-          toast.error(reason || message || `Error ${status} find Doctor`, {
-            position: "bottom-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: bounce,
-            onClose: () => {
-            }
-          });
-        } else {
-          const { userRooms } = msg;
-          // Process attachments before updating the state to get private images
-          const updatedRooms = await Promise.all(userRooms.map(async (room) => {
-            const updatedMessages = await Promise.all(room.messages.map(async (msg) => ({
-              ...msg,
-              attachment: await Promise.all(
-                msg.attachment.map(async (a) => ({
-                  ...a,
-                  src: a.id !== "" ? await getChatFile(a.id, userProfile?._id!) : a.src,
-                }))
-              ),
-            })));
-
-            return { ...room, messages: updatedMessages };
-          }));
-          setUserChatData((prevState) => {
-            const newState = updatedRooms.map((room) => {
-              const existingRoom = prevState.find((r) => r._id === room._id);
-
-              if (!existingRoom) {
-                return room; // New room
-              }
-
-              // Update room if data has changed
-              if (
-                !_.isEqual(existingRoom.receiverData, room.receiverData) ||
-                !_.isEqual(existingRoom.createrData, room.createrData) ||
-                !_.isEqual(existingRoom.messages, room.messages)
-              ) {
-                // setTimeout(() => {
-                //   lastRef.current?.scrollIntoView({ behavior: 'smooth' });
-
-                // }, 100);
-                return {
-                  ...existingRoom,
-                  receiverData: room.receiverData,
-                  createrData: room.createrData,
-                  messages: room.messages
-                };
-              }
-
-              return existingRoom; // No changes, return the existing room
-            });
-            const finalResult = newState.filter((room) => updatedRooms.some((r) => r._id === room._id))
-
-            // Ensure removed rooms are also removed from the state
-            return finalResult;
-          });
-          setIsLoading(false)
-          homeSocket.current.once(`updateGetUserRooms`, () => {
-            setReload(!reload)
-          })
-        }
-      })
-    }
-    return () => {
-      active = false;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, reload, userProfile?._id])
-
-  const getChatFile = async (fileId: string, userId: string): Promise<string> => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_adminUrl}/api/chat/file/${fileId}?userId=${userId}`
-    );
-    if (!response.ok) return Image_placeholder;
-
-    const blob = await response.blob();
-
-    return URL.createObjectURL(blob);
-  };
-  //Resize chatfooter and search
-  useEffect(() => {
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        if (entry.target === inputGroupRef.current) {
-          setSearchInputWidth(entry.contentRect.width);
-        }
-        if (entry.target === chatFooterRef.current) {
-          setFooterHeight(entry.contentRect.height);
-        }
-      }
-    });
-
-    if (inputGroupRef.current) resizeObserver.observe(inputGroupRef.current);
-    if (chatFooterRef.current) resizeObserver.observe(chatFooterRef.current);
-
-    return () => resizeObserver.disconnect(); // Cleanup on unmount
-  }, []);
-
-
-
-  // clear on delete room
-  useEffect(() => {
-
-    if (currentRoom !== null && currentRoomId !== null) {
-      if (currentRoom.createrData.userId !== currentUserId) {
-        const isCurrentRoomDelete = !userChatData.some((room) => room.roomId === currentRoomId);
-        if (isCurrentRoomDelete) {
-          setCurrentRoom(null)
-          setCurrentRoomId(null)
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userChatData,])
-  //Update messages when read from reciever
-  useEffect(() => {
-    if (!currentRoomId || userChatData.length === 0) return;
-
-    const currentRoomData = userChatData.find((a) => a.roomId === currentRoomId);
-
-    if (!currentRoomData) return;
-
-    if (_.isEqual(currentRoom, currentRoomData)) return; // Prevent duplicate updates
-
-    const lastMessage = currentRoomData.messages[currentRoomData.messages.length - 1];
-    if (lastMessage) {
-      if (!lastMessage.read) {
-        if (lastMessage?.receiverId === currentUserId) {
-          if (!lastMessage.read && homeSocket.current) {
-            homeSocket.current.emit('makeOneMessageRead', lastMessage);
-          }
-        }
-
-      }
-    }
-    setCurrentRoom((prev) => (_.isEqual(prev, currentRoomData) ? prev : currentRoomData));
-
-
-  }, [currentRoomId, userChatData, currentUserId, homeSocket, currentRoom]);
 
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -649,7 +227,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const handleClose = () => {
     setAnchorEl(null);
   };
-
 
   const sortLatestMessage: (userChatData: ChatDataType[]) => ChatDataType[] = (userChatData) => {
     return [...userChatData].sort((a, b) => {
@@ -665,18 +242,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const makeAllMessageRead = (roomId: string) => {
-    if (roomId !== "" && homeSocket.current) {
-      if (currentRoom !== null) {
-        if (currentRoom.messages.length !== 0) {
-          const lastMessageReciverId = currentRoom.messages[currentRoom.messages.length - 1].receiverId
-          if (lastMessageReciverId == currentUserId) {
-            homeSocket.current.emit('makeAllMessageRead', { roomId: roomId })
-          }
-        }
-      }
-    }
-  }
 
 
   const onLeftUserClicked = (chatData: ChatDataType) => {
@@ -833,88 +398,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       roomId: ''
     });
   }
-  //Join all rooms at entrance
-  useEffect(() => {
-    if (homeSocket.current) {
-      userChatData.map((data) => {
-        homeSocket.current.emit("joinRoom", data.roomId);
-      })
-    }
-  }, [homeSocket, userChatData]);
 
-  useEffect(() => {
-    let isActive = true;
-    if (isActive && homeSocket.current) {
-      homeSocket.current.on("receiveMessage", (messageData: MessageType) => {
-        setUserChatData((prevState) => {
-          let newState = [...prevState];
-          const chatIndex = newState.findIndex(chat => chat.roomId === messageData.roomId);
-          if (chatIndex !== -1) {
-            newState[chatIndex].messages.push(messageData);
-          }
-          return newState
-        })
-      })
-    }
-    return () => {
-      isActive = false;
-    }
-  }, [homeSocket])
-  const userChatDataRef = useRef(userChatData);
-
-  useEffect(() => {
-    userChatDataRef.current = userChatData; // Keep ref updated
-  }, [userChatData]);
-  useEffect(() => {
-    let isActive = true;
-    if (isActive && homeSocket.current) {
-      homeSocket.current.on('receiveMessage', (messageData: MessageType) => {
-
-        if (messageData.receiverId == currentUserId) {
-          if (currentRoomId == messageData.roomId) {
-            const chatIndex = userChatDataRef.current.findIndex(chat => chat.roomId === messageData.roomId);
-            if (chatIndex !== -1) {
-              setTimeout(() => {
-                const msgIndex = userChatDataRef.current[chatIndex].messages.findIndex((m) => m.timestamp == messageData.timestamp)
-                if (msgIndex !== -1) {
-                  const message = userChatDataRef.current[chatIndex].messages[msgIndex];
-                  homeSocket.current.emit('makeOneMessageRead', message)
-                  setUserChatData((prevState) => {
-                    let newState = [...prevState];
-
-                    newState[chatIndex].messages[msgIndex].read = true;
-                    return newState
-                  })
-                }
-              }, 50);
-            }
-          }
-        }
-        if (messageData.receiverId == currentUserId) {
-          if (currentRoomId !== null) {
-            if (reciveMessageAudioRef && reciveMessageAudioRef.current !== null) {
-
-              reciveMessageAudioRef.current.currentTime = 0; // Reset to start
-              reciveMessageAudioRef.current.play();
-
-            }
-          }
-        }
-        if (messageData.senderId == currentUserId) {
-          if (sendMessageAudioRef && sendMessageAudioRef.current !== null) {
-
-            sendMessageAudioRef.current.currentTime = 0; // Reset to start
-            sendMessageAudioRef.current.play();
-
-          }
-        }
-        // }
-      })
-    }
-    return () => {
-      isActive = false;
-    }
-  }, [homeSocket, currentRoomId, currentUserId])
 
 
   const handleClickInputFile = () => {
@@ -1040,7 +524,618 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
+  const configuration = useMemo(() => {
+    return { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] }
+  }, [])
+  const createPeerConnection = () => {
+    const pc = new RTCPeerConnection(configuration);
+    pc.onicecandidate = (event) => {
+      if (event.candidate && homeSocket.current) {
+        const callerId = currentUserId;
+        const receiverId =
+          currentRoom?.createrData.userId == callerId ?
+            currentRoom?.receiverData.userId :
+            currentRoom?.createrData.userId
 
+        homeSocket.current.emit("newIceCandidate", { candidate: event.candidate, callerId, receiverId, roomId: currentRoomId });
+      }
+    }
+    pc.ontrack = (event) => {
+      if (event.streams.length > 0) {
+        const audioElement = document.getElementById("remoteAudio") as HTMLAudioElement;
+        if (audioElement) {
+          audioElement.srcObject = event.streams[0];
+          audioElement.onloadedmetadata = () => {
+            audioElement.play().catch((err) => console.error("Audio play error:", err));
+          };
+        }
+      }
+    }
+    return pc;
+  }
+
+  const openMediaDevices = async (constraints: { video?: boolean, audio?: boolean }) => {
+    try {
+      return await navigator.mediaDevices.getUserMedia(constraints);
+    } catch (error: any) {
+      if (error.name === "NotAllowedError") {
+        toast.error("Microphone permission denied. Please allow access.");
+      } else if (error.name === "NotFoundError") {
+        toast.error("No microphone device found.");
+      } else {
+        toast.error("An error occurred while accessing the microphone.");
+      }
+
+    }
+
+  }
+
+
+  const makeAllMessageRead = (roomId: string) => {
+    if (roomId !== "" && homeSocket.current) {
+      if (currentRoom !== null) {
+        if (currentRoom.messages.length !== 0) {
+          const lastMessageReciverId = currentRoom.messages[currentRoom.messages.length - 1].receiverId
+          if (lastMessageReciverId == currentUserId) {
+            homeSocket.current.emit('makeAllMessageRead', { roomId: roomId })
+          }
+        }
+      }
+    }
+  }
+
+  const voiceCallToggleFunction = () => {
+    const drautoComplet = document.querySelector('.MuiAutocomplete-root') as HTMLElement
+    if (!voiceCallActive) {
+      makeVoiceCall();
+      if (drautoComplet) {
+        drautoComplet.style.zIndex = "1";
+      }
+    } else {
+      endVoiceCall();
+      if (drautoComplet) {
+        drautoComplet.style.zIndex = "1301";
+      }
+    }
+  };
+
+  const makeVoiceCall = async () => {
+    try {
+      const stream = await openMediaDevices({ audio: true });
+      if (stream) {
+        localStream.current = stream;
+        remoteStream.current = new MediaStream();
+        peerConnection.current = createPeerConnection();
+        localStream.current.getTracks().forEach(track => {
+          track.enabled = true;
+          peerConnection.current?.addTrack(track, localStream.current!);
+
+        })
+        const offer = await peerConnection.current.createOffer();
+        await peerConnection.current.setLocalDescription(offer);
+        const callerId = currentUserId;
+        const receiverId =
+          currentRoom?.createrData.userId == callerId ?
+            currentRoom?.receiverData.userId :
+            currentRoom?.createrData.userId;
+        const messageData: MessageType = {
+          senderId: currentUserId!,
+          receiverId: receiverId!,
+          timestamp: new Date().getTime(),
+          message: chatInputValue.message,
+          read: false,
+          attachment: chatInputValue.attachment,
+          roomId: currentRoomId!,
+          calls: [
+            {
+              isVoiceCall: true,
+              isVideoCall: false,
+              startTimeStamp: new Date().getTime(),
+              finishTimeStamp: null,
+              isMissedCall: false,
+              isRejected: false,
+              isAnswered: false,
+            }
+          ],
+        };
+        setChatInputValue(messageData)
+        homeSocket.current.emit("makeVoiceCall", { offer, callerId, receiverId, roomId: currentRoomId, messageData });
+        if (currentRoom !== null) {
+          const callReceiver = currentRoom.createrData.userId === currentUserId ? currentRoom.receiverData : currentRoom.createrData;
+          setCallReceiverUserData((prevState) => (prevState == null ? callReceiver : null));
+          setTimeout(() => {
+            setVoiceCallActive(true)
+            if (makeCallAudioRef && makeCallAudioRef.current !== null) {
+              makeCallAudioRef.current.loop = true;
+              makeCallAudioRef.current.play();
+            }
+          }, 500);
+        }
+      }
+    } catch (error: any) {
+      toast.error(error.toString())
+    }
+  }
+  const acceptVoiceCall = async () => {
+    if (incomingCall == null) return;
+    if (!homeSocket?.current) return;
+    try {
+
+      const stream = await openMediaDevices({ audio: true });
+      if (stream) {
+
+        localStream.current = stream;
+        remoteStream.current = new MediaStream();
+        peerConnection.current = createPeerConnection();
+        localStream.current.getTracks().forEach(track => {
+          track.enabled = true;
+          peerConnection.current?.addTrack(track, localStream.current!);
+        })
+        const { offer, callerId, receiverId, roomId } = incomingCall;
+        peerConnection.current.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await peerConnection.current.createAnswer();
+        await peerConnection.current.setLocalDescription(answer);
+        const updatedChatInputValue = {
+          ...chatInputValue,
+          calls: chatInputValue.calls.map((call, index) =>
+            index === 0 ? { ...call, isAnswered: true } : call
+          ),
+        };
+
+        setChatInputValue(updatedChatInputValue);
+        homeSocket.current.emit("answerCall", { answer, callerId, receiverId, roomId, messageData: updatedChatInputValue });
+        if (makeCallAudioRef && makeCallAudioRef.current !== null) {
+          makeCallAudioRef.current.pause();
+          // Get remote stream
+          const remoteTracks = peerConnection.current?.getReceivers().map(receiver => receiver.track);
+          if (remoteTracks) {
+            const stream = new MediaStream(remoteTracks);
+
+            // Create a fake MediaRecorder (to bypass the type error)
+            const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm;codecs=opus" });
+
+            mediaRecorder.onerror = (err) => console.error("MediaRecorder error:", err);
+
+            mediaRecorder.start();
+            setFakeMediaRecorder(mediaRecorder);
+          }
+        }
+        setIncomingCall(null)
+        // Clear missed call timeout if the call is accepted
+        if (missedCallTimeout.current) {
+          clearTimeout(missedCallTimeout.current);
+          missedCallTimeout.current = null;
+        }
+      }
+    } catch (error) {
+      toast.error
+    }
+  }
+
+  const endVoiceCall = () => {
+    if (!homeSocket?.current) return;
+    const updatedChatInputValue = {
+      ...chatInputValue,
+      calls: chatInputValue.calls.map((call, index) =>
+        index === 0 ? { ...call, finishTimeStamp: new Date().getTime() } : call
+      ),
+    };
+
+    setChatInputValue(updatedChatInputValue);
+    setFakeMediaRecorder(null)
+    homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue, })
+  }
+
+
+
+  const videoCallToggleFunction = () => {
+    setVideoCallActive((prev) => !prev);
+    if (currentRoom !== null) {
+      const callReceiver = currentRoom.createrData.userId == currentUserId ? currentRoom.receiverData : currentRoom.createrData;
+      setCallReceiverUserData((prevState) => {
+        if (prevState == null) {
+          return callReceiver;
+        } else {
+          return null;
+        }
+      })
+    }
+  };
+
+  const userChatDataRef = useRef(userChatData);
+
+  useEffect(() => {
+    userChatDataRef.current = userChatData; // Keep ref updated
+  }, [userChatData]);
+
+  useEffect(() => {
+    loadStylesheet('/css/yet-another-react-lightbox-styles.css')
+    if (typeof window !== 'undefined') {
+      reciveMessageAudioRef.current = new Audio("/sound/recive-message.mp3");
+      makeCallAudioRef.current = new Audio('/sound/incoming-call.mp3')
+      sendMessageAudioRef.current = new Audio('/sound/send-message.mp3')
+    }
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        if (entry.target === inputGroupRef.current) {
+          setSearchInputWidth(entry.contentRect.width);
+        }
+        if (entry.target === chatFooterRef.current) {
+          setFooterHeight(entry.contentRect.height);
+        }
+      }
+    });
+
+    if (inputGroupRef.current) resizeObserver.observe(inputGroupRef.current);
+    if (chatFooterRef.current) resizeObserver.observe(chatFooterRef.current);
+
+    return () => resizeObserver.disconnect(); // Cleanup on unmount
+  }, []);
+
+  useEffect(() => {
+    if (!homeSocket?.current) return;
+    const socket = homeSocket.current;
+
+    socket.emit('getUserRooms', { userId: userProfile?._id })
+    socket.once('getUserRoomsReturn', async (msg: { status: number, reason?: string, message?: string, userRooms: ChatDataType[] }) => {
+      const { status, reason, message } = msg;
+      if (status !== 200) {
+        toast.error(reason || message || `Error ${status} find Doctor`);
+      } else {
+        const { userRooms } = msg;
+        // Process attachments before updating the state to get private images
+        const updatedRooms = await Promise.all(userRooms.map(async (room) => {
+          const updatedMessages = await Promise.all(room.messages.map(async (msg) => ({
+            ...msg,
+            attachment: await Promise.all(
+              msg.attachment.map(async (a) => ({
+                ...a,
+                src: a.id !== "" ? await getChatFile(a.id, userProfile?._id!) : a.src,
+              }))
+            ),
+          })));
+
+          return { ...room, messages: updatedMessages };
+        }));
+        setUserChatData((prevState) => {
+          const newState = updatedRooms.map((room) => {
+            const existingRoom = prevState.find((r) => r._id === room._id);
+
+            if (!existingRoom) {
+              return room; // New room
+            }
+
+            // Update room if data has changed
+            if (
+              !_.isEqual(existingRoom.receiverData, room.receiverData) ||
+              !_.isEqual(existingRoom.createrData, room.createrData) ||
+              !_.isEqual(existingRoom.messages, room.messages)
+            ) {
+              // setTimeout(() => {
+              //   lastRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+              // }, 100);
+              return {
+                ...existingRoom,
+                receiverData: room.receiverData,
+                createrData: room.createrData,
+                messages: room.messages
+              };
+            }
+
+            return existingRoom; // No changes, return the existing room
+          });
+          const finalResult = newState.filter((room) => updatedRooms.some((r) => r._id === room._id))
+
+          // Ensure removed rooms are also removed from the state
+          return finalResult;
+        });
+        setIsLoading(false)
+        socket.once(`updateGetUserRooms`, () => {
+          setReload(!reload)
+        })
+      }
+    })
+
+    return () => {
+      socket.off("getUserRoomsReturn");
+      socket.off("updateGetUserRooms");
+    }
+
+  }, [homeSocket, reload, userProfile?._id])
+
+  //Join all rooms at entrance
+  useEffect(() => {
+    if (homeSocket.current) {
+      userChatData.map((data) => {
+        homeSocket.current.emit("joinRoom", data.roomId);
+      })
+    }
+  }, [homeSocket, userChatData]);
+
+  useEffect(() => {
+    if (!currentRoomId || userChatData.length === 0) return;
+
+    const currentRoomData = userChatData.find((a) => a.roomId === currentRoomId);
+
+    if (!currentRoomData) return;
+
+    if (_.isEqual(currentRoom, currentRoomData)) return; // Prevent duplicate updates
+
+    const lastMessage = currentRoomData.messages[currentRoomData.messages.length - 1];
+    if (lastMessage) {
+      if (!lastMessage.read) {
+        if (lastMessage?.receiverId === currentUserId) {
+          if (!lastMessage.read && homeSocket.current) {
+            homeSocket.current.emit('makeOneMessageRead', lastMessage);
+          }
+        }
+
+      }
+    }
+    setCurrentRoom((prev) => (_.isEqual(prev, currentRoomData) ? prev : currentRoomData));
+
+
+  }, [currentRoomId, userChatData, currentUserId, homeSocket, currentRoom]);
+
+  // clear on delete room
+  useEffect(() => {
+    let isActive = true;
+    if (isActive) {
+      if (currentRoom !== null && currentRoomId !== null) {
+        if (currentRoom.createrData.userId !== currentUserId) {
+          const isCurrentRoomDelete = !userChatData.some((room) => room.roomId === currentRoomId);
+          if (isCurrentRoomDelete) {
+            setCurrentRoom(null)
+            setCurrentRoomId(null)
+          }
+        }
+      }
+    }
+    return () => {
+      isActive = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userChatData,])
+
+
+  useEffect(() => {
+    if (!homeSocket?.current) return;
+    const socket = homeSocket.current;
+    socket.once('receiveVoiceCall', async (data: { offer: RTCSessionDescriptionInit, callerId: string, receiverId: string, roomId: string, messageData: MessageType }) => {
+      setIncomingCall(data);
+      setChatInputValue(data.messageData)
+      setVoiceCallActive(true);
+      if (data.receiverId === currentUserId) {
+        const { roomId } = data;
+        setCurrentRoomId(() => roomId)
+        const roomData = userChatData.find((a) => a.roomId === roomId);
+        if (roomData) {
+          const callReceiver =
+            roomData.createrData.userId == currentUserId ?
+              roomData.receiverData :
+              roomData.createrData;
+          setCallReceiverUserData(() => callReceiver)
+        }
+        setTimeout(() => {
+          setVoiceCallActive(true)
+          if (makeCallAudioRef && makeCallAudioRef.current !== null) {
+            makeCallAudioRef.current.loop = true;
+            makeCallAudioRef.current.play();
+          }
+        }, 500);
+
+        // Clear any existing timeout before setting a new one
+        if (missedCallTimeout.current) {
+          clearTimeout(missedCallTimeout.current);
+        }
+
+        // Set a timeout to show "missed call" only if not accepted
+        missedCallTimeout.current = setTimeout(() => {
+          const updatedChatInputValue = {
+            ...data.messageData,
+            calls: data.messageData.calls.map((call, index) =>
+              index === 0 ? { ...call, isMissedCall: true } : call
+            ),
+          };
+
+          setChatInputValue(updatedChatInputValue);
+          homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue })
+        }, 20 * 1000);
+      }
+    })
+    return () => {
+      socket.off("receiveVoiceCall")
+    }
+  }, [currentUserId, homeSocket, userChatData, missedCallTimeout])
+
+  useEffect(() => {
+    let isActive = true;
+    if (isActive && homeSocket.current) {
+      homeSocket.current.on('receiveMessage', (messageData: MessageType) => {
+
+        if (messageData.receiverId == currentUserId) {
+          if (currentRoomId == messageData.roomId) {
+            const chatIndex = userChatDataRef.current.findIndex(chat => chat.roomId === messageData.roomId);
+            if (chatIndex !== -1) {
+              setTimeout(() => {
+                const msgIndex = userChatDataRef.current[chatIndex].messages.findIndex((m) => m.timestamp == messageData.timestamp)
+                if (msgIndex !== -1) {
+                  const message = userChatDataRef.current[chatIndex].messages[msgIndex];
+                  homeSocket.current.emit('makeOneMessageRead', message)
+                  setUserChatData((prevState) => {
+                    let newState = [...prevState];
+
+                    newState[chatIndex].messages[msgIndex].read = true;
+                    return newState
+                  })
+                }
+              }, 50);
+            }
+          }
+        }
+        if (messageData.receiverId == currentUserId) {
+          if (currentRoomId !== null) {
+            if (reciveMessageAudioRef && reciveMessageAudioRef.current !== null) {
+
+              reciveMessageAudioRef.current.currentTime = 0; // Reset to start
+              reciveMessageAudioRef.current.play();
+
+            }
+          }
+        }
+        if (messageData.senderId == currentUserId) {
+          if (sendMessageAudioRef && sendMessageAudioRef.current !== null) {
+
+            sendMessageAudioRef.current.currentTime = 0; // Reset to start
+            sendMessageAudioRef.current.play();
+
+          }
+        }
+        // }
+      })
+    }
+    return () => {
+      isActive = false;
+    }
+  }, [homeSocket, currentRoomId, currentUserId])
+
+
+  //IceCandidate
+  useEffect(() => {
+    if (!homeSocket?.current) return;
+    const socket = homeSocket.current;
+
+    socket.on("iceCandidate", async (data: { candidate: any, callerId: string, receiverId: string, roomId: string }) => {
+      if (peerConnection.current !== null) {
+        try {
+          // // Added comment: Ensure remote description is set before adding ICE candidate.
+          if (peerConnection.current.remoteDescription !== null) {
+            await peerConnection.current.addIceCandidate(data.candidate); // // ICE candidate added
+          }
+        } catch (err) {
+          console.error("Error adding received ice candidate", err);
+
+        }
+      }
+
+    })
+
+    return () => {
+      socket.off("iceCandidate")
+    }
+  }, [homeSocket, peerConnection])
+
+  useEffect(() => {
+    if (!homeSocket?.current) return;
+    const socket = homeSocket.current;
+    socket.on("receiveMessage", (messageData: MessageType) => {
+      setUserChatData((prevState) => {
+        let newState = [...prevState];
+        const chatIndex = newState.findIndex(chat => chat.roomId === messageData.roomId);
+        if (chatIndex !== -1) {
+          newState[chatIndex].messages.push(messageData);
+        }
+        return newState
+      })
+    })
+
+    socket.on("confirmCall", async (data: { answer: any, callerId: string, receiverId: string, roomId: string, messageData: MessageType }) => {
+      try {
+        setChatInputValue(data.messageData)
+        await peerConnection.current?.setRemoteDescription(new RTCSessionDescription(data.answer));
+        if (makeCallAudioRef && makeCallAudioRef.current !== null) {
+          makeCallAudioRef.current.pause();
+        }
+        // Get remote stream
+        const remoteTracks = peerConnection.current?.getReceivers().map(receiver => receiver.track);
+        if (remoteTracks) {
+          const stream = new MediaStream(remoteTracks);
+
+          // Create a fake MediaRecorder (to bypass the type error)
+          const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm;codecs=opus" });
+          mediaRecorder.onerror = (err) => console.error("MediaRecorder error:", err);
+
+          mediaRecorder.start();
+          setFakeMediaRecorder(mediaRecorder);
+        }
+      } catch (error: any) {
+        toast.error(error.toString())
+      }
+    })
+
+    socket.on('endVoiceCall', () => {
+      if (makeCallAudioRef && makeCallAudioRef.current !== null) {
+        makeCallAudioRef.current.pause();
+      }
+      const drautoComplet = document.querySelector('.MuiAutocomplete-root') as HTMLElement
+      if (drautoComplet) {
+        drautoComplet.style.zIndex = "1301";
+      }
+      peerConnection.current?.close();
+      peerConnection.current = null;
+      localStream.current?.getTracks().forEach((track) => track.stop());
+      remoteStream.current?.getTracks().forEach((track) => track.stop());
+      remoteStream.current = null;
+      localStream.current = null;
+      setVoiceCallActive(false);
+      setCallReceiverUserData(null);
+      if (isRecording) {
+        stopRecording();
+        setTimeout(() => {
+          handleDownload(); // Ensure we download the latest blob
+        }, 300); // Give time for state updates
+      }
+
+      setShowSnakBar(() => {
+        return {
+          text: "The call has ended.",
+          show: true,
+        }
+      })
+    })
+    return () => {
+      socket.off("receiveMessage");
+      socket.off('confirmCall');
+      socket.off('endVoiceCall');
+    }
+
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioBlob, homeSocket, isRecording, recordingBlob, stopRecording])
+  const audioBlobRef = useRef<Blob | null>(null);
+  // Ensure audioBlob updates when recordingBlob is available
+  useEffect(() => {
+    if (recordingBlob) {
+      setAudioBlob(recordingBlob);
+      audioBlobRef.current = recordingBlob;
+    }
+
+  }, [recordingBlob, isRecording]);
+
+
+
+  // Clear recording
+  const clearRecording = () => {
+    setAudioBlob(null);
+    audioBlobRef.current = null;
+  };
+
+  const handleDownload = () => {
+    if (audioBlobRef.current) {
+      const url = URL.createObjectURL(audioBlobRef.current);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "recording.webm";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setTimeout(() => {
+        clearRecording()
+      }, 200);
+    }
+  };
   return (
     <ChatContext.Provider value={{
       searchInputWidth,
@@ -1095,7 +1190,19 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       acceptVoiceCall,
       incomingCall,
       setIncomingCall,
-      minWidth768
+      minWidth768,
+      fakeMediaRecorder,
+
+      setAudioBlob,
+      audioBlob,
+      recordingTime,
+      startRecording,
+      isRecording,
+      stopRecording,
+      togglePauseResume,
+      isPaused,
+      clearRecording,
+      handleDownload
     }}>
       {children}
     </ChatContext.Provider>
@@ -1109,3 +1216,14 @@ export const useChat = (): ChatContextType => {
   }
   return context;
 }
+
+const getChatFile = async (fileId: string, userId: string): Promise<string> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_adminUrl}/api/chat/file/${fileId}?userId=${userId}`
+  );
+  if (!response.ok) return Image_placeholder;
+
+  const blob = await response.blob();
+
+  return URL.createObjectURL(blob);
+};

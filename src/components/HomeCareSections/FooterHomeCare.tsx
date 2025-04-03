@@ -11,6 +11,7 @@ import {
 } from '@/public/assets/imagepath'
 import { useTheme } from "@mui/material";
 import Flickity from 'react-flickity-component'
+import packageJson from "../../../package.json";
 
 const FooterHomeCare: FC = (() => {
   const { muiVar } = useScssVar();
@@ -267,12 +268,13 @@ const FooterHomeCare: FC = (() => {
               <Link
                 href="https://nastaransamui.github.io/"
                 target="_blank"
-                style={{ color: theme.palette.primary.contrastText, fontSize: 20, fontStyle: "italic" }}
+                style={{ color: theme.palette.secondary.main, fontSize: 15, fontStyle: "italic" }}
               >
-                Mj.
+                Mj
               </Link>{" "}
               All Rights Reserved
             </p>
+            <p> v:{packageJson.version}</p>
           </div>
         </div>
       </div>

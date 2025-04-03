@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { FiClock, FiMail, FiPhone } from "react-icons/fi";
 import useScssVar from '@/hooks/useScssVar';
 import { logo, payment } from "../../../public/assets/imagepath";
-
+import packageJson from "../../../package.json";
 //Mui
 import { useTheme } from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
@@ -206,6 +206,7 @@ const Footer: FC = (() => {
                 <div className="col-md-5">
                   <div className="copyright-text">
                     <p>© 2023 MJ. All Rights Reserved.</p>
+                    <small style={{ display: 'flex', justifyContent: 'flex-start' }}> v:{packageJson.version}</small>
                   </div>
                 </div>
                 <div className="col-md-2">

@@ -25,6 +25,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip'
 import { useTheme } from '@mui/material'
 import { getSelectedBackgroundColor, StyledBadge } from "@/components/DoctorDashboardSections/ScheduleTiming"
+import Version from './Version'
 
 
 const PatientDashboardSidebar: FC = (() => {
@@ -333,6 +334,8 @@ const PatientDashboardSidebar: FC = (() => {
           <button className={`${homeSideBarOpen ? 'side-bar-toggle-button-open' : 'side-bar-toggle-button-close'}`}
             aria-label="side-bar-toggle-button" onClick={handlesidebar}></button>
         </List>
+
+        <Version />
       </Drawer>
     </Fragment >
   )

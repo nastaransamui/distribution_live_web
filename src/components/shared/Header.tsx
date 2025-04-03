@@ -818,7 +818,7 @@ const DoctorAfterLogin: FC<AfterLoginType> = (({ logOut }) => {
               idle={userProfile?.lastLogin?.idle}
             >
               <Avatar alt="" src={`${userProfile?.profileImage}`} key={userProfile?.profileImage}>
-                <img src={patient_profile} alt="" className="rounded-circle" />
+                <img src={doctors_profile} alt="" className="rounded-circle" />
               </Avatar>
             </StyledBadge>
           </span>

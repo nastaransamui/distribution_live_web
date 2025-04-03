@@ -11,7 +11,7 @@ import {
   hexagon_group_5,
   logo
 } from '../../../public/assets/imagepath'
-
+import packageJson from "../../../package.json";
 //Mui
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
@@ -197,21 +197,20 @@ const Footer: FC = (() => {
         </div>
         <div className="footer-bottom">
           <div className="container">
-            {/* Copyright */}
-            <div className="copyright">
+            <div className="copyright" style={{ paddingBottom: '0px' }}>
               <div className="copyright-text">
                 <p className="mb-0">© 2023 MJ. All Rights Reserved.</p>
+
               </div>
-              {/* Copyright Menu */}
               <div className="copyright-menu">
                 <ul className="policy-menu">
                   <li><Link href="/privacy">Privacy Policy</Link></li>
                   <li><Link href="/terms">Terms and Conditions</Link></li>
                 </ul>
               </div>
-              {/* /Copyright Menu */}
+
             </div>
-            {/* /Copyright */}
+            <small style={{ display: 'flex', justifyContent: 'center' }}> v:{packageJson.version}</small>
 
           </div>
         </div>

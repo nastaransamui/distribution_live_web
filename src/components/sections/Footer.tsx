@@ -6,7 +6,7 @@ import FeatherIcon from "feather-icons-react";
 import { logo } from '../../../public/assets/imagepath'
 import useScssVar from '@/hooks/useScssVar';
 import { useRouter } from 'next/router';
-
+import packageJson from "../../../package.json";
 
 //Mui
 import Paper from '@mui/material/Paper';
@@ -219,10 +219,11 @@ const Footer: FC = (() => {
                           href="https://nastaransamui.github.io/"
                           target="_blank" aria-label="socialmedia"
                         >
-                          Mj.
+                          Mj
                         </Link>{" "}
                         All Rights Reserved
                       </p>
+                      <small > v:{packageJson.version}</small>
                     </div>
                   </div>
                   <div className="col-md-6 col-lg-6">
