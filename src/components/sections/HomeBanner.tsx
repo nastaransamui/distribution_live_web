@@ -107,7 +107,7 @@ const HomeBanner: FC = (() => {
                             variant="dot"
                             online={bestDoctors?.[0]?.online}
                           >
-                            <Avatar sx={avatar2Sx} alt="" src={bestDoctors?.[0]?.profileImage || bannerFifteen}>
+                            <Avatar sx={avatar2Sx} alt="" src={bestDoctors?.[0]?.profileImage || doctors_profile}>
                               <img src={doctors_profile} alt="" className="avatar" />
                             </Avatar>
                           </StyledBadge>
@@ -181,7 +181,9 @@ const HomeBanner: FC = (() => {
                                       variant="dot"
                                       online={bestDoctor?.online}
                                     >
-                                      <Avatar sx={avatar3Sx} alt="" src={bestDoctor?.profileImage} />
+                                      <Avatar sx={avatar3Sx} alt="" src={bestDoctor?.profileImage} >
+                                        <img src={doctors_profile} alt="" className="avatar" />
+                                      </Avatar>
                                     </StyledBadge>
                                   </Link>
                                 </Tooltip>

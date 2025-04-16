@@ -101,7 +101,6 @@ const AppWrapper = ({ children }: ChildrenProps) => {
 
       newSocket.on('connect', () => {
         dispatch(updateHomeSocket({ current: newSocket })); //update homeSocket to the new socket.
-        // console.log('Socket connected');
         socket.current.on('getThemeFromAdmin', (msg: { homeThemeName: string, homeThemeType: string, homeActivePage: string }) => {
           const body = document.getElementById('body');
           if (body) {
@@ -158,7 +157,6 @@ const AppWrapper = ({ children }: ChildrenProps) => {
           var { accessToken, user_id, services, roleName, iat, exp, userProfile: newUserProfile } = verifyHomeAccessToken(msg)
 
           const { isActive } = newUserProfile;
-          // console.log({ accessToken, user_id, services, roleName, iat, exp, newUserProfile, isActive, userProfile })
           if (accessToken == '' || accessToken !== userProfile?.accessToken || !isActive) {
             //Logut users
             if (getCookie('homeAccessToken')) {
@@ -281,15 +279,11 @@ const AppWrapper = ({ children }: ChildrenProps) => {
 
 
     if (!socket.current) {
-      // console.log('Creating new socket');
       socket.current = createSocket();
     } else {
-      // console.log('Socket already exists, ensuring connection');
       if (socket.current.disconnected) {
-        // console.log("socket was disconnected, creating new socket");
         socket.current = createSocket();
       } else {
-        // console.log('Socket was already connected');
         socket.current.emit('getLastReviewsFromAdmin',)
         socket.current.emit('getBestDoctorsFromAdmin',)
         socket.current.emit('getBestCardiologyDoctorsFromAdmin')
@@ -300,19 +294,14 @@ const AppWrapper = ({ children }: ChildrenProps) => {
 
     const handleRouteChange = (url: string) => {
       if (socket.current) {
-        // socket.current.disconnect();
-        // socket.current = null;
       }
     };
 
     router.events.on('routeChangeStart', handleRouteChange);
 
     return () => {
-      // console.log('Cleanup: removing route change listener');
       router.events.off('routeChangeStart', handleRouteChange);
       if (socket.current) {
-        // console.log('Cleanup: disconnecting socket');
-        // socket.current.disconnect();
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1337,8 +1337,7 @@ const TabsButtonsCompoenent = () => {
     setTabIndex,
   } = useTimeSlot();
 
-  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-    event
+  const handleChangeTab = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
   };
   const fixMultipleState = (index: number, keyState: string) => {
@@ -1633,8 +1632,11 @@ const SlotSwipeable: FC<SlotSwipeableType> = ({ saveTodb, updateDb, getConfirmDb
                             }}
                             className="card-title d-flex justify-content-between">
                             <span>
-                              <span style={{ display: 'flex' }}>Time Slots: </span><br />
-                              <span style={{ display: 'flex' }}>From: {dayjs(slot.startDate).format('DD MMM YYYY')}
+                              <span style={{ display: 'flex' }}>
+                                Time Slots:
+                              </span><br />
+                              <span style={{ display: 'flex' }}>
+                                From: {dayjs(slot.startDate).format('DD MMM YYYY')} &nbsp;
                                 To: {dayjs(slot.finishDate).format('DD MMM YYYY')}
                               </span>
                             </span>
@@ -2114,6 +2116,9 @@ const SelectCheckBox = ({ period }: { period: 'morning' | 'afternoon' | 'evening
                           "& .MuiButtonBase-root": {
                             pl: { xl: "9px", lg: '9px', md: `9px`, xs: '0px' },
                             pr: { xl: "9px", lg: '9px', md: `9px`, xs: '0px' }
+                          },
+                          "& .MuiStack-root": {
+                            minWidth: { xl: '115px' }
                           }
                         }} />
                       {
