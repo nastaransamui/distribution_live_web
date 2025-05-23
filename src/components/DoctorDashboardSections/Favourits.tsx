@@ -68,7 +68,7 @@ const Favourits: FC = (() => {
 
   const [sortModel, setSortModel] = useState<any>([
     {
-      field: 'id',
+      field: 'profile.id',
       sort: 'asc',
     },
   ]);
@@ -363,6 +363,9 @@ const Favourits: FC = (() => {
             setFavPatientsProfile(() => { return [] })
           }
           homeSocket.current.once(`updateGetFavPatientsForDoctorProfile`, () => {
+            setReload(!reload)
+          })
+          homeSocket.current.once(`updateGetFavPatientsForDoctorProfilePatient`, () => {
             setReload(!reload)
           })
           setIsLoading(false)
