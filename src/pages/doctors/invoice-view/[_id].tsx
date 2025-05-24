@@ -29,6 +29,7 @@ const InvoiceViewPage: NextPage = (props: any) => {
   const { homeRoleName } = props;
   const { value: roleName } = homeRoleName
   const { muiVar } = useScssVar();
+  const displayRoleName = roleName ? `${roleName.charAt(0).toLocaleUpperCase()}${roleName.slice(1)}` : 'Use';
   return (
     <>
       <Head>
@@ -42,7 +43,7 @@ const InvoiceViewPage: NextPage = (props: any) => {
         <title>Welcome to Health Care page</title>
       </Head>
       <BreadCrumb title={`${roleName.charAt(0).toLocaleUpperCase()}${roleName.slice(1)} Invoice`}
-        subtitle={`${roleName.charAt(0).toLocaleUpperCase()}${roleName.slice(1)} Invoice`} />
+        subtitle={`${displayRoleName} Invoice`} />
 
       <Invoice />
       <Footer />
@@ -71,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       if (hasCookie('homeThemeName', ctx)) {
         store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
       }
-
+      console.log(hasCookie('homeAccessToken', ctx))
       if (hasCookie('homeAccessToken', ctx)) {
         const accessToken = getCookie('homeAccessToken', ctx);
         const user_id = getCookie('user_id', ctx);
@@ -113,6 +114,15 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         roleName == 'patient' ?
           store.dispatch(updateUserPatientProfile(data)) :
           store.dispatch(updateUserDoctorProfile(data))
+      }
+
+      if (!hasCookie('homeAccessToken', ctx)) {
+        return {
+          redirect: {
+            destination: '/login',
+            permanent: false,
+          },
+        };
       }
 
       return {
@@ -168,6 +178,15 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         roleName == 'patient' ?
           store.dispatch(updateUserPatientProfile(data)) :
           store.dispatch(updateUserDoctorProfile(data))
+      }
+
+      if (!hasCookie('homeAccessToken', ctx)) {
+        return {
+          redirect: {
+            destination: '/login',
+            permanent: false,
+          },
+        };
       }
       return {
         props

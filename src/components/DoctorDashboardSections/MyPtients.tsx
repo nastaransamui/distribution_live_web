@@ -112,7 +112,7 @@ const MyPtients: FC = (() => {
 
   const [sortModel, setSortModel] = useState<any>([
     {
-      field: 'id',
+      field: 'profile.id',
       sort: 'asc',
     },
   ]);
