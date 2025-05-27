@@ -100,7 +100,7 @@ const CustomToolbar: FC<CustomToolbarPropsType> = (props) => {
             </Grid>
           </Fragment> :
           <Fragment>
-            <div className="MuiDataGrid-selectedRowCount css-de9k3v-MuiDataGrid-selectedRowCount">
+            <div style={{ paddingBlock: '20px' }} className="MuiDataGrid-selectedRowCount css-de9k3v-MuiDataGrid-selectedRowCount">
               {deleteId.length} selected for {router.pathname !== "/doctors/dashboard/invoice" ? `delete.` : `update.`}
 
             </div>
