@@ -44,7 +44,7 @@ import Stack from '@mui/material/Stack';
 import CustomNoRowsOverlay from '@/components/shared/CustomNoRowsOverlay';
 import { PatientProfile } from '@/components/DoctorDashboardSections/MyPtients';
 import { Terms } from '@/components/TermsSections/TermsDetails';
-
+import { DataGridMongoDBQuery } from '@/shared/CustomToolbar';
 
 export interface RepliesType {
   _id?: string;
@@ -126,7 +126,18 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
   const [page, setPage] = useState(1);
   const [termsDialog, setTermsDialog] = useState<boolean>(false)
   const [loginDialog, setLoginDialog] = useState<boolean>(false)
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: perPage,
+    page: 0,
+  });
 
+  const [sortModel, setSortModel] = useState<any>([
+    {
+      field: 'updatedAt',
+      sort: 'desc',
+    },
+  ]);
+  const [mongoFilterModel, setMongoFilterModel] = useState<DataGridMongoDBQuery>({});
   const {
     register,
     handleSubmit,
@@ -231,10 +242,17 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
       })
     }
   }
+  const handlePageChange = (
+    _event: any | null,
+    newPage: number) => {
+    setPaginationModel((prevState) => {
+      return {
+        ...prevState,
+        page: newPage - 1
+      }
+    })
+  }
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
-  };
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name == 'body') {
@@ -293,13 +311,12 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
   useEffect(() => {
     if (profile) {
 
-      let limit = perPage * page;
-      let skip = (page - 1) * perPage
       if (homeSocket?.current) {
-        homeSocket.current.emit('getDoctorReviews', { doctorId: profile?._id, limit, skip })
-        homeSocket.current.once('getDoctorReviewsReturn', (msg: { status: number, doctorReviews: ReviewTypes[], totalReviews: number, message?: string }) => {
+        homeSocket.current.emit('getDoctorReviews', { doctorId: profile?._id, paginationModel, sortModel, mongoFilterModel })
+        homeSocket.current.once('getDoctorReviewsReturn', (msg: { status: number, doctorReviews: ReviewTypes[], totalReviews: number, message?: string, reason?: string }) => {
           if (msg?.status !== 200) {
-            toast.error(msg?.message || 'getDoctorReviews error', {
+            console.log(msg);
+            toast.error(msg?.message || msg?.reason || 'getDoctorReviews error', {
               position: "bottom-center",
               autoClose: 5000,
               hideProgressBar: false,
@@ -308,7 +325,9 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
               draggable: true,
               progress: undefined,
               transition: bounce,
+              toastId: 'review_error',
               onClose: () => {
+                toast.dismiss('review_error')
               }
             });
           } else if (msg?.status == 200) {
@@ -331,7 +350,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, profile, reload, page])
+  }, [homeSocket, profile, reload, page, mongoFilterModel, paginationModel, sortModel])
 
   const removeClicked = (e: MouseEvent) => {
     e.preventDefault()
@@ -384,7 +403,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                               variant="outlined"
                               color="secondary"
                               count={Math.ceil(totalReviews / perPage)}
-                              page={page}
+                              page={paginationModel.page + 1}
                               onChange={handlePageChange}
                               sx={{
                                 marginLeft: 'auto',
@@ -674,7 +693,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                               variant="outlined"
                               color="secondary"
                               count={Math.ceil(totalReviews / perPage)}
-                              page={page}
+                              page={paginationModel.page + 1}
                               onChange={handlePageChange}
                               sx={{
                                 marginLeft: 'auto',

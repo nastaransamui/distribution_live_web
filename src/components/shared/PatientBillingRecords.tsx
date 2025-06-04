@@ -439,8 +439,8 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
       userType == 'patient' ? {
         field: 'doctorProfile.fullName',
         headerName: "Doctor",
-        width: 200,
-        align: 'center' as GridAlignment,
+        width: 250,
+        // align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
         searchAble: false,
         sortable: true,
@@ -485,8 +485,8 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
       userType == 'doctor' ? {
         field: 'patientProfile.fullName',
         headerName: "Patient",
-        width: 200,
-        align: 'center' as GridAlignment,
+        width: 250,
+        // align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
         searchAble: false,
         sortable: true,
