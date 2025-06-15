@@ -590,9 +590,9 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
     }
 
   }
-  const [deleteId, setDeleteId] = useState<string>()
+  const [deleteIds, setDeleteId] = useState<string[]>()
   const deleteClicked = (params: GridRowParams) => {
-    setDeleteId(() => (params.row._id))
+    setDeleteId(() => ([params.row._id]))
     setShowDelete(true);
   }
   const {
@@ -669,7 +669,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
   const deleteSubmited = () => {
     dispatch(updateHomeFormSubmit(true))
     if (homeSocket.current !== undefined) {
-      homeSocket.current.emit('deleteMedicalRecord', { userId: patientProfile?._id, deleteId })
+      homeSocket.current.emit('deleteMedicalRecord', { userId: patientProfile?._id, deleteIds })
       homeSocket.current.once('deleteMedicalRecordReturn', (msg: { status: number, message?: string, }) => {
         const { status, message, } = msg;
         if (status !== 200) {
@@ -689,7 +689,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         } else {
           dispatch(updateHomeFormSubmit(false))
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-          setDeleteId("")
+          setDeleteId([])
           setTimeout(() => {
             setShowDelete(false)
           }, 500);
@@ -1293,7 +1293,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         onClose={(event, reason) => {
           if (reason == 'backdropClick') return false;
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-          setDeleteId("")
+          setDeleteId([])
           setTimeout(() => {
             setShowDelete(false)
           }, 500);
@@ -1304,7 +1304,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         <BootstrapDialogTitle
           id="edit_invoice_details" onClose={() => {
             document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-            setDeleteId("")
+            setDeleteId([])
             setTimeout(() => {
               setShowDelete(false)
             }, 500);
@@ -1324,7 +1324,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
             <button type="button" className="btnLogout" style={muiVar}
               onClick={() => {
                 document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-                setDeleteId("")
+                setDeleteId([])
                 setTimeout(() => {
                   setShowDelete(false)
                 }, 500);

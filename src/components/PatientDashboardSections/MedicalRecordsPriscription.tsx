@@ -518,14 +518,14 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
             <GridActionsCellItem
               key="view-action"
               onClick={() => {
-                if (params.row?._id == patientProfile?._id) {
+                if (params.row?.doctorId == userProfile?._id) {
                   deleteClicked(params);
                 }
               }}
               icon={
-                <DeleteForever sx={{ color: 'crimson' }} />
+                <DeleteForever sx={{ color: params.row?.doctorId !== userProfile?._id ? theme.palette.text.disabled : 'crimson' }} />
               }
-              disabled={params.row?._id !== patientProfile?._id}
+              disabled={params.row?.doctorId !== userProfile?._id}
               label="View"
             />
           ) : <></>,
