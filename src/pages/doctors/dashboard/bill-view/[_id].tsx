@@ -50,7 +50,7 @@ const InvoiceViewPage: NextPage = (props: any) => {
       <span style={muiVar}>
         <DoctorDashboardSidebar />
       </span>
-      <BillInvoice />
+      <BillInvoice doctorPatientProfile={doctorPatientProfile} />
       <DashboardFooter />
       <CookieConsentComponent />
     </>

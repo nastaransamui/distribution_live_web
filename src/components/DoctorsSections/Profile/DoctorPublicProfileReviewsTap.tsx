@@ -315,7 +315,6 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
         homeSocket.current.emit('getDoctorReviews', { doctorId: profile?._id, paginationModel, sortModel, mongoFilterModel })
         homeSocket.current.once('getDoctorReviewsReturn', (msg: { status: number, doctorReviews: ReviewTypes[], totalReviews: number, message?: string, reason?: string }) => {
           if (msg?.status !== 200) {
-            console.log(msg);
             toast.error(msg?.message || msg?.reason || 'getDoctorReviews error', {
               position: "bottom-center",
               autoClose: 5000,

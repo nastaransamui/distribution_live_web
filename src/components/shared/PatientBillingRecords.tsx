@@ -9,6 +9,7 @@ import { doctors_profile, logo, patient_profile } from '@/public/assets/imagepat
 import Stack from '@mui/material/Stack';
 import Link from 'next/link';
 import Edit from '@mui/icons-material/Edit';
+import Visibility from '@mui/icons-material/Visibility'
 import PaymentIcon from '@mui/icons-material/Payment';
 
 import { BillingDetailsArrayType, BillingType } from '../DoctorDashboardSections/AddBilling';
@@ -18,7 +19,7 @@ import { useReactToPrint } from 'react-to-print';
 import { toast } from 'react-toastify';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
+
 import CustomNoRowsOverlay from './CustomNoRowsOverlay';
 import CustomPagination from './CustomPagination';
 import { formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
@@ -436,7 +437,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
           </Link>
         }
       },
-      userType == 'patient' ? {
+      {
         field: 'doctorProfile.fullName',
         headerName: "Doctor",
         width: 250,
@@ -481,7 +482,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
             </>
           )
         },
-      } : null,
+      },
       userType == 'doctor' ? {
         field: 'patientProfile.fullName',
         headerName: "Patient",
@@ -538,11 +539,12 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         filterable: true,
         filterOperators: createCustomOperators().number,
         renderCell: (params: GridRenderCellParams) => {
+          const isSameDoctor = userProfile?._id == params?.row?.doctorId;
           return (
             <Stack >
-              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(params?.row?.price)}</span>
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{isSameDoctor ? formatNumberWithCommas(params?.row?.price) : 'N/A'}</span>
               <span className="d-block">
-                <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.currencySymbol || 'THB'}</span>
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{isSameDoctor ? params?.row?.currencySymbol : ''}</span>
               </span>
             </Stack>
           )
@@ -561,7 +563,8 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         filterOperators: createCustomOperators().number,
         valueGetter(params: GridRenderCellParams) {
           const { row } = params
-          return `${row?.bookingsFee} %`
+          const isSameDoctor = userProfile?._id == params?.row?.doctorId;
+          return isSameDoctor ? `${row?.bookingsFee} %` : `N/A`
         }
       } : null,
       userType == 'doctor' ? {
@@ -577,13 +580,14 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         filterOperators: createCustomOperators().number,
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
+          const isSameDoctor = userProfile?._id == row?.doctorId;
           return (
             <Stack >
-              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
-                params?.row?.bookingsFeePrice
-              )}</span>
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>
+                {isSameDoctor ? formatNumberWithCommas(params?.row?.bookingsFeePrice) : 'N/A'}
+              </span>
               <span className="d-block">
-                <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.currencySymbol || 'THB'}</span>
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{isSameDoctor && params?.row?.currencySymbol}</span>
               </span>
             </Stack>
           )
@@ -601,13 +605,14 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         filterable: true,
         filterOperators: createCustomOperators().number,
         renderCell: (params: GridRenderCellParams) => {
+          const isSameDoctor = userProfile?._id == params?.row?.doctorId;
           return (
             <Stack >
-              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
-                params?.row?.total
-              )}</span>
+              <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>
+                {isSameDoctor ? formatNumberWithCommas(params?.row?.total) : 'N/A'}
+              </span>
               <span className="d-block">
-                <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.currencySymbol || 'THB'}</span>
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{isSameDoctor && params?.row?.currencySymbol}</span>
               </span>
             </Stack>
           )
@@ -662,10 +667,11 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         },
         renderCell: (params: GridRenderCellParams) => {
           const { billDetailsArray: value } = params?.row;
+          const isSameDoctor = userProfile?._id == params?.row?.doctorId;
           const tooltipText = value.map((obj: any) => {
             // Map over each key-value pair in the object
             const formattedEntries = Object.entries(obj)
-              .filter(([key]) => userType == 'patient' ? key === 'title' || key === 'total' : key) // Filter for only 'title' and 'total'
+              .filter(([key]) => userType == 'patient' || !isSameDoctor ? key === 'title' || key === 'total' : key) // Filter for only 'title' and 'total'
               .map(([key, val]: [string, any]) => `${key.charAt(0).toUpperCase() + key.slice(1)}: ${key == "title" ? val :
                 `${formatNumberWithCommas(val.toString())}${key == 'bookingsFee' ? '%' : " " + params?.row?.currencySymbol
                 }`
@@ -791,6 +797,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         align: "center" as GridAlignment,
         width: 250,
         getActions: (params: GridRowParams) => {
+          const isSameDoctor = userProfile?._id == params?.row?.doctorId;
           if (userType == 'patient') {
             return [
               <GridActionsCellItem
@@ -844,8 +851,11 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                 label="Delete"
                 disabled={params.row.status === 'Paid'}
               />,
-              <GridActionsCellItem key={params.row.toString()} icon={
-                <Edit sx={{ color: theme.palette.primary.main }} />} onClick={() => {
+              <GridActionsCellItem key={params.row.toString()}
+                icon={
+                  isSameDoctor ? <Edit sx={{ color: theme.palette.primary.main }} /> : <Visibility sx={{ color: theme.palette.primary.main }} />
+                }
+                onClick={() => {
                   router.push(`/doctors/dashboard/edit-billing/${btoa(params?.row?._id)}`)
 
                 }} label="Edit" />,

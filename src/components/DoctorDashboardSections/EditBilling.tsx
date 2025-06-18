@@ -45,6 +45,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+  const isSameDoctor = userProfile?._id == singleBill?.doctorId;
 
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const {
@@ -166,7 +167,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
           :
           <div className="card">
             <div className="card-header" style={{ display: 'flex' }}>
-              <h4 className="card-title mb-0">Edit Billing</h4>
+              <h4 className="card-title mb-0">{isSameDoctor ? 'Edit Bill' : 'View Bill'}</h4>
               <a href="" className="link" aria-label='back'
                 onClick={(e) => {
                   e.preventDefault();
@@ -180,12 +181,12 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
               <div className="row">
                 <div className="col-sm-6">
                   <div className="biller-info">
-                    <h4 className="d-block">Dr. {`${userProfile?.firstName} ${userProfile?.lastName}`}</h4>
-                    <span className="d-block text-sm text-muted">{userDoctorProfile?.specialities && userDoctorProfile?.specialities.length > 0 && userDoctorProfile?.specialities[0]?.specialities}</span>
+                    <h4 className="d-block">Dr. {`${singleBill.doctorProfile?.fullName}`}</h4>
+                    <span className="d-block text-sm text-muted">{singleBill.doctorProfile?.specialities && singleBill.doctorProfile?.specialities.length > 0 && singleBill.doctorProfile?.specialities[0]?.specialities}</span>
                     <span className="d-block text-sm text-muted">
-                      Country: {userProfile?.country || '-------'}<br />
-                      State: {userProfile?.state || '-------'}<br />
-                      City: {userProfile?.city || '-------'}
+                      Country: {singleBill.doctorProfile?.country || '-------'}<br />
+                      State: {singleBill.doctorProfile?.state || '-------'}<br />
+                      City: {singleBill.doctorProfile?.city || '-------'}
                     </span>
                   </div>
                 </div>
@@ -230,7 +231,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                   size: 'small'
                                 },
                               }}
-                              disabled={watch('status') == 'Paid'}
+                              disabled={!isSameDoctor || watch('status') == 'Paid'}
                             />
                           </LocalizationProvider>
                         )
@@ -242,16 +243,24 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                 <div className="col-md-6">
                   <div className="form-group mb-0">
                     <Chip
-                      color={
-                        singleBill?.status == 'Paid' ? 'success' :
-                          (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ? 'error' :
-                            'primary'}
+                      // color={
+                      //   }
                       label={`${singleBill?.status !== 'Paid' && (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ? `Over Due` : singleBill?.status}`}
-
-                      sx={{ color: '#000', fontSize: '18px', minWidth: '100%', height: '40px', mb: 3 }} />
+                      sx={{
+                        color: '#000',
+                        fontSize: '18px',
+                        minWidth: '100%',
+                        height: '40px',
+                        mb: 3,
+                        backgroundColor:
+                          singleBill?.status == 'Paid' ? theme.palette.success.main :
+                            (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ?
+                              theme.palette.error.main :
+                              '#ffa500'
+                      }} />
                   </div>
                 </div>
-                {billsFields.length < 5 &&
+                {isSameDoctor && billsFields.length < 5 &&
                   <div className="add-more text-end" onClick={addInputField} style={{ marginBottom: 8 }}>
                     <Link href="" onClick={(e) => { e.preventDefault() }} className="add-education"><i className="fa fa-plus-circle"></i> Add More</Link>
                   </div>}
@@ -266,11 +275,11 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                         <tr>
 
                           <th style={{ minWidth: 200, textAlign: 'center' }}>Title</th>
-                          <th style={{ minWidth: 150, textAlign: 'center' }}>Price</th>
-                          <th style={{ maxWidth: 50, textAlign: 'center' }}>Bookings Fee</th>
-                          <th style={{ minWidth: 100, textAlign: 'center' }}>Fee Price</th>
+                          {isSameDoctor && <th style={{ minWidth: 150, textAlign: 'center' }}>Price</th>}
+                          {isSameDoctor && <th style={{ maxWidth: 50, textAlign: 'center' }}>Bookings Fee</th>}
+                          {isSameDoctor && <th style={{ minWidth: 100, textAlign: 'center' }}>Fee Price</th>}
                           <th style={{ minWidth: 100, textAlign: 'center' }}>Total</th>
-                          <th style={{ width: 50 }} />
+                          {isSameDoctor && <th style={{ width: 50 }} />}
                         </tr>
                       </thead>
                       {
@@ -279,24 +288,39 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                             <tbody key={index}>
                               <tr>
                                 <td>
-                                  <FormControl fullWidth>
-                                    <TextField
-                                      required
-                                      id={`title${index}`}
-                                      autoComplete='off'
-                                      error={errors?.['billDetailsArray']?.[index]?.['title'] == undefined ? false : true}
-                                      helperText={errors?.['billDetailsArray']?.[index]?.['title'] && errors?.['billDetailsArray']?.[index]?.['title']?.['message'] as ReactNode}
-                                      {
-                                      ...control.register(`billDetailsArray.${index}.title`, {
-                                        required: `This field is required `,
-                                      })
-                                      }
-                                      label="Title"
-                                      size='small'
-                                      fullWidth
-                                      disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'}
-                                    />
-                                  </FormControl>
+                                  <Controller
+                                    name={`billDetailsArray.${index}.title`}
+                                    control={control}
+                                    rules={{
+                                      required: 'This field is required',
+                                    }}
+                                    render={({ field }) => {
+                                      const { ref, onChange, value = '' } = field;
+                                      return (
+                                        <TextField
+                                          required
+                                          id={`title${index}`}
+                                          autoComplete="off"
+                                          fullWidth
+                                          size="small"
+                                          inputRef={ref}
+                                          value={value || ''}
+                                          onChange={onChange}
+                                          label="Title"
+                                          disabled={router.asPath.endsWith('see-prescription') || watch('status') === 'Paid' || !isSameDoctor}
+                                          error={!!errors?.billDetailsArray?.[index]?.title}
+                                          helperText={errors?.billDetailsArray?.[index]?.title?.message as ReactNode}
+                                          FormHelperTextProps={{
+                                            sx: {
+                                              position: 'absolute',
+                                              bottom: -18,
+                                              left: -10
+                                            },
+                                          }}
+                                        />
+                                      );
+                                    }}
+                                  />
                                 </td>
                                 <td>
                                   <Controller
@@ -332,7 +356,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                             setFormValue(`billDetailsArray.${index}.total`, Number((Number(e.target.value) * (1 + Number(getFormValue('bookingsFee')) / 100)).toFixed(2)))
                                             onChange(Number(e.target.value))
                                           }}
-                                          disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'}
+                                          disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid' || !isSameDoctor}
                                           InputProps={{
                                             endAdornment:
                                               <InputAdornment position="end" >
@@ -344,12 +368,19 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                                 }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
                                               </InputAdornment>,
                                           }}
-                                          value={watch(`billDetailsArray.${index}.price`)}
+                                          value={watch(`billDetailsArray.${index}.price`) === 0 ? '' : watch(`billDetailsArray.${index}.price`)}
+                                          FormHelperTextProps={{
+                                            sx: {
+                                              position: 'absolute',
+                                              bottom: -18,
+                                              left: -10
+                                            },
+                                          }}
                                         />
                                       )
                                     }} />
                                 </td>
-                                <td>
+                                {isSameDoctor && <td>
                                   <FormControl fullWidth>
                                     <TextField
                                       required
@@ -375,71 +406,78 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                     />
                                   </FormControl>
                                 </td>
-                                <td>
-                                  <FormControl fullWidth>
-                                    <TextField
-                                      required
-                                      id={`bookingsFeePrice${index}`}
-                                      autoComplete='off'
-                                      {
-                                      ...control.register(`billDetailsArray.${index}.bookingsFeePrice`, {
-                                        required: `This field is required `,
-                                        validate: (value) => value > 0 || 'Price should be greater than Zero.',
-                                      })
-                                      }
-                                      InputLabelProps={{
-                                        shrink: true,
-                                      }}
-                                      label="Fee Price"
-                                      size='small'
-                                      fullWidth
-                                      disabled
-                                      InputProps={{
-                                        endAdornment:
-                                          <InputAdornment position="end" >
-                                            <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
-                                          </InputAdornment>,
-                                      }}
-                                    />
-                                  </FormControl>
-                                </td>
-                                <td>
-                                  <FormControl fullWidth>
-                                    <TextField
-                                      required
-                                      id={`total${index}`}
-                                      autoComplete='off'
-                                      {
-                                      ...control.register(`billDetailsArray.${index}.total`, {
-                                        required: `This field is required `,
-                                        validate: (value) => value > 0 || 'Price should be greater than Zero.',
-                                      })
-                                      }
-                                      InputLabelProps={{
-                                        shrink: true,
-                                      }}
-                                      label="Total"
-                                      size='small'
-                                      fullWidth
-                                      disabled
-                                      InputProps={{
-                                        endAdornment:
-                                          <InputAdornment position="end" >
-                                            <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
-                                          </InputAdornment>,
-                                      }}
-                                    />
-                                  </FormControl>
-                                </td>
-                                <td>
-                                  {!router.asPath.endsWith('see-billing') &&
-                                    <Link href="" aria-label='delete' onClick={(e) => {
-                                      e.preventDefault();
-                                      removeInputFields(index)
-                                      //
-                                    }} className={`btn ${router.asPath.endsWith('see-prescription') || watch('status') == 'Paid' ? 'disabled' : ""}`}>
-                                      <i className="far fa-trash-alt" style={{ color: '#000', }}></i></Link>}
-                                </td>
+                                }
+                                {isSameDoctor &&
+                                  <td>
+                                    <FormControl fullWidth>
+                                      <TextField
+                                        required
+                                        id={`bookingsFeePrice${index}`}
+                                        autoComplete='off'
+                                        {
+                                        ...control.register(`billDetailsArray.${index}.bookingsFeePrice`, {
+                                          required: `This field is required `,
+                                          validate: (value) => value > 0 || 'Price should be greater than Zero.',
+                                        })
+                                        }
+                                        InputLabelProps={{
+                                          shrink: true,
+                                        }}
+                                        label="Fee Price"
+                                        size='small'
+                                        fullWidth
+                                        disabled
+                                        InputProps={{
+                                          endAdornment:
+                                            <InputAdornment position="end" >
+                                              <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
+                                            </InputAdornment>,
+                                        }}
+                                      />
+                                    </FormControl>
+                                  </td>
+                                }
+                                {isSameDoctor &&
+                                  <td>
+                                    <FormControl fullWidth>
+                                      <TextField
+                                        required
+                                        id={`total${index}`}
+                                        autoComplete='off'
+                                        {
+                                        ...control.register(`billDetailsArray.${index}.total`, {
+                                          required: `This field is required `,
+                                          validate: (value) => value > 0 || 'Price should be greater than Zero.',
+                                        })
+                                        }
+                                        InputLabelProps={{
+                                          shrink: true,
+                                        }}
+                                        label="Total"
+                                        size='small'
+                                        fullWidth
+                                        disabled
+                                        InputProps={{
+                                          endAdornment:
+                                            <InputAdornment position="end" >
+                                              <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
+                                            </InputAdornment>,
+                                        }}
+                                      />
+                                    </FormControl>
+                                  </td>
+                                }
+                                {isSameDoctor &&
+                                  <td>
+                                    {!router.asPath.endsWith('see-billing') &&
+                                      <Link href="" aria-label='delete' onClick={(e) => {
+                                        e.preventDefault();
+                                        removeInputFields(index)
+                                        //
+                                      }} className={`btn ${router.asPath.endsWith('see-prescription') || watch('status') == 'Paid' ? 'disabled' : ""}`}>
+                                        <i className="far fa-trash-alt" style={{ color: '#000', }}></i></Link>}
+                                  </td>
+                                }
                               </tr>
                             </tbody>
                           )
@@ -455,21 +493,25 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                   <table className="invoice-table-two table">
                     <tbody>
                       <tr>
-                        <th>Total Price:</th>
-                        <td style={{ padding: '10px 0px' }}>
-                          <span>{userDoctorProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
-                            watch('price').toString()
-                          )}</span>
-                        </td>
+                        {isSameDoctor &&
+                          <>
+                            <th>Total Price:</th>
+                            <td style={{ padding: '10px 0px' }}>
+                              <span>{userDoctorProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
+                                watch('price').toString()
+                              )}</span>
+                            </td>
+                          </>
+                        }
                       </tr>
-                      <tr>
+                      {isSameDoctor && <tr>
                         <th>Total Fee Price:</th>
                         <td style={{ padding: '10px 0px' }}>
                           <span>{userDoctorProfile?.currency?.[0]?.currency || 'THB'}&nbsp; {formatNumberWithCommas(
                             watch('bookingsFeePrice').toString()
                           )}</span>
                         </td>
-                      </tr>
+                      </tr>}
                       <tr>
                         <th>Total:</th>
                         <td style={{ padding: '10px 0px' }}>
@@ -478,22 +520,43 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                           )}</span>
                         </td>
                       </tr>
+                      {!isSameDoctor && <tr></tr>}
                     </tbody>
                   </table>
                 </div>
               </div>
 
 
-              {!router.asPath.endsWith('see-billing') && <div className="row">
+              {!router.asPath.endsWith('see-billing') && isSameDoctor && <div className="row">
                 <div className="col-md-12">
                   <div className="submit-section">
                     <button type="submit" disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'} className="btn btn-primary submit-btn">Save</button>
-                    <button type="reset" disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'} className="btn btn-primary submit-btn"
+                    {/* <button type="reset" disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'} className="btn btn-primary submit-btn"
                       onClick={() => {
                         reset();
                         setFormValue('billDetailsArray.0.bookingsFee', userDoctorProfile?.bookingsFee!)
                         setFormValue('billDetailsArray.0.price', 0)
-                      }}>Clear</button>
+                      }}>Clear</button> */}
+                    <button
+                      type="reset"
+                      disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'}
+                      className="btn btn-primary submit-btn"
+                      onClick={() => {
+                        reset({
+                          billDetailsArray: [
+                            {
+                              title: '',
+                              price: 0,
+                              bookingsFee: userDoctorProfile?.bookingsFee ?? 0,
+                              bookingsFeePrice: 0,
+                              total: 0
+                            }
+                          ]
+                        });
+                      }}
+                    >
+                      Clear
+                    </button>
                   </div>
                 </div>
               </div>}

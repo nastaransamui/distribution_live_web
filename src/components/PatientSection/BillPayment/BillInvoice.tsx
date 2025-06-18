@@ -20,6 +20,7 @@ import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfileP
 import { PatientProfile } from '@/components/DoctorDashboardSections/MyPtients';
 import { BillingDetailsArrayType } from '@/components/DoctorDashboardSections/AddBilling';
 import Box from '@mui/material/Box';
+import { PatientProfileExtendBillingType } from '@/components/BillingPage/BilingPage';
 
 export interface BillingTypeWithDoctorProfileAndPatientProfile extends BillingTypeWithDoctorProfile {
   patientProfile: PatientProfile
@@ -30,7 +31,7 @@ export function truncateString(str: string, maxLength: number) {
 }
 
 
-const BillInvoice: FC = (() => {
+const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
   const exportRef = useRef<HTMLDivElement>(null);
   const invoiceHeaderRef = useRef<HTMLDivElement>(null);
   const invoiceBodyRef = useRef<HTMLDivElement>(null);
@@ -57,11 +58,11 @@ const BillInvoice: FC = (() => {
       if (base64regex.test(encryptID)) {
         let _id = atob(encryptID as string)
         if (active && homeSocket?.current) {
-          homeSocket.current.emit(`getSingleBillingForPatient`, { billing_id: _id, patientId: userProfile?._id })
-          homeSocket.current.once(`getSingleBillingForPatientReturn`, (msg: { status: number, singleBill: BillingTypeWithDoctorProfileAndPatientProfile[], reason?: string }) => {
+          homeSocket.current.emit(`getSingleBillingForPatient`, { billing_id: _id, patientId: homeRoleName == 'doctors' ? doctorPatientProfile._id : userProfile?._id })
+          homeSocket.current.once(`getSingleBillingForPatientReturn`, (msg: { status: number, singleBill: BillingTypeWithDoctorProfileAndPatientProfile[], reason?: string, massage?: string }) => {
             const { status, singleBill, reason } = msg;
             if (status !== 200) {
-              toast.error(reason || `Error ${status} find Bill`, {
+              toast.error(msg?.massage || `Error ${status} find Bill`, {
                 position: "bottom-center",
                 autoClose: 5000,
                 hideProgressBar: false,

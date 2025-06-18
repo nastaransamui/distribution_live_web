@@ -26,13 +26,15 @@ import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { ErrorComponent } from '@/pages/404';
 import { updateHomeSideBarOpen } from '@/redux/homeSideBarOpen';
 const AddBillingPage: NextPage = (props: any) => {
-  const { doctorPatientProfile } = props;
+  const { doctorPatientProfile, isSameDoctor } = props;
   const { muiVar } = useScssVar();
   const homeSideBarOpen = useSelector((state: AppState) => state.homeSideBarOpen.value)
 
   if (props.error) {
     return <ErrorComponent errorCode={props.errorCode} errorText={props.error} />;
   }
+
+
   return (
     <>
       <Head>
@@ -45,7 +47,7 @@ const AddBillingPage: NextPage = (props: any) => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
-      <BreadCrumb subtitle='Edit Billing' title='Edit Billing' />
+      <BreadCrumb subtitle={isSameDoctor ? 'Edit Bill' : 'View Bill'} title={isSameDoctor ? 'Edit Bill' : 'View Bill'} />
       <div className={`content ${homeSideBarOpen ? 'content-padding-open' : 'content-padding-close'}`} style={muiVar}>
         <div className="container-fluid">
           <div className="row">
@@ -157,9 +159,11 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
           const data = await res.json();
           const { status, user: doctorPatientProfile } = data
           if (status == 200) {
+            const isSameDoctor = user_id === doctorPatientProfile?.singleBill?.doctorId;
             props = {
               ...props,
-              doctorPatientProfile: doctorPatientProfile
+              doctorPatientProfile: doctorPatientProfile,
+              isSameDoctor
             }
           } else {
             return {

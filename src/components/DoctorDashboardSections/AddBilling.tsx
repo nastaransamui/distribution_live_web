@@ -318,6 +318,13 @@ const AddBilling: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) =>
                                       size='small'
                                       fullWidth
                                       disabled={router.asPath.endsWith('see-prescription')}
+                                      FormHelperTextProps={{
+                                        sx: {
+                                          position: 'absolute',
+                                          bottom: -18,
+                                          left: -10
+                                        },
+                                      }}
                                     />
                                   </FormControl>
                                 </td>
@@ -361,6 +368,13 @@ const AddBilling: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) =>
                                               <InputAdornment position="end" >
                                                 <span style={{ fontSize: '12px' }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
                                               </InputAdornment>,
+                                          }}
+                                          FormHelperTextProps={{
+                                            sx: {
+                                              position: 'absolute',
+                                              bottom: -18,
+                                              left: -10
+                                            },
                                           }}
                                         />
                                       )

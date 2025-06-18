@@ -67,7 +67,7 @@ export const LazyLoadWrapper = ({ children }: { children: React.ReactNode }) => 
 };
 
 const Home: NextPage = (props: any) => {
-  // console.log(props)
+
   return (
     <>
       <Head>
