@@ -29,6 +29,7 @@ import { BootstrapDialog, Transition, BootstrapDialogTitle } from '@/components/
 import DialogContent from '@mui/material/DialogContent';
 import { UserPatientProfileTypeValue } from '@/redux/userPatientProfile';
 import { UserDoctorProfileTypeValue } from '@/redux/userDoctorProfile';
+import { DataGridMongoDBQuery } from '@/shared/CustomToolbar';
 
 export interface PatientReviewsType {
   profile: UserPatientProfileTypeValue | UserDoctorProfileTypeValue
@@ -50,9 +51,29 @@ const PatientReviews: FC<PatientReviewsType> = (({ profile }) => {
   const [deleteId, setDeleteId] = useState<string>('')
   const perPage = 10;
   const [page, setPage] = useState(1);
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
-  };
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: perPage,
+    page: 0,
+  });
+
+  const [sortModel, setSortModel] = useState<any>([
+    {
+      field: 'updatedAt',
+      sort: 'desc',
+    },
+  ]);
+  const [mongoFilterModel, setMongoFilterModel] = useState<DataGridMongoDBQuery>({});
+
+  const handlePageChange = (
+    _event: any | null,
+    newPage: number) => {
+    setPaginationModel((prevState) => {
+      return {
+        ...prevState,
+        page: newPage - 1
+      }
+    })
+  }
 
   const {
     register,
@@ -70,10 +91,8 @@ const PatientReviews: FC<PatientReviewsType> = (({ profile }) => {
   useEffect(() => {
     if (profile) {
 
-      let limit = perPage * page;
-      let skip = (page - 1) * perPage
       if (homeSocket?.current) {
-        homeSocket.current.emit('getAuthorReviews', { patientId: profile?._id, limit, skip })
+        homeSocket.current.emit('getAuthorReviews', { patientId: profile?._id, paginationModel, sortModel, mongoFilterModel })
         homeSocket.current.once('getAuthorReviewsReturn', (msg: { status: number, authorReviews: ReviewTypes[], totalReviews: number, message?: string }) => {
           if (msg?.status !== 200) {
             toast.error(msg?.message || 'getAuthorReviews error', {
@@ -108,7 +127,7 @@ const PatientReviews: FC<PatientReviewsType> = (({ profile }) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, profile, reload, page])
+  }, [homeSocket, profile, reload, page, mongoFilterModel, paginationModel, sortModel])
 
 
   const editClicked = (e: MouseEvent<HTMLAnchorElement>, reviews: ReviewTypes) => {
