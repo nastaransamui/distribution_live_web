@@ -27,6 +27,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'
 import { formatNumberWithCommas, LoadingComponent, StyledBadge } from './ScheduleTiming';
 import Chip from '@mui/material/Chip';
 import { useTheme } from '@mui/material/styles';
+import { DataGridMongoDBQuery } from '@/shared/CustomToolbar';
 export interface EditValueType {
   start: Date;
   end: Date;
@@ -46,7 +47,7 @@ export interface AppointmentReservationExtendType extends AppointmentReservation
   patientProfile: PatientProfile;
   createdDate: string;
 }
-const perPage = 10
+
 
 const Appointment: FC = (() => {
 
@@ -60,10 +61,32 @@ const Appointment: FC = (() => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false)
   const [myAppointmentData, setMyAppointmentData] = useState<AppointmentReservationExtendType[]>([])
+  const perPage = 10;
   const [page, setPage] = useState(1);
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
-  };
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: perPage,
+    page: 0,
+  });
+
+  const [sortModel, setSortModel] = useState<any>([
+    {
+      field: 'updatedAt',
+      sort: 'desc',
+    },
+  ]);
+  const [mongoFilterModel, setMongoFilterModel] = useState<DataGridMongoDBQuery>({});
+
+  const handlePageChange = (
+    _event: any | null,
+    newPage: number) => {
+    setPaginationModel((prevState) => {
+      return {
+        ...prevState,
+        page: newPage - 1
+      }
+    })
+  }
+
 
   const theme = useTheme();
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
@@ -76,12 +99,10 @@ const Appointment: FC = (() => {
   useEffect(() => {
     let isActive = true;
     let userId = userProfile?._id
-    let reservationsIdArray = userProfile?.reservations_id
-    let limit = perPage * page;
-    let skip = (page - 1) * perPage
+
     if (isActive && homeSocket.current !== undefined && userProfile !== null) {
       if (userProfile?.reservations_id && userProfile?.reservations_id.length !== 0) {
-        homeSocket.current.emit('getDoctorAppointments', { userId, reservationsIdArray, limit, skip })
+        homeSocket.current.emit('getDoctorAppointments', { userId, paginationModel, sortModel, mongoFilterModel })
         homeSocket.current.once('getDoctorAppointmentsReturn', (msg: { status: number, myAppointment: AppointmentReservationExtendType[], message?: string }) => {
           const { status, myAppointment, message } = msg;
           if (status !== 200) {
@@ -125,7 +146,7 @@ const Appointment: FC = (() => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, page, reload])
+  }, [homeSocket, page, reload, mongoFilterModel, paginationModel, sortModel])
 
 
 
@@ -194,7 +215,7 @@ const Appointment: FC = (() => {
                           variant="outlined"
                           color="secondary"
                           count={userProfile ? Math.ceil(userProfile?.reservations_id.length / perPage) : 0}
-                          page={page}
+                          page={paginationModel.page + 1}
                           onChange={handlePageChange}
                           sx={{
                             marginLeft: 'auto',
@@ -216,7 +237,7 @@ const Appointment: FC = (() => {
                       variant="outlined"
                       color="secondary"
                       count={userProfile ? Math.ceil(userProfile?.reservations_id.length / perPage) : 0}
-                      page={page}
+                      page={paginationModel.page + 1}
                       onChange={handlePageChange}
                       sx={{
                         mb: 3,
