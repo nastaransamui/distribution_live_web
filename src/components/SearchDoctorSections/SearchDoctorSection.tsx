@@ -140,7 +140,13 @@ const SearchDoctorSection: FC = (() => {
 
   const [doctorResults, setDoctorResults] = useState<DoctorProfileType[] | []>([])
   const [totalDoctors, setTotalDoctors] = useState<number>(0)
-  const [sortBy, setSortBy] = useState('profile.userName');
+  // const [sortBy, setSortBy] = useState('profile.userName');
+  const [sortModel, setSortModel] = useState<any>([
+    {
+      field: 'profile.userName',
+      sort: 'asc',
+    },
+  ]);
   const componentRef = useRef<any>()
   const fetch = useMemo(() => (
     throttle((
@@ -151,7 +157,7 @@ const SearchDoctorSection: FC = (() => {
       country: string,
       state: string,
       city: string,
-      sortBy: string,
+      sortModel: { field: string; sort: "asc" | "desc" | null }[],
       homeSocket: any,
       reload: boolean,
       page: number,
@@ -169,7 +175,7 @@ const SearchDoctorSection: FC = (() => {
         city,
         limit,
         skip,
-        sortBy
+        sortModel
       })
       homeSocket.current.once(`doctorSearchReturn`, (msg: { status: number, message?: string, doctors?: any[], total: number }) => {
         const { status, doctors, message, total } = msg;
@@ -223,7 +229,7 @@ const SearchDoctorSection: FC = (() => {
         country,
         state,
         city,
-        sortBy,
+        sortModel,
         homeSocket,
         reload,
         page,
@@ -232,7 +238,7 @@ const SearchDoctorSection: FC = (() => {
     return () => {
       active = false;
     }
-  }, [city, country, gender, available, homeSocket, keyWord, specialities, state, reload, page, sortBy, perPage,
+  }, [city, country, gender, available, homeSocket, keyWord, specialities, state, reload, page, sortModel, perPage,
     // isLoading,
     fetch])
 
@@ -257,8 +263,8 @@ const SearchDoctorSection: FC = (() => {
                       setPage={setPage}
                       perPage={perPage}
                       setPerPage={setPerPage}
-                      setSortBy={setSortBy}
-                      sortBy={sortBy}
+                      sortModel={sortModel}
+                      setSortModel={setSortModel}
                       isLoading={isLoading}
                     />
                   </div>

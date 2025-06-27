@@ -92,8 +92,8 @@ export interface DoctorSearchResultsPropsType {
   setPage: Function;
   perPage: number;
   setPerPage: Function;
-  setSortBy: Function;
-  sortBy: string;
+  setSortModel: Function;
+  sortModel: { field: string; sort: "asc" | "desc" | null }[];
   isLoading: boolean;
 }
 
@@ -116,8 +116,8 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 
 const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
   {
-    sortBy,
-    setSortBy,
+    sortModel,
+    setSortModel,
     page,
     setPage,
     perPage,
@@ -170,8 +170,8 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
             totalDoctors={totalDoctors}
             displayType={displayType}
             setDisplayType={setDisplayType}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
+            sortModel={sortModel}
+            setSortModel={setSortModel}
             setPerPage={setPerPage}
           />
       }
@@ -282,8 +282,8 @@ export interface TopFilterType {
   totalDoctors: number;
   displayType: 'list' | 'grid';
   setDisplayType: Function;
-  sortBy: string;
-  setSortBy: Function;
+  sortModel: { field: string; sort: "asc" | "desc" | null }[],
+  setSortModel: Function;
   setPerPage: Function;
 }
 export const TopFilter: FC<TopFilterType> = (({
@@ -291,8 +291,8 @@ export const TopFilter: FC<TopFilterType> = (({
   totalDoctors,
   displayType,
   setDisplayType,
-  sortBy,
-  setSortBy,
+  sortModel,
+  setSortModel,
   setPerPage
 }) => {
   const searchParams = useSearchParams();
@@ -308,8 +308,9 @@ export const TopFilter: FC<TopFilterType> = (({
   var nextTenDays = new Date();
   nextTenDays.setDate(nextTenDays.getDate() + 10)
   const handleSortChange = (event: SelectChangeEvent) => {
-    setSortBy(event.target.value as string);
-    window.localStorage.setItem('sortBy', event.target.value as string)
+    const value = event.target.value as string;
+    setSortModel((_prev: { field: string; sort: "asc" | "desc" | null }[]) => [{ field: value, sort: _prev[0].sort as "asc" | "desc" | null }]);
+    window.localStorage.setItem('sortBy', value as string)
   };
   const viewChange = () => {
     dispatch(updateHomeFormSubmit(true))
@@ -371,7 +372,7 @@ export const TopFilter: FC<TopFilterType> = (({
               id: "sort",
               name: 'sort'
             }}
-            value={sortBy}
+            value={sortModel[0].field}
             label="Sort"
             onChange={handleSortChange}
             fullWidth
@@ -792,16 +793,17 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
                   <i className="far fa-money-bill-alt" />{" "}
                   <Tooltip arrow title="Averrage price per hour">
                     <span> A/H:</span>
-                  </Tooltip>{" "}
-                  {
-                    doctor?.currency && doctor?.currency.length > 0 &&
-                    `${doctor?.currency[0]?.currency_symbol}`
-                  }
+                  </Tooltip>
                   {" "}
                   {
                     doctor?.timeslots && doctor?.timeslots.length > 0 &&
                       doctor?.timeslots[0]?.averageHourlyPrice ?
-                      formatNumberWithCommas(`${doctor?.timeslots[0]?.averageHourlyPrice?.toFixed(0)}`) : 0
+                      formatNumberWithCommas(`${doctor?.timeslots[0]?.averageHourlyPrice?.toFixed(0)}`) : '--'
+                  }
+                  {" "}
+                  {
+                    doctor?.currency && doctor?.currency.length > 0 &&
+                    `${doctor?.currency[0]?.currency}`
                   }
                   {" "}
                 </li>
@@ -1298,10 +1300,12 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
                                 <Tooltip arrow title="Averrage price per hour">
                                   <span> A/H:</span>
                                 </Tooltip>{" "}
-                                {doctor?.currency && doctor?.currency.length > 0 && `${doctor?.currency[0]?.currency_symbol}`}{" "}
                                 {doctor?.timeslots && doctor?.timeslots.length > 0 &&
-                                  doctor?.timeslots[0]?.averageHourlyPrice ? formatNumberWithCommas(`${doctor?.timeslots[0]?.averageHourlyPrice?.toFixed(0)}`) : 0
+                                  doctor?.timeslots[0]?.averageHourlyPrice ? formatNumberWithCommas(`${doctor?.timeslots[0]?.averageHourlyPrice?.toFixed(0)}`) : '--'
                                 }
+                                {" "}
+                                {doctor?.currency && doctor?.currency.length > 0 && `${doctor?.currency[0]?.currency}`}
+
                                 {" "}
                               </li>
                             </ul>
