@@ -826,24 +826,8 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
             </CardContent>
           </Grid>
         </Grid>
-        <CardActionArea aria-label='card action area' id={`${index}_cardActionArea`}>
-          <div id={`collapseservices_${index}`} className="collapse-service hide-service ">
-            <Grid container rowGap={1} columnGap={1} sx={{ paddingRight: 1, paddingLeft: 1 }}
-              className="clinic-services"
-              key={doctor?.specialitiesServices?.toString()}>
-              {doctor?.specialitiesServices &&
-                doctor?.specialitiesServices.map((s: string, i: number) => {
-                  return (
-                    <Grid key={s + i} item component="span" aria-label='key specilaities'>{s}</Grid>
-                  )
-                })
-              }
-            </Grid>
-          </div>
-
-        </CardActionArea>
         <CardActions id={`${index}_cardAction`} disableSpacing
-          sx={{ flex: 1 }}
+          sx={{ flex: 1, position: 'relative' }}
         >
           <FavButton doctor={doctor} index={index} />
           <ShareButtons doctor={doctor} displayType='list' />
@@ -866,6 +850,23 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
               }} />Services
           </Link>
         </CardActions>
+        <CardActionArea aria-label='card action area' id={`${index}_cardActionArea`}>
+          <div id={`collapseservices_${index}`} className="collapse-service hide-service ">
+            <Grid container rowGap={1} columnGap={1} sx={{ paddingRight: 1, paddingLeft: 1 }}
+              className="clinic-services"
+              key={doctor?.specialitiesServices?.toString()}>
+              {doctor?.specialitiesServices &&
+                doctor?.specialitiesServices.map((s: string, i: number) => {
+                  return (
+                    <Grid key={s + i} item component="span" aria-label='key specilaities'>{s}</Grid>
+                  )
+                })
+              }
+            </Grid>
+          </div>
+
+        </CardActionArea>
+
       </ListStyledCard>
       <Lightbox
         open={openImage}
@@ -1531,6 +1532,7 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
           disableFocusRipple
           disableRipple
           aria-label="add to favorites"
+          disabled={homeRoleName == 'doctors'}
           onClick={() => {
             favClicked();
           }}
