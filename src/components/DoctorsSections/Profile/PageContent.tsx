@@ -246,16 +246,19 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                       <Tooltip arrow title="Averrage price per hour">
                         <span> A/H:</span>
                       </Tooltip>{" "}
-                      {profile?.currency && profile?.currency.length > 0 && `${profile?.currency[0]?.currency_symbol}`}{" "}
-                      {profile?.timeslots && profile?.timeslots.length > 0 && formatNumberWithCommas(`${profile?.timeslots[0]?.averageHourlyPrice?.toFixed(0)}`)}{" "}
+
+                      {profile?.timeslots && profile?.timeslots.length > 0 &&
+                        formatNumberWithCommas(`${profile?.timeslots[0]?.averageHourlyPrice?.toFixed(0)}`)}{" "}
+                      {profile?.currency && profile?.currency.length > 0 &&
+                        `${profile?.currency[0]?.currency}`}
                     </li>
                   </ul>
                 </div>
-                <div className="doctor-action">
-                  <Link href={''} onClick={(e) => e.preventDefault()} className="btn btn-white msg-btn">
+                <div className="doctor-action" style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Link href={''} onClick={(e) => e.preventDefault()} className="btn btn-white msg-btn" style={{ width: '100%' }}>
                     {_fav_button()}
                   </Link>
-                  <Link href="/chat-doctor" aria-label='chat' className="btn btn-white msg-btn" onClick={(e) => {
+                  {/* <Link href="/chat-doctor" aria-label='chat' className="btn btn-white msg-btn" onClick={(e) => {
                     e.preventDefault();
                     if (userProfile) {
                     } else {
@@ -263,9 +266,9 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                     }
                   }}>
                     <i className="far fa-comment-alt" />
-                  </Link>
+                  </Link> */}
 
-                  <Link
+                  {/* <Link
                     href="#"
                     aria-label='call'
                     className="btn btn-white call-btn"
@@ -282,8 +285,8 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                     }}
                   >
                     <i className="fas fa-phone" />
-                  </Link>
-                  <Link
+                  </Link> */}
+                  {/* <Link
                     href="#"
                     className="btn btn-white call-btn"
                     aria-label='video-call'
@@ -300,7 +303,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                     }}
                   >
                     <i className="fas fa-video" />
-                  </Link>
+                  </Link> */}
                 </div>
                 <div className="clinic-booking">
                   <Link

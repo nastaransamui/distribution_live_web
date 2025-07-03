@@ -122,7 +122,7 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
                                 <small >
                                   {dayjs(morningStart).minute(0).format('HH:mm')}{" "}
                                   to
-                                  {dayjs(morningFinish).minute(0).format('HH:mm')}
+                                  {" "}{dayjs(morningFinish).minute(0).format('HH:mm')}
                                 </small><br />
                               </>
                             }
@@ -156,7 +156,7 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
                                 <small >
                                   {dayjs(afterNoonStart).minute(0).format('HH:mm')}{" "}
                                   to
-                                  {dayjs(afterNoonFinish).minute(0).format('HH:mm')}
+                                  {" "}{dayjs(afterNoonFinish).minute(0).format('HH:mm')}
                                 </small><br />
                               </>
                             }
@@ -190,7 +190,7 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
                                 <small>
                                   {dayjs(eveningStart).minute(0).format('HH:mm')}{" "}
                                   to
-                                  {dayjs(eveningFinish).minute(0).format('HH:mm')}
+                                  {" "}{dayjs(eveningFinish).minute(0).format('HH:mm')}
                                 </small><br />
                               </>
                             }

@@ -49,7 +49,6 @@ const DoctorPublicProfileBusinessHoursTap: FC<DoctorPublicProfileBusinessHoursTy
                                       // Check if today's date is within the range
                                       const today = dayjs();
                                       const isTodayInRange = today.isBetween(startDate, finishDate, null, "[]");
-
                                       if (isTodayInRange) {
                                         // Combine all periods into a single array
                                         const allPeriods = [
@@ -57,15 +56,16 @@ const DoctorPublicProfileBusinessHoursTap: FC<DoctorPublicProfileBusinessHoursTy
                                           ...(availables?.afternoon || []),
                                           ...(availables?.evening || []),
                                         ];
-
                                         // Ensure allPeriods is not empty
                                         if (allPeriods.length > 0) {
                                           return allPeriods.map((time: TimeType, j: number) => {
                                             let isTodayReserved = false
                                             if (time.isReserved) {
-                                              const reservationsDaysArray = time?.reservations?.map((a) => a.selectedDate)
-                                              const formatToday = dayjs().format('DD MMM YYYY');
-                                              isTodayReserved = reservationsDaysArray?.some(date => dayjs(date, 'DD MMM YYYY').isSame(formatToday, 'day'))!;
+                                              const reservationsDaysArray = time?.reservations?.map((a) => a.selectedDate);
+                                              const today = dayjs();
+                                              isTodayReserved = reservationsDaysArray?.some(date =>
+                                                dayjs(date).isSame(today, 'day')
+                                              ) ?? false;
 
                                             }
                                             return (
@@ -139,9 +139,9 @@ const DoctorPublicProfileBusinessHoursTap: FC<DoctorPublicProfileBusinessHoursTy
                                             let isTommorowReserved = false
                                             if (time.isReserved) {
                                               const reservationsDaysArray = time?.reservations?.map((a) => a.selectedDate)
-                                              const formatTomorrow = dayjs().add(1, 'day').format('DD MMM YYYY');
+                                              const tomorrow = dayjs().add(1, 'day');
                                               if (reservationsDaysArray) {
-                                                isTommorowReserved = reservationsDaysArray.some(date => dayjs(date, 'DD MMM YYYY').isSame(formatTomorrow, 'day'));
+                                                isTommorowReserved = reservationsDaysArray.some(date => dayjs(date).isSame(tomorrow, 'day'));
                                               }
 
                                             }

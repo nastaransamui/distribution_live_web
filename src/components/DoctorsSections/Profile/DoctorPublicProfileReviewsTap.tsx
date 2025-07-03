@@ -446,7 +446,14 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
 
                                 <div className="comment-body">
                                   <div className="meta-data">
-                                    <span className="comment-author">{reviews?.role == 'doctors' ? 'Dr.' : `${reviews?.patientProfile?.gender !== "" && `${reviews?.patientProfile?.gender}. `}`}{authorName}</span>
+                                    <span className="comment-author">
+                                      {
+                                        reviews?.role == 'doctors' ?
+                                          'Dr.' :
+                                          `${reviews?.patientProfile?.gender !== ""
+                                            ? `${reviews?.patientProfile?.gender}. ` : ''}`}
+                                      {authorName}
+                                    </span>
 
                                     <span className="comment-date">{`#${reviews?.id}`}</span>
                                     <span className="comment-date">{formattedDate}</span>
@@ -724,7 +731,7 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                 <h1 style={{ fontSize: '18px' }}>
                   {
                     doctorReviews &&
-                      !doctorReviews.map((review: ReviewTypes) => review.authorId)?.includes(userProfile?._id) ?
+                      !alreadyHasReview(profile.reviews_array, userProfile.reviews_array) ?
                       <>
                         {
                           profile.patients_id.includes(userProfile._id) ?
@@ -735,9 +742,10 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                   }
 
                 </h1>
+
                 {
                   doctorReviews &&
-                  !doctorReviews.map((review: ReviewTypes) => review.authorId)?.includes(userProfile?._id) &&
+                  !alreadyHasReview(profile.reviews_array, userProfile.reviews_array) &&
                   profile.patients_id.includes(userProfile._id) &&
                   <form noValidate onSubmit={handleSubmit(onSubmitReview)}>
                     <div className='form-group'>
@@ -1022,3 +1030,8 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
     </Fragment>
   )
 });
+
+function alreadyHasReview(arr1: string[], arr2: string[]) {
+  const set1 = new Set(arr1);
+  return arr2.some((item: string) => set1.has(item));
+}

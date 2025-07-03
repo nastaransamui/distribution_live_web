@@ -17828,13 +17828,13 @@ call-btn:focus {
 }
 
 .experience-list::before {
-  background: var(--bgPaper);
+  background: var(--secondaryMain);
   bottom: 0;
   content: "";
   width: 2px;
   position: absolute;
   top: 8px;
-  left: 8px;
+  left: 9px;
 }
 
 .experience-list li {
@@ -17846,7 +17846,7 @@ call-btn:focus {
 }
 
 .experience-list > li .experience-user {
-  background: var(--bgDefault);
+  /* background: var(--bgDefault); */
   height: 10px;
   width: 10px;
   position: absolute;
