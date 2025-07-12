@@ -366,7 +366,7 @@ const AddBilling: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) =>
                                           InputProps={{
                                             endAdornment:
                                               <InputAdornment position="end" >
-                                                <span style={{ fontSize: '12px' }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
+                                                <span style={{ fontSize: '12px' }}>{userDoctorProfile?.currency[0]?.currency}</span>
                                               </InputAdornment>,
                                           }}
                                           FormHelperTextProps={{
@@ -428,7 +428,7 @@ const AddBilling: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) =>
                                       InputProps={{
                                         endAdornment:
                                           <InputAdornment position="end" >
-                                            <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
+                                            <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency}</span>
                                           </InputAdornment>,
                                       }}
                                     />
@@ -456,7 +456,7 @@ const AddBilling: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) =>
                                       InputProps={{
                                         endAdornment:
                                           <InputAdornment position="end" >
-                                            <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
+                                            <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency}</span>
                                           </InputAdornment>,
                                       }}
                                     />

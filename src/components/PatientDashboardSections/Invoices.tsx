@@ -162,7 +162,7 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                             </thead>
                             <tbody style={{ borderTop: "none", }}>
                               <tr>
-                                <td style={{ padding: '10px 0px', color: '#000' }}>{selectedDate} - {timeSlot?.period}</td>
+                                <td style={{ padding: '10px 0px', color: '#000' }}>{dayjs(selectedDate).format('DD MMM YYYY')} - {timeSlot?.period}</td>
                                 <td className="text-center" style={{ color: '#000' }} >1</td>
                                 <td className="text-center" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(timeSlot?.price)}</td>
                                 <td className="text-end" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(timeSlot?.price)}</td>
@@ -312,7 +312,7 @@ const Invoices: FC = (() => {
       let newState = {}
       newState = {
         _id: row?._id,
-        issueDay: dayjs(row.createdAt).format('DD/MMM/YYYY'),
+        issueDay: dayjs(row.createdAt).format('DD MMM YYYY'),
         drName: `Dr. ${firstName} ${lastName}`,
         drAddress: `${address1} ${address1 !== '' ? ', ' : ''} ${address2}`,
         drCity: city,

@@ -365,7 +365,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                                   color: router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'
                                                     ? theme.palette.text.disabled :
                                                     theme.palette.text.color
-                                                }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
+                                                }}>{userDoctorProfile?.currency[0]?.currency}</span>
                                               </InputAdornment>,
                                           }}
                                           value={watch(`billDetailsArray.${index}.price`) === 0 ? '' : watch(`billDetailsArray.${index}.price`)}
@@ -430,7 +430,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                         InputProps={{
                                           endAdornment:
                                             <InputAdornment position="end" >
-                                              <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
+                                              <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency}</span>
                                             </InputAdornment>,
                                         }}
                                       />
@@ -460,7 +460,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                                         InputProps={{
                                           endAdornment:
                                             <InputAdornment position="end" >
-                                              <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency_symbol}</span>
+                                              <span style={{ fontSize: '12px', color: theme.palette.text.disabled }}>{userDoctorProfile?.currency[0]?.currency}</span>
                                             </InputAdornment>,
                                         }}
                                       />

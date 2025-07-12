@@ -367,121 +367,123 @@ const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSl
                                     slotTimeKey = entrie[0] as 'morning' | 'afternoon' | 'evening'
                                   }
                                   if (Array.isArray(entrie[1]) && entrie[1].length > 0) {
-                                    return (
-                                      <div key={slotIndex.toString() + j.toString()} className="time-slot time-slot-blk">
-                                        <Fragment >
-                                          {
-                                            <Divider variant="middle" sx={{ m: 2 }}>
-                                              <Typography variant="body1">
-                                                {entrie[0].charAt(0).toUpperCase()}{entrie[0].slice(1)}<br />
-                                                <small style={{ marginTop: -10 }}>{smallText}</small>
-                                              </Typography>
-                                            </Divider>
-                                          }
-                                          <div className="time-slot-list">
-                                            <ul style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                              {
-                                                entrie[1].map((newTimeslot: TimeType, i: number) => {
-                                                  if (newTimeslot.active) {
-                                                    let isSelect = _.isEqual(newTimeslot, occupyTime?.timeSlot)
-                                                      &&
-                                                      dayjs(occupyTime?.selectedDate).isSame(dayjs(calendarValue), 'day')
-                                                    const selectedDate = dayjs(calendarValue).format(`DD MMM YYYY`);
-                                                    const period = newTimeslot.period;
-                                                    let isPassed: boolean = !disablePastTime(selectedDate, period);
-                                                    let isBooked: boolean = false;
-                                                    if (newTimeslot.reservations && newTimeslot.reservations.length > 0) {
-                                                      newTimeslot.reservations.forEach((elem) => {
-                                                        if (dayjs(elem.selectedDate).format('DD MMM YYYY') == calendarValue.format('')) {
-                                                          if (elem.timeSlot.period == period) {
-                                                            isBooked = true
-                                                          }
-                                                        }
-
-                                                      })
-                                                    }
-                                                    const isOccupied = bookingTimeSlot.occupyTime.some(
-                                                      (occupy) => occupy.timeSlot.period === newTimeslot.period && dayjs(occupy.selectedDate).isSame(dayjs(calendarValue), 'day')
-
-                                                    );
-                                                    const patientHasOccupiedTime = bookingTimeSlot?.occupyTime?.filter((a) => `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}` == `${selectedDate} ${period}`).some(
-                                                      (occupy) => occupy.patientId === userProfile?._id
-                                                    )
-                                                    const occupyTimeDeleteArrayOfIds = bookingTimeSlot.occupyTime
-                                                      .filter((a) => a.patientId == userProfile?._id)
-                                                      .map((a) => a._id)
-                                                      .filter(Boolean) as string[]
-                                                    const occupiedPeriod = bookingTimeSlot.occupyTime.filter((a) => a.patientId == userProfile?._id).map((a) => `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}`).join(', ')
-                                                    const dayAndPeriodOfOcupy = bookingTimeSlot.occupyTime.map((a) => `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}`).join(', ')
-                                                    const eachDayAndPeriod = `${dayjs(calendarValue).format('DD MMM YYYY')} ${newTimeslot.period}`
-                                                    const disableExactOccupy = eachDayAndPeriod == dayAndPeriodOfOcupy
-                                                    const disabled = isPassed
-                                                      ? true
-                                                      : isBooked
-                                                        ? true
-                                                        : patientHasOccupiedTime
-                                                          ? false // Allow action for the user's occupied time
-                                                          : bookingTimeSlot.occupyTime.some((a) => a.patientId === userProfile?._id)
-                                                            ? true // If the user has any occupied time, disable all other buttons
-                                                            : disableExactOccupy; // Otherwise, allow selection
-                                                    return (
-                                                      <li style={{ width: 'inherit' }} key={slotIndex.toString() + " " + j.toString() + i.toString()}>
-                                                        <Tooltip placement='top' arrow title={
-                                                          isPassed ?
-                                                            'This time is Passed' :
-                                                            isBooked ? "This period is reserved." :
-                                                              isOccupied ?
-                                                                patientHasOccupiedTime ? `You need to finish or remove this in process booking first.` :
-                                                                  "There is booking in process." :
-                                                                bookingTimeSlot.occupyTime.some((a) => a.patientId === userProfile?._id) ? `You have appointment that in process on ${occupiedPeriod} and not finish yet first remove that.` :
-                                                                  ""}>
-                                                          <span>
-                                                            <Button
-                                                              disabled={disabled}
-                                                              className={`timing ${isSelect ? 'active' : ' '}`}
-                                                              sx={{
-                                                                bgcolor: isBooked ? `${theme.palette.primary.main} !Important` : isOccupied ? '#ffa500 !important' : '',
-                                                                color: theme.palette.text.color,
-                                                                display: 'flex', flexDirection: 'column'
-                                                              }}
-                                                              onClick={(e) => {
-                                                                if (isOccupied) {
-                                                                  deleteOccupationFromDb(occupyTimeDeleteArrayOfIds)
-                                                                } else {
-                                                                  periodButtonClick(e, newTimeslot, isSelect, slot, entrie[0])
-                                                                }
-                                                              }}>
-                                                              <span><i className={isPassed ? "feather-x-circle" : "feather-clock"} />{period}</span>
-                                                              <span>{formatNumberWithCommas(newTimeslot.total.toString())} {" "} {newTimeslot.currencySymbol || 'THB'}</span>
-
-                                                            </Button>
-                                                            {isOccupied &&
-                                                              <>
-                                                                {
-                                                                  bookingTimeSlot?.occupyTime
-                                                                    .filter((a) => {
-                                                                      return `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}` == `${selectedDate} ${period}`
-                                                                    })
-                                                                    .map((a) => {
-                                                                      return (
-                                                                        <CountdownTimer key={a._id} expireAt={a?.expireAt} />
-                                                                      )
-                                                                    })
-                                                                }
-                                                              </>
+                                    const atListOneActive = entrie[1].some((a) => a.active);
+                                    if (atListOneActive)
+                                      return (
+                                        <div key={slotIndex.toString() + j.toString()} className="time-slot time-slot-blk">
+                                          <Fragment >
+                                            {
+                                              <Divider variant="middle" sx={{ m: 2 }}>
+                                                <Typography variant="body1">
+                                                  {entrie[0].charAt(0).toUpperCase()}{entrie[0].slice(1)}<br />
+                                                  <small style={{ marginTop: -10 }}>{smallText}</small>
+                                                </Typography>
+                                              </Divider>
+                                            }
+                                            <div className="time-slot-list">
+                                              <ul style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                                {
+                                                  entrie[1].map((newTimeslot: TimeType, i: number) => {
+                                                    if (newTimeslot.active) {
+                                                      let isSelect = _.isEqual(newTimeslot, occupyTime?.timeSlot)
+                                                        &&
+                                                        dayjs(occupyTime?.selectedDate).isSame(dayjs(calendarValue), 'day')
+                                                      const selectedDate = dayjs(calendarValue).format(`DD MMM YYYY`);
+                                                      const period = newTimeslot.period;
+                                                      let isPassed: boolean = !disablePastTime(selectedDate, period);
+                                                      let isBooked: boolean = false;
+                                                      if (newTimeslot.reservations && newTimeslot.reservations.length > 0) {
+                                                        newTimeslot.reservations.forEach((elem) => {
+                                                          if (dayjs(elem.selectedDate).format('DD MMM YYYY') == calendarValue.format('')) {
+                                                            if (elem.timeSlot.period == period) {
+                                                              isBooked = true
                                                             }
-                                                          </span>
-                                                        </Tooltip>
-                                                      </li>
-                                                    )
-                                                  }
-                                                })
-                                              }
-                                            </ul>
-                                          </div>
-                                        </Fragment>
-                                      </div>
-                                    )
+                                                          }
+
+                                                        })
+                                                      }
+                                                      const isOccupied = bookingTimeSlot.occupyTime.some(
+                                                        (occupy) => occupy.timeSlot.period === newTimeslot.period && dayjs(occupy.selectedDate).isSame(dayjs(calendarValue), 'day')
+
+                                                      );
+                                                      const patientHasOccupiedTime = bookingTimeSlot?.occupyTime?.filter((a) => `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}` == `${selectedDate} ${period}`).some(
+                                                        (occupy) => occupy.patientId === userProfile?._id
+                                                      )
+                                                      const occupyTimeDeleteArrayOfIds = bookingTimeSlot.occupyTime
+                                                        .filter((a) => a.patientId == userProfile?._id)
+                                                        .map((a) => a._id)
+                                                        .filter(Boolean) as string[]
+                                                      const occupiedPeriod = bookingTimeSlot.occupyTime.filter((a) => a.patientId == userProfile?._id).map((a) => `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}`).join(', ')
+                                                      const dayAndPeriodOfOcupy = bookingTimeSlot.occupyTime.map((a) => `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}`).join(', ')
+                                                      const eachDayAndPeriod = `${dayjs(calendarValue).format('DD MMM YYYY')} ${newTimeslot.period}`
+                                                      const disableExactOccupy = eachDayAndPeriod == dayAndPeriodOfOcupy
+                                                      const disabled = isPassed
+                                                        ? true
+                                                        : isBooked
+                                                          ? true
+                                                          : patientHasOccupiedTime
+                                                            ? false // Allow action for the user's occupied time
+                                                            : bookingTimeSlot.occupyTime.some((a) => a.patientId === userProfile?._id)
+                                                              ? true // If the user has any occupied time, disable all other buttons
+                                                              : disableExactOccupy; // Otherwise, allow selection
+                                                      return (
+                                                        <li style={{ width: 'inherit' }} key={slotIndex.toString() + " " + j.toString() + i.toString()}>
+                                                          <Tooltip placement='top' arrow title={
+                                                            isPassed ?
+                                                              'This time is Passed' :
+                                                              isBooked ? "This period is reserved." :
+                                                                isOccupied ?
+                                                                  patientHasOccupiedTime ? `You need to finish or remove this in process booking first.` :
+                                                                    "There is booking in process." :
+                                                                  bookingTimeSlot.occupyTime.some((a) => a.patientId === userProfile?._id) ? `You have appointment that in process on ${occupiedPeriod} and not finish yet first remove that.` :
+                                                                    ""}>
+                                                            <span>
+                                                              <Button
+                                                                disabled={disabled}
+                                                                className={`timing ${isSelect ? 'active' : ' '}`}
+                                                                sx={{
+                                                                  bgcolor: isBooked ? `${theme.palette.primary.main} !Important` : isOccupied ? '#ffa500 !important' : '',
+                                                                  color: theme.palette.text.color,
+                                                                  display: 'flex', flexDirection: 'column'
+                                                                }}
+                                                                onClick={(e) => {
+                                                                  if (isOccupied) {
+                                                                    deleteOccupationFromDb(occupyTimeDeleteArrayOfIds)
+                                                                  } else {
+                                                                    periodButtonClick(e, newTimeslot, isSelect, slot, entrie[0])
+                                                                  }
+                                                                }}>
+                                                                <span><i className={isPassed ? "feather-x-circle" : "feather-clock"} />{period}</span>
+                                                                <span>{formatNumberWithCommas(newTimeslot.total.toString())} {" "} {newTimeslot.currencySymbol || 'THB'}</span>
+
+                                                              </Button>
+                                                              {isOccupied &&
+                                                                <>
+                                                                  {
+                                                                    bookingTimeSlot?.occupyTime
+                                                                      .filter((a) => {
+                                                                        return `${dayjs(a.selectedDate).format('DD MMM YYYY')} ${a?.timeSlot?.period}` == `${selectedDate} ${period}`
+                                                                      })
+                                                                      .map((a) => {
+                                                                        return (
+                                                                          <CountdownTimer key={a._id} expireAt={a?.expireAt} />
+                                                                        )
+                                                                      })
+                                                                  }
+                                                                </>
+                                                              }
+                                                            </span>
+                                                          </Tooltip>
+                                                        </li>
+                                                      )
+                                                    }
+                                                  })
+                                                }
+                                              </ul>
+                                            </div>
+                                          </Fragment>
+                                        </div>
+                                      )
 
                                   }
                                 })

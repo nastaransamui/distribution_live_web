@@ -338,79 +338,81 @@ const PatientAppointmentShowBox: FC<PatientAppointmentShowBoxType> = (({ myAppoi
           const { profileImage, address1, address2, online } = doctorProfile
           const doctorName = `Dr. ${doctorProfile?.firstName} ${doctorProfile?.lastName}`;
           return (
-            <div className="appointment-list" key={index}>
-              <div className="profile-info-widget" >
-                <StyledBadge
-                  overlap="circular"
-                  anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                  variant="dot"
-                  online={online as boolean}
-                  idle={doctorProfile?.lastLogin?.idle}
-                >
-                  <Link aria-label="patient"
-                    href={`/doctors/profile/${btoa(doctorId)}`}
-                    className="booking-doc-img"
-                    target='_blank'
+            <div className="appointment-list" key={index} style={{ flexDirection: 'column' }}>
+              <span style={{ display: 'flex' }}>
+                <div className="profile-info-widget" >
+                  <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                    variant="dot"
+                    online={online as boolean}
+                    idle={doctorProfile?.lastLogin?.idle}
                   >
-                    <Avatar sx={{
-                      width: 'auto',
-                      height: 'auto',
-                      borderRadius: `5px 5px 5px 5px`,
-                      transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
-                      "&:hover": {
-                        transform: "scale(1.15)",
-
-                      },
-                      background: theme.palette.background.default
-                    }}
-                      variant="circular"
-                      alt=""
-                      src={`${profileImage}`}
-                      key={profileImage}
+                    <Link aria-label="patient"
+                      href={`/doctors/profile/${btoa(doctorId)}`}
+                      className="booking-doc-img"
+                      target='_blank'
                     >
-                      <img className="img-fluid" src={doctors_profile} alt="" />
-                    </Avatar>
-                  </Link>
-                </StyledBadge>
-                <div className="profile-det-info">
-                  <h3>
-                    <Link aria-label="patient" style={{ color: theme.palette.secondary.main }} href={`/doctors/profile/${btoa(doctorId)}`} target='_blank'>{doctorName}</Link>
-                  </h3>
-                  <div className="patient-details">
-                    <h4>
-                      <i className="far fa-clock"></i> {dayjs(selectedDate).format("DD MMM YYYY")} {' '} {period}
-                    </h4>
-                    <h4>
-                      <i className="fas fa-map-marker-alt"></i> {address1} {' '} {address2}
-                    </h4>
-                    <h4>
-                      <img src={doctorProfile?.specialities[0]?.image} width="20" height="20" alt={doctorProfile?.specialities[0]?.specialities} />
-                      {' '}
-                      {doctorProfile?.specialities[0]?.specialities}
-                    </h4>
-                    <br />
-                    <h4 className="mb-0">
-                      <Link href={`/patient/dashboard/invoice-view/${btoa(appointment?._id as string)}`} target='_blank'>
-                        {appointment.invoiceId}
-                      </Link>
-                    </h4>
+                      <Avatar sx={{
+                        width: 'auto',
+                        height: 'auto',
+                        borderRadius: `5px 5px 5px 5px`,
+                        transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
+                        "&:hover": {
+                          transform: "scale(1.15)",
+
+                        },
+                        background: theme.palette.background.default
+                      }}
+                        variant="circular"
+                        alt=""
+                        src={`${profileImage}`}
+                        key={profileImage}
+                      >
+                        <img className="img-fluid" src={doctors_profile} alt="" />
+                      </Avatar>
+                    </Link>
+                  </StyledBadge>
+                  <div className="profile-det-info">
+                    <h3>
+                      <Link aria-label="patient" style={{ color: theme.palette.secondary.main }} href={`/doctors/profile/${btoa(doctorId)}`} target='_blank'>{doctorName}</Link>
+                    </h3>
+                    <div className="patient-details">
+                      <h4>
+                        <i className="far fa-clock"></i> {dayjs(selectedDate).format("DD MMM YYYY")} {' '} {period}
+                      </h4>
+                      <h4>
+                        <i className="fas fa-map-marker-alt"></i> {address1} {' '} {address2}
+                      </h4>
+                      <h4>
+                        <img src={doctorProfile?.specialities[0]?.image} width="20" height="20" alt={doctorProfile?.specialities[0]?.specialities} />
+                        {' '}
+                        {doctorProfile?.specialities[0]?.specialities}
+                      </h4>
+                      <br />
+                      <h4 className="mb-0">
+                        <Link href={`/patient/dashboard/invoice-view/${btoa(appointment?._id as string)}`} target='_blank'>
+                          {appointment.invoiceId}
+                        </Link>
+                      </h4>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="appointment-action">
-                <Link
-                  href=""
-                  className="doctorAppointmentView"
-                  style={{ lineHeight: '28px', }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleShow(appointment)
-                  }}
-                >
-                  <i className="far fa-eye"></i> View
-                </Link>
+                <div className="appointment-action">
+                  <Link
+                    href=""
+                    className="doctorAppointmentView"
+                    style={{ lineHeight: '28px', }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleShow(appointment)
+                    }}
+                  >
+                    <i className="far fa-eye"></i> View
+                  </Link>
 
-              </div>
+                </div>
+              </span>
               <div style={{ paddingTop: 30 }}>
                 <h4 className="mb-0">
                   <Grid container rowGap={1} columnGap={1} sx={{ paddingRight: 1, paddingLeft: 1 }} className="clinic-services"
