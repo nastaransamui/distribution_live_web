@@ -246,6 +246,7 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                                 <p className="invoice-details invoice-details-two">
                                   {singleBill?.paymentType} <br />
                                   {truncateString(singleBill?.paymentToken, 20)} <br />
+                                  {dayjs(singleBill?.paymentDate).format(`D MMM YYYY HH:mm`)}
                                   <br />
                                 </p>
                               </Tooltip>
