@@ -18080,7 +18080,7 @@ call-btn:focus {
   margin-bottom: 15px;
   font-size: 14px;
   word-wrap: break-word;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   white-space: normal;
 }
 

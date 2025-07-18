@@ -63,10 +63,10 @@ export interface ChatDataType {
 
 export const menuOptions = [
   'None',
-  'Atria',
-  'Callisto',
-  'Dione',
-  'Ganymede',
+  // 'Atria',
+  // 'Callisto',
+  // 'Dione',
+  // 'Ganymede',
 ];
 export const ITEM_HEIGHT = 48;
 interface ChatContextType {
