@@ -430,23 +430,15 @@ const DeleteMessageButton: FC<{ deleteType: string | number, mesage?: MessageTyp
         }}>
         <DeleteForever sx={{ fontSize: 16, color: 'crimson' }} />
       </IconButton>
-      <IconButton
-        disableFocusRipple
-        disableRipple
-        disableTouchRipple
-        onClick={(e) => {
-          if (mesage) {
-            if (!isEdit) {
-              setIsEdit(true)
-              setEditChatInputValue(() => {
-                return {
-                  ...mesage,
-                  message: mesage.message ? decrypt(mesage.message) : ""
-                }
-              })
-            } else {
-              setIsEdit(false);
-              setTimeout(() => {
+
+      {mesage?.calls.length == 0 &&
+        <IconButton
+          disableFocusRipple
+          disableRipple
+          disableTouchRipple
+          onClick={(e) => {
+            if (mesage) {
+              if (!isEdit) {
                 setIsEdit(true)
                 setEditChatInputValue(() => {
                   return {
@@ -454,13 +446,24 @@ const DeleteMessageButton: FC<{ deleteType: string | number, mesage?: MessageTyp
                     message: mesage.message ? decrypt(mesage.message) : ""
                   }
                 })
-              }, 50);
-            }
+              } else {
+                setIsEdit(false);
+                setTimeout(() => {
+                  setIsEdit(true)
+                  setEditChatInputValue(() => {
+                    return {
+                      ...mesage,
+                      message: mesage.message ? decrypt(mesage.message) : ""
+                    }
+                  })
+                }, 50);
+              }
 
-          }
-        }}>
-        <EditIcon sx={{ fontSize: 16, color: "secondary.main" }} />
-      </IconButton>
+            }
+          }}>
+          <EditIcon sx={{ fontSize: 16, color: "secondary.main" }} />
+        </IconButton>
+      }
     </span>
   )
 })
