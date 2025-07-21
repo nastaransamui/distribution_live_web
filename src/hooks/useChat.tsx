@@ -577,7 +577,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (currentRoom.messages.length !== 0) {
           const lastMessageReciverId = currentRoom.messages[currentRoom.messages.length - 1].receiverId
           if (lastMessageReciverId == currentUserId) {
-            homeSocket.current.emit('makeAllMessageRead', { roomId: roomId })
+            homeSocket.current.emit('makeAllMessageRead', { roomId: roomId, userId: currentUserId })
           }
         }
       }
