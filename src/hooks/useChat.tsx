@@ -537,7 +537,16 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             currentRoom?.receiverData.userId :
             currentRoom?.createrData.userId
 
-        homeSocket.current.emit("newIceCandidate", { candidate: event.candidate, callerId, receiverId, roomId: currentRoomId });
+        homeSocket.current.emit("newIceCandidate", {
+          candidate: {
+            candidate: event.candidate.candidate,
+            sdpMid: event.candidate.sdpMid,
+            sdpMLineIndex: event.candidate.sdpMLineIndex,
+          },
+          callerId,
+          receiverId,
+          roomId: currentRoomId
+        });
       }
     }
     pc.ontrack = (event) => {
@@ -659,6 +668,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const acceptVoiceCall = async () => {
     if (incomingCall == null) return;
     if (!homeSocket?.current) return;
+    // Clear missed call timeout if the call is accepted
+    if (missedCallTimeout.current) {
+      clearTimeout(missedCallTimeout.current);
+      missedCallTimeout.current = null;
+    }
     try {
 
       const stream = await openMediaDevices({ audio: true });
@@ -701,11 +715,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }
         setIncomingCall(null)
-        // Clear missed call timeout if the call is accepted
-        if (missedCallTimeout.current) {
-          clearTimeout(missedCallTimeout.current);
-          missedCallTimeout.current = null;
-        }
+
       }
     } catch (error) {
       toast.error
