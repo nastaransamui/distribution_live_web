@@ -41,6 +41,7 @@ import { updateHomeIAT } from '@/redux/homeIAT';
 import { updateHomeExp } from '@/redux/homeExp';
 import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
+import { getFcmToken } from '@/helpers/firebase';
 
 export interface FormType {
   firstName: string;
@@ -231,6 +232,8 @@ const RegisterSection: FC = (() => {
         data.expires_in = tokenResponse.expires_in;
         data.prompt = tokenResponse.prompt;
         data.scope = tokenResponse.scope;
+        const fcmToken = await getFcmToken();
+        data.fcmToken = fcmToken;
         homeSocket.current.emit('googleLoginSubmit', data)
         homeSocket.current.once('googleLoginReturn', (msg: any) => {
           setUserType('')

@@ -34,6 +34,7 @@ import { updateHomeServices } from '@/redux/homeServices';
 import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
+import { getFcmToken } from '@/helpers/firebase';
 
 const VerifyEmail: FC = ((props) => {
   const router = useRouter();
@@ -64,7 +65,7 @@ const VerifyEmail: FC = ((props) => {
     }
   })
 
-  const veficationClicked = () => {
+  const veficationClicked = async () => {
     let ipAddr = userData?.query;
     let userAgent = navigator.userAgent;
 
@@ -119,6 +120,7 @@ const VerifyEmail: FC = ((props) => {
             type: 'pattern', message: `Password should be at least 8 characters long and should contain one number,one character and one special character`
           })
         } else {
+          const fcmToken = await getFcmToken();
           clearErrors('password')
           dispatch(updateHomeFormSubmit(true))
           homeSocket.current.emit('verificationEmail',
@@ -126,7 +128,8 @@ const VerifyEmail: FC = ((props) => {
             router?.query?.token,
             ipAddr,
             userAgent,
-            getValues('password'))
+            getValues('password')),
+            fcmToken
           homeSocket.current.once('verificationEmailReturn', (msg: any) => {
             if (msg?.status == 200) {
               const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)

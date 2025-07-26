@@ -14,6 +14,7 @@ export interface UserPatientProfileTypeValue {
   dob: Date | "";
   doctors_id: string[];
   favs_id: string[];
+  fcmTokens: string[];
   firstName: string;
   fullName?: string;
   gender: string;
@@ -58,6 +59,7 @@ export interface UserPatientProfileType {
     dob: Date | "";
     doctors_id: string[];
     favs_id: string[];
+    fcmTokens: string[];
     firstName: string;
     fullName: string;
     gender: string;

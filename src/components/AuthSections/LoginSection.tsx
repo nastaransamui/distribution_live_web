@@ -39,6 +39,7 @@ import { updateHomeIAT } from '@/redux/homeIAT';
 import { updateHomeExp } from '@/redux/homeExp';
 import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
+import { getFcmToken } from '@/helpers/firebase';
 
 
 
@@ -48,6 +49,7 @@ export interface FormType {
   password: string;
   ipAddr?: string;
   userAgent?: string;
+  fcmToken?: string | null;
 }
 
 const LoginSection: FC = (() => {
@@ -123,12 +125,14 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
     }
   })
 
-  const onLoginSubmit = (data: FormType) => {
+  const onLoginSubmit = async (data: FormType) => {
     if (hasCookie('cc_cookie')) {
+      const fcmToken = await getFcmToken();
       dispatch(updateHomeFormSubmit(true))
       data.ipAddr = userData?.query;
       data.userAgent = navigator.userAgent;
       data.email = data.email.toLowerCase();
+      data.fcmToken = fcmToken;
 
       if (homeSocket?.current) {
         homeSocket.current.emit('loginFormSubmit', data)
@@ -306,6 +310,8 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
         data.expires_in = tokenResponse.expires_in;
         data.prompt = tokenResponse.prompt;
         data.scope = tokenResponse.scope;
+        const fcmToken = await getFcmToken();
+        data.fcmToken = fcmToken;
         homeSocket.current.emit('googleLoginSubmit', data)
         homeSocket.current.once('googleLoginReturn', (msg: any) => {
           setUserType('')

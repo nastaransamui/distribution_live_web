@@ -31,6 +31,7 @@ export interface UserDoctorProfileTypeValue {
   educations: EducationType[];
   experinces: ExperienceType[];
   favs_id: string[];
+  fcmTokens: string[];
   firstName: string;
   fullName: string;
   gender: string;
@@ -90,6 +91,7 @@ export interface UserDoctorProfileType {
     educations: EducationType[];
     experinces: ExperienceType[];
     favs_id: string[];
+    fcmTokens: string[];
     firstName: string;
     fullName: string;
     gender: string;
