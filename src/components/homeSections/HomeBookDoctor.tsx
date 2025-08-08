@@ -6,7 +6,7 @@ import Slider from "react-slick";
 import AOS from 'aos'
 import useScssVar from "@/hooks/useScssVar";
 import { useTheme } from "@mui/material";
-import { Doc01, Doc02, Doc03, Doc04 } from "@/public/assets/imagepath";
+import { Doc01, Doc02, Doc03, Doc04, doctors_profile } from "@/public/assets/imagepath";
 import { useSelector } from "react-redux";
 import { AppState } from "@/redux/store";
 import Rating from '@mui/material/Rating'
@@ -208,7 +208,7 @@ const HomeBookDoctor: FC = (() => {
                               <div className="profile-widget">
                                 <div className="doc-img">
                                   <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
-                                    <img className="img-fluid" alt="User" src={doctor.profileImage} />
+                                    <img className="img-fluid" alt="User" src={doctor.profileImage == '' ? doctors_profile : doctor.profileImage} />
                                   </Link>
                                   <Link href="#" onClick={(e) => e.preventDefault()} className="fav-btn">
                                     <FavButton />

@@ -127,8 +127,8 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
 
   const onLoginSubmit = async (data: FormType) => {
     if (hasCookie('cc_cookie')) {
-      const fcmToken = await getFcmToken();
       dispatch(updateHomeFormSubmit(true))
+      const fcmToken = await getFcmToken();
       data.ipAddr = userData?.query;
       data.userAgent = navigator.userAgent;
       data.email = data.email.toLowerCase();

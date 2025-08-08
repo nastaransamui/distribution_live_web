@@ -43,6 +43,8 @@ import AppWrapper from '@/theme/AppWrapper';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AppCacheProvider } from '@mui/material-nextjs/v13-pagesRouter'
 import { StyledEngineProvider } from '@mui/material/styles';
+import useFirebaseNotifications from '@/hooks/useFirebaseNotifications'
+import { getFcmToken } from '@/helpers/firebase'
 export interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
 }
@@ -62,6 +64,7 @@ export const loadStylesheet = (href: string) => {
 const App = ({ Component, ...rest }: MyAppProps) => {
   const { store, props } = wrapper.useWrappedStore(rest);
   const { router, emotionCache = clientSideEmotionCache, pageProps } = props;
+  useFirebaseNotifications();
   useEffect(() => {
     loadStylesheet('/css/owl.carousel.min.css');
     loadStylesheet('/css/owl.theme.default.min.css');
@@ -75,6 +78,9 @@ const App = ({ Component, ...rest }: MyAppProps) => {
       easing: "ease-out-cubic",
       once: true,
       offset: 50,
+    });
+    getFcmToken().then((token) => {
+      // console.log('FCM Token:', token);
     });
   }, []);
 

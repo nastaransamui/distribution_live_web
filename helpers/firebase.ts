@@ -18,6 +18,7 @@ export const messagingPromise = isSupported().then((supported) =>
   supported ? getMessaging(app) : null
 );
 export const getFcmToken = async (): Promise<string | null> => {
+  if (!("Notification" in window)) return null;
   try {
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
@@ -30,10 +31,13 @@ export const getFcmToken = async (): Promise<string | null> => {
     const messaging = await messagingPromise;
     if (!messaging || !swRegistration) return null;
 
-    const token = await getToken(messaging, {
-      vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY!,
-      serviceWorkerRegistration: swRegistration,
-    });
+    const token = await await Promise.race([
+      getToken(messaging, {
+        vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY!,
+        serviceWorkerRegistration: swRegistration,
+      }),
+      new Promise<string | null>((r) => setTimeout(() => r(null), 5000)),
+    ]);
 
     return token || null;
   } catch (error) {

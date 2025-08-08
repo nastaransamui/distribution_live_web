@@ -18,14 +18,46 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function (payload) {
-  console.log(
-    "[firebase-messaging-sw.js] Received background message ",
-    payload
-  );
-  const { title, body, icon } = payload.notification || {};
+  const title = payload.notification?.title || "Notification";
+  const body = payload.notification?.body || "You have a new message.";
+  const icon = payload.notification?.icon || "/health_logo_clear_70.webp";
+  const click_action =
+    payload.data?.click_action || "https://health-care.duckdns.org/";
 
-  self.registration.showNotification(title || "Notification", {
-    body: body || "You have a new message.",
-    icon: icon || "/logo.webp",
-  });
+  const notificationOptions = {
+    body,
+    icon,
+    data: {
+      click_action,
+    },
+    actions: [
+      { action: "open_chat", title: "Open Chat" },
+      { action: "dismiss", title: "Dismiss" },
+    ],
+    requireInteraction: true,
+  };
+
+  self.registration.showNotification(title, notificationOptions);
+});
+
+// Handle notification click
+self.addEventListener("notificationclick", function (event) {
+  event.notification.close();
+  const action = event.action;
+  const targetUrl = event.notification.data?.click_action || "/";
+  if (action === "dismiss") return;
+  event.waitUntil(
+    clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then(function (clientList) {
+        for (const client of clientList) {
+          if (client.url === targetUrl && "focus" in client) {
+            return client.focus();
+          }
+        }
+        if (clients.openWindow) {
+          return clients.openWindow(targetUrl);
+        }
+      })
+  );
 });

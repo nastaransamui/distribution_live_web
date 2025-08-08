@@ -1528,32 +1528,34 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
   return (
     <Fragment>
       <Tooltip arrow title={!userProfile ? 'Login in to add to favorit.' : `${isFav ? 'Remove' : 'Add'} doctor to favorite.`}>
-        <IconButton
-          disableFocusRipple
-          disableRipple
-          aria-label="add to favorites"
-          disabled={homeRoleName == 'doctors'}
-          onClick={() => {
-            favClicked();
-          }}
-        >
-          {typeof favIconLoading[index] == 'undefined' ||
-            !favIconLoading[index] ?
-            <FavoriteIcon sx={{
-              animation: isFav ? `heartbeat 1s infinite` : 'unset',
-              color: isFav ? 'deeppink' : 'unset',
-              "&:hover": {
-                animation: `heartbeat 1s infinite`,
-                color: 'deeppink'
-              },
-            }} />
-            :
-            <SyncIcon sx={{
-              color: 'primary.main',
-              animation: `rotate 3s infinite`,
-            }} />
-          }
-        </IconButton>
+        <span>
+          <IconButton
+            disableFocusRipple
+            disableRipple
+            aria-label="add to favorites"
+            disabled={homeRoleName == 'doctors'}
+            onClick={() => {
+              favClicked();
+            }}
+          >
+            {typeof favIconLoading[index] == 'undefined' ||
+              !favIconLoading[index] ?
+              <FavoriteIcon sx={{
+                animation: isFav ? `heartbeat 1s infinite` : 'unset',
+                color: isFav ? 'deeppink' : 'unset',
+                "&:hover": {
+                  animation: `heartbeat 1s infinite`,
+                  color: 'deeppink'
+                },
+              }} />
+              :
+              <SyncIcon sx={{
+                color: 'primary.main',
+                animation: `rotate 3s infinite`,
+              }} />
+            }
+          </IconButton>
+        </span>
       </Tooltip>
       <Dialog
         TransitionComponent={Transition}

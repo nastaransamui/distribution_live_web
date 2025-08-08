@@ -20565,8 +20565,13 @@ chat-attachment-list li {
   position: absolute;
   top: -3px;
   left: 50%;
+  /* bottom: -3px; */
 }
-
+@-moz-document url-prefix() {
+  .span-or {
+    bottom: -3px;
+  }
+}
 .forgot-link {
   color: #3d3d3d;
   display: inline-block;

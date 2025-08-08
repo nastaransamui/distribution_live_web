@@ -21,7 +21,9 @@ import { useSelector } from "react-redux";
 import { AppState } from "@/redux/store";
 import { StyledBadge } from "../DoctorDashboardSections/ScheduleTiming";
 import { doctors_profile } from "@/public/assets/imagepath";
-import { ChatDataType, useChat } from "@/hooks/useChat";
+import { useChat } from "@/hooks/useChat";
+import { useRouter } from "next/router";
+import { ChatDataType } from "../../../@types/cattypes";
 
 
 
@@ -53,6 +55,8 @@ export interface AutocompleteDoctorUserProfileType {
   _id: string;
   searchString: string;
   subtitle: string;
+  gender: string;
+  fcmTokens: string[];
 }
 export function escapeRegExp(value: string) {
   return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -72,11 +76,12 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
 
+  const router = useRouter();
   const {
     userChatData,
     currentUserId,
-    setCurrentRoomId,
-    sortLatestMessage
+    sortLatestMessage,
+    setShowEmptyRoomInSearchList
   } = useChat();
 
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
@@ -183,9 +188,15 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
                 const userId2 = currentUserId;
                 const roomId = [userId1, userId2].sort().join('');
 
-                let selectedIndex = sortLatestMessage(userChatData).findIndex((a) => a.roomId == roomId)
-
-                setCurrentRoomId(roomId)
+                let selectedIndex = sortLatestMessage(userChatData).findIndex((a) => a.roomId == roomId);
+                router.push(
+                  {
+                    pathname: router.pathname,
+                    query: { ...router.query, roomId },
+                  },
+                  undefined,
+                  { shallow: true }
+                )
                 if (selectedIndex == -1) {
                   const roomData: ChatDataType = {
                     roomId: roomId,
@@ -196,7 +207,9 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
                       profileImage: userProfile?.profileImage!,
                       online: userProfile?.online!,
                       idle: userProfile?.lastLogin?.idle || false,
-                      roleName: userProfile?.roleName as 'doctors' | 'patient'
+                      roleName: userProfile?.roleName as 'doctors' | 'patient',
+                      gender: userProfile?.gender!,
+                      fcmTokens: userProfile?.fcmTokens!,
                     },
                     receiverData: {
                       userId: newValue._id,
@@ -204,13 +217,21 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
                       profileImage: newValue.profileImage,
                       online: newValue.online,
                       idle: newValue?.lastLogin?.idle || false,
-                      roleName: newValue?.roleName
+                      roleName: newValue?.roleName,
+                      gender: newValue?.gender,
+                      fcmTokens: newValue?.fcmTokens
                     },
                     messages: []
                   }
                   if (homeSocket.current) {
                     homeSocket.current.emit('inviteUserToRoom', roomData)
                   }
+                } else {
+                  const existRoomId = userChatData[selectedIndex].roomId;
+                  setShowEmptyRoomInSearchList((prevState) => {
+                    if (prevState.includes(existRoomId)) return prevState;
+                    return [...prevState, existRoomId];
+                  });
                 }
                 setLoadingOption(() => false)
                 setValue(() => {
