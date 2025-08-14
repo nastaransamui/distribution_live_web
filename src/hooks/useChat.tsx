@@ -11,7 +11,7 @@ import useScssVar from "./useScssVar";
 import { Image_placeholder } from "@/public/assets/imagepath";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useAudioRecorder } from "react-audio-voice-recorder";
-import { AttachmentType, ChatDataType, ChatUserType, MessageType } from "../../@types/cattypes";
+import { AttachmentType, ChatDataType, ChatUserType, MessageType } from "../../@types/chatTypes";
 
 import sortLatestMessage from "./useChatHelpers/sortLatestMessage";
 import rawOnLeftUserClicked from "./useChatHelpers/onLeftUserClicked";
@@ -30,7 +30,7 @@ import rawHandleDownload from './useChatHelpers/handleDownload'
 import downloadClick from './useChatHelpers/downloadClick'
 import useResizeObserver from "./useChatHooks/useResizeObserver";
 import useChatAssets from "./useChatHooks/useChatAssets";
-import useFetchUserRooms from "./useChatHooks/useFetchUserRooms";
+import useFetchUserRooms, { getChatFile } from "./useChatHooks/useFetchUserRooms";
 import useSyncCurrentRoomAndMarkAsRead from "./useChatHooks/useSyncCurrentRoomAndMarkAsRead";
 import useJoinRoom from "./useChatHooks/useJoinRoom";
 import useUpdateCurrentRoomWithReadStatus from "./useChatHooks/useUpdateCurrentRoomWithReadStatus";
@@ -41,11 +41,19 @@ import useEndVoiceCallHandler from "./useChatHooks/useEndVoiceCallHandler";
 import useConfirmCallHandler from "./useChatHooks/useConfirmCallHandler";
 import useAudioBlobUpdate from "./useChatHooks/useAudioBlobUpdate";
 import { useRouter } from "next/router";
+import DeleteForever from "@mui/icons-material/DeleteForever";
+import { toast } from "react-toastify";
+import makeAllMessageRead from "./useChatHelpers/makeAllMessageRead";
 
 
 
 export const menuOptions = [
-  'None',
+  {
+    text: 'Delete Room',
+    icon: DeleteForever,
+    iconColor: 'crimson',
+    callBack: 'deleteRoom',
+  }
 ];
 export const ITEM_HEIGHT = 48;
 interface ChatContextType {
@@ -66,7 +74,7 @@ interface ChatContextType {
   isLoading: boolean;
   open: boolean;
   handleClick: (event: React.MouseEvent<HTMLElement>) => void;
-  handleClose: () => void;
+  handleClose: ({ callBack }: { callBack: string }) => void;
   userChatData: ChatDataType[];
   setUserChatData: React.Dispatch<React.SetStateAction<ChatDataType[]>>;
   currentUserId: string | undefined;
@@ -219,8 +227,17 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = ({ callBack }: { callBack: string }) => {
     setAnchorEl(null);
+    switch (callBack) {
+      case 'deleteRoom':
+        setDeleteConfirmationShow(true)
+        setDeleteType(currentRoomId)
+        break;
+
+      default:
+        break;
+    }
   };
 
 
@@ -246,7 +263,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     currentUserId,
     setCurrentRoomId
   })
-
   const onCancelEdit = () =>
     rawOnCancelEdit({ setIsEdit, currentRoom, currentUserId, setEditChatInputValue });
 
@@ -359,13 +375,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     sendMessageAudioRef,
   })
 
-  useSyncCurrentRoomAndMarkAsRead({
-    routerRoomId,
-    homeSocket,
-    currentRoom,
-    currentUserId,
-    setCurrentRoomId
-  })
+  // useSyncCurrentRoomAndMarkAsRead({
+  //   routerRoomId,
+  //   homeSocket,
+  //   currentRoom,
+  //   currentUserId,
+  //   setCurrentRoomId
+  // })
 
 
   useEffect(() => {
@@ -387,6 +403,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
   useJoinRoom({ homeSocket, routerRoomId })
+
 
 
   useUpdateCurrentRoomWithReadStatus({
@@ -416,9 +433,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     homeSocket,
     currentUserId,
     userChatDataRef,
-    setUserChatData,
     reciveMessageAudioRef,
-    sendMessageAudioRef
+    sendMessageAudioRef,
+    setCurrentRoom,
+    lastRef
   })
 
   useIceCandidate({ homeSocket, peerConnection })
@@ -459,6 +477,79 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     recordingBlob,
     audioBlobRef,
   })
+
+
+
+  useEffect(() => {
+    if (typeof routerRoomId !== 'string' || !homeSocket?.current) return;
+    const getSingleRoomByIdWithUpdate = async (data: { status: number, reason?: string, message?: string, userRoom: ChatDataType }) => {
+
+      const { status, userRoom } = data;
+      if (status !== 200) {
+        toast.error(data.reason || data.message || `Error ${status} getSingleRoomByIdWithUpdate`);
+      }
+
+      // If room doesn't exist anymore (deleted), clear state and bail
+      if (!userRoom) {
+        setCurrentRoom(null);
+        return;
+      }
+      // Process attachments for all messages in this single room
+      const updatedMessages = await Promise.all(
+        userRoom.messages.map(async (msg) => ({
+          ...msg,
+          attachment: await Promise.all(
+            msg.attachment.map(async (a) => ({
+              ...a,
+              src:
+                a.id && a.id !== ""
+                  ? await getChatFile(a.id, userProfile?._id!)
+                  : a.src,
+            }))
+          ),
+        }))
+      );
+      const updatedRoom: ChatDataType = {
+        ...userRoom,
+        messages: updatedMessages,
+      };
+      // ✅ Only update if the room actually changed
+      setCurrentRoom((prev) => {
+        if (!prev || !_.isEqual(prev, updatedRoom)) {
+          return updatedRoom;
+        }
+        return prev; // No change → skip re-render
+      });
+
+      // if (typeof routerRoomId === "string") {
+      //   makeAllMessageRead({ routerRoomId, homeSocket, currentRoom, currentUserId });
+      // }
+    }
+    const socket = homeSocket.current;
+    socket.emit("getSingleRoomById", { userId: currentUserId, roomId: routerRoomId });
+
+    socket.once("getSingleRoomByIdReturn", getSingleRoomByIdWithUpdate);
+
+    return () => {
+      socket.off("getSingleRoomByIdReturn");
+      socket.off("updateGetSingleRoomById");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUserId, homeSocket, routerRoomId, reload]);
+
+  useEffect(() => {
+    if (!homeSocket?.current) return;
+    const socket = homeSocket.current;
+    socket.once('updateGetSingleRoomById', () => {
+      setReload(() => !reload);
+    });
+
+    return () => {
+      socket.off("updateGetSingleRoomById");
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <ChatContext.Provider value={{

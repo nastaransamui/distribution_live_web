@@ -1,4 +1,4 @@
-import { ChatDataType } from "../../../@types/cattypes";
+import { ChatDataType } from "../../../@types/chatTypes";
 
 type CreatePeerConnectionProps = {
   homeSocket: any,

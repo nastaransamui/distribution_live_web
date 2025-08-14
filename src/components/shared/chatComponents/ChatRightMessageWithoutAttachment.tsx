@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { FC, Fragment } from "react";
 import DeleteMessageButton from "./DeleteMessageButton";
 import ReadStatusComponent from "./ReadStatusComponent";
-import { MessageType } from "../../../../@types/cattypes";
+import { MessageType } from "../../../../@types/chatTypes";
 
 const ChatRightMessageWithoutAttachment: FC<{ mesage: MessageType, index: number }> = (({ mesage, index }) => {
 

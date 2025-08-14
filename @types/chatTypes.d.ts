@@ -40,10 +40,11 @@ export interface MessageType {
 }
 
 export interface ChatDataType {
-  _id?: string;
-  roomId: string;
-  participants: string[];
   createrData: ChatUserType;
-  receiverData: ChatUserType;
   messages: MessageType[];
+  participants: string[];
+  receiverData: ChatUserType;
+  totalUnreadMessage?: number;
+  roomId: string;
+  _id?: string;
 }

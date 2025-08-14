@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ChatDataType, ChatUserType, MessageType } from "../../../@types/cattypes";
+import { ChatDataType, ChatUserType, MessageType } from "../../../@types/chatTypes";
 
 
 type UseReceiveVoiceCallProps = {

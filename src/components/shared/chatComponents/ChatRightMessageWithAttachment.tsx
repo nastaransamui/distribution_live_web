@@ -9,7 +9,7 @@ import DeleteMessageButton from "./DeleteMessageButton";
 import getFileIcon from "./getFileIcon";
 import ReadStatusComponent from "./ReadStatusComponent";
 import Lightbox from "yet-another-react-lightbox";
-import { MessageType, AttachmentType } from "../../../../@types/cattypes";
+import { MessageType, AttachmentType } from "../../../../@types/chatTypes";
 
 const ChatRightMessageWithAttachment: FC<{ mesage: MessageType, index: number }> = (({ mesage, index }) => {
 

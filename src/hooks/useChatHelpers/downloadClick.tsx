@@ -1,4 +1,4 @@
-import { AttachmentType } from "../../../@types/cattypes";
+import { AttachmentType } from "../../../@types/chatTypes";
 
 const downloadClick = ({ attach }: { attach: AttachmentType }) => {
   const link = document.createElement("a");

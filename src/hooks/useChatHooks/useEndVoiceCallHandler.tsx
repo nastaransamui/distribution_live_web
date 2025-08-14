@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { ChatUserType, MessageType } from "../../../@types/cattypes";
+import { ChatUserType, MessageType } from "../../../@types/chatTypes";
 import endVoiceCall from "../useChatHelpers/endVoiceCall";
 
 type UseEndVoiceCallHandlerProps = {

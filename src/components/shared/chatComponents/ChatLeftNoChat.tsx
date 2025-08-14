@@ -2,14 +2,14 @@
 /* eslint-disable @next/next/no-img-element */
 import { StyledBadge } from "@/components/DoctorDashboardSections/ScheduleTiming";
 import { useChat } from "@/hooks/useChat";
-import { doctors_profile } from "@/public/assets/imagepath";
+import { doctors_profile, patient_profile } from "@/public/assets/imagepath";
 import Avatar from "@mui/material/Avatar";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC, Fragment } from "react";
 import DeleteMessageButton from "./DeleteMessageButton";
-import { ChatDataType } from "../../../../@types/cattypes";
+import { ChatDataType } from "../../../../@types/chatTypes";
 
 export const ChatLeftNoChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatData, index }) => {
   const router = useRouter();
@@ -45,7 +45,7 @@ export const ChatLeftNoChat: FC<{ chatData: ChatDataType, index: number }> = (({
             idle={profileToShow.idle}
           >
             <Avatar alt="" src={`${profileToShow?.profileImage}`} >
-              <img src={doctors_profile} alt="" className="avatar" />
+              <img src={profileToShow.roleName == 'doctors' ? doctors_profile : patient_profile} alt="" className="avatar" />
             </Avatar>
           </StyledBadge>
         </div>

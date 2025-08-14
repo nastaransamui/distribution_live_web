@@ -10,9 +10,10 @@ import { doctors_profile } from "@/public/assets/imagepath";
 import Link from "next/link";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import useScssVar from "@/hooks/useScssVar";
 
 const ChatRightHeader: FC = (() => {
-
+  const { muiVar } = useScssVar();
   const router = useRouter();
   const currentRoomId = router.query.roomId;
   const {
@@ -106,6 +107,8 @@ const ChatRightHeader: FC = (() => {
             <i className="material-icons" >more_vert</i>
           </Link>
           <Menu
+
+            style={muiVar}
             id="long-menu"
             MenuListProps={{
               'aria-labelledby': 'long-button',
@@ -114,23 +117,34 @@ const ChatRightHeader: FC = (() => {
             open={open}
             onClose={handleClose}
             slotProps={{
+              root: {
+                style: {
+                  marginTop: 21,
+                  marginLeft: -25
+                }
+              },
               paper: {
                 style: {
                   maxHeight: ITEM_HEIGHT * 4.5,
                   width: '20ch',
+                  backgroundColor: theme.palette.background.paper,
+                  boxShadow: 'none',
+                  backgroundImage: 'none'
                 }
               }
             }}
           >
             {menuOptions.map((option) => (
-              <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
-                {option}
+              <MenuItem key={option.text} onClick={(e) => {
+                handleClose({ callBack: option.callBack })
+              }} >
+                <option.icon style={{ color: option.iconColor, }} /> {option.text}
               </MenuItem>
             ))}
           </Menu>
         </div>
       </div>
-    </Fragment>
+    </Fragment >
   )
 })
 export default ChatRightHeader;

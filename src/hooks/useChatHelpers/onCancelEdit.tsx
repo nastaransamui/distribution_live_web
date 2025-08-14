@@ -1,4 +1,4 @@
-import { ChatDataType, MessageType } from "../../../@types/cattypes";
+import { ChatDataType, MessageType } from "../../../@types/chatTypes";
 
 type OnCancelEditProps = {
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>,

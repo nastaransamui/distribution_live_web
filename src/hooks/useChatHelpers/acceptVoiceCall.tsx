@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import openMediaDevices from "./openMediaDevices";
 import createPeerConnection from "./createPeerConnection";
-import { ChatDataType, MessageType } from "../../../@types/cattypes";
+import { ChatDataType, MessageType } from "../../../@types/chatTypes";
 
 type AcceptVoiceCallProps = {
   setIsAnswerable: React.Dispatch<React.SetStateAction<boolean>>,
@@ -95,7 +95,6 @@ const acceptVoiceCall = async (
         ),
       };
       setChatInputValue(updatedChatInputValue);
-
       homeSocket.current.emit("answerCall", { answer, callerId, receiverId, roomId, messageData: updatedChatInputValue });
 
       if (makeCallAudioRef && makeCallAudioRef.current !== null) {

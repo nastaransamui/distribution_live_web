@@ -1,4 +1,4 @@
-import { ChatDataType, ChatUserType } from "../../../@types/cattypes";
+import { ChatDataType, ChatUserType } from "../../../@types/chatTypes";
 
 type VideoCallToggleFunctionProps = {
   currentUserId: string | undefined,

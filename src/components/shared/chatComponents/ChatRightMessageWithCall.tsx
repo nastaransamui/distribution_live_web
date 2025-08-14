@@ -9,7 +9,7 @@ import PhoneCallbackIcon from '@mui/icons-material/PhoneCallback';
 import { doctors_profile, patient_profile } from '@/public/assets/imagepath';
 import ReadStatusComponent from "./ReadStatusComponent";
 import PhoneMissedIcon from '@mui/icons-material/PhoneMissed';
-import { MessageType } from "../../../../@types/cattypes";
+import { MessageType } from "../../../../@types/chatTypes";
 
 
 const ChatRightMessageWithCall: FC<{ mesage: MessageType, index: number }> = (({ mesage, index }) => {

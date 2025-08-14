@@ -1,4 +1,4 @@
-import { ChatDataType, MessageType } from "../../../@types/cattypes";
+import { ChatDataType, MessageType } from "../../../@types/chatTypes";
 
 type OnEditButtonClickProps = {
   editChatInputValue: MessageType,
@@ -43,7 +43,7 @@ const onEditButtonClick = (
     message: editChatInputValue.message,
     read: false,
     attachment: editChatInputValue.attachment,
-    roomId: currentRoomId!,
+    roomId: currentRoom?.roomId!,
     attachmentFiles: [],
     calls: [],
   };

@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { ChatDataType, ChatUserType, MessageType } from "../../../@types/cattypes";
+import { ChatDataType, ChatUserType, MessageType } from "../../../@types/chatTypes";
 import createPeerConnection from "./createPeerConnection";
 import openMediaDevices from "./openMediaDevices";
 
@@ -72,6 +72,10 @@ const makeVoiceCall = async (
       const senderGender = currentRoom?.createrData.userId == currentUserId
         ? currentRoom?.createrData.gender!
         : currentRoom?.receiverData.gender!;
+      const callerData = currentRoom?.createrData.userId == currentUserId
+        ? currentRoom?.createrData : currentRoom?.receiverData;
+      const receiverData = currentRoom?.createrData.userId == currentUserId
+        ? currentRoom?.receiverData : currentRoom?.createrData;
 
       const messageData: MessageType & {
         senderRoleName?: string;
@@ -87,7 +91,7 @@ const makeVoiceCall = async (
         message: null,
         read: false,
         attachment: [],
-        roomId: currentRoomId!,
+        roomId: currentRoom?.roomId!,
         calls: [
           {
             isVoiceCall: true,
@@ -105,7 +109,7 @@ const makeVoiceCall = async (
         icon: icon,
       };
       setChatInputValue(messageData)
-      homeSocket.current.emit("makeVoiceCall", { offer, callerId, receiverId, roomId: currentRoomId, messageData });
+      homeSocket.current.emit("makeVoiceCall", { offer, callerId, receiverId, roomId: currentRoom?.roomId, messageData, callerData, receiverData });
       if (currentRoom !== null) {
         const callReceiver = currentRoom.createrData.userId === currentUserId ? currentRoom.receiverData : currentRoom.createrData;
         setCallReceiverUserData((prevState) => (prevState == null ? callReceiver : null));

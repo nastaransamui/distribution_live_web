@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton'
 import DeleteForever from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit'
 import { decrypt } from "@/helpers/encryptDecrypt";
-import { MessageType } from "../../../../@types/cattypes";
+import { MessageType } from "../../../../@types/chatTypes";
 
 const DeleteMessageButton: FC<{ deleteType: string | number, mesage?: MessageType }> = (({ deleteType, mesage }) => {
   const { deleteButtonClicked, setDeleteType, setEditChatInputValue, setIsEdit, isEdit } = useChat();

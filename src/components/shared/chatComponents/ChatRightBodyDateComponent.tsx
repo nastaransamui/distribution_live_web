@@ -1,7 +1,7 @@
 import { useChat } from "@/hooks/useChat";
 import dayjs from "dayjs";
 import { FC, Fragment } from "react";
-import { MessageType } from "../../../../@types/cattypes";
+import { MessageType } from "../../../../@types/chatTypes";
 
 const ChatRightBodyDateComponent: FC<{ mesage: MessageType, index: number }> = (({ mesage, index }) => {
 

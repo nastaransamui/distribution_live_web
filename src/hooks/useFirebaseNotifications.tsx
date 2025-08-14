@@ -23,6 +23,7 @@ const useFirebaseNotifications = () => {
           const messaging = getMessaging();
 
           unsubscribe = onMessage(messaging, (payload) => {
+            console.log({ payload })
             const { title, body } = payload.notification || {};
             const data = payload.data ?? {};
 

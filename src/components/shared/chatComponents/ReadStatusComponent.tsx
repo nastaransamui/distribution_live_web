@@ -1,7 +1,7 @@
 
 import { FC, Fragment } from "react";
 import { useTheme } from '@mui/material'
-import { MessageType } from "../../../../@types/cattypes";
+import { MessageType } from "../../../../@types/chatTypes";
 
 const ReadStatusComponent: FC<{ lastMessage: MessageType }> = (({ lastMessage }) => {
 

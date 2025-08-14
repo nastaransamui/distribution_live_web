@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ChatDataType } from "../../../@types/cattypes";
+import { ChatDataType } from "../../../@types/chatTypes";
 import _ from 'lodash';
 
 

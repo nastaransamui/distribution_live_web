@@ -1,5 +1,5 @@
 import { RefObject } from "react";
-import { ChatDataType, MessageType } from "../../../@types/cattypes";
+import { ChatDataType, MessageType } from "../../../@types/chatTypes";
 
 type OnSendButtonClick = {
   chatInputValue: MessageType,
@@ -62,7 +62,7 @@ const onSendButtonClick = (
     message: chatInputValue.message,
     read: false,
     attachment: chatInputValue.attachment,
-    roomId: currentRoomId!,
+    roomId: currentRoom?.roomId!,
     attachmentFiles: [],
     calls: [],
     senderRoleName: senderRoleName,
@@ -115,6 +115,7 @@ const onSendButtonClick = (
 
 
     if (homeSocket.current) {
+
       homeSocket.current.emit("sendMessage", messageData);
       setTimeout(() => {
         lastRef.current?.scrollIntoView({ behavior: 'smooth' });

@@ -1,4 +1,4 @@
-import { ChatDataType, ChatUserType, MessageType } from "../../../@types/cattypes";
+import { ChatDataType, ChatUserType, MessageType } from "../../../@types/chatTypes";
 import endVoiceCall from "./endVoiceCall";
 import makeVoiceCall from "./makeVoiceCall";
 

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ChatDataType } from "../../../@types/cattypes";
+import { ChatDataType } from "../../../@types/chatTypes";
 import makeAllMessageRead from "../useChatHelpers/makeAllMessageRead";
 
 type UseSyncCurrentRoomAndMarkAsReadProps = {
@@ -20,7 +20,7 @@ const useSyncCurrentRoomAndMarkAsRead = ({
 }: UseSyncCurrentRoomAndMarkAsReadProps) => {
   useEffect(() => {
     if (typeof routerRoomId === 'string') {
-      setCurrentRoomId(routerRoomId);
+      // setCurrentRoomId(routerRoomId);
       makeAllMessageRead({ routerRoomId, homeSocket, currentRoom, currentUserId });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

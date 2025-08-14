@@ -3,7 +3,7 @@ import { UserPatientProfileTypeValue } from "@/redux/userPatientProfile";
 
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { ChatDataType } from "../../../@types/cattypes";
+import { ChatDataType } from "../../../@types/chatTypes";
 import { Image_placeholder } from "@/public/assets/imagepath";
 import _ from 'lodash'
 import { useRouter } from "next/router";
@@ -70,7 +70,8 @@ const useFetchUserRooms = ({
             if (
               !_.isEqual(existingRoom.receiverData, room.receiverData) ||
               !_.isEqual(existingRoom.createrData, room.createrData) ||
-              !_.isEqual(existingRoom.messages, room.messages)
+              !_.isEqual(existingRoom.messages, room.messages) ||
+              !_.isEqual(existingRoom.totalUnreadMessage, room.totalUnreadMessage)
             ) {
               // setTimeout(() => {
               //   lastRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -80,7 +81,8 @@ const useFetchUserRooms = ({
                 ...existingRoom,
                 receiverData: room.receiverData,
                 createrData: room.createrData,
-                messages: room.messages
+                messages: room.messages,
+                totalUnreadMessage: room.totalUnreadMessage
               };
             }
 
@@ -126,7 +128,7 @@ const useFetchUserRooms = ({
 
 export default useFetchUserRooms;
 
-const getChatFile = async (fileId: string, userId: string): Promise<string> => {
+export const getChatFile = async (fileId: string, userId: string): Promise<string> => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_adminUrl}/api/chat/file/${fileId}?userId=${userId}`
   );

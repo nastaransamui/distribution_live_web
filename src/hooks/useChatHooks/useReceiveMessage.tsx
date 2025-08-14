@@ -1,75 +1,118 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { ChatDataType, MessageType } from "../../../@types/cattypes";
+import { RefObject, useEffect } from "react";
+import { ChatDataType, MessageType } from "../../../@types/chatTypes";
+import { getChatFile } from "./useFetchUserRooms";
 
 type UseReceiveMessageProps = {
   homeSocket: any,
   currentUserId: string | undefined;
   userChatDataRef: React.MutableRefObject<ChatDataType[]>;
-  setUserChatData: React.Dispatch<React.SetStateAction<ChatDataType[]>>;
   reciveMessageAudioRef: React.MutableRefObject<HTMLAudioElement | null>;
-  sendMessageAudioRef: React.MutableRefObject<HTMLAudioElement | null>
+  sendMessageAudioRef: React.MutableRefObject<HTMLAudioElement | null>;
+  setCurrentRoom: React.Dispatch<React.SetStateAction<ChatDataType | null>>;
+  lastRef: RefObject<HTMLDivElement>,
 }
 
 const useReceiveMessage = ({
   homeSocket,
   currentUserId,
   userChatDataRef,
-  setUserChatData,
   reciveMessageAudioRef,
-  sendMessageAudioRef
+  sendMessageAudioRef,
+  setCurrentRoom,
+  lastRef
 }: UseReceiveMessageProps) => {
   const router = useRouter();
   useEffect(() => {
-    let isActive = true;
-    if (isActive && homeSocket.current) {
-      homeSocket.current.on('receiveMessage', (messageData: MessageType) => {
-        if (messageData.receiverId == currentUserId) {
-          if (typeof router.query.roomId !== 'undefined' && router.query.roomId == messageData.roomId) {
-            const chatIndex = userChatDataRef.current.findIndex(chat => chat.roomId === messageData.roomId);
-            if (chatIndex !== -1) {
-              setTimeout(() => {
-                const msgIndex = userChatDataRef.current[chatIndex].messages.findIndex((m) => m.timestamp == messageData.timestamp)
-                if (msgIndex !== -1) {
-                  const message = userChatDataRef.current[chatIndex].messages[msgIndex];
-                  homeSocket.current.emit('makeOneMessageRead', message)
-                  setUserChatData((prevState) => {
-                    let newState = [...prevState];
+    const socket = homeSocket.current;
+    if (!socket || !currentUserId) return;
 
-                    // newState[chatIndex].messages[msgIndex].read = true;
-                    return newState
-                  })
-                }
-              }, 50);
+    const handleReceiveMessage = async (messageData: MessageType) => {
+      const isReceiver = messageData.receiverId === currentUserId;
+      const isSender = messageData.senderId === currentUserId;
+      // If the message has attachments, process them
+      if (messageData.attachment?.length) {
+        messageData = {
+          ...messageData,
+          attachment: await Promise.all(
+            messageData.attachment.map(async (a) => ({
+              ...a,
+              src:
+                a.id && a.id !== ""
+                  ? await getChatFile(a.id, currentUserId)
+                  : a.src,
+            }))
+          ),
+        };
+      }
+
+      // If I'm the receiver and in the same room → append message & mark as read
+      // if (isReceiver) {
+      if (
+        typeof router.query.roomId !== "undefined" &&
+        router.query.roomId === messageData.roomId
+      ) {
+        const chatIndex = userChatDataRef.current.findIndex(
+          (chat) => chat.roomId === messageData.roomId
+        );
+
+        if (chatIndex !== -1) {
+          setTimeout(() => {
+            setCurrentRoom((prev) => {
+              if (!prev) return prev;
+              const exists = prev.messages.some(
+                (m) => m.timestamp === messageData.timestamp
+              );
+              if (exists) return prev;
+              if (messageData.receiverId == currentUserId) messageData.read = true;
+              return {
+                ...prev,
+                messages: [...prev.messages, messageData],
+              };
+            });
+            if (messageData.receiverId == currentUserId) {
+              homeSocket.current.emit("makeOneMessageRead", messageData);
             }
-          }
+
+            setTimeout(() => {
+              lastRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+            }, 100);
+          }, 50);
         }
-        if (messageData.receiverId == currentUserId) {
-          if (router.query.roomId !== null) {
-            if (reciveMessageAudioRef && reciveMessageAudioRef.current !== null) {
+      }
 
-              reciveMessageAudioRef.current.currentTime = 0; // Reset to start
-              reciveMessageAudioRef.current.play();
+      // Play receive sound
+      if (router.query.roomId !== null) {
+        reciveMessageAudioRef.current?.pause();
+        reciveMessageAudioRef.current!.currentTime = 0;
+        reciveMessageAudioRef.current?.play();
+      }
+      // }
 
-            }
-          }
-        }
-        if (messageData.senderId == currentUserId) {
-          if (sendMessageAudioRef && sendMessageAudioRef.current !== null) {
+      // If I'm the sender → play send sound
+      if (isSender) {
+        sendMessageAudioRef.current?.pause();
+        sendMessageAudioRef.current!.currentTime = 0;
+        sendMessageAudioRef.current?.play();
+      }
+    };
 
-            sendMessageAudioRef.current.currentTime = 0; // Reset to start
-            sendMessageAudioRef.current.play();
+    socket.on("receiveMessage", handleReceiveMessage);
 
-          }
-        }
-        // }
-      })
-    }
     return () => {
-      isActive = false;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, currentUserId, router,])
+      socket.off("receiveMessage", handleReceiveMessage);
+    };
+  }, [
+    homeSocket,
+    currentUserId,
+    router.query.roomId, // only rebind if room changes, not full currentRoom
+    reciveMessageAudioRef,
+    sendMessageAudioRef,
+    setCurrentRoom,
+    userChatDataRef,
+    lastRef
+  ]);
 }
 
 export default useReceiveMessage;

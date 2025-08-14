@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { MessageType } from "../../../@types/cattypes";
+import { MessageType } from "../../../@types/chatTypes";
 import { toast } from "react-toastify";
 
 type UseConfirmCallHandlerProps = {

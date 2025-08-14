@@ -20,10 +20,10 @@ import Typography from '@mui/material/Typography'
 import { useSelector } from "react-redux";
 import { AppState } from "@/redux/store";
 import { StyledBadge } from "../DoctorDashboardSections/ScheduleTiming";
-import { doctors_profile } from "@/public/assets/imagepath";
+import { doctors_profile, patient_profile } from "@/public/assets/imagepath";
 import { useChat } from "@/hooks/useChat";
 import { useRouter } from "next/router";
-import { ChatDataType } from "../../../@types/cattypes";
+import { ChatDataType } from "../../../@types/chatTypes";
 
 
 
@@ -319,6 +319,7 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
         renderOption={(props, option) => {
           const matches = match(Array.isArray(option[optionFieldName]) ? option['arrayField'] : option[optionFieldName] || '', inputValue, { insideWords: true, findAllOccurrences: true });
           const parts = parse(Array.isArray(option[optionFieldName]) ? option['arrayField'] : option[optionFieldName], matches);
+
           return (
             <li {...props} key={option._id + JSON.stringify(props)}
               style={{
@@ -342,7 +343,7 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
                         idle={option?.idle}
                       >
                         <Avatar alt="" src={option.profileImage} >
-                          <img src={doctors_profile} alt="" className="avatar" />
+                          <img src={option.roleName == 'doctors' ? doctors_profile : patient_profile} alt="" className="avatar" />
                         </Avatar>
                       </StyledBadge> &nbsp; &nbsp;
                       <Grid item xs>

@@ -1,4 +1,4 @@
-import { ChatUserType, MessageType } from "../../../@types/cattypes";
+import { ChatUserType, MessageType } from "../../../@types/chatTypes";
 import clearRecording from "./clearRecording";
 import handleDownload from "./handleDownload";
 

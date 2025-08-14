@@ -5,8 +5,8 @@ import Avatar from "@mui/material/Avatar";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FC, Fragment } from "react";
-import { doctors_profile } from '@/public/assets/imagepath';
+import { FC, Fragment, useState } from "react";
+import { doctors_profile, patient_profile } from '@/public/assets/imagepath';
 import getFileIcon from "./getFileIcon";
 import { decrypt } from "@/helpers/encryptDecrypt";
 import PhoneMissedIcon from '@mui/icons-material/PhoneMissed';
@@ -14,12 +14,22 @@ import PhoneForwardedIcon from '@mui/icons-material/PhoneForwarded';
 import PhoneCallbackIcon from '@mui/icons-material/PhoneCallback';
 import ReadStatusComponent from "./ReadStatusComponent";
 import DeleteMessageButton from "./DeleteMessageButton";
-import { ChatDataType } from "../../../../@types/cattypes";
+import { AttachmentType, ChatDataType } from "../../../../@types/chatTypes";
+import Lightbox from "yet-another-react-lightbox";
 
 export const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = (({ chatData, index }) => {
   const router = useRouter();
   const currentRoomId = router.query.roomId;
-  const { onLeftUserClicked, weekdays, currentUserId, downloadClick, voiceCallToggleFunction } = useChat();
+  const [openImage, setOpenImage] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+  const [Images, setImages] = useState<AttachmentType[]>([]);
+  const {
+    onLeftUserClicked,
+    weekdays,
+    currentUserId,
+    downloadClick,
+    voiceCallToggleFunction,
+  } = useChat();
   let sortedMessages = [...chatData?.messages].sort((a, b) => b.timestamp - a.timestamp); // Sort in descending order
   let lastMessage = sortedMessages[0];
   let lastMessageTime = dayjs(lastMessage?.timestamp);
@@ -32,12 +42,22 @@ export const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = ((
   const thisWeekValue = <>{dayName}<br /> {lastMessageTime.format('HH:mm')}</>;
   const thisYearValue = <>{lastMessageTime.format('MMM D ')}<br /> {lastMessageTime.format('HH:mm')}</>;
   const defaultValue = <>{lastMessageTime.format('D MMM YY')}<br /> {lastMessageTime.format('HH:mm')}</>;
-  let numberOfNotRead = chatData?.messages.filter((a) => !a.read).length;
-  let unreadMessagesLength = (numberOfNotRead == 0 ? '' : numberOfNotRead);
+
+  let unreadMessagesLength = chatData.totalUnreadMessage;
   const profileToShow = chatData.createrData.userId == currentUserId ? chatData.receiverData : chatData.createrData
+
 
   return (
     <Fragment key={index}>
+      <Lightbox
+        open={openImage}
+        close={() => setOpenImage(false)}
+        slides={Images.filter(img => img.isImage).map(img => ({
+          src: img.src,
+          type: "image", // Ensuring it meets the expected type
+        }))}
+        index={imageIndex}
+      />
       <Link href="#"
         onClick={(e) => {
           e.preventDefault();
@@ -54,7 +74,7 @@ export const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = ((
             idle={profileToShow.idle}
           >
             <Avatar alt="" src={`${profileToShow?.profileImage}`} >
-              <img src={doctors_profile} alt="" className="avatar" />
+              <img src={profileToShow.roleName == 'doctors' ? doctors_profile : patient_profile} alt="" className="avatar" />
             </Avatar>
           </StyledBadge>
         </div>
@@ -78,7 +98,19 @@ export const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = ((
                   const isBlob = attach.src && attach.src.startsWith("blob:");
                   return (
                     <span key={`${i} ${index}`}>
-                      <div className="chat-attachment chat-attachment-left-side" onClick={() => { downloadClick({ attach }) }} >
+                      <div className="chat-attachment chat-attachment-left-side" onClick={() => {
+                        if (!attach.isImage) {
+                          downloadClick({ attach })
+                        } else {
+                          // Filter only images and find the correct index in the filtered list
+                          const imageAttachments = lastMessage.attachment.filter((a) => a.isImage);
+                          const newIndex = imageAttachments.findIndex((a) => a.src === attach.src);
+
+                          setImages(imageAttachments);
+                          setImageIndex(newIndex);
+                          setOpenImage(true);
+                        }
+                      }} >
                         {isBlob &&
                           <img
                             src={attach.isImage ? attach.src : getFileIcon(attach.type)} // Use icon/placeholder until blob is ready
@@ -140,7 +172,7 @@ export const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = ((
                       : defaultValue
               }
             </div>
-            <div className="badge badge-success">{unreadMessagesLength}</div>
+            {unreadMessagesLength !== 0 && <div className="badge badge-success">{unreadMessagesLength}</div>}
           </div>
         </div>
       </Link>
