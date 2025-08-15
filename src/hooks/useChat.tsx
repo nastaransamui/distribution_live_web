@@ -232,7 +232,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     switch (callBack) {
       case 'deleteRoom':
         setDeleteConfirmationShow(true)
-        setDeleteType(currentRoomId)
+        if (currentRoom !== null) {
+          setDeleteType(currentRoom?.roomId as string)
+        }
         break;
 
       default:
