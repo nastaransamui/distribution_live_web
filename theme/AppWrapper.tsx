@@ -56,6 +56,8 @@ import { BestDoctorsDataType, updateBestDoctorsData } from '@/redux/bestDoctorsD
 import { LastReviewsDataType, updateLastReviewsData } from '@/redux/lastReviewsData';
 import { BestCardioDoctorsDataType, updateBestCardioDoctorsData } from '@/redux/bestCardioDoctors';
 import { updateBestEyeCareDoctorsData } from '@/redux/bestEyeCareDoctors';
+import { ChatProvider, useChat } from '@/hooks/useChat';
+import { CallDialog } from '@/components/shared/chatComponents/CallDialog';
 
 export type ChildrenProps = {
   children: JSX.Element;
@@ -65,7 +67,14 @@ const AppWrapper = ({ children }: ChildrenProps) => {
   const dispatch = useDispatch()
   const router = useRouter();
   const { bounce } = useScssVar();
-
+  const {
+    voiceCallActive,
+    voiceCallToggleFunction,
+    videoCallActive,
+    videoCallToggleFunction,
+    currentRoom,
+    incomingCall
+  } = useChat()
 
   const homeThemeName = useSelector((state: AppState) => state.homeThemeName.value)
   const homeThemeType = useSelector((state: AppState) => state.homeThemeType.value)
@@ -364,10 +373,21 @@ const AppWrapper = ({ children }: ChildrenProps) => {
           <>
             {router.route !== '/404' ?
               <Fragment>
+                {voiceCallActive &&
+                  <CallDialog callType='Voice' open={voiceCallActive} toggleFunction={() => {
+                    const roomId = router.query.roomId;
+                    voiceCallToggleFunction()
+                  }} />
+                }
+                {videoCallActive &&
+                  <CallDialog callType='Video' open={videoCallActive} toggleFunction={videoCallToggleFunction} />
+                }
                 {(!router.route.startsWith('/verify-email') && !router.route.startsWith('/reset-password')) && <Header />}
                 <div dir={homeTheme.direction} className='app-wrapper-div' style={{ background: homeTheme.palette.background.paper, }}>
                   {/* overflowX: 'hidden' */}
+
                   {children}
+
                 </div>
               </Fragment>
               :

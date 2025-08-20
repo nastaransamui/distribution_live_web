@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { ChatDataType, ChatUserType, MessageType } from "../../../@types/chatTypes";
+import { ChatDataType, ChatUserType, IncomingCallType, MessageType } from "../../../@types/chatTypes";
 
 
 type UseReceiveVoiceCallProps = {
   homeSocket: any;
-  setIncomingCall: React.Dispatch<React.SetStateAction<{ offer: RTCSessionDescriptionInit, receiverId: string, callerId: string, roomId: string } | null>>;
+  setIncomingCall: React.Dispatch<React.SetStateAction<IncomingCallType | null>>;
   setVoiceCallActive: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAnswerable: React.Dispatch<React.SetStateAction<boolean>>;
   setChatInputValue: React.Dispatch<React.SetStateAction<MessageType>>;
@@ -33,53 +33,69 @@ const useReceiveVoiceCall = ({
   useEffect(() => {
     if (!homeSocket?.current) return;
     const socket = homeSocket.current;
-    socket.on('receiveVoiceCall', async (data: { offer: RTCSessionDescriptionInit, callerId: string, receiverId: string, roomId: string, messageData: MessageType }) => {
-      setEndCall(false)
-      setIncomingCall(data);
-      setVoiceCallActive(true);
-      setIsAnswerable(true);
-      setChatInputValue(data.messageData)
-      if (data.receiverId === currentUserId) {
-        const { roomId } = data;
-        // setCurrentRoomId(() => roomId)
-        const roomData = userChatData.find((a) => a.roomId === roomId);
-        if (roomData) {
-          const callReceiver =
-            roomData.createrData.userId == currentUserId ?
-              roomData.receiverData :
-              roomData.createrData;
-          setCallReceiverUserData(() => callReceiver)
-        }
-        setTimeout(() => {
-          setVoiceCallActive(true)
-          if (makeCallAudioRef && makeCallAudioRef.current !== null) {
-            makeCallAudioRef.current.loop = true;
-            makeCallAudioRef.current.play();
-          }
-        }, 500);
+    socket.on('receiveVoiceCall', async (data: IncomingCallType) => {
+      handleReciveCall({
+        homeSocket,
+        setIncomingCall,
+        setVoiceCallActive,
+        setIsAnswerable,
+        setChatInputValue,
+        currentUserId,
+        userChatData,
+        setCallReceiverUserData,
+        makeCallAudioRef,
+        missedCallTimeout,
+        setEndCall,
+        data
+      })
+      // setEndCall(false)
+      // setIncomingCall(data);
+      // setVoiceCallActive(true);
+      // setIsAnswerable(true);
+      // setChatInputValue(data.messageData)
 
-        // Clear any existing timeout before setting a new one
-        if (missedCallTimeout.current) {
-          clearTimeout(missedCallTimeout.current);
-        }
+      // if (data.receiverId === currentUserId) {
+      //   const { roomId } = data;
+      //   // setCurrentRoomId(() => roomId)
+      //   const roomData = userChatData.find((a) => a.roomId === roomId);
 
-        // Set a timeout to show "missed call" only if not accepted
-        missedCallTimeout.current = setTimeout(() => {
-          const updatedChatInputValue = {
-            ...data.messageData,
-            calls: data.messageData.calls.map((call, index) =>
-              index === 0 ? {
-                ...call,
-                isMissedCall: true,
-                isAnswered: false,
-                finishTimeStamp: new Date().getTime(),
-              } : call
-            ),
-          };
-          setChatInputValue(updatedChatInputValue);
-          homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue })
-        }, 20 * 1000);
-      }
+      //   if (roomData) {
+      //     const callReceiver =
+      //       roomData.createrData.userId == currentUserId ?
+      //         roomData.receiverData :
+      //         roomData.createrData;
+      //     setCallReceiverUserData(() => callReceiver)
+      //   }
+      //   setTimeout(() => {
+      //     setVoiceCallActive(true)
+      //     if (makeCallAudioRef && makeCallAudioRef.current !== null) {
+      //       makeCallAudioRef.current.loop = true;
+      //       makeCallAudioRef.current.play();
+      //     }
+      //   }, 500);
+
+      //   // Clear any existing timeout before setting a new one
+      //   if (missedCallTimeout.current) {
+      //     clearTimeout(missedCallTimeout.current);
+      //   }
+
+      //   // Set a timeout to show "missed call" only if not accepted
+      //   missedCallTimeout.current = setTimeout(() => {
+      //     const updatedChatInputValue = {
+      //       ...data.messageData,
+      //       calls: data.messageData.calls.map((call, index) =>
+      //         index === 0 ? {
+      //           ...call,
+      //           isMissedCall: true,
+      //           isAnswered: false,
+      //           finishTimeStamp: new Date().getTime(),
+      //         } : call
+      //       ),
+      //     };
+      //     setChatInputValue(updatedChatInputValue);
+      //     homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue })
+      //   }, 20 * 1000);
+      // }
     })
     return () => {
       socket.off("receiveVoiceCall")
@@ -90,3 +106,69 @@ const useReceiveVoiceCall = ({
 }
 
 export default useReceiveVoiceCall;
+
+export const handleReciveCall = async ({
+  homeSocket,
+  setIncomingCall,
+  setVoiceCallActive,
+  setIsAnswerable,
+  setChatInputValue,
+  currentUserId,
+  userChatData,
+  setCallReceiverUserData,
+  makeCallAudioRef,
+  missedCallTimeout,
+  setEndCall,
+  data
+}: UseReceiveVoiceCallProps & {
+  data: IncomingCallType
+}) => {
+  setEndCall(false)
+  setIncomingCall(data);
+  setVoiceCallActive(true);
+  setIsAnswerable(true);
+  setChatInputValue(data.messageData)
+  if (data.receiverId === currentUserId) {
+    const { roomId } = data;
+    // setCurrentRoomId(() => roomId)
+    const roomData = userChatData.find((a) => a.roomId === roomId);
+    if (roomData) {
+      const callReceiver =
+        roomData.createrData.userId == currentUserId ?
+          roomData.receiverData :
+          roomData.createrData;
+      setCallReceiverUserData(() => callReceiver)
+    }
+    setTimeout(() => {
+      setVoiceCallActive(true)
+      if (makeCallAudioRef && makeCallAudioRef.current !== null) {
+        makeCallAudioRef.current.loop = true;
+        makeCallAudioRef.current.play();
+      }
+    }, 500);
+
+    // Clear any existing timeout before setting a new one
+    if (missedCallTimeout.current) {
+      clearTimeout(missedCallTimeout.current);
+    }
+
+    // Set a timeout to show "missed call" only if not accepted
+    missedCallTimeout.current = setTimeout(() => {
+      const updatedChatInputValue = {
+        ...data.messageData,
+        calls: data.messageData.calls.map((call, index) =>
+          index === 0 ? {
+            ...call,
+            isMissedCall: true,
+            isAnswered: false,
+            finishTimeStamp: new Date().getTime(),
+          } : call
+        ),
+      };
+      const callerData = data?.callerData as ChatUserType
+      const receiverData = data?.receiverData as ChatUserType
+      setChatInputValue(updatedChatInputValue);
+      homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue, callerData, receiverData })
+    }, 20 * 1000);
+  }
+}

@@ -135,7 +135,11 @@ export const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = ((
                       isSent ?
                         <Avatar sx={{ backgroundColor: "background.default", height: 30, width: 30, marginRight: '8px' }} onClick={(e) => {
                           if (currentRoomId !== null) {
-                            voiceCallToggleFunction();
+                            if (currentRoomId == chatData.roomId) {
+                              voiceCallToggleFunction();
+                            } else {
+                              window.localStorage.setItem('queuedCallRoomId', chatData.roomId)
+                            }
                           }
                         }}>
                           {
@@ -147,7 +151,11 @@ export const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = ((
                         </Avatar> :
                         <Avatar sx={{ backgroundColor: "background.default", height: 30, width: 30, marginRight: '8px' }} onClick={(e) => {
                           if (currentRoomId !== null) {
-                            voiceCallToggleFunction();
+                            if (currentRoomId == chatData.roomId) {
+                              voiceCallToggleFunction();
+                            } else {
+                              window.localStorage.setItem('queuedCallRoomId', chatData.roomId)
+                            }
                           }
                         }}>
                           {

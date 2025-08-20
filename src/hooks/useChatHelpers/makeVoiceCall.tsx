@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { ChatDataType, ChatUserType, MessageType } from "../../../@types/chatTypes";
+import { ChatDataType, ChatUserType, IncomingCallType, MessageType } from "../../../@types/chatTypes";
 import createPeerConnection from "./createPeerConnection";
 import openMediaDevices from "./openMediaDevices";
 
@@ -16,6 +16,8 @@ type MakeVoiceCallProps = {
   setVoiceCallActive: React.Dispatch<React.SetStateAction<boolean>>,
   makeCallAudioRef: React.MutableRefObject<HTMLAudioElement | null>
   setEndCall: React.Dispatch<React.SetStateAction<boolean>>;
+  setIncomingCall: React.Dispatch<React.SetStateAction<IncomingCallType | null>>,
+  incomingCall: IncomingCallType | null;
 }
 
 const makeVoiceCall = async (
@@ -31,7 +33,9 @@ const makeVoiceCall = async (
     setCallReceiverUserData,
     setVoiceCallActive,
     makeCallAudioRef,
-    setEndCall
+    setEndCall,
+    setIncomingCall,
+    incomingCall
   }: MakeVoiceCallProps
 ) => {
   try {
@@ -40,7 +44,7 @@ const makeVoiceCall = async (
     if (stream) {
       localStream.current = stream;
       remoteStream.current = new MediaStream();
-      peerConnection.current = createPeerConnection({ homeSocket, currentUserId, currentRoom, currentRoomId });
+      peerConnection.current = createPeerConnection({ homeSocket, currentUserId, currentRoom, currentRoomId, incomingCall });
       localStream.current.getTracks().forEach(track => {
         track.enabled = true;
         peerConnection.current?.addTrack(track, localStream.current!);
@@ -109,6 +113,15 @@ const makeVoiceCall = async (
         icon: icon,
       };
       setChatInputValue(messageData)
+      setIncomingCall({
+        callerData: callerData as ChatUserType,
+        callerId: callerId as string,
+        messageData,
+        offer,
+        receiverData: receiverData as ChatUserType,
+        receiverId: receiverId as string,
+        roomId: currentRoom?.roomId!,
+      })
       homeSocket.current.emit("makeVoiceCall", { offer, callerId, receiverId, roomId: currentRoom?.roomId, messageData, callerData, receiverData });
       if (currentRoom !== null) {
         const callReceiver = currentRoom.createrData.userId === currentUserId ? currentRoom.receiverData : currentRoom.createrData;

@@ -1,11 +1,11 @@
 import { toast } from "react-toastify";
 import openMediaDevices from "./openMediaDevices";
 import createPeerConnection from "./createPeerConnection";
-import { ChatDataType, MessageType } from "../../../@types/chatTypes";
+import { ChatDataType, IncomingCallType, MessageType } from "../../../@types/chatTypes";
 
 type AcceptVoiceCallProps = {
   setIsAnswerable: React.Dispatch<React.SetStateAction<boolean>>,
-  incomingCall: { offer: RTCSessionDescriptionInit, receiverId: string, callerId: string, roomId: string } | null,
+  incomingCall: IncomingCallType | null,
   homeSocket: any,
   missedCallTimeout: React.MutableRefObject<NodeJS.Timeout | null>,
   localStream: React.MutableRefObject<MediaStream | null>,
@@ -17,7 +17,8 @@ type AcceptVoiceCallProps = {
   chatInputValue: MessageType,
   setChatInputValue: React.Dispatch<React.SetStateAction<MessageType>>,
   setFakeMediaRecorder: React.Dispatch<React.SetStateAction<MediaRecorder | null>>,
-  setIncomingCall: React.Dispatch<React.SetStateAction<{ offer: RTCSessionDescriptionInit, receiverId: string, callerId: string, roomId: string } | null>>,
+  fakeMediaRecorder: MediaRecorder | null;
+  setIncomingCall: React.Dispatch<React.SetStateAction<IncomingCallType | null>>,
   makeCallAudioRef: React.MutableRefObject<HTMLAudioElement | null>,
   setEndCall: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -37,6 +38,7 @@ const acceptVoiceCall = async (
     chatInputValue,
     setChatInputValue,
     setFakeMediaRecorder,
+    fakeMediaRecorder,
     setIncomingCall,
     makeCallAudioRef,
     setEndCall
@@ -56,18 +58,34 @@ const acceptVoiceCall = async (
     if (stream) {
       localStream.current = stream;
       remoteStream.current = new MediaStream();
-      peerConnection.current = createPeerConnection({ homeSocket, currentUserId, currentRoom, currentRoomId });
+      peerConnection.current = createPeerConnection({ homeSocket, currentUserId, currentRoom, currentRoomId, incomingCall });
 
       // Listen for incoming remote tracks
       peerConnection.current.ontrack = (event) => {
-        event.streams[0].getTracks().forEach(track => {
-          remoteStream.current?.addTrack(track);
-        });
 
-        // Start MediaRecorder when we have remote audio
-        if (remoteStream.current && remoteStream.current.getTracks().length > 0) {
+        // Ensure remoteStream exists
+        if (!remoteStream.current) {
+          remoteStream.current = new MediaStream();
+        }
+
+        // Add track if not already present
+        if (event.track && !remoteStream.current.getTracks().some(t => t.id === event.track.id)) {
+          remoteStream.current.addTrack(event.track);
+        }
+
+        // Attach to audio element
+        const audioEl = document.getElementById("remoteAudio") as HTMLAudioElement | null;
+        if (audioEl && audioEl.srcObject !== remoteStream.current) {
+          audioEl.srcObject = remoteStream.current;
+          audioEl.onloadedmetadata = () => audioEl.play().catch(err => console.warn("audio play failed", err));
+        }
+
+        // Start MediaRecorder ONLY ONCE
+        if (!fakeMediaRecorder && event.track.kind === "audio") {
           try {
-            const mediaRecorder = new MediaRecorder(remoteStream.current, { mimeType: "audio/webm;codecs=opus" });
+            const mediaRecorder = new MediaRecorder(remoteStream.current, {
+              mimeType: "audio/webm;codecs=opus",
+            });
             mediaRecorder.onerror = (err) => console.error("MediaRecorder error:", err);
             mediaRecorder.start();
             setFakeMediaRecorder(mediaRecorder);
@@ -101,7 +119,7 @@ const acceptVoiceCall = async (
         makeCallAudioRef.current.pause();
       }
 
-      setIncomingCall(null);
+      // setIncomingCall(null);
     }
 
   } catch (error) {

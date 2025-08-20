@@ -45,6 +45,8 @@ import { AppCacheProvider } from '@mui/material-nextjs/v13-pagesRouter'
 import { StyledEngineProvider } from '@mui/material/styles';
 import useFirebaseNotifications from '@/hooks/useFirebaseNotifications'
 import { getFcmToken } from '@/helpers/firebase'
+import { ChatProvider } from '@/hooks/useChat'
+import { NextRouter } from 'next/router'
 export interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
 }
@@ -64,7 +66,7 @@ export const loadStylesheet = (href: string) => {
 const App = ({ Component, ...rest }: MyAppProps) => {
   const { store, props } = wrapper.useWrappedStore(rest);
   const { router, emotionCache = clientSideEmotionCache, pageProps } = props;
-  useFirebaseNotifications();
+
   useEffect(() => {
     loadStylesheet('/css/owl.carousel.min.css');
     loadStylesheet('/css/owl.theme.default.min.css');
@@ -79,46 +81,37 @@ const App = ({ Component, ...rest }: MyAppProps) => {
       once: true,
       offset: 50,
     });
-    getFcmToken().then((token) => {
-      // console.log('FCM Token:', token);
-    });
+    getFcmToken().then((token) => { });
   }, []);
-
+  function InnerApp({ Component, pageProps, router }: InnerAppProps) {
+    useFirebaseNotifications(); // safe here, because ChatProvider is already wrapping
+    return <Component {...pageProps} key={router.route} router={router} />;
+  }
   return (
     <>
       {/* <AppCacheProvider {...props} > */}
       <Provider store={store}>
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
-          <AppWrapper>
-            <Component {...pageProps} key={router.route} router={router} />
-          </AppWrapper>
+          <ChatProvider>
+            <AppWrapper>
+              <InnerApp Component={Component} pageProps={pageProps} router={router} />
+            </AppWrapper>
+          </ChatProvider>
         </GoogleOAuthProvider>
       </Provider>
-      {/* </AppCacheProvider> */}
-      {/* CacheProvider break in production */}
-      {/* {
-        process.env.NODE_ENV == 'development' ?
-          <CacheProvider value={emotionCache}>
-            <Provider store={store}>
-              <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
-                <AppWrapper>
-                  <Component {...pageProps} key={router.route} router={router} />
-                </AppWrapper>
-              </GoogleOAuthProvider>
-            </Provider>
-          </CacheProvider >
-          :
-          <Provider store={store}>
-            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
-              <AppWrapper>
-                <Component {...pageProps} key={router.route} router={router} />
-              </AppWrapper>
-            </GoogleOAuthProvider>
-          </Provider>
-
-      } */}
     </>
   )
 }
 
 export default App
+
+type InnerAppProps = {
+  Component: AppProps["Component"];
+  pageProps: AppProps["pageProps"];
+  router: NextRouter;
+};
+
+function InnerApp({ Component, pageProps, router }: InnerAppProps) {
+  useFirebaseNotifications(); // now inside ChatProvider tree
+  return <Component {...pageProps} key={router.route} router={router} />;
+}

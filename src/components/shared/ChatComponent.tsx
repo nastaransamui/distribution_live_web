@@ -13,7 +13,6 @@ import { BootstrapDialog, BootstrapDialogTitle, Transition } from './Dialog';
 import Snackbar from '@mui/material/Snackbar'
 import useScssVar from '@/hooks/useScssVar';
 import _ from 'lodash';
-import { CallDialog } from './chatComponents/CallDialog';
 import ChatLeftHeader from './chatComponents/ChatLeftHeader';
 import ChatLeftSearch from './chatComponents/ChatLeftSearch';
 import ChatRightBody from './chatComponents/ChatRightBody';
@@ -39,10 +38,6 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
 
   const {
     footerHeight,
-    voiceCallActive,
-    voiceCallToggleFunction,
-    videoCallActive,
-    videoCallToggleFunction,
     currentRoom,
     deleteConfirmationShow,
     setDeleteConfirmationShow,
@@ -82,12 +77,7 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
           </div>
         </div>
       </div>
-      {voiceCallActive &&
-        <CallDialog callType='Voice' open={voiceCallActive} toggleFunction={voiceCallToggleFunction} />
-      }
-      {videoCallActive &&
-        <CallDialog callType='Video' open={videoCallActive} toggleFunction={videoCallToggleFunction} />
-      }
+
 
       {deleteConfirmationShow && <BootstrapDialog
         TransitionComponent={Transition}

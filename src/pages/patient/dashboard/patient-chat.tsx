@@ -24,8 +24,7 @@ import { ErrorComponent } from '@/pages/404';
 import PatientDashboardSidebar from '@/components/shared/PatientDashboardSidebar';
 import useScssVar from '@/hooks/useScssVar';
 import { updateHomeSideBarOpen } from '@/redux/homeSideBarOpen';
-import DashboardFooter from '@/components/sections/DashboardFooter';
-import { ChatProvider } from '@/hooks/useChat';
+
 
 const PatientChatPage: NextPage = (props: any) => {
   const homeSideBarOpen = useSelector((state: AppState) => state.homeSideBarOpen.value)
@@ -50,9 +49,9 @@ const PatientChatPage: NextPage = (props: any) => {
         <div className="container-fluid">
           <div className="row">
             <PatientDashboardSidebar />
-            <ChatProvider>
-              <ChatComponent userType='doctors' />
-            </ChatProvider>
+
+            <ChatComponent userType='doctors' />
+
           </div>
         </div>
       </div>

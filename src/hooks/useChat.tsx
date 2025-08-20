@@ -11,7 +11,7 @@ import useScssVar from "./useScssVar";
 import { Image_placeholder } from "@/public/assets/imagepath";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useAudioRecorder } from "react-audio-voice-recorder";
-import { AttachmentType, ChatDataType, ChatUserType, MessageType } from "../../@types/chatTypes";
+import { AttachmentType, ChatDataType, ChatUserType, IncomingCallType, MessageType } from "../../@types/chatTypes";
 
 import sortLatestMessage from "./useChatHelpers/sortLatestMessage";
 import rawOnLeftUserClicked from "./useChatHelpers/onLeftUserClicked";
@@ -106,8 +106,9 @@ interface ChatContextType {
   showSnackBar: { show: boolean, text: string };
   setShowSnakBar: React.Dispatch<React.SetStateAction<{ show: boolean, text: string }>>;
   acceptVoiceCall: () => void;
-  incomingCall: { offer: RTCSessionDescriptionInit, receiverId: string, callerId: string, roomId: string } | null;
-  setIncomingCall: React.Dispatch<React.SetStateAction<{ offer: RTCSessionDescriptionInit, receiverId: string, callerId: string, roomId: string } | null>>;
+  incomingCall: IncomingCallType | null;
+  setIncomingCall: React.Dispatch<React.SetStateAction<IncomingCallType | null
+  >>;
   minWidth768: boolean;
   fakeMediaRecorder: MediaRecorder | null;
 
@@ -129,6 +130,8 @@ interface ChatContextType {
   setEndCall: React.Dispatch<React.SetStateAction<boolean>>;
   showEmptyRoomInSearchList: string[];
   setShowEmptyRoomInSearchList: React.Dispatch<React.SetStateAction<string[]>>;
+  makeCallAudioRef: React.MutableRefObject<HTMLAudioElement | null>
+  missedCallTimeout: React.MutableRefObject<NodeJS.Timeout | null>
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
@@ -164,7 +167,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const currentUserId = userProfile?._id
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [showSnackBar, setShowSnakBar] = useState<{ show: boolean, text: string }>({ show: false, text: '' })
-  const [incomingCall, setIncomingCall] = useState<{ offer: RTCSessionDescriptionInit, receiverId: string, callerId: string, roomId: string } | null>(null);
+  const [incomingCall, setIncomingCall] = useState<IncomingCallType | null>(null);
   const [fakeMediaRecorder, setFakeMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [chatInputValue, setChatInputValue] = useState<MessageType>({
@@ -327,6 +330,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setShowSnakBar,
       setAudioBlob,
       audioBlobRef,
+      incomingCall,
+      setIncomingCall
     })
   const acceptVoiceCall = () =>
     rawAcceptVoiceCall({
@@ -343,6 +348,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       chatInputValue,
       setChatInputValue,
       setFakeMediaRecorder,
+      fakeMediaRecorder,
       setIncomingCall,
       makeCallAudioRef,
       setEndCall,
@@ -461,6 +467,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setShowSnakBar,
     setAudioBlob,
     audioBlobRef,
+    incomingCall
   })
 
   useConfirmCallHandler({
@@ -546,12 +553,26 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setReload(() => !reload);
     });
 
+
     return () => {
       socket.off("updateGetSingleRoomById");
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // just for call if room is not active and click on call button in left chat
+  useEffect(() => {
+    if (typeof window != 'undefined') {
+      if (currentRoom !== null) {
+        if (currentRoom?.roomId == localStorage.getItem('queuedCallRoomId')) {
+          voiceCallToggleFunction();
+          localStorage.removeItem('queuedCallRoomId')
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRoom, currentRoom?.roomId])
 
   return (
     <ChatContext.Provider value={{
@@ -623,7 +644,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       togglePauseResume,
       isPaused,
       clearRecording,
-      handleDownload
+      handleDownload,
+      makeCallAudioRef,
+      missedCallTimeout
     }}>
       {children}
     </ChatContext.Provider>

@@ -21,6 +21,8 @@ type EndVoiceCallProps = {
   setShowSnakBar: React.Dispatch<React.SetStateAction<{ show: boolean, text: string }>>;
   setAudioBlob: React.Dispatch<React.SetStateAction<Blob | null>>,
   audioBlobRef: React.MutableRefObject<Blob | null>;
+  createrData: ChatUserType;
+  receiverData: ChatUserType;
 }
 
 const endVoiceCall = (
@@ -43,6 +45,8 @@ const endVoiceCall = (
     setShowSnakBar,
     setAudioBlob,
     audioBlobRef,
+    createrData,
+    receiverData
   }: EndVoiceCallProps
 ) => {
   if (!homeSocket?.current) return;
@@ -103,7 +107,8 @@ const endVoiceCall = (
     text: "The call has ended.",
     show: true,
   });
-  homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue, })
+
+  homeSocket.current.emit('endVoiceCall', { messageData: updatedChatInputValue, callerData: createrData, receiverData })
 }
 
 export default endVoiceCall

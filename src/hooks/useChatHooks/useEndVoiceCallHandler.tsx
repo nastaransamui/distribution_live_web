@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { ChatUserType, MessageType } from "../../../@types/chatTypes";
+import { ChatUserType, IncomingCallType, MessageType } from "../../../@types/chatTypes";
 import endVoiceCall from "../useChatHelpers/endVoiceCall";
 
 type UseEndVoiceCallHandlerProps = {
@@ -21,6 +21,7 @@ type UseEndVoiceCallHandlerProps = {
   setShowSnakBar: React.Dispatch<React.SetStateAction<{ show: boolean, text: string }>>;
   setAudioBlob: React.Dispatch<React.SetStateAction<Blob | null>>,
   audioBlobRef: React.MutableRefObject<Blob | null>;
+  incomingCall: IncomingCallType | null;
 }
 
 const useEndVoiceCallHandler = ({
@@ -42,10 +43,13 @@ const useEndVoiceCallHandler = ({
   setShowSnakBar,
   setAudioBlob,
   audioBlobRef,
+  incomingCall,
 }: UseEndVoiceCallHandlerProps) => {
   // Create a stable listener
   const handleEndVoiceCall = useCallback(() => {
     if (endCall) return;
+    const createrData = incomingCall?.callerData as ChatUserType
+    const receiverData = incomingCall?.receiverData as ChatUserType
     endVoiceCall({
       homeSocket,
       chatInputValue,
@@ -65,6 +69,8 @@ const useEndVoiceCallHandler = ({
       setShowSnakBar,
       setAudioBlob,
       audioBlobRef,
+      createrData,
+      receiverData,
     });
   }, [
     endCall,
@@ -85,6 +91,7 @@ const useEndVoiceCallHandler = ({
     setShowSnakBar,
     setAudioBlob,
     audioBlobRef,
+    incomingCall
   ]);
   useEffect(() => {
     if (!homeSocket?.current) return;

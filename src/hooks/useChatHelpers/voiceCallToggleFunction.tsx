@@ -1,4 +1,4 @@
-import { ChatDataType, ChatUserType, MessageType } from "../../../@types/chatTypes";
+import { ChatDataType, ChatUserType, IncomingCallType, MessageType } from "../../../@types/chatTypes";
 import endVoiceCall from "./endVoiceCall";
 import makeVoiceCall from "./makeVoiceCall";
 
@@ -25,6 +25,8 @@ type VoiceCallToggleFunctionProps = {
   setShowSnakBar: React.Dispatch<React.SetStateAction<{ show: boolean, text: string }>>;
   setAudioBlob: React.Dispatch<React.SetStateAction<Blob | null>>,
   audioBlobRef: React.MutableRefObject<Blob | null>;
+  incomingCall: IncomingCallType | null;
+  setIncomingCall: React.Dispatch<React.SetStateAction<IncomingCallType | null>>,
 }
 
 const voiceCallToggleFunction = (
@@ -51,6 +53,8 @@ const voiceCallToggleFunction = (
     setShowSnakBar,
     setAudioBlob,
     audioBlobRef,
+    incomingCall,
+    setIncomingCall
   }: VoiceCallToggleFunctionProps
 ) => {
   const drautoComplet = document.querySelector('.MuiAutocomplete-root') as HTMLElement
@@ -68,11 +72,15 @@ const voiceCallToggleFunction = (
       setVoiceCallActive,
       makeCallAudioRef,
       setEndCall,
+      setIncomingCall,
+      incomingCall
     });
     if (drautoComplet) {
       drautoComplet.style.zIndex = "1";
     }
   } else {
+    const createrData = incomingCall?.callerData as ChatUserType
+    const receiverData = incomingCall?.receiverData as ChatUserType
     endVoiceCall({
       homeSocket,
       chatInputValue,
@@ -92,6 +100,8 @@ const voiceCallToggleFunction = (
       setShowSnakBar,
       setAudioBlob,
       audioBlobRef,
+      createrData,
+      receiverData,
     });
     if (drautoComplet) {
       drautoComplet.style.zIndex = "1301";

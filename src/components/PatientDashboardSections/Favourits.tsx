@@ -345,39 +345,33 @@ const Favourits: FC = (() => {
             key="view-action"
             icon={
               <Tooltip arrow title="Remove doctor to favorite.">
-                <IconButton
-                  disableFocusRipple
-                  disableRipple
-                  aria-label="add to favorites"
-                  onClick={() => {
-                    setFavIconLoading((prevState) => {
-                      return {
-                        ...prevState,
-                        [params.row?._id]: true
-                      }
-                    });
-
-                    removeFavDoctor(params.row?._id)
-                  }}
-                >
-                  {!favIconLoading[params.row._id] ?
-                    <FavoriteIcon sx={{
+                {!favIconLoading[params.row._id] ?
+                  <FavoriteIcon sx={{
+                    animation: `heartbeat 1s infinite`,
+                    color: 'deeppink',
+                    "&:hover": {
                       animation: `heartbeat 1s infinite`,
-                      color: 'deeppink',
-                      "&:hover": {
-                        animation: `heartbeat 1s infinite`,
-                        color: 'deeppink'
-                      },
-                    }} /> :
-                    <SyncIcon sx={{
-                      color: 'primary.main',
-                      animation: `rotate 3s infinite`,
-                    }} />
-                  }
-                </IconButton>
+                      color: 'deeppink'
+                    },
+                  }} /> :
+                  <SyncIcon sx={{
+                    color: 'primary.main',
+                    animation: `rotate 3s infinite`,
+                  }} />
+                }
               </Tooltip>
             }
-            label="View" />,
+            label="View"
+            onClick={() => {
+              setFavIconLoading((prevState) => {
+                return {
+                  ...prevState,
+                  [params.row?._id]: true
+                }
+              });
+
+              removeFavDoctor(params.row?._id)
+            }} />,
 
         ]
       }

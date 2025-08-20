@@ -34,14 +34,14 @@ const useFetchUserRooms = ({
 }: UseFetchUserRoomsProps) => {
   const router = useRouter();
   useEffect(() => {
-    if (!homeSocket?.current) return;
+    if (!homeSocket?.current || userProfile?._id == null || userProfile?._id == undefined) return;
     const socket = homeSocket.current;
 
     socket.emit('getUserRooms', { userId: userProfile?._id })
     socket.once('getUserRoomsReturn', async (msg: { status: number, reason?: string, message?: string, userRooms: ChatDataType[] }) => {
       const { status, reason, message } = msg;
       if (status !== 200) {
-        toast.error(reason || message || `Error ${status} find Doctor`);
+        toast.error(reason || message || `Error ${status} get User Rooms`);
       } else {
         const { userRooms } = msg;
         // Process attachments before updating the state to get private images

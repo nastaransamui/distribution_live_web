@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       if (hasCookie('homeThemeName', ctx)) {
         store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
       }
-      console.log(hasCookie('homeAccessToken', ctx))
+
       if (hasCookie('homeAccessToken', ctx)) {
         const accessToken = getCookie('homeAccessToken', ctx);
         const user_id = getCookie('user_id', ctx);

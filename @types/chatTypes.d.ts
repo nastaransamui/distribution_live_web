@@ -27,16 +27,16 @@ export interface ChatUserType {
 }
 
 export interface MessageType {
-  senderId: string;
-  receiverId: string;
-  senderFcmTokens: string[];
-  receiverFcmTokens: string[];
-  timestamp: number;
-  message: null | string;
-  read: boolean;
   attachment: AttachmentType[];
   calls: CallType[];
+  message: null | string;
+  read: boolean;
+  receiverFcmTokens: string[];
+  receiverId: string;
   roomId: string;
+  senderFcmTokens: string[];
+  senderId: string;
+  timestamp: number;
 }
 
 export interface ChatDataType {
@@ -47,4 +47,13 @@ export interface ChatDataType {
   totalUnreadMessage?: number;
   roomId: string;
   _id?: string;
+}
+export interface IncomingCallType {
+  callerData: ChatUserType;
+  callerId: string;
+  messageData: MessageType;
+  offer: RTCSessionDescriptionInit;
+  receiverData: ChatUserType;
+  receiverId: string;
+  roomId: string;
 }

@@ -1,10 +1,11 @@
-import { ChatDataType } from "../../../@types/chatTypes";
+import { ChatDataType, IncomingCallType } from "../../../@types/chatTypes";
 
 type CreatePeerConnectionProps = {
   homeSocket: any,
   currentUserId: string | undefined,
   currentRoom: ChatDataType | null,
-  currentRoomId: string | null
+  currentRoomId: string | null,
+  incomingCall: IncomingCallType | null;
 }
 
 const peerConnectionConfiguration = { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] }
@@ -14,6 +15,7 @@ const createPeerConnection = (
     currentUserId,
     currentRoom,
     currentRoomId,
+    incomingCall
   }: CreatePeerConnectionProps
 ) => {
   const pc = new RTCPeerConnection(peerConnectionConfiguration);
@@ -21,9 +23,11 @@ const createPeerConnection = (
     if (event.candidate && homeSocket.current) {
       const callerId = currentUserId;
       const receiverId =
-        currentRoom?.createrData.userId == callerId ?
-          currentRoom?.receiverData.userId :
-          currentRoom?.createrData.userId
+        // currentRoom !== null ?
+        //   currentRoom?.createrData.userId == callerId ?
+        //     currentRoom?.receiverData.userId :
+        //     currentRoom?.createrData.userId : 
+        incomingCall?.messageData.receiverId;
 
       homeSocket.current.emit("newIceCandidate", {
         candidate: {
@@ -33,7 +37,9 @@ const createPeerConnection = (
         },
         callerId,
         receiverId,
-        roomId: currentRoomId
+        roomId:
+          // currentRoom !== null ? currentRoom?.roomId : 
+          incomingCall?.roomId
       });
     }
   }
