@@ -312,7 +312,7 @@ const GeoLocationAutocomplete: FC<GeoLocationAutocompleteProps> = ((props: GeoLo
                 {...params}
                 inputProps={{
                   ...params.inputProps,
-                  autoComplete: 'new-password',
+                  autoComplete: 'off',
                   required: required == undefined ? true : required,
                   'aria-autocomplete': "none"
                 }}

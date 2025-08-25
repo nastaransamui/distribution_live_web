@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useState } from 'react'
+import { FC, Fragment, useEffect, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import FeatherIcon from "feather-icons-react";
 import TextField from "@mui/material/TextField";
@@ -6,7 +6,6 @@ import IconButton from '@mui/material/IconButton'
 import { useTheme } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -17,26 +16,31 @@ import { AppState } from '@/redux/store';
 import GeoLocationAutocomplete from '../shared/GeoLocationAutocomplete';
 import { useForm } from 'react-hook-form';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
+import { Filters, SetFilters, SetPage, shallowEqualFilters } from './SearchDoctorSection';
 
 
-function valuetext(value: number) {
-  return `${value}°C`;
-}
-const SearchFilter: FC<{ setPage: Function }> = (({ setPage }) => {
+
+const SearchFilter: FC<{ setPage: SetPage; filters: Filters; setFilters: SetFilters }> = (({ setPage, filters, setFilters }) => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
-  const searchParams = useSearchParams()
   const router = useRouter()
   const specialitiesData = useSelector((state: AppState) => state.specialities.value)
-  const specialities = searchParams.get('specialities')
+
   const dispatch = useDispatch();
-  // const keyWord = searchParams.get('keyWord')
-  const [keyWord, setKeyWord] = useState<string | null>(searchParams.get('keyWord'))
-  const gender = searchParams.get('gender')
-  const available = searchParams.get('available')
-  const country = searchParams.get('country')
-  const state = searchParams.get('state')
-  const city = searchParams.get('city')
+  const [keyWord, setKeyWord] = useState<string | null>(filters.keyWord)
+
+  // value / inputValue initialisation from filters instead of getValues/searchParams
+  const [value, setValue] = useState<any>({
+    city: filters.city == null || filters.city === '' ? null : filters.city,
+    state: filters.state == null || filters.state === '' ? null : filters.state,
+    country: filters.country == null || filters.country === '' ? null : filters.country,
+  });
+
+  const [inputValue, setInputValue] = useState({
+    city: filters.city || '',
+    state: filters.state || '',
+    country: filters.country || '',
+  });
   const {
     register,
     clearErrors,
@@ -45,21 +49,12 @@ const SearchFilter: FC<{ setPage: Function }> = (({ setPage }) => {
     setValue: setFormValue,
   } = useForm({
     defaultValues: {
-      country: country ? country : '',
-      state: state ? state : '',
-      city: city ? city : '',
+      country: filters.country ? filters.country : '',
+      state: filters.state ? filters.state : '',
+      city: filters.city ? filters.city : '',
     }
   })
-  const [value, setValue] = useState<any>({
-    city: getValues('city') == '' ? null : getValues('city'),
-    state: getValues('state') == '' ? null : getValues('state'),
-    country: getValues('country') == '' ? null : getValues('country'),
-  });
-  const [inputValue, setInputValue] = useState({
-    city: getValues('city') || '',
-    state: getValues('state') || '',
-    country: getValues('country') || '',
-  });
+
 
   const [disable, setDisable] = useState({
     city: false,
@@ -70,41 +65,66 @@ const SearchFilter: FC<{ setPage: Function }> = (({ setPage }) => {
   useEffect(() => {
     let paramsObj = {
       ...value,
-      specialities,
-      gender,
+      specialities: filters.specialities, // keep the one from current filters (if any)
+      gender: filters.gender,
       keyWord,
-      available
+      available: filters.available
     }
     let param: any[] = []
     Object.values(paramsObj).forEach((doc, index) => {
       if (doc !== null && doc !== '') {
-        if (Object.keys(paramsObj)[index] == 'specialities') {
-          //If specialities name change clear filter
+        const key = Object.keys(paramsObj)[index];
+        if (key === 'specialities') {
           if (!specialitiesData.map((a) => a.specialities).includes(doc as string)) {
-            param = param.filter((a) => a.strartsWith('specialities'))
+            param = param.filter((a) => a.startsWith('specialities'))
           } else {
-            //other wise add specialities to filters
-            param.push(`${Object.keys(paramsObj)[index]}=${doc}`)
+            param.push(`${key}=${doc}`)
           }
         } else {
-          //Add other filters than specialites
-          param.push(`${Object.keys(paramsObj)[index]}=${doc}`)
+          param.push(`${key}=${doc}`)
         }
-
       }
     })
 
     let url = `/doctors/search${param.length !== 0 ? `?${param.join('&').replace(/\s/g, "%20")}` : ``}`
 
 
-    if (router.asPath !== url) {
-      router.push(url, undefined, { shallow: true, scroll: false })
-      setPage(1)
-    }
+    // if (router.asPath !== url) {
+    //   router.push(url, undefined, { shallow: true, scroll: false })
+    //   setPage(1)
+    // }
+
+    // Instead of router.push, update local filters state (no URL write)
+    setFilters((prev: any) => ({
+      ...prev,
+      ...value,
+      keyWord
+    }));
+    setPage(1);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city, country, gender, keyWord, router, specialities, state, value, specialitiesData, available])
+  }, [value, keyWord, filters.specialities, filters.gender, filters.available, specialitiesData])
 
+  const lastWriteRef = useRef<number>(0); // increment when this child writes filters
+
+  useEffect(() => {
+
+    const nextFilters = {
+      ...filters, // keep other filter keys (specialities/gender/available) intact
+      ...value,
+      keyWord,
+    };
+
+    // avoid writing identical object (no-op)
+    if (shallowEqualFilters(filters, nextFilters)) return;
+
+    // mark that this child is writing (timestamp helps)
+    lastWriteRef.current = Date.now();
+    setFilters(nextFilters);
+    setPage(1);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, keyWord]);
   return (
     <Fragment>
       <div className="card search-filter" style={muiVar}>
@@ -119,15 +139,46 @@ const SearchFilter: FC<{ setPage: Function }> = (({ setPage }) => {
               label={keyWord !== null ? "Key word" : ""}
               value={keyWord || ''}
               size='small'
-              onChange={(e) => setKeyWord(e.target.value == '' ? null : e.target.value)}
+              onChange={(e) => {
+                const v = e.target.value === '' ? null : e.target.value;
+                setKeyWord(v);
+
+                // update parent filters BUT DON'T router.push — parent will use `filters` when other filters push
+                setFilters((prev: any) => {
+                  // avoid useless set (keeps from triggering extra renders)
+                  if (prev.keyWord === v) return prev;
+                  return { ...prev, keyWord: v };
+                });
+              }}
+              autoFocus
+              sx={{
+                '& .MuiInputLabel-root': {
+                  color: theme.palette.secondary.main,
+                },
+                '& label.Mui-focused': {
+                  color: theme.palette.secondary.main,
+                },
+                '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: theme.palette.primary.main,
+                }
+              }}
               InputProps={{
                 autoComplete: 'off',
                 endAdornment:
                   <InputAdornment position='end'>
-                    {keyWord !== null &&
-                      <IconButton disableTouchRipple onClick={() => setKeyWord(null)}>
+                    {
+                      filters.keyWord !== null &&
+                      <IconButton disableTouchRipple onClick={() => {
+                        setKeyWord(null);
+                        setFilters((prev: any) => {
+                          if (prev.keyWord === null) return prev;
+                          return { ...prev, keyWord: null };
+                        });
+                        setPage(1);
+                      }}>
                         <FeatherIcon icon="x" style={{ color: theme.palette.secondary.main }} />
-                      </IconButton>}
+                      </IconButton>
+                    }
                   </InputAdornment>
               }}
             />
@@ -144,7 +195,7 @@ const SearchFilter: FC<{ setPage: Function }> = (({ setPage }) => {
                   fullWidth
                 >
                   <RadioGroup
-                    value={gender ? gender : ''}
+                    value={filters.gender ? filters.gender : ''}
                     sx={{ justifyContent: 'space-evenly' }}
                     onChange={(e) => {
                       let url;
@@ -152,12 +203,12 @@ const SearchFilter: FC<{ setPage: Function }> = (({ setPage }) => {
                         delete router.query?.gender
                         url = {
                           pathname: router.pathname,
-                          query: { ...router.query }
+                          query: { ...router.query, keyWord: filters.keyWord, }
                         }
                       } else {
                         url = {
                           pathname: router.pathname,
-                          query: { ...router.query, gender: e.target.value }
+                          query: { ...router.query, gender: e.target.value, keyWord: filters.keyWord, }
                         }
                       }
                       dispatch(updateHomeFormSubmit(true))
@@ -187,7 +238,7 @@ const SearchFilter: FC<{ setPage: Function }> = (({ setPage }) => {
                   fullWidth
                 >
                   <RadioGroup
-                    value={available ? available : ''}
+                    value={filters.available ? filters.available : ''}
                     sx={{ justifyContent: 'space-evenly' }}
                     onChange={(e) => {
                       let url;
@@ -195,12 +246,12 @@ const SearchFilter: FC<{ setPage: Function }> = (({ setPage }) => {
                         delete router.query?.available
                         url = {
                           pathname: router.pathname,
-                          query: { ...router.query }
+                          query: { ...router.query, keyWord: filters.keyWord, }
                         }
                       } else {
                         url = {
                           pathname: router.pathname,
-                          query: { ...router.query, available: e.target.value }
+                          query: { ...router.query, available: e.target.value, keyWord: filters.keyWord, }
                         }
                       }
                       dispatch(updateHomeFormSubmit(true))
@@ -252,7 +303,7 @@ const SearchFilter: FC<{ setPage: Function }> = (({ setPage }) => {
                   fullWidth
                 >
                   <RadioGroup
-                    value={specialities ? specialities : ''}
+                    value={filters.specialities ? filters.specialities : ''}
                     sx={{ justifyContent: 'space-evenly' }}
                     onChange={(e) => {
                       let url;
@@ -260,12 +311,12 @@ const SearchFilter: FC<{ setPage: Function }> = (({ setPage }) => {
                         delete router.query?.specialities
                         url = {
                           pathname: router.pathname,
-                          query: { ...router.query }
+                          query: { ...router.query, keyWord: filters.keyWord, }
                         }
                       } else {
                         url = {
                           pathname: router.pathname,
-                          query: { ...router.query, specialities: e.target.value }
+                          query: { ...router.query, specialities: e.target.value, keyWord: filters.keyWord, }
                         }
                       }
                       dispatch(updateHomeFormSubmit(true))

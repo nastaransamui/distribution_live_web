@@ -118,6 +118,24 @@ export interface DoctorProfileType {
   };
 
 }
+type NullableString = string | null;
+
+// filters shape (matches your useState initializer)
+export type Filters = {
+  specialities: NullableString;
+  keyWord: NullableString;
+  gender: NullableString;
+  available: NullableString;
+  country: NullableString;
+  state: NullableString;
+  city: NullableString;
+}
+
+// the setter you pass down
+export type SetFilters = React.Dispatch<React.SetStateAction<Filters>>;
+
+// if you want to pass setPage explicitly typed
+export type SetPage = React.Dispatch<React.SetStateAction<number>>;
 
 
 
@@ -126,15 +144,19 @@ const SearchDoctorSection: FC = (() => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [reload, setReload] = useState<boolean>(false)
-  const searchParams = useSearchParams()
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
-  const specialities = searchParams.get('specialities')
-  const keyWord = searchParams.get('keyWord')
-  const gender = searchParams.get('gender')
-  const available = searchParams.get('available')
-  const country = searchParams.get('country')
-  const state = searchParams.get('state')
-  const city = searchParams.get('city')
+  const searchParams = useSearchParams();
+
+  // Local filters state (initialised from URL once)
+  const [filters, setFilters] = useState<Filters>(() => ({
+    specialities: searchParams.get('specialities'),
+    keyWord: searchParams.get('keyWord'),
+    gender: searchParams.get('gender'),
+    available: searchParams.get('available'),
+    country: searchParams.get('country'),
+    state: searchParams.get('state'),
+    city: searchParams.get('city'),
+  }));
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
 
@@ -196,9 +218,6 @@ const SearchDoctorSection: FC = (() => {
             }
           });
         } else {
-          homeSocket.current.on(`updateDoctorSearch`, (msg: any) => {
-            setReload(!reload)
-          })
           setDoctorResults((prevState) => {
             if (doctors) {
               prevState = [...doctors]
@@ -222,26 +241,64 @@ const SearchDoctorSection: FC = (() => {
 
     let active = true;
     if (active && homeSocket?.current) {
-      fetch(keyWord,
-        specialities,
-        gender,
-        available,
-        country,
-        state,
-        city,
+      fetch(
+        filters.keyWord,
+        filters.specialities,
+        filters.gender,
+        filters.available,
+        filters.country,
+        filters.state,
+        filters.city,
         sortModel,
         homeSocket,
         reload,
         page,
-        perPage)
+        perPage
+      )
     }
     return () => {
       active = false;
     }
-  }, [city, country, gender, available, homeSocket, keyWord, specialities, state, reload, page, sortModel, perPage,
-    // isLoading,
-    fetch])
+  }, [filters, homeSocket, reload, page, sortModel, perPage, fetch])
 
+  useEffect(() => {
+    if (!homeSocket?.current) return;
+    const socket = homeSocket.current;
+    socket.on(`updateDoctorSearch`, (msg: any) => {
+      setReload(!reload)
+    })
+    return () => {
+      socket.off('updateDoctorSearch')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeSocket])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const syncFiltersFromUrl = () => {
+      const sp = new URLSearchParams(window.location.search);
+      const next = {
+        specialities: sp.get('specialities'),
+        keyWord: sp.get('keyWord'),
+        gender: sp.get('gender'),
+        available: sp.get('available'),
+        country: sp.get('country'),
+        state: sp.get('state'),
+        city: sp.get('city'),
+      };
+      // only update if actually different (avoid useless setFilters)
+      setFilters(prev => {
+        if (shallowEqualFilters(prev, next)) return prev;
+        return { ...prev, ...next };
+      });
+    };
+
+    // DO NOT call syncFiltersFromUrl() immediately — initial state already read from URL.
+    // only listen for popstate events (back/forward)
+    window.addEventListener('popstate', syncFiltersFromUrl);
+    return () => window.removeEventListener('popstate', syncFiltersFromUrl);
+  }, [setFilters]);
   return (
     <Fragment>
       <div className="doctor-content content" style={muiVar}>
@@ -249,13 +306,13 @@ const SearchDoctorSection: FC = (() => {
           <div className="row">
             <div className="col-xl-12 col-lg-12 map-view">
               <div className="row">
-                <div className="col-lg-3  theiaStickySidebar  animate__animated animate__backInUp">
+                <div className="col-lg-3  theiaStickySidebar  ">
                   <StickyBox offsetTop={100} offsetBottom={20}>
-                    <SearchFilter setPage={setPage} />
+                    <SearchFilter setPage={setPage} filters={filters} setFilters={setFilters} />
                   </StickyBox>
                 </div>
                 <div className="col-lg-9" ref={componentRef}>
-                  <div className='card   animate__animated animate__backInUp' style={{ padding: '30px 10px' }}>
+                  <div className='card   ' style={{ padding: '30px 10px' }}>
                     <DoctorSearchResults
                       doctorResults={doctorResults}
                       totalDoctors={totalDoctors}
@@ -266,6 +323,7 @@ const SearchDoctorSection: FC = (() => {
                       sortModel={sortModel}
                       setSortModel={setSortModel}
                       isLoading={isLoading}
+                      filters={filters}
                     />
                   </div>
                   <ScrollToTop />
@@ -307,3 +365,13 @@ export const useContainerDimensions = (myRef: any) => {
 
   return dimensions;
 };
+
+export const shallowEqualFilters = (a: Record<string, any>, b: Record<string, any>) => {
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) return false;
+  for (let k of aKeys) {
+    if (a[k] !== b[k]) return false;
+  }
+  return true;
+}

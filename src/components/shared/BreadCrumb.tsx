@@ -18,10 +18,9 @@ const BreadCrumb: FC<BreadCrumbProps> = (({ title, subtitle }: BreadCrumbProps) 
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
   const router = useRouter();
-
   return (
     <Fragment>
-      <div className="breadcrumb-bar-two  animate__animated animate__lightSpeedInLeft" style={muiVar}>
+      <div className={`breadcrumb-bar-two  ${router.pathname.startsWith('/doctors/search') ? '' : 'animate__animated animate__lightSpeedInLeft'}`} style={muiVar}>
         <div className="container">
           <div className="row align-items-center inner-banner">
             <div className="col-md-12 col-12 text-center">

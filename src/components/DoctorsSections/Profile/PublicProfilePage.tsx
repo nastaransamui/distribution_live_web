@@ -74,7 +74,7 @@ const PublicProfilePage: FC = (() => {
           <Fragment>
             {
               profile == null ?
-                <div className="card  animate__animated animate__backInUp">
+                <div className="card  ">
                   <div className="card-body">
                     <div className="table-responsive">
                       <Box sx={{ minHeight: "500px" }} className="dataGridOuterBox">

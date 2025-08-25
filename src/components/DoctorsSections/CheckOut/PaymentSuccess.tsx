@@ -62,7 +62,7 @@ const PaymentSuccess: FC = (() => {
           homeSocket.current.once(`findReservationByIdReturn`, (msg: { status: number, reservation: AppointmentReservationExtendType, reason?: string }) => {
             const { status, reservation, reason } = msg;
             if (status !== 200) {
-              toast.error(reason || `Error ${status} find Doctor`, {
+              toast.error(reason || `Error ${status} find reservation`, {
                 position: "bottom-center",
                 autoClose: 5000,
                 hideProgressBar: false,

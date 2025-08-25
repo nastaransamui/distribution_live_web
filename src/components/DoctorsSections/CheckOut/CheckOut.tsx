@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, ReactNode, useEffect, useState } from 'react'
+import { FC, Fragment, ReactNode, useEffect, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import StickyBox from 'react-sticky-box';
@@ -8,7 +8,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { doctors_profile } from '@/public/assets/imagepath';
 import dayjs from 'dayjs'
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { base64regex } from '../Profile/PublicProfilePage';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -91,66 +91,185 @@ const Checkout: FC = (() => {
   const searchParams = useSearchParams()
   const dispatch = useDispatch()
   const encryptID = searchParams.get('reservation')
-
+  const pathname = usePathname();
+  const ranRef = useRef(false);
+  const currentPathRef = useRef(pathname);
+  // keep currentPathRef up to date
   useEffect(() => {
-    let active = true;
-    if (encryptID && active) {
-      if (base64regex.test(encryptID)) {
-        let _id = atob(encryptID as string)
-        if (homeSocket?.current) {
-          homeSocket.current.emit(`findOccupyTimeForCheckout`, { occupyId: _id, patientId: userProfile?._id })
-          homeSocket.current.once(`findOccupyTimeForCheckoutReturn`, (msg: {
-            status: number,
-            checkoutData: CheckoutDataType[],
-            reason?: string,
-            message?: string
-          }) => {
-            const { status, reason, message } = msg;
-            if (status !== 200) {
-              dispatch(updateHomeFormSubmit(true))
-              toast.error(reason || message || `Error cant find occupation`, {
-                position: "bottom-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                transition: bounce,
-                onClose: () => {
-                  dispatch(updateHomeFormSubmit(false))
-                  setIsLoading(false)
-                  router.back()
-                }
-              });
-            } else {
-              const { checkoutData } = msg;
-              if (checkoutData.length > 0) {
-                setCheckoutData(checkoutData[0])
-                setPaymentInfo({
-                  totalPriceStatus: 'FINAL',
-                  totalPriceLabel: 'Total',
-                  totalPrice: checkoutData[0]?.timeSlot.total.toFixed(2),
-                  currencyCode: checkoutData[0]?.timeSlot?.currencySymbol || 'THB',
-                  countryCode: checkoutData[0]?.doctorProfile?.currency[0]?.iso2 || 'TH',
-                })
-              }
+    currentPathRef.current = pathname;
+  }, [pathname]);
+  useEffect(() => {
+    const checkoutBasePath = "/doctors/check-out"; // adjust if needed
+    if (!encryptID) return;
 
-            }
-            setIsLoading(false)
-          })
-        }
+    const checkoutPath = `${checkoutBasePath}/${encryptID}`;
 
-      } else {
-        router.back()
-      }
+    // only attempt emit when we are (right now) on the intended checkout path
+    if (currentPathRef.current !== checkoutPath) {
+      // console.log("not on checkout path, skip effect", { current: currentPathRef.current, checkoutPath });
+      return;
     }
+
+    // session-level guard: don't do this more than once per encryptID (survives remounts)
+    const sessionKey = `checkout:emitted:${encryptID}`;
+    if (sessionStorage.getItem(sessionKey)) {
+      // console.log("already emitted for this encryptID (sessionStorage)", encryptID);
+      return;
+    }
+
+    if (ranRef.current) {
+      // console.log("ranRef prevents re-run (same mount)");
+      return;
+    }
+
+    if (!base64regex.test(encryptID as string)) {
+      router.back();
+      return;
+    }
+
+    // ensure we have patient id / auth — avoids server 403 for missing identity
+    const patientId = userProfile?._id;
+    if (!patientId) {
+      // console.warn("no patientId, skip emit to avoid 403");
+      return;
+    }
+
+    ranRef.current = true;
+    sessionStorage.setItem(sessionKey, "1");
+
+    const _id = atob(encryptID as string);
+    const socket = homeSocket?.current;
+    if (!socket) {
+      // console.warn("no socket available");
+      router.back();
+      return;
+    }
+
+    let mounted = true;
+    setIsLoading(true);
+
+    const handler = (msg: {
+      status: number;
+      checkoutData: CheckoutDataType[];
+      reason?: string;
+      message?: string;
+    }) => {
+      // when the response arrives, consult currentPathRef to decide whether to act
+      if (!mounted) {
+        // console.log("handler ignored: not mounted", msg);
+        return;
+      }
+      if (currentPathRef.current !== checkoutPath) {
+        // console.log("handler ignored: user left checkout page", {
+        //   currentPath: currentPathRef.current,
+        //   expected: checkoutPath,
+        //   msg,
+        // });
+        return;
+      }
+
+      const { status, reason, message } = msg;
+      if (status !== 200) {
+        dispatch(updateHomeFormSubmit(true));
+        toast.error(reason || message || "Error cant find occupation", {
+          position: "bottom-center",
+          autoClose: 5000,
+          onClose: () => {
+            dispatch(updateHomeFormSubmit(false));
+            setIsLoading(false);
+            router.back();
+          },
+        });
+      } else {
+        const { checkoutData } = msg;
+        if (checkoutData?.length > 0) {
+          setCheckoutData(checkoutData[0]);
+          setPaymentInfo({
+            totalPriceStatus: "FINAL",
+            totalPriceLabel: "Total",
+            totalPrice: checkoutData[0]?.timeSlot.total.toFixed(2),
+            currencyCode: checkoutData[0]?.timeSlot?.currencySymbol || "THB",
+            countryCode: checkoutData[0]?.doctorProfile?.currency?.[0]?.iso2 || "TH",
+          });
+        }
+      }
+      setIsLoading(false);
+    };
+
+    // helpful debug before emit (inspect values that cause server 403)
+    // console.log("emit findOccupyTimeForCheckout", { _id, patientId });
+
+    socket.emit("findOccupyTimeForCheckout", { occupyId: _id, patientId });
+    socket.once("findOccupyTimeForCheckoutReturn", handler);
 
     return () => {
-      active = false;
-    }
+      mounted = false;
+      // remove the exact handler so it won't fire after unmount/navigation
+      socket.off("findOccupyTimeForCheckoutReturn", handler);
+    };
+    // intentionally depend on encryptID only; currentPathRef is updated separately
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [encryptID, homeSocket, reload, router])
+  }, [encryptID]);
+  // useEffect(() => {
+  //   let active = true;
+  //   if (encryptID && active) {
+  //     if (base64regex.test(encryptID)) {
+  //       let _id = atob(encryptID as string)
+  //       if (homeSocket?.current) {
+  //         homeSocket.current.emit(`findOccupyTimeForCheckout`, { occupyId: _id, patientId: userProfile?._id })
+  //         homeSocket.current.once(`findOccupyTimeForCheckoutReturn`, (msg: {
+  //           status: number,
+  //           checkoutData: CheckoutDataType[],
+  //           reason?: string,
+  //           message?: string
+  //         }) => {
+  //           const { status, reason, message } = msg;
+  //           if (status !== 200) {
+  //             dispatch(updateHomeFormSubmit(true))
+  //             toast.error(reason || message || `Error cant find occupation`, {
+  //               position: "bottom-center",
+  //               autoClose: 5000,
+  //               hideProgressBar: false,
+  //               closeOnClick: true,
+  //               pauseOnHover: true,
+  //               draggable: true,
+  //               progress: undefined,
+  //               transition: bounce,
+  //               onClose: () => {
+  //                 dispatch(updateHomeFormSubmit(false))
+  //                 setIsLoading(false)
+  //                 router.back()
+  //               }
+  //             });
+  //           } else {
+  //             const { checkoutData } = msg;
+  //             if (checkoutData.length > 0) {
+  //               setCheckoutData(checkoutData[0])
+  //               setPaymentInfo({
+  //                 totalPriceStatus: 'FINAL',
+  //                 totalPriceLabel: 'Total',
+  //                 totalPrice: checkoutData[0]?.timeSlot.total.toFixed(2),
+  //                 currencyCode: checkoutData[0]?.timeSlot?.currencySymbol || 'THB',
+  //                 countryCode: checkoutData[0]?.doctorProfile?.currency[0]?.iso2 || 'TH',
+  //               })
+  //             }
+
+  //           }
+  //           setIsLoading(false)
+  //         })
+  //       }
+
+  //     } else {
+  //       router.back()
+  //     }
+  //   }
+
+  //   return () => {
+  //     active = false;
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [encryptID, homeSocket, reload, router])
+
   const {
     register,
     clearErrors,

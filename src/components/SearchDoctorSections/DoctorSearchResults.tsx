@@ -25,7 +25,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { CardActionArea, useTheme } from '@mui/material';
-import { ClinicImagesType, DoctorProfileType } from './SearchDoctorSection';
+import { ClinicImagesType, DoctorProfileType, Filters, SetPage } from './SearchDoctorSection';
 import { useSearchParams } from 'next/navigation';
 import ReadMoreText from 'read-more-less-react';
 import Grid from '@mui/material/Grid'
@@ -89,12 +89,13 @@ export interface DoctorSearchResultsPropsType {
   doctorResults: DoctorProfileType[];
   totalDoctors: number;
   page: number;
-  setPage: Function;
+  setPage: SetPage;
   perPage: number;
   setPerPage: Function;
   setSortModel: Function;
   sortModel: { field: string; sort: "asc" | "desc" | null }[];
   isLoading: boolean;
+  filters: Filters
 }
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -125,9 +126,10 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
     doctorResults,
     totalDoctors,
     isLoading,
+    filters
   }) => {
   const [displayType, setDisplayType] = useState<'list' | 'grid' | null>(null); // Default to null to defer rendering.
-  const theme = useTheme();
+
 
   useEffect(() => {
     // Get display type from cookies once the component mounts (client-side).
@@ -173,6 +175,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
             sortModel={sortModel}
             setSortModel={setSortModel}
             setPerPage={setPerPage}
+            filters={filters}
           />
       }
       {
@@ -285,6 +288,7 @@ export interface TopFilterType {
   sortModel: { field: string; sort: "asc" | "desc" | null }[],
   setSortModel: Function;
   setPerPage: Function;
+  filters: Filters;
 }
 export const TopFilter: FC<TopFilterType> = (({
   isLoading,
@@ -293,16 +297,13 @@ export const TopFilter: FC<TopFilterType> = (({
   setDisplayType,
   sortModel,
   setSortModel,
-  setPerPage
+  setPerPage,
+  filters
 }) => {
   const searchParams = useSearchParams();
   const specialities = searchParams.get('specialities')
   const available = searchParams.get('available')
-  const keyWord = searchParams.get('keyWord')
   const gender = searchParams.get('gender')
-  const country = searchParams.get('country')
-  const state = searchParams.get('state')
-  const city = searchParams.get('city')
   const theme = useTheme();
   const dispatch = useDispatch();
   var nextTenDays = new Date();
@@ -335,7 +336,7 @@ export const TopFilter: FC<TopFilterType> = (({
         <div className="doctors-found">
           <p>
             <span>{!isLoading && totalDoctors} Doctors found for:</span>{' '}
-            {available} {specialities} {country} {state} {city} {gender} {keyWord}
+            {available} {specialities} {filters.country} {filters.state} {filters.city} {gender} {filters.keyWord}
           </p>
         </div>
         <div className="doctor-filter-availability">
@@ -396,7 +397,7 @@ export interface TopPaginationType {
   totalDoctors: number;
   perPage: number;
   page: number;
-  setPage: Function;
+  setPage: SetPage;
   placement: "top" | "bottom"
 }
 
@@ -408,7 +409,6 @@ export const TopPagination: FC<TopPaginationType> = (({
   placement,
 }) => {
   const dispatch = useDispatch();
-  const theme = useTheme();
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     dispatch(updateHomeFormSubmit(true))
     setPage(value);
@@ -649,24 +649,26 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
                   online={doctor.online as boolean}
                   idle={doctor?.lastLogin?.idle}
                 >
-                  <Avatar
-                    sx={{
-                      width: 'auto',
-                      height: 'auto',
-                      borderRadius: `5px 0px 15px 0px`,
-                      transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
-                      "&:hover": {
-                        boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
-                        transform: "scale(1.15)",
-                      },
-                    }}
-                    variant="square"
-                    alt=""
-                    src={`${doctor?.profileImage}`}
-                    key={doctor?.profileImage}
-                  >
-                    <img className="img-fluid" src={doctors_profile} alt="" />
-                  </Avatar>
+                  <span style={{ minWidth: '100%', minHeight: '100%', overflow: 'hidden', borderRadius: `5px 0px 15px 0px`, }}>
+                    <Avatar
+                      sx={{
+                        width: 'auto',
+                        height: 'auto',
+                        borderRadius: `5px 0px 15px 0px`,
+                        transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
+                        "&:hover": {
+                          boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+                          transform: "scale(1.15)",
+                        },
+                      }}
+                      variant="square"
+                      alt=""
+                      src={`${doctor?.profileImage}`}
+                      key={doctor?.profileImage}
+                    >
+                      <img className="img-fluid" src={doctors_profile} alt="" />
+                    </Avatar>
+                  </span>
                 </StyledBadge>
               </Link>
               <ul className="clinic-gallery" >
