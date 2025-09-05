@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link';
 import { AtomBondSvg } from '@/public/assets/images/icons/IconsSvgs';
 import {
-  add_circle, doctor_25_aspect, doctor_26_aspect, doctor_27_aspect, pulse_1, pulse_2, pulse_3
+  add_circle, doctor_25_aspect, doctor_26_aspect, doctor_27_aspect, doctors_profile, pulse_1, pulse_2, pulse_3
 }
   from '@/public/assets/imagepath'
 import { useTheme } from '@mui/material';
@@ -191,9 +191,10 @@ const DoctorsSection: FC = (() => {
                           <div className="our-doctor-thirteen-all" key={index}>
                             <div className="our-doctor-thirteen-img">
                               <img
-                                src={doctor.profileImage}
+                                src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile}
                                 alt=""
                                 className="img-fluid"
+                                style={{ borderRadius: "5px 5px 0px 0px" }}
                               />
                             </div>
                             <div className="our-doctor-content" style={{ borderRadius: `0px 0px 10px 10px` }}>

@@ -6,7 +6,7 @@ import AOS from 'aos'
 import dynamic from 'next/dynamic'
 import { useTheme } from '@mui/material'
 import { ServeImageIconOneSvg, ServeImageIconTwoSvg } from '../../../public/assets/images/icons/IconsSvgs'
-import { doctor_15_aspect, doctor_16_aspect, doctor_17_aspect } from '@/public/assets/imagepath'
+import { doctor_15_aspect, doctor_16_aspect, doctor_17_aspect, doctors_profile } from '@/public/assets/imagepath'
 import { useSelector } from 'react-redux'
 import { AppState } from '@/redux/store'
 import { formatNumberWithCommas } from '../DoctorDashboardSections/ScheduleTiming'
@@ -189,7 +189,7 @@ const TeamSection: FC = (() => {
                               <Link href={`/doctors/profile/${btoa(doctor._id)}`} aria-label='search'>
                                 <div className="articles-img articles-img-fourteen">
                                   <img
-                                    src={doctor.profileImage}
+                                    src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile}
                                     alt=""
                                     className="img-fluid"
                                   />

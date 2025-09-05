@@ -1,18 +1,16 @@
 import { FC, Fragment, useEffect, useState } from 'react'
 import PageContent from '@/components/DoctorsSections/Profile/PageContent';
-import { useSearchParams, useParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material/styles';
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
 import useScssVar from '@/hooks/useScssVar';
 import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
 import DoctorPublicProfilePageTab from './DoctorPublicProfilePageTab';
-import Box from '@mui/material/Box';
-import { LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
 
+import BeatLoader from 'react-spinners/BeatLoader';
 
 export const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 
@@ -22,6 +20,7 @@ const PublicProfilePage: FC = (() => {
   const { bounce, muiVar } = useScssVar();
   const encryptID = searchParams.get('_id')
   const router = useRouter()
+  const theme = useTheme();
 
   const [profile, setProfile] = useState<DoctorProfileType | null>(null);
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
@@ -74,15 +73,11 @@ const PublicProfilePage: FC = (() => {
           <Fragment>
             {
               profile == null ?
-                <div className="card  ">
-                  <div className="card-body">
-                    <div className="table-responsive">
-                      <Box sx={{ minHeight: "500px" }} className="dataGridOuterBox">
-                        <LoadingComponent boxMinHeight="500px" />
-                      </Box>
-                    </div>
-                  </div>
-                </div>
+                <BeatLoader color={theme.palette.primary.main} style={{
+                  minWidth: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }} />
                 :
                 <>
                   <PageContent profile={profile} />

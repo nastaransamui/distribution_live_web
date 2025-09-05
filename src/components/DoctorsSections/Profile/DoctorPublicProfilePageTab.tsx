@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 
 import useScssVar from '@/hooks/useScssVar'
 
@@ -10,16 +10,22 @@ import DoctorPublicProfileOverViewTap from './DoctorPublicProfileOverViewTap';
 import DoctorPublicProfileAvailabilityTap from './DoctorPublicProfileAvailabilityTap';
 import { DoctorPublicProfileReviewsTap } from './DoctorPublicProfileReviewsTap';
 import DoctorPublicProfileBusinessHoursTap from './DoctorPublicProfileBusinessHoursTap';
-import ScrollToTop from '@/components/sections/ScrollToTop';
 
 const DoctorPublicProfilePageTab: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
 
   const { muiVar } = useScssVar();
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
 
   return (
     <Fragment>
-      <div className="card animate__animated animate__backInUp" style={muiVar}>
+      <div className={`card ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
         <MuiSwipeableTabs
           steps={
             [
@@ -63,7 +69,6 @@ const DoctorPublicProfilePageTab: FC<{ profile: DoctorProfileType }> = (({ profi
           }
           activeTab={0} />
 
-        <ScrollToTop />
       </div >
 
 

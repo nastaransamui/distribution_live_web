@@ -2,7 +2,8 @@
 import { FC, Fragment, useState, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
@@ -13,6 +14,9 @@ import Calendar, { OccupyTimeType } from './Calendar';
 import { AvailableType, LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { SpecialitiesType } from '@/redux/specialities';
 import { CurrenciesType } from '@/components/shared/CurrencyAutocomplete';
+import BeatLoader from 'react-spinners/BeatLoader';
+import { useTheme } from '@mui/material/styles';
+
 
 export interface BookingDoctorProfile {
   address1: string;
@@ -56,7 +60,7 @@ const BookingPage: FC = (() => {
   const encryptID = searchParams.get('_id')
   const { bounce, muiVar } = useScssVar();
   const router = useRouter()
-
+  const theme = useTheme();
   const [profile, setProfile] = useState<BookingDoctorProfile>();
   const [bookingTimeSlot, setBookingTimeSlot] = useState<BookingTimeSlotType>();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
@@ -116,18 +120,26 @@ const BookingPage: FC = (() => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encryptID, homeSocket, router, reload])
+
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 0);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
 
       {
         isLoading ?
-          <div className="col-lg-12 col-md-12 animate__animated animate__backInUp" style={muiVar}>
-            <div className="card">
-              <div className="card-body">
-                <LoadingComponent boxMinHeight='300px' />
-              </div>
-            </div>
-          </div>
+          <BeatLoader color={theme.palette.primary.main} style={{
+            minWidth: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            minHeight: '30vh'
+          }} />
           :
           <>
             {profile && <Summary profile={profile} />}
@@ -136,31 +148,30 @@ const BookingPage: FC = (() => {
 
       {
         isLoading ?
-          <div className="col-lg-12 col-md-12 animate__animated animate__backInUp" style={muiVar}>
-            <div className="card">
-              <div className="card-body">
-                <LoadingComponent boxMinHeight='500px' />
-              </div>
-            </div>
-          </div>
+          <BeatLoader color={theme.palette.primary.main} style={{
+            minWidth: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+          }} />
           :
           <>
             {bookingTimeSlot &&
               <>
                 {bookingTimeSlot?.availableSlots.length > 0 ?
                   <Calendar bookingTimeSlot={bookingTimeSlot} /> :
-                  <div className="col-lg-12 col-md-12" style={muiVar}>
+                  <div className={`col-lg-12 col-md-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
                     <div className="card booking-card" >
                       <div className="card-body time-slot-card-body">
                         <p>Not Available</p>
                       </div>
                     </div>
-                  </div>}
+                  </div>
+                }
               </>
             }
           </>
       }
-    </Fragment>
+    </Fragment >
   )
 })
 

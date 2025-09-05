@@ -4,7 +4,7 @@ import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
 import { useTheme } from '@mui/material';
 
-import { Doc01, Doc02, Doc03, Doc04, alarm, consult, exper, mapplus } from '../../../public/assets/imagepath';
+import { Doc01, Doc02, Doc03, Doc04, alarm, consult, doctors_profile, exper, mapplus } from '../../../public/assets/imagepath';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import Skeleton from '@mui/material/Skeleton'
@@ -182,7 +182,7 @@ const BookDoctor: FC = (() => {
                         <div className="book-best-doctors">
                           <div className="book-header">
                             <Link href="/doctors/search" aria-label='doctors'>
-                              <img src={doctor.profileImage} alt="" className="img-fluid" />
+                              <img src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile} alt="" className="img-fluid" />
                             </Link>
                             <div className="img-overlay">
                               <FavButton doctor={doctor} index={index} />

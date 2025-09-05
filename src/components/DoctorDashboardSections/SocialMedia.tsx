@@ -1,4 +1,4 @@
-import { FC, Fragment, ReactNode, useEffect } from 'react'
+import { FC, Fragment, ReactNode, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
@@ -6,13 +6,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
-import { useRouter } from 'next/router';
+import { useTheme } from '@mui/material/styles';
 import { toast } from 'react-toastify';
 import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import { setCookie } from 'cookies-next';
 import verifyHomeAccessToken from '@/helpers/verifyHomeAccessToken';
 import { updateUserProfile } from '@/redux/userProfile';
 import InputAdornment from '@mui/material/InputAdornment';
+import AnimationWrapper from '@/shared/AnimationWrapper';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 export let urlRegex = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/)
 const socialPlatforms = ["facebook", "x", "instagram", "pinterest", "linkedin", "youtube"];
@@ -34,7 +36,7 @@ const getSocialIcon = (platform: string) => {
 };
 const SocialMedia: FC = (() => {
   const { bounce } = useScssVar();
-
+  const theme = useTheme();
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const dispatch = useDispatch();
@@ -106,71 +108,90 @@ const SocialMedia: FC = (() => {
 
     reset({ socialMedia: updatedFields });
   }, [userDoctorProfile?.socialMedia, reset]);
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp" >
-        <div className="card">
-          <div className="card-body">
-            <form noValidate onSubmit={handleSubmit(onSocialMediaSubmit)} >
-              {
-                fields.map((field: any, index: number) => {
-                  let socialName = field.platform
-                  let socialError = errors?.socialMedia;
-                  let socialErrorIndex: any;
-                  if (socialError !== undefined) {
-                    socialErrorIndex = socialError[index]
-                  }
-                  let registerName: any = `socialMedia.${index}.link`
+      <AnimationWrapper fallbackMs={1500}>
+        {
+          !isClient ?
+            <BeatLoader color={theme.palette.primary.main} style={{
+              minWidth: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+            }} /> :
+            <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
 
-                  return (
-                    <div className="row" key={field.id}>
-                      <div className="col-md-12 col-lg-12">
-                        <div className="form-group">
-                          <FormControl fullWidth>
-                            <TextField
-                              required
-                              size='small'
-                              id={`${socialName}`}
-                              error={socialError?.[index] == undefined ? false : true}
-                              helperText={socialError && socialErrorIndex?.[socialName]?.['message'] as ReactNode}
-                              {
-                              ...control.register(registerName,
-                                {
-                                  // required: `This field is required `,
-                                  pattern: {
-                                    value: urlRegex,
-                                    message: 'Your url not look correct.'
-                                  }
-                                }
-                              )
-                              }
-                              label={`${socialName.charAt(0).toUpperCase() + socialName.slice(1)} URL`}
-                              autoComplete='off'
-                              fullWidth
-                              InputProps={{
-                                endAdornment:
-                                  <InputAdornment position="end" >
-                                    {getSocialIcon(field.platform)}
-                                  </InputAdornment>,
-                              }}
-                            />
-                          </FormControl>
-                        </div>
-                      </div>
+              <div className="card">
+                <div className="card-body">
+                  <form noValidate onSubmit={handleSubmit(onSocialMediaSubmit)} >
+                    {
+                      fields.map((field: any, index: number) => {
+                        let socialName = field.platform
+                        let socialError = errors?.socialMedia;
+                        let socialErrorIndex: any;
+                        if (socialError !== undefined) {
+                          socialErrorIndex = socialError[index]
+                        }
+                        let registerName: any = `socialMedia.${index}.link`
+
+                        return (
+                          <div className="row" key={field.id}>
+                            <div className="col-md-12 col-lg-12">
+                              <div className="form-group">
+                                <FormControl fullWidth>
+                                  <TextField
+                                    required
+                                    size='small'
+                                    id={`${socialName}`}
+                                    error={socialError?.[index] == undefined ? false : true}
+                                    helperText={socialError && socialErrorIndex?.[socialName]?.['message'] as ReactNode}
+                                    {
+                                    ...control.register(registerName,
+                                      {
+                                        // required: `This field is required `,
+                                        pattern: {
+                                          value: urlRegex,
+                                          message: 'Your url not look correct.'
+                                        }
+                                      }
+                                    )
+                                    }
+                                    label={`${socialName.charAt(0).toUpperCase() + socialName.slice(1)} URL`}
+                                    autoComplete='off'
+                                    fullWidth
+                                    InputProps={{
+                                      endAdornment:
+                                        <InputAdornment position="end" >
+                                          {getSocialIcon(field.platform)}
+                                        </InputAdornment>,
+                                    }}
+                                  />
+                                </FormControl>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })
+                    }
+
+                    <div className="submit-section" style={{ display: 'flex', justifyContent: "center" }}>
+                      <button type="submit" className="btn btn-primary submit-btn" >
+                        Save Changes
+                      </button>
                     </div>
-                  )
-                })
-              }
-
-              <div className="submit-section" style={{ display: 'flex', justifyContent: "center" }}>
-                <button type="submit" className="btn btn-primary submit-btn" >
-                  Save Changes
-                </button>
+                  </form>
+                </div>
               </div>
-            </form>
-          </div>
-        </div>
-      </div>
+            </div>
+        }
+      </AnimationWrapper>
     </Fragment>
   )
 });

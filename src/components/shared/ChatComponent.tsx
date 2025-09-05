@@ -1,5 +1,5 @@
 
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime'
 import duration from 'dayjs/plugin/duration'
@@ -20,6 +20,7 @@ import ChatRightFooter from './chatComponents/ChatRightFooter';
 import ChatRightHeader from './chatComponents/ChatRightHeader';
 import MobileShowSearchButton from './chatComponents/MobileShowSearchButton';
 import ChatLeftUsers from './chatComponents/ChatLeftUsers';
+import AnimationWrapper from './AnimationWrapper';
 
 export function escapeRegExp(value: string) {
   return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -50,9 +51,9 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
 
   return (
     <Fragment>
-
+      {/* ${true ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'} */}
       <audio id="remoteAudio" autoPlay playsInline />
-      <div className="col-md-12 col-lg-12 col-xl-12">
+      <div className={`col-md-12 col-lg-12 col-xl-12`}>
         <div className="new-chat-window row g-0">
           <div style={{ minHeight: minWidth768 ? `calc(100vh + ${footerHeight}px)` : '131px' }}
             className="new-chat-cont-left col-xl-4 col-md-4">
@@ -77,7 +78,6 @@ const ChatComponent: FC<ChatComponentType> = (({ userType }) => {
           </div>
         </div>
       </div>
-
 
       {deleteConfirmationShow && <BootstrapDialog
         TransitionComponent={Transition}

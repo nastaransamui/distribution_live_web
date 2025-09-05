@@ -32,41 +32,36 @@ const ForgotSection: FC = (() => {
     setError,
   } = useForm({
     defaultValues: {
-      email: ''
-    }
+      email: '',
+    },
+    mode: 'onBlur'// validate on blur; use 'onChange' if you want live validation
   })
 
   const onResetPasswordSubmit = (data: any) => {
     dispatch(updateHomeFormSubmit(true))
     homeSocket.current.emit('forgetPassword', data)
     homeSocket.current.once('forgetPasswordReturn', (msg: any) => {
+      // clear submit flag & UI regardless
+      const finalize = () => {
+        dispatch(updateHomeFormSubmit(false))
+      }
       if (msg?.status !== 200) {
         toast.error(msg?.reason, {
           position: "bottom-center",
           autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
           transition: bounce,
-          onClose: () => {
-            dispatch(updateHomeFormSubmit(false))
-          }
+          onClose: finalize
         });
       } else if (msg?.status == 200) {
         toast.info(msg?.message, {
           position: "bottom-center",
           autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
           transition: bounce,
           onClose: () => {
-            dispatch(updateHomeFormSubmit(false))
-            reset()
+            finalize();
+            reset({ email: '' });         // <-- reset the form value
+            clearErrors('email');         // <-- clear validation state
+            // optionally: trigger('email') or setValue('email','',{ shouldValidate: true })
           }
         });
       }
@@ -115,6 +110,8 @@ const ForgotSection: FC = (() => {
                     <form noValidate onSubmit={handleSubmit(onResetPasswordSubmit)}>
                       <div className="form-group form-focus">
                         <Controller
+                          name='email'
+                          control={control}
                           rules={{
                             required: "This field is required",
                             pattern: {
@@ -122,27 +119,30 @@ const ForgotSection: FC = (() => {
                               message: 'Email should looks like an email.'
                             }
                           }}
-                          name='email'
-                          control={control}
-                          render={(props: any) => {
-                            const { field, fieldState, formState } = props;
-                            const { ref, onChange } = field;
+                          render={({ field }) => {
+                            // const { field, fieldState, formState } = props;
+                            // const { ref, onChange } = field;
                             return (
                               <TextField
                                 required
-                                id='email'
+                                id="email"
                                 label="Email"
-                                error={errors.email == undefined ? false : true}
-                                helperText={errors.email && errors['email']['message'] as ReactNode}
                                 fullWidth
-                                ref={ref}
-                                onChange={(e: any) => {
-                                  e.target.value = e.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
-                                  onChange(e)
+                                // pass react-hook-form field props to TextField
+                                {...field}
+                                // MUI prefers inputRef for forwarding the ref to native input
+                                inputRef={field.ref}
+                                // trim on blur instead of on every keystroke (safer UX)
+                                onBlur={(e) => {
+                                  const trimmed = (e.target as HTMLInputElement).value.trim();
+                                  field.onChange(trimmed); // update RHF value with trimmed
+                                  field.onBlur(); // preserve onBlur behavior
                                 }}
-                                inputProps={{
-                                  autoComplete: 'email'
-                                }}
+                                // If you prefer trimming on each change uncomment below and remove onBlur above:
+                                // onChange={(e) => field.onChange((e.target as HTMLInputElement).value.replace(/^\s+|\s+$/g, ''))}
+                                error={!!errors.email}
+                                helperText={errors.email?.message ?? ''}
+                                inputProps={{ autoComplete: 'email' }}
                               />
                             )
                           }} />

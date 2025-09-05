@@ -1096,7 +1096,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                             renderValue={(selected) => dependents.filter((a) => a._id == selected)[0]?.id}
                           >
                             {
-                              dependents.map((dependent, index) => {
+                              dependents?.map((dependent, index) => {
                                 return (
                                   <MenuItem key={dependent._id} value={dependent._id}>
                                     {

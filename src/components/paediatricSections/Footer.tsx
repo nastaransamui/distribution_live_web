@@ -149,7 +149,7 @@ const Footer: FC = (() => {
                 <div className="col-lg-6">
                   <div className="subscribe-form">
                     <form action="#">
-                      <input type="email" className="form-control" placeholder="Doccure@example.com" />
+                      <input type="email" className="form-control" placeholder="mjcode2020@gmail.com" />
                       <button type="submit" className="btn">Subscribe <i className="feather-arrow-right ms-2" /></button>
                     </form>
                   </div>

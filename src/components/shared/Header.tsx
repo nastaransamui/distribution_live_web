@@ -75,7 +75,17 @@ const Header: FC = () => {
         });
       } else {
         deleteCookie('homeAccessToken')
+        deleteCookie('user_id')
+        deleteCookie('services')
+        deleteCookie('roleName')
+        deleteCookie('iat')
+        deleteCookie('exp')
         dispatch(updateHomeAccessToken(null))
+        dispatch(updateHomeExp(null));
+        dispatch(updateHomeIAT(null))
+        dispatch(updateHomeRoleName(null))
+        dispatch(updateHomeServices(null));
+        dispatch(updateHomeUserId(null));
         toast.info('Logout successfully', {
           position: "bottom-center",
           autoClose: 5000,
@@ -725,7 +735,7 @@ const EyecareAuth: FC = (() => {
   return (
     <ul className="nav header-navbar-rht">
       <li className="nav-item">
-        <Link className={`nav-link header-login `} href="/login">
+        <Link className={`nav-link header-login `} href="/register">
           <i className="me-2"><FeatherIcon icon="lock" /></i>
           Register
         </Link>

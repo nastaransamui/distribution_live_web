@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { useTheme } from '@mui/material';
 
@@ -8,10 +8,17 @@ import { useTheme } from '@mui/material';
 const ComingSoon: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setIsClient(true);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <section className="error-section" style={muiVar}>
+      <section className={`error-section  ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
         <div className="container">
           <div className="row justify-content-center">
             <div className="col-lg-8 col-md-12 text-center">

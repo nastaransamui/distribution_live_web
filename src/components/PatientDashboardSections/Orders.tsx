@@ -1,4 +1,4 @@
-import { FC, Fragment, useRef, useState } from 'react'
+import { FC, Fragment, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 
@@ -132,10 +132,14 @@ const Orders: FC = (() => {
     pageSize: 5,
     page: 0,
   });
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12" style={muiVar}>
+      <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
         <div className="card">
           <div className="card-body ">
             {/* Dependent Tab */}

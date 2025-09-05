@@ -56,7 +56,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -65,7 +66,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Benzaxapine Croplex</Link>
+                  <Link href="#" tabIndex={-1}>Benzaxapine Croplex</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -82,7 +84,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product13} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -91,7 +94,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Rapalac Neuronium</Link>
+                  <Link href="#" tabIndex={-1}>Rapalac Neuronium</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -107,7 +111,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product1} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -116,7 +121,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Ombinazol Bonibamol</Link>
+                  <Link href="#" tabIndex={-1}>Ombinazol Bonibamol</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -132,7 +138,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product2} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -141,7 +148,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Dantotate Dantodazole</Link>
+                  <Link href="#" tabIndex={-1}>Dantotate Dantodazole</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -158,7 +166,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product12} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -167,7 +176,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Acetrace Amionel</Link>
+                  <Link href="#" tabIndex={-1}>Acetrace Amionel</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -183,7 +193,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product11} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -192,7 +203,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Ergorinex Caffeigestin</Link>
+                  <Link href="#" tabIndex={-1}>Ergorinex Caffeigestin</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -208,7 +220,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product3} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -217,7 +230,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Alispirox Aerorenone</Link>
+                  <Link href="#" tabIndex={-1}>Alispirox Aerorenone</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -233,7 +247,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product10} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -242,7 +257,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Lysofranil Dorzostin</Link>
+                  <Link href="#" tabIndex={-1}>Lysofranil Dorzostin</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -259,7 +275,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product4} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -268,7 +285,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Nitrolozin Zithrotropin</Link>
+                  <Link href="#" tabIndex={-1}>Nitrolozin Zithrotropin</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -284,7 +302,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product14} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -293,7 +312,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Cordacriptine Mardipine</Link>
+                  <Link href="#" tabIndex={-1}>Cordacriptine Mardipine</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -309,7 +329,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product5} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -318,7 +339,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Iconevist Ampyplex</Link>
+                  <Link href="#" tabIndex={-1}>Iconevist Ampyplex</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -334,7 +356,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product6} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -343,7 +366,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Alcafsteride Omebide</Link>
+                  <Link href="#" tabIndex={-1}>Alcafsteride Omebide</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -359,7 +383,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product15} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -368,7 +393,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Neubide Aborase</Link>
+                  <Link href="#" tabIndex={-1}>Neubide Aborase</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -384,7 +410,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product7} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -393,7 +420,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>ITONE eye drops 10ml</Link>
+                  <Link href="#" tabIndex={-1}>ITONE eye drops 10ml</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -409,7 +437,8 @@ const ResultMain: FC = (() => {
           <div className="col-md-12 col-lg-4 col-xl-4 product-custom">
             <div className="profile-widget">
               <div className="doc-img">
-                <Link href="/pharmacy/product-description" tabIndex={-1}>
+                <Link href="#" tabIndex={-1}>
+                  {/* /pharmacy/product-description */}
                   <img className="img-fluid" alt="Product image" src={Product8} />
                 </Link>
                 <Link href="#" className="fav-btn" tabIndex={-1}>
@@ -418,7 +447,8 @@ const ResultMain: FC = (() => {
               </div>
               <div className="pro-content">
                 <h3 className="title pb-4">
-                  <Link href="/pharmacy/product-description" tabIndex={-1}>Antatriene Drospiletra</Link>
+                  <Link href="#" tabIndex={-1}>Antatriene Drospiletra</Link>
+                  {/* /pharmacy/product-description */}
                 </h3>
                 <div className="row align-items-center">
                   <div className="col-lg-6">

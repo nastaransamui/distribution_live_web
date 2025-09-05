@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { FC, Fragment, ReactNode, useCallback, useEffect, useMemo } from 'react'
+import { FC, Fragment, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 
 //next
 import Link from 'next/link';
@@ -73,6 +73,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, globalFilterFunctions } from '../shared/CustomToolbar';
 
 import InputAdornment from '@mui/material/InputAdornment';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 
 
@@ -263,6 +264,9 @@ const ScheduleTiming: FC = (() => {
               onClose: () => {
                 setIsLoading(false)
                 // toast.dismiss('schedule_error')
+                if (message == 'timeSlot not found.') {
+                  router.reload();
+                }
               }
             });
           } else {
@@ -321,6 +325,11 @@ const ScheduleTiming: FC = (() => {
         !_.isEmpty(morningCheck) && setMorningCheck({});
         rows.length !== 0 && setRows([]);
         !_.isEmpty(timeSlot) && setTimeSlot({})
+
+        homeSocket.current.once(`updateGetDoctorTimeSlots`, () => {
+          console.log('updateGetDoctorTimeSlots')
+          setReload(!reload)
+        })
       }
     } else {
       setIsLoading(false)
@@ -503,12 +512,20 @@ const ScheduleTiming: FC = (() => {
     });
   };
 
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
       {
-        userDoctorProfile?.currency.length == 0 ?
+        userDoctorProfile?.currency?.length == 0 ?
           <>
-            <div className="col-md-12 col-lg-12 col-xl-12" style={muiVar}>
+            <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
               <div className="row">
                 <div className="col-md-12">
                   <div className="card schedule-widget mb-3" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -519,21 +536,16 @@ const ScheduleTiming: FC = (() => {
             </div>
           </> :
           <>
-            <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp">
+            <div className="col-md-12 col-lg-12 col-xl-12">
               {
                 isLoading ?
-                  // true ?
-                  <div className="card">
-                    <div className="card-body">
-                      <div className="table-responsive">
-
-                        <LoadingComponent boxMinHeight="700px" />
-
-                      </div>
-                    </div>
-                  </div> :
+                  <BeatLoader color={theme.palette.primary.main} style={{
+                    minWidth: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }} /> :
                   <>
-                    <div className="card">
+                    <div className={`card ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
                       <div className="card-body">
                         <div className="table-responsive">
                           <CalendarComponent />
@@ -542,7 +554,7 @@ const ScheduleTiming: FC = (() => {
                         </div>
                       </div>
                     </div>
-                    <div className="card">
+                    <div className={`card ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
                       <div className="card-body">
                         <div className="table-responsive">
                           <ReservationsComponent />
@@ -601,11 +613,12 @@ const ConfirmDeleteToast: FC<{ deleteDb: Function }> = (({ deleteDb }) => {
 
 export const LoadingComponent: FC<{ boxMinHeight?: string }> = ({ boxMinHeight }) => {
   const theme = useTheme();
-  return <CircleToBlockLoading color={theme.palette.primary.main} size="small"
+  return <BeatLoader color={theme.palette.primary.main}
     style={{
       minWidth: '100%',
       display: 'flex',
       justifyContent: 'center',
+      alignItems: 'center',
       minHeight: boxMinHeight,
     }} />
 }
@@ -2403,7 +2416,9 @@ const ReservationsComponent: FC = () => {
           const online = row?.patientProfile?.online || false
           return (
             <span style={{ minWidth: "100%", display: 'flex', alignItems: 'center' }}>
-              <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
+              <Link className="avatar mx-2" onClick={() => {
+                sessionStorage.setItem('doctorPatientTabValue', '0')
+              }} href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -2415,7 +2430,9 @@ const ReservationsComponent: FC = () => {
                     <img src={patient_profile} alt="" className="avatar avatar-in-schedule-table" />
                   </Avatar>
                 </StyledBadge></Link>
-              <Link href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`} >{`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}</Link>
+              <Link onClick={() => {
+                sessionStorage.setItem('doctorPatientTabValue', '0')
+              }} href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`} >{`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}</Link>
             </span>
           )
         }

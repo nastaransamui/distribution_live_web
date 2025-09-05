@@ -187,9 +187,17 @@ const Appointment: FC = (() => {
     })
   }
 
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp">
+      <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
         {
           isLoading ?
             <>
@@ -271,7 +279,9 @@ const Appointment: FC = (() => {
                 setShow(false)
               }, 500);
             }}>
-            <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
+            <Link onClick={() => {
+              sessionStorage.setItem('doctorPatientTabValue', '0')
+            }} className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
               <StyledBadge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -286,6 +296,9 @@ const Appointment: FC = (() => {
             </Link>
             <Typography
               component="a"
+              onClick={() => {
+                sessionStorage.setItem('doctorPatientTabValue', '0')
+              }}
               sx={{
                 color: theme.palette.primary.main,
                 fontSize: '1rem',
@@ -386,6 +399,9 @@ const DoctorAppointmentShowBox: FC<DoctorAppointmentShowBoxType> = (({ myAppoint
                   idle={patientProfile?.lastLogin?.idle}
                 >
                   <Link aria-label="patient"
+                    onClick={() => {
+                      sessionStorage.setItem('doctorPatientTabValue', '0')
+                    }}
                     href={`/doctors/dashboard/patient-profile/${btoa(patientId)}`}
                     className="booking-doc-img"
                   >
@@ -411,7 +427,14 @@ const DoctorAppointmentShowBox: FC<DoctorAppointmentShowBoxType> = (({ myAppoint
                 </StyledBadge>
                 <div className="profile-det-info">
                   <h3>
-                    <Link aria-label="patient" style={{ color: theme.palette.secondary.main }} href={`/doctors/dashboard/patient-profile/${btoa(patientId)}`}>{patientName}</Link>
+                    <Link aria-label="patient"
+                      onClick={() => {
+                        sessionStorage.setItem('doctorPatientTabValue', '0')
+                      }}
+                      style={{ color: theme.palette.secondary.main }}
+                      href={`/doctors/dashboard/patient-profile/${btoa(patientId)}`}>
+                      {patientName}
+                    </Link>
                   </h3>
                   <h3>
                     <Link aria-label='id' style={{ color: theme.palette.secondary.main }} href="#" onClick={(e) => e.preventDefault()}>{`#${appointment?.id}`}</Link>

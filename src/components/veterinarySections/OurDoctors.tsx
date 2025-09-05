@@ -4,7 +4,7 @@ import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
 import AOS from 'aos'
 import dynamic from 'next/dynamic'
-import { big_paw, small_paw, vetDoctor01, vetDoctor02, vetDoctor03, vetDoctor04 } from '../../../public/assets/imagepath'
+import { big_paw, doctors_profile, small_paw, vetDoctor01, vetDoctor02, vetDoctor03, vetDoctor04 } from '../../../public/assets/imagepath'
 import { useTheme } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { AppState } from '@/redux/store'
@@ -206,7 +206,7 @@ const OurDoctors: FC = (() => {
                               <Link href={`/doctors/profile/${btoa(doctor?._id)}`}>
                                 <div className="blog-inner-right-img">
                                   <img
-                                    src={doctor.profileImage}
+                                    src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile}
                                     alt="image"
                                     className="img-fluid "
                                   />

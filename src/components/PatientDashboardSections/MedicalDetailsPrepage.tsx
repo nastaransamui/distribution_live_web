@@ -1,35 +1,9 @@
-/* eslint-disable react/jsx-key */
 
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useState, useRef, useEffect, useMemo, ReactNode } from 'react'
-import useScssVar from '@/hooks/useScssVar'
-
-//Mui
-import { Transition, BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
-import DialogContent from '@mui/material/DialogContent'
-import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams } from '@mui/x-data-grid';
-import { useTheme } from '@mui/material/styles';
-import dayjs from 'dayjs'
-import timezone from 'dayjs/plugin/timezone'
-import utc from 'dayjs/plugin/utc'
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import DeleteForever from '@mui/icons-material/DeleteForever'
+import { FC, Fragment, useState, useEffect } from 'react'
 import Stack from '@mui/material/Stack';
-import Link from 'next/link';
-import { ExtendedVitalSignTypes } from './ClinicalSignsHistory';
-import { useSelector } from 'react-redux';
-import { AppState } from '@/redux/store';
-import { toast } from 'react-toastify';
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import MuiSwipeableTabs from '../shared/MuiSwipeableTabs';
 import { Dashboard1, Dashboard2, Dashboard5, Dashboard6 } from '@/public/assets/imagepath';
-
-import { useRouter } from 'next/router';
-import { Controller, useForm } from 'react-hook-form';
-import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
-import CustomPagination from '../shared/CustomPagination';
-import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor } from '../DoctorDashboardSections/ScheduleTiming';
 import VitalTabs from './VitalTabs';
 export interface VitalTypeObjectForm {
   value: number;
@@ -39,24 +13,22 @@ export interface VitalTypeObjectForm {
   date: Date;
 }
 
-const initialState: VitalTypeObjectForm = {
-  value: 0,
-  id: 0,
-  userId: '',
-  name: '',
-  date: new Date(),
-}
+
 
 
 const MedicalDetailsPrepage: FC = (() => {
-  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
-  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
-  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
-  const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
 
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12 animate__animated animate__backInUp">
+      <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
         <div className="row">
           <div className="card">
             <div className="card-body">

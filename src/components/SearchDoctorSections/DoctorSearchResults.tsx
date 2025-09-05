@@ -1432,8 +1432,8 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+  const [isFav, setIsFav] = useState<boolean>(!!userProfile ? doctor?.favs_id?.includes(userProfile?._id as string) : false);
 
-  let isFav = !!userProfile ? doctor?.favs_id?.includes(userProfile?._id as string) : false
   const [favIconLoading, setFavIconLoading] = useState<{ [key: string]: boolean }>({ 0: false });
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
 
@@ -1474,6 +1474,7 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
                 ...prevDoctor,
                 favs_id: [...(prevDoctor.favs_id || []), userProfile._id]
               }));
+              setIsFav(true)
               setFavIconLoading((prevState: { [key: string]: boolean }) => {
                 return {
                   ...prevState,
@@ -1514,6 +1515,7 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
               const codeIndex = doctor?.favs_id.indexOf(userProfile._id);
               if (codeIndex > -1) {
                 // doctor?.favs_id.splice(codeIndex, 1);
+                setIsFav(false)
                 setLocalDoctor(prevDoctor => ({
                   ...prevDoctor,
                   favs_id: prevDoctor.favs_id.filter(id => id !== userProfile._id) // Remove without mutation
@@ -1525,8 +1527,6 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
       }
     }
   }
-
-
   return (
     <Fragment>
       <Tooltip arrow title={!userProfile ? 'Login in to add to favorit.' : `${isFav ? 'Remove' : 'Add'} doctor to favorite.`}>

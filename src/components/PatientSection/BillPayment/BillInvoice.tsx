@@ -7,7 +7,7 @@ import html2canvas from 'html2canvas';
 import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
-import { formatNumberWithCommas, LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { toast } from 'react-toastify';
 
 
@@ -19,8 +19,9 @@ import { BillingTypeWithDoctorProfile } from '@/components/DoctorDashboardSectio
 import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import { PatientProfile } from '@/components/DoctorDashboardSections/MyPtients';
 import { BillingDetailsArrayType } from '@/components/DoctorDashboardSections/AddBilling';
-import Box from '@mui/material/Box';
-import { PatientProfileExtendBillingType } from '@/components/BillingPage/BilingPage';
+
+import { useTheme } from '@mui/material/styles';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 export interface BillingTypeWithDoctorProfileAndPatientProfile extends BillingTypeWithDoctorProfile {
   patientProfile: PatientProfile
@@ -32,6 +33,7 @@ export function truncateString(str: string, maxLength: number) {
 
 
 const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
+  const theme = useTheme();
   const exportRef = useRef<HTMLDivElement>(null);
   const invoiceHeaderRef = useRef<HTMLDivElement>(null);
   const invoiceBodyRef = useRef<HTMLDivElement>(null);
@@ -95,76 +97,160 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
   }, [encryptID, homeSocket, reload, router])
   const handleExport = async () => {
     if (!exportRef.current) return;
-    const customStyles = `
-      #pdf-content {
-        width: 794px; /* A4 width in pixels at 96 DPI */
-        background-color: #fff;
-        font-size: 18px;
-        overflow: hidden;
-        margin: 0 auto; 
+
+    // mm page sizes
+    const A4_W_MM = 210;
+    const A4_H_MM = 297;
+
+    // clone node so we don't disturb layout
+    const original = exportRef.current;
+    const clone = original.cloneNode(true) as HTMLElement;
+
+    // force clone to exact A4 CSS width so html2canvas produces an image that maps to mm correctly
+    clone.style.width = `${A4_W_MM}mm`;
+    clone.style.boxSizing = "border-box";
+    clone.style.background = "#fff"; // ensure white background
+    // put it off-screen so it doesn't flash to the user
+    clone.style.position = "absolute";
+    clone.style.left = "-9999px";
+    clone.style.top = "0";
+    const style = document.createElement("style");
+    style.innerHTML = `
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+    #pdf-content {
+     font-size: 18px;
+        height: auto !important;
+        min-height: ${A4_H_MM - 1}mm; /* optional: gives it at least one page height visually */
+        overflow: visible !important;
+        border: 1px solid ${theme.palette.secondary.main};
+        box-sizing: border-box;
+        display: block;
+        }
+  #pdf-content, #pdf-content * {
+    color: #000 ;   /* force pure black text */
+  }
+      #rubber_stamp_await{
+      color: ${theme.palette.error.main} !important;
+      border: 3px solid ${theme.palette.error.main};
       }
-      #pdf-content p,
-      #pdf-content td {
-        color: black !important;
-      }
-    `;
-    const styleSheet = document.createElement("style");
-    styleSheet.id = "pdf-styles";
-    styleSheet.innerText = customStyles;
+  #rubber_stamp_paid{
+    color: ${theme.palette.success.main} !important;
+    border: 3px solid ${theme.palette.success.main};
+  }
+  #rubber_stamp_pendign {
+    color: #ffa500 !important;
+    border: 3px solid #ffa500;
+  }
+  table.table thead tr th,
+  table.table tbody tr  {
+  border-bottom:1px solid ${theme.palette.primary.main} !important;
+  }
+    
+    #totalPriceTH,
+    #totalPriceNumber{
+    border-top: 0 !important;
+    margin-top: -2px !important;
+    }
+  strong, th{
+    color: ${theme.palette.primary.main} !important;
+    }
+`;
+    clone.appendChild(style);
+    document.body.appendChild(clone);
 
-    // Append styles to the exportRef content
-    exportRef.current.appendChild(styleSheet);
-    // Define A4 page dimensions in pixels (at 96 DPI)
-    const DPI = 96; // Dots per inch
-    const PX_PER_MM = DPI / 25.4; // Pixels per mm
-    const A4_WIDTH_PX = Math.floor(210 * PX_PER_MM); // A4 width in pixels
-    const A4_HEIGHT_PX = Math.floor(297 * PX_PER_MM); // A4 height in pixels
-
-    // Ensure the export container matches A4 dimensions
-    const exportContent = exportRef.current;
-    exportContent.style.width = `${A4_WIDTH_PX}px`;
-    exportContent.style.height = `auto`; // Let height adjust naturally for content
-
-    // Render the HTML content to a canvas
-    const canvas = await html2canvas(exportContent, {
-      scale: 1, // No scaling
-      width: A4_WIDTH_PX,
-      height: exportContent.offsetHeight, // Render full content height
-      scrollX: 0,
-      scrollY: 0,
-    });
-
-    // Create a jsPDF instance
-    const pdf = new jsPDF("p", "mm", "a4");
-
-    // Slice the canvas into A4-sized chunks and add to PDF
-    const imgData = canvas.toDataURL("image/png");
-    const totalHeight = canvas.height;
-    let positionY = 0;
-
-    while (positionY < totalHeight) {
-      // Add the current slice to the PDF
-      pdf.addImage(
-        imgData,
-        "PNG",
-        0,
-        0,
-        210, // Full A4 width in mm
-        (canvas.height * 210) / canvas.width // Scale height proportionally
-      );
-
-      positionY += A4_HEIGHT_PX; // Move to the next slice
-      if (positionY < totalHeight) pdf.addPage(); // Add a new page if needed
+    // wait for fonts to be ready so sizes are stable
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
     }
 
-    // Save the PDF
-    pdf.save(`${singleBill?.invoiceId || "document"}.pdf`);
-    // Clean up the custom styles
-    exportRef.current.removeChild(styleSheet);
-    exportContent.style.width = "";
-    exportContent.style.height = "";
-  };
+    try {
+      // Use devicePixelRatio for crisp canvas
+      const scale = Math.max(1, window.devicePixelRatio || 1);
 
+      // Render the clone to canvas (do NOT pass width/height here; let html2canvas render the full clone)
+      const canvas = await html2canvas(clone, {
+        scale,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        removeContainer: true,
+      });
+
+
+      // compute px per mm from canvas: canvas.width pixels === 210 mm
+      const pxPerMm = canvas.width / A4_W_MM;
+
+      // page height in pixels on the canvas
+      const pageHeightPx = Math.floor(A4_H_MM * pxPerMm);
+
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      let positionY = 0;
+      let pageIndex = 0;
+
+      while (positionY < canvas.height) {
+        const sliceHeight = Math.min(pageHeightPx, canvas.height - positionY);
+
+        // make temp canvas for the page slice
+        const pageCanvas = document.createElement("canvas");
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = sliceHeight;
+        const ctx = pageCanvas.getContext("2d");
+        if (!ctx) throw new Error("Failed to get canvas context");
+
+        ctx.drawImage(canvas, 0, positionY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+
+        const imgData = pageCanvas.toDataURL("image/png");
+
+        const PAGE_MARGIN_MM = 1; // set to whatever gutter you want
+
+        // convert slice pixel height to mm using pxPerMm
+        const imgHeightMM = sliceHeight / pxPerMm;
+
+        // available space inside the page after margins
+        const availableWidthMM = A4_W_MM - 2 * PAGE_MARGIN_MM;
+        const availableHeightMM = A4_H_MM - 2 * PAGE_MARGIN_MM;
+
+        // compute uniform scale so image fits inside available box (preserve aspect ratio)
+        const scaleW = availableWidthMM / A4_W_MM;
+        const scaleH = availableHeightMM / imgHeightMM;
+        const scale = Math.min(scaleW, scaleH);
+
+        // final draw size
+        const drawWidthMM = A4_W_MM * scale;
+        const drawHeightMM = imgHeightMM * scale;
+
+        // position so the image is centered inside the page (this guarantees margins >= PAGE_MARGIN_MM)
+        const x = (A4_W_MM - drawWidthMM) / 2;
+        const y = (A4_H_MM - drawHeightMM) / 2;
+
+        if (pageIndex > 0) pdf.addPage();
+        pdf.addImage(imgData, "PNG", x, y, drawWidthMM, drawHeightMM);
+
+        positionY += sliceHeight;
+        pageIndex++;
+      }
+
+      pdf.save(`${singleBill?.invoiceId || "document"}.pdf`);
+    } catch (err) {
+      console.error("PDF export failed:", err);
+    } finally {
+      // cleanup the clone
+      if (clone && clone.parentNode) clone.parentNode.removeChild(clone);
+    }
+  };
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
       <div className="content" style={muiVar}>
@@ -172,19 +258,13 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
           <div className="row">
             {
               !singleBill || userProfile == null ?
-                <div className="col-lg-8 offset-lg-2   animate__animated animate__backInUp">
-                  <div className="card">
-                    <div className="card-body">
-                      <div className="table-responsive">
-                        <Box sx={{ minHeight: '500px' }} className="dataGridOuterBox">
-                          <LoadingComponent boxMinHeight='500px' />
-                        </Box>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <BeatLoader color={theme.palette.primary.main} style={{
+                  minWidth: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }} />
                 :
-                <div className="col-lg-8 offset-lg-2   animate__animated animate__backInUp">
+                <div className={`col-lg-8 offset-lg-2   ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
                   <button onClick={handleExport} style={{ width: '100%', marginBottom: 30 }} className='btn btn-primary'>Export as PDF</button>
                   <div className="invoice-content" ref={exportRef} id="pdf-content">
                     <span ref={invoiceHeaderRef}>
@@ -209,7 +289,7 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                         <div className="row">
                           <div className="col-md-4">
                             <div className="invoice-info">
-                              <strong className="customer-text">Invoice From</strong>
+                              <strong className="customer-text" id='customer-text'>Invoice From</strong>
                               <p className="invoice-details invoice-details-two">
                                 Name: Dr.{singleBill?.doctorProfile?.firstName} {" "} {singleBill?.doctorProfile?.lastName} <br />
                                 Address: {`${singleBill?.doctorProfile?.address1} ${singleBill?.doctorProfile?.address1 !== '' ? ', ' : ''} ${singleBill?.doctorProfile?.address2}`.trim().length === 0 ? '---' : `${singleBill?.doctorProfile?.address1} ${singleBill?.doctorProfile?.address1 !== '' ? ', ' : ''} ${singleBill?.doctorProfile?.address2}`}
@@ -219,6 +299,8 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                                 State: {`${singleBill?.doctorProfile?.state.trim().length === 0 ? '---' : singleBill?.doctorProfile?.state}`}
                                 <br />
                                 Country: {`${singleBill?.doctorProfile?.country.trim().length === 0 ? '---' : singleBill?.doctorProfile?.country}`}
+                                <br />
+                                Speciality: <img src={`${singleBill.doctorProfile.specialities[0].image}`} alt='speciality' width={10} height={10} /> {" "}{`${singleBill.doctorProfile.specialities[0].specialities}`}
                                 <br />
                               </p>
                             </div>
@@ -246,7 +328,7 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                                 <p className="invoice-details invoice-details-two">
                                   {singleBill?.paymentType} <br />
                                   {truncateString(singleBill?.paymentToken, 20)} <br />
-                                  {dayjs(singleBill?.paymentDate).format(`D MMM YYYY HH:mm`)}
+                                  {singleBill?.paymentDate !== '' && dayjs(singleBill?.paymentDate).format(`D MMM YYYY HH:mm`)}
                                   <br />
                                 </p>
                               </Tooltip>
@@ -272,7 +354,7 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                                       }
                                     }).map((pres: string, index: number) => {
                                       return (
-                                        <th className={userProfile?.roleName == 'patient' ? pres == 'title' ? 'text-center' : "text-end" : index !== 0 ? "text-center" : ''} key={index}>{`${pres.charAt(0).toLocaleUpperCase()}${pres.slice(1)}`}</th>
+                                        <th className={userProfile?.roleName == 'patient' ? pres == 'title' ? 'text-left' : "text-end" : index !== 0 ? "text-center" : ''} key={index}>{`${pres.charAt(0).toLocaleUpperCase()}${pres.slice(1)}`}</th>
                                       )
                                     })
                                   }
@@ -283,7 +365,7 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                                   singleBill.billDetailsArray.map((a: BillingDetailsArrayType, index: number) => {
                                     return (
                                       <tr key={index}>
-                                        <td style={{ textAlign: userProfile?.roleName == 'patient' ? 'center' : "left" }}>{a.title}</td>
+                                        <td style={{ textAlign: userProfile?.roleName == 'patient' ? 'left' : "left" }}>{a.title}</td>
                                         {
                                           userProfile?.roleName == 'doctors' &&
                                           <>
@@ -292,7 +374,7 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                                             <td className="text-center">{`${singleBill?.currencySymbol} ${formatNumberWithCommas(a.bookingsFeePrice.toString())}`}</td>
                                           </>
                                         }
-                                        <td style={{ display: 'block', whiteSpace: 'pre' }} className="text-end">
+                                        <td style={{ whiteSpace: 'pre', }} className="text-end">
                                           {`${singleBill?.currencySymbol} ${formatNumberWithCommas(a.total.toString())}`}
                                         </td>
                                       </tr>
@@ -306,12 +388,17 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                         </div>
 
                         <div className="col-md-6 col-xl-4 ms-auto" style={{ minHeight: '300px', position: 'relative' }}>
-                          <div style={{
-                          }} className={
-                            `${singleBill?.status !== 'Paid' && (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day'))
+                          <div id={
+                            singleBill?.status !== 'Paid' && (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day'))
                               ? "rubber_stamp_await"
                               : singleBill?.status == "Paid"
                                 ? "rubber_stamp_paid" : "rubber_stamp_pendign"}
+
+                            className={
+                              `${singleBill?.status !== 'Paid' && (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day'))
+                                ? "rubber_stamp_await"
+                                : singleBill?.status == "Paid"
+                                  ? "rubber_stamp_paid" : "rubber_stamp_pendign"}
                               `}>{`${singleBill?.status !== 'Paid' && (dayjs(singleBill?.dueDate).isBefore(dayjs(), 'day') || dayjs(singleBill?.dueDate).isSame(dayjs(), 'day')) ? `Over Due` : singleBill?.status}`}
                           </div>
                         </div>
@@ -322,9 +409,10 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                                 <tr>
                                   {
                                     userProfile?.roleName == 'doctors' && <>
-                                      <th>Total Price:</th>
-                                      <td style={{ padding: '10px 0px' }}>
-                                        <span style={{ paddingRight: '18px' }}>
+                                      <th id='totalPriceTH,
+                                      #totalPriceNumber'>Total Price:</th>
+                                      <td style={{ padding: '10px 0px' }} id='totalPriceNumber'>
+                                        <span style={{ paddingRight: '18px' }} >
                                           {singleBill?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                             singleBill?.price.toString()
                                           )}
@@ -392,7 +480,7 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
         </div>
       </div>
 
-    </Fragment>
+    </Fragment >
   )
 });
 

@@ -24,6 +24,8 @@ import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridM
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
+import AnimationWrapper from '@/shared/AnimationWrapper';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 
 const Rates: FC = () => {
@@ -115,7 +117,9 @@ const Rates: FC = () => {
                 `${row?.authorProfile.gender}. ` : ""}`}${row?.authorProfile?.fullName}`
           return (
             <>
-              <Link aria-label='profile' className=" mx-2" href={
+              <Link aria-label='profile' className=" mx-2" onClick={() => {
+                sessionStorage.setItem('doctorPatientTabValue', '0')
+              }} href={
                 roleName == "doctors" ?
                   `/doctors/profile/${btoa(row?.authorId)}` :
                   `/doctors/dashboard/patient-profile/${btoa(row?.authorId)}`} >
@@ -132,7 +136,9 @@ const Rates: FC = () => {
                 </StyledBadge>
               </Link>
               <Stack >
-                <Link aria-label='profile' href={
+                <Link aria-label='profile' onClick={() => {
+                  sessionStorage.setItem('doctorPatientTabValue', '0')
+                }} href={
                   roleName == "doctors" ?
                     `/doctors/profile/${btoa(row?.authorId)}` :
                     `/doctors/dashboard/patient-profile/${btoa(row?.authorId)}`}
@@ -484,137 +490,142 @@ const Rates: FC = () => {
     }
   }, [paginationModel.page, paginationModel.pageSize, rowsCount])
 
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp">
-        {
-          isLoading ?
-            <div className="card">
-              <div className="card-body">
-                <div className="table-responsive">
-                  <Box sx={{ minHeight: boxMinHeight }} className="dataGridOuterBox">
-                    <LoadingComponent boxMinHeight={boxMinHeight} />
-                  </Box>
-                </div>
-              </div>
-            </div> :
-            <div className="card">
-              <div ref={dataGridRef} className="tab-content schedule-cont">
-                <Box className="dataGridOuterBox" >
-                  <Typography className="totalTypo"
-                    variant='h5' align='center' gutterBottom >
-                    {
-                      rowsCount !== 0 ?
-                        `Total Rates: ${rowsCount}` :
-                        `Not any Rates yet`
-                    }
-                  </Typography>
-                  <div className="table-responsive" style={{ height: paginationModel?.pageSize == 5 ? 600 : 1000, width: '100%' }}>
+      <AnimationWrapper fallbackMs={1500}>
+        <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
+          {
+            isLoading ?
+              <BeatLoader color={theme.palette.primary.main} style={{
+                minWidth: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+              }} /> :
+              <div className="card">
+                <div ref={dataGridRef} className="tab-content schedule-cont">
+                  <Box className="dataGridOuterBox" >
+                    <Typography className="totalTypo"
+                      variant='h5' align='center' gutterBottom >
+                      {
+                        rowsCount !== 0 ?
+                          `Total Rates: ${rowsCount}` :
+                          `Not any Rates yet`
+                      }
+                    </Typography>
+                    <div className="table-responsive" style={{ height: paginationModel?.pageSize == 5 ? 600 : 1000, width: '100%' }}>
 
 
-                    <DataGrid
-                      rowHeight={80}
-                      paginationMode='server'
-                      filterMode="server"
-                      // dont mode server and handle in client side sorting toosortingMode="server"
-                      sortModel={sortModel}
-                      onSortModelChange={(model: GridSortModel) => {
-                        if (model.length > 0) {
-                          setSortModel((_prev: GridSortModel) => [...model]);
-                        }
-                      }}
-                      sortingOrder={['desc', 'asc']}
-                      filterModel={filterModel}
-                      onFilterModelChange={handelFilterModelChange}
-                      columnVisibilityModel={columnVisibilityModel}
-                      onColumnVisibilityModelChange={(newModel) => {
-                        setColumnVisibilityModel(newModel)
-                      }}
-                      loading={isLoading}
-                      experimentalFeatures={{ ariaV7: true }}
-                      slots={{
-                        toolbar: CustomToolbar,
-                        pagination: CustomPagination,
-                        noResultsOverlay: CustomNoRowsOverlay,
-                        noRowsOverlay: CustomNoRowsOverlay
-                      }}
-                      slotProps={{
-                        toolbar: {
-                          printOptions: { disableToolbarButton: true },
-                          deleteId: [],
-                          deleteClicked: () => { },
-                          columnVisibilityModel: columnVisibilityModel,
-                        },
-                        pagination: {
-                          onRowsPerPageChange: handleChangeRowsPerPage,
-                          page: paginationModel.page,
-                          rowsPerPage: paginationModel.pageSize,
-                          onPageChange: handleChangePage,
-                          count: rowsCount,
-                          SelectProps: {
-                            inputProps: {
-                              id: 'pagination-select',
-                              name: 'pagination-select',
-                            },
+                      <DataGrid
+                        rowHeight={80}
+                        paginationMode='server'
+                        filterMode="server"
+                        // dont mode server and handle in client side sorting toosortingMode="server"
+                        sortModel={sortModel}
+                        onSortModelChange={(model: GridSortModel) => {
+                          if (model.length > 0) {
+                            setSortModel((_prev: GridSortModel) => [...model]);
+                          }
+                        }}
+                        sortingOrder={['desc', 'asc']}
+                        filterModel={filterModel}
+                        onFilterModelChange={handelFilterModelChange}
+                        columnVisibilityModel={columnVisibilityModel}
+                        onColumnVisibilityModelChange={(newModel) => {
+                          setColumnVisibilityModel(newModel)
+                        }}
+                        loading={isLoading}
+                        experimentalFeatures={{ ariaV7: true }}
+                        slots={{
+                          toolbar: CustomToolbar,
+                          pagination: CustomPagination,
+                          noResultsOverlay: CustomNoRowsOverlay,
+                          noRowsOverlay: CustomNoRowsOverlay
+                        }}
+                        slotProps={{
+                          toolbar: {
+                            printOptions: { disableToolbarButton: true },
+                            deleteId: [],
+                            deleteClicked: () => { },
+                            columnVisibilityModel: columnVisibilityModel,
                           },
-                        },
-                        filterPanel: {
-                          filterFormProps: {
-                            deleteIconProps: {
-                              sx: {
-                                justifyContent: 'flex-start'
+                          pagination: {
+                            onRowsPerPageChange: handleChangeRowsPerPage,
+                            page: paginationModel.page,
+                            rowsPerPage: paginationModel.pageSize,
+                            onPageChange: handleChangePage,
+                            count: rowsCount,
+                            SelectProps: {
+                              inputProps: {
+                                id: 'pagination-select',
+                                name: 'pagination-select',
                               },
                             },
                           },
-                        },
-                        baseCheckbox: {
-                          inputProps: {
-                            name: "select-checkbox"
+                          filterPanel: {
+                            filterFormProps: {
+                              deleteIconProps: {
+                                sx: {
+                                  justifyContent: 'flex-start'
+                                },
+                              },
+                            },
+                          },
+                          baseCheckbox: {
+                            inputProps: {
+                              name: "select-checkbox"
+                            }
                           }
-                        }
-                      }}
-                      getRowId={(params) => params._id}
-                      rows={rows}
-                      rowCount={rowsCount}
-                      columns={columns}
-                      disableRowSelectionOnClick
-                      paginationModel={paginationModel}
-                      pageSizeOptions={[5, 10]}
-                      showCellVerticalBorder
-                      showColumnVerticalBorder
-                      sx={{
-                        "&.MuiDataGrid-root .MuiDataGrid-row": {
-                          backgroundColor:
-                            false ? getSelectedBackgroundColor(
-                              theme.palette.primary.dark,
-                              theme.palette.mode,
-                            ) : '',
-                          '&:hover': {
-                            backgroundColor: getSelectedHoverBackgroundColor(
-                              theme.palette.primary.light,
-                              theme.palette.mode,
-                            ),
+                        }}
+                        getRowId={(params) => params._id}
+                        rows={rows}
+                        rowCount={rowsCount}
+                        columns={columns}
+                        disableRowSelectionOnClick
+                        paginationModel={paginationModel}
+                        pageSizeOptions={[5, 10]}
+                        showCellVerticalBorder
+                        showColumnVerticalBorder
+                        sx={{
+                          "&.MuiDataGrid-root .MuiDataGrid-row": {
+                            backgroundColor:
+                              false ? getSelectedBackgroundColor(
+                                theme.palette.primary.dark,
+                                theme.palette.mode,
+                              ) : '',
+                            '&:hover': {
+                              backgroundColor: getSelectedHoverBackgroundColor(
+                                theme.palette.primary.light,
+                                theme.palette.mode,
+                              ),
+                            }
+                          },
+                          "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
+                            marginTop: "1em",
+                            marginBottom: "1em"
+                          },
+                          "& .MuiDataGrid-footerContainer": {
+                            [theme.breakpoints.only("xs")]: {
+                              justifyContent: 'center',
+                              marginBottom: '2px'
+                            }
                           }
-                        },
-                        "& .MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {
-                          marginTop: "1em",
-                          marginBottom: "1em"
-                        },
-                        "& .MuiDataGrid-footerContainer": {
-                          [theme.breakpoints.only("xs")]: {
-                            justifyContent: 'center',
-                            marginBottom: '2px'
-                          }
-                        }
-                      }}
-                    />
-                  </div>
-                </Box>
+                        }}
+                      />
+                    </div>
+                  </Box>
+                </div>
               </div>
-            </div>
-        }
-      </div>
+          }
+        </div>
+      </AnimationWrapper>
     </Fragment>
   );
 }

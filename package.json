@@ -102,6 +102,7 @@
     "react-scroll-into-view": "^2.0.2",
     "react-share": "^5.2.2",
     "react-slick": "^0.29.0",
+    "react-spinners": "^0.17.0",
     "react-sticky-box": "^2.0.4",
     "react-swipeable-views": "^0.14.0",
     "react-tag-input-component": "^2.0.2",

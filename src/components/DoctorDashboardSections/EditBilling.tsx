@@ -150,7 +150,12 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
           }
         });
       } else if (msg?.status == 200) {
-        router.reload();
+        const { newBilling } = msg;
+        reset(newBilling)
+        setTimeout(() => {
+          dispatch(updateHomeFormSubmit(false))
+        }, 500);
+        // router.reload();
       }
 
     })
@@ -167,15 +172,15 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
           :
           <div className="card">
             <div className="card-header" style={{ display: 'flex' }}>
-              <h4 className="card-title mb-0">{isSameDoctor ? 'Edit Bill' : 'View Bill'}</h4>
               <a href="" className="link" aria-label='back'
                 onClick={(e) => {
                   e.preventDefault();
                   router.back()
                 }}
-                style={{ ...threeOptionMain, marginLeft: 'auto' }}>
+                style={{ ...threeOptionMain, marginRight: 'auto' }}>
                 <ArrowBackIcon />
               </a>
+              <h4 className="card-title mb-0">{isSameDoctor ? 'Edit Bill' : 'View Bill'}</h4>
             </div>
             <form noValidate onSubmit={handleSubmit(onBillSubmit)} className="card-body">
               <div className="row">
@@ -537,7 +542,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                         setFormValue('billDetailsArray.0.bookingsFee', userDoctorProfile?.bookingsFee!)
                         setFormValue('billDetailsArray.0.price', 0)
                       }}>Clear</button> */}
-                    <button
+                    {/* <button
                       type="reset"
                       disabled={router.asPath.endsWith('see-prescription') || watch('status') == 'Paid'}
                       className="btn btn-primary submit-btn"
@@ -556,7 +561,7 @@ const EditBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ single
                       }}
                     >
                       Clear
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>}

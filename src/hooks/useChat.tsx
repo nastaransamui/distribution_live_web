@@ -297,7 +297,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     rawDeleteSubmited({
       homeSocket,
       deleteType,
-      currentRoomId,
+      currentRoomId: router.query.roomId as string,
       currentUserId,
       setDeleteConfirmationShow,
       setDeleteType,

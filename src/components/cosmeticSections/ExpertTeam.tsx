@@ -2,7 +2,7 @@
 import { FC, Fragment, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import useScssVar from '@/hooks/useScssVar'
-import { Doc04, Doc03, Doc02, Doc01 } from '../../../public/assets/imagepath';
+import { Doc04, Doc03, Doc02, Doc01, doctors_profile } from '../../../public/assets/imagepath';
 import { AppState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 import Skeleton from "@mui/material/Skeleton"
@@ -106,7 +106,7 @@ const ExpertTeam: FC = (() => {
                             return (
                               <div className="test_imgs" key={index}>
                                 <div className="main-reviewimages">
-                                  <img src={doctor.profileImage} alt="" className="img-fluid" />
+                                  <img src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile} alt="" className="img-fluid" />
                                 </div>
                                 <div className="testimonal-contents">
                                   <h3>Dr. {doctor.fullName}</h3>

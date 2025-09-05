@@ -9,12 +9,12 @@ import { MessageType } from "../../../../@types/chatTypes";
 const DeleteMessageButton: FC<{ deleteType: string | number, mesage?: MessageType }> = (({ deleteType, mesage }) => {
   const { deleteButtonClicked, setDeleteType, setEditChatInputValue, setIsEdit, isEdit } = useChat();
   return (
-    <span className='delete-whole-chat'>
+    <span className='delete-whole-chat' >
       <IconButton
         disableFocusRipple
         disableRipple
         disableTouchRipple
-
+        sx={{ width: '100%', height: '100%', borderRadius: '0px' }}
         onClick={(e) => {
           deleteButtonClicked(e)
           setDeleteType(deleteType)

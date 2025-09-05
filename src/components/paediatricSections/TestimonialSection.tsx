@@ -82,7 +82,7 @@ const TestimonialSection: FC = (() => {
             <OwlCarousel {...settings}>
               <div className="client-says-all">
                 <div className="clients-says-content">
-                  <p>I would like to thank everyone at Doccure for the fantastic way you looked after me.
+                  <p>I would like to thank everyone at Health care for the fantastic way you looked after me.
                     I could not fault anyone during the time I spent with you - from the point I arrived in reception,
                     to the catering team and every member of staff throughout the changes of shift during my stay.</p>
                   <h4>
@@ -100,7 +100,7 @@ const TestimonialSection: FC = (() => {
               </div>
               <div className="client-says-all">
                 <div className="clients-says-content">
-                  <p>I would like to thank everyone at Doccure for the fantastic way you looked after me.
+                  <p>I would like to thank everyone at Health care for the fantastic way you looked after me.
                     I could not fault anyone during the time I spent with you - from the point I arrived in reception,
                     to the catering team and every member of staff throughout the changes of shift during my stay.</p>
                   <h4>
@@ -118,7 +118,7 @@ const TestimonialSection: FC = (() => {
               </div>
               <div className="client-says-all">
                 <div className="clients-says-content">
-                  <p>I would like to thank everyone at Doccure for the fantastic way you looked after me.
+                  <p>I would like to thank everyone at Health care for the fantastic way you looked after me.
                     I could not fault anyone during the time I spent with you - from the point I arrived in reception,
                     to the catering team and every member of staff throughout the changes of shift during my stay.</p>
                   <h4>

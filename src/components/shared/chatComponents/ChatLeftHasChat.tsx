@@ -98,10 +98,11 @@ export const ChatLeftHasChat: FC<{ chatData: ChatDataType, index: number }> = ((
                   const isBlob = attach.src && attach.src.startsWith("blob:");
                   return (
                     <span key={`${i} ${index}`}>
-                      <div className="chat-attachment chat-attachment-left-side" onClick={() => {
+                      <div className="chat-attachment chat-attachment-left-side" onClick={(e) => {
                         if (!attach.isImage) {
                           downloadClick({ attach })
                         } else {
+                          e.stopPropagation();
                           // Filter only images and find the correct index in the filtered list
                           const imageAttachments = lastMessage.attachment.filter((a) => a.isImage);
                           const newIndex = imageAttachments.findIndex((a) => a.src === attach.src);

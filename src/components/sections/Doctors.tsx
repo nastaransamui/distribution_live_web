@@ -201,7 +201,7 @@ const Doctors: FC = (() => {
                                   <Link href={`/doctors/profile/${btoa(doctor?._id)}`} aria-label='doctor-profile'>
                                     <div className="doctor-profile-img">
                                       <img
-                                        src={doctor.profileImage}
+                                        src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile}
                                         className="img-fluid"
                                         alt=""
                                       />

@@ -727,7 +727,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
               }, 500);
             }}>
             <Link
-              target='_blank'
+              onClick={(e) => e.preventDefault()}
               className="avatar mx-2"
               href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
               <StyledBadge
@@ -743,7 +743,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
             </Link>
             <Typography
               component="a"
-              target='_blank'
+              onClick={(e) => e.preventDefault()}
               sx={{
                 color: theme.palette.primary.main,
                 fontSize: '1rem',

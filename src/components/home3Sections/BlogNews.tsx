@@ -78,7 +78,7 @@ const BlogNews: FC = (() => {
                   </div>
                   <div className="blogs-info">
                     <span>Urology</span>
-                    <Link href="/blog/blog-details" aria-label="blogs"><h3>Doccure – Making your clinic painless visit?</h3></Link>
+                    <Link href="/blog/blog-details" aria-label="blogs"><h3>Health care – Making your clinic painless visit?</h3></Link>
                     <p>Lorem ipsum dolor sit amet, consectetur em adipiscing elit, sed do eiusmod tempor.</p>
                     <span className="blogs-time"><i className="far fa-clock" /> 3 Dec 2021</span>
                   </div>

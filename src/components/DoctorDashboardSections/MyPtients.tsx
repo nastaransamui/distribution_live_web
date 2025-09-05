@@ -27,6 +27,7 @@ import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingCom
 import CustomPagination from '../shared/CustomPagination';
 import RenderExpandableCell from '../shared/RenderExpandableCell';
 import { useRouter } from 'next/router';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 
 
@@ -157,7 +158,9 @@ const MyPtients: FC = (() => {
 
           return (
             <span style={{ minWidth: "100%", display: 'flex', alignItems: 'center' }}>
-              <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row._id)}`}>
+              <Link className="avatar mx-2" onClick={() => {
+                sessionStorage.setItem('doctorPatientTabValue', '0')
+              }} href={`/doctors/dashboard/patient-profile/${btoa(row._id)}`}>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -169,7 +172,9 @@ const MyPtients: FC = (() => {
                     <img src={patient_profile} alt="" className="avatar avatar-in-schedule-table" />
                   </Avatar>
                 </StyledBadge></Link>
-              <Link href={`/doctors/dashboard/patient-profile/${btoa(row._id)}`} >{`${row?.gender == '' ? '' : row?.gender + '.'}`}{row?.fullName}</Link>
+              <Link onClick={() => {
+                sessionStorage.setItem('doctorPatientTabValue', '0')
+              }} href={`/doctors/dashboard/patient-profile/${btoa(row._id)}`} >{`${row?.gender == '' ? '' : row?.gender + '.'}`}{row?.fullName}</Link>
             </span>
           )
         }
@@ -356,6 +361,9 @@ const MyPtients: FC = (() => {
             key="view-action"
             onClick={() => {
               const encodedId = btoa(params.row?._id);
+
+              sessionStorage.setItem('doctorPatientTabValue', '0')
+
               router.push(`/doctors/dashboard/patient-profile/${encodedId}`)
             }}
             icon={<i className="far fa-eye" style={{ color: theme.palette.secondary.main }}></i>} label="View" />,
@@ -518,21 +526,25 @@ const MyPtients: FC = (() => {
   }, [paginationModel.page, paginationModel.pageSize, total])
 
 
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12   animate__animated animate__backInUp" style={muiVar}>
+      <div className={`col-md-12 col-lg-12 col-xl-12  ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
 
         {
           isLoading ?
-            <div className="card">
-              <div className="card-body">
-                <div className="table-responsive">
-                  <Box sx={{ minHeight: boxMinHeight }} className="dataGridOuterBox">
-                    <LoadingComponent boxMinHeight={boxMinHeight} />
-                  </Box>
-                </div>
-              </div>
-            </div> :
+            <BeatLoader color={theme.palette.primary.main} style={{
+              minWidth: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+            }} /> :
             <div className="card">
               <div ref={dataGridRef} className="tab-content schedule-cont">
                 <Box className="dataGridOuterBox" >

@@ -1,4 +1,4 @@
-import { FC, Fragment, SyntheticEvent, useEffect, useRef, useState } from 'react'
+import { FC, Fragment, SyntheticEvent, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -6,8 +6,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 
-import SwipeableViews from 'react-swipeable-views';
-import { useTheme } from '@mui/material';
+import { SxProps, Theme, useTheme } from '@mui/material';
 import PatientAppointment from '../shared/PatientAppointment';
 import Link from 'next/link';
 import PatientBillingRecords from '../shared/PatientBillingRecords';
@@ -62,15 +61,21 @@ export interface PatientSidebarDoctorTypes {
 }
 const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfile, userType }) => {
   const { muiVar } = useScssVar();
-  const [value, setValue] = useState('0');
+  const [sxProps, setSxProbs] = useState<SxProps<Theme>>()
+  const [value, setValue] = useState<string>(() => {
+    // init from sessionStorage on client synchronously to avoid jumping indicator
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("doctorPatientTabValue") || "0";
+    }
+    return "0";
+  });
   const theme = useTheme();
 
   const [edit, setEdit] = useState(false);
-  const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
-  const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const handleChangeTab = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
+    sessionStorage.setItem('doctorPatientTabValue', newValue)
   };
   const [editValues, setEditValues] = useState<ValueType>(initialState)
   const [imageName, setImageName] = useState("")
@@ -92,20 +97,33 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
     }
 
   }
-  const [isFirstRender, setIsFirstRender] = useState(true);
+
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsFirstRender(false);
-    }, 1000); // Change 1000 to the delay in milliseconds
-
-    return () => clearTimeout(timeout); // Cleanup function to avoid memory leaks
-  }, []);
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
 
   const [isMobile, setIsmobile] = useState(false)
   useEffect(() => {
     setIsmobile(typeof window !== 'undefined' && window.mobileCheck())
-  }, [])
+    if (typeof window !== 'undefined') {
+      setValue(sessionStorage.getItem('doctorPatientTabValue') || '0')
+    }
+  }, [doctorPatientProfile])
+
+  useLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      setSxProbs({
+        left: `${Number(value) * 25}% !important`,
+        minWidth: '25%',
+        transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+      })
+    }
+  }, [value])
 
   return (
     <Fragment>
@@ -115,8 +133,13 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
             <Box sx={{ width: '100%', typography: 'body1' }}>
               <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                  <TabList onChange={handleChangeTab} aria-label="lab API tabs example" textColor="secondary"
-                    indicatorColor="secondary" >
+                  <TabList
+                    onChange={handleChangeTab}
+                    aria-label="lab API tabs example" textColor="secondary"
+                    indicatorColor="secondary"
+                    TabIndicatorProps={{
+                      sx: sxProps
+                    }} >
                     <Tab label="Appointments" value="0" sx={{ minWidth: '25%' }} />
                     <Tab label="Prescription" value="1" sx={{ minWidth: '25%' }} />
                     <Tab label="Medical Records" value="2" sx={{ minWidth: '25%' }} />
@@ -153,11 +176,11 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                       <PatientBillingRecords userType={userType} patientId={doctorPatientProfile?._id} />
                     </TabPanel>
                   </> :
-                    <TabContext value={value}>
-                      <TabPanel value="0" className={`${value == "0" && !isFirstRender ? "animate__animated animate__backInRight" : ""}`}>
+                    <>
+                      <TabPanel value="0" className={`${value == "0" && isClient ? "animate__animated animate__backInUp" : "pre-anim-hidden"}`}>
                         <PatientAppointment userType={userType} patientId={doctorPatientProfile?._id} />
                       </TabPanel>
-                      <TabPanel value="1" className={`${value == "1" && !isFirstRender ? "animate__animated animate__backInRight" : ""}`}>
+                      <TabPanel value="1" className={`${value == "1" && isClient ? "animate__animated animate__backInUp" : ""}`}>
                         {userType == 'doctor' && <div className="text-end">
                           <Link href={`/doctors/dashboard/add-prescription/${btoa(doctorPatientProfile._id)}`} className="add-new-btn">
                             Add Prescription
@@ -165,10 +188,10 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                         </div>}
                         <MedicalRecordsPriscription patientProfile={doctorPatientProfile} />
                       </TabPanel>
-                      <TabPanel value="2" className={`${value == "2" && !isFirstRender ? "animate__animated animate__backInRight" : ""}`}>
+                      <TabPanel value="2" className={`${value == "2" && isClient ? "animate__animated animate__backInUp" : ""}`}>
                         <MedicalRecords patientProfile={doctorPatientProfile} />
                       </TabPanel>
-                      <TabPanel value="3" className={`${value == "3" && !isFirstRender ? "animate__animated animate__backInRight" : ""}`}>
+                      <TabPanel value="3" className={`${value == "3" && isClient ? "animate__animated animate__backInUp" : ""}`}>
                         {userDoctorProfile?.currency &&
                           <>{userDoctorProfile?.currency.length > 0 ? <div className="text-end">
                             <Link href={`/doctors/dashboard/add-billing/${btoa(doctorPatientProfile._id)}`} className="add-new-btn">
@@ -180,7 +203,7 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                         }
                         <PatientBillingRecords userType={userType} patientId={doctorPatientProfile?._id} />
                       </TabPanel>
-                    </TabContext>
+                    </>
                 }
 
 

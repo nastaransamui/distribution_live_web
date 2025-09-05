@@ -35,3 +35,16 @@ body .top-loading-bar {
 @keyframes rotate {
   100% {transform: rotate(-360deg);}
 }
+.full-height {
+  height: 100%;
+  min-height: inherit;
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-fill {
+  flex: 1 1 auto;
+}
+
+.pre-anim-hidden { visibility: hidden; }
+.pre-anim-hidden.animate__animated { visibility: visible; animation-fill-mode: both; }

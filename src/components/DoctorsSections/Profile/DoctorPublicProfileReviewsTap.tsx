@@ -45,6 +45,7 @@ import CustomNoRowsOverlay from '@/components/shared/CustomNoRowsOverlay';
 import { PatientProfile } from '@/components/DoctorDashboardSections/MyPtients';
 import { Terms } from '@/components/TermsSections/TermsDetails';
 import { DataGridMongoDBQuery } from '@/shared/CustomToolbar';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 export interface RepliesType {
   _id?: string;
@@ -370,587 +371,611 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
     replySetValue('replies', reviews.replies);
 
   }
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
+      {
+        isLoading ?
+          <BeatLoader color={theme.palette.primary.main} style={{
+            minWidth: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+          }} /> :
+          <Fragment>
+            <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'} full-height`}>
+              <div className="doc-review review-listing  full-height" >
+                <div className="card" style={{ padding: 10, minHeight: 'inherit', display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', }}>
 
-      <div className="card-body pt-0">
-        <div className="tab-content pt-0">
-          <div >
-            {
-              isLoading ?
-                <div style={{ minHeight: '50vh' }}>
-                  <CircleToBlockLoading color={theme.palette.primary.main} size="small"
-                    style={{
-                      minWidth: '100%',
-                      display: 'flex',
-                      justifyContent: 'center',
-                    }} />
-                </div> :
-                <Fragment>
-                  {totalReviews !== 0 ?
-                    <div style={{ position: 'relative' }}>
-                      <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
-                        {
-                          <Stack spacing={2}>
-                            <Pagination
-                              showFirstButton
-                              showLastButton
-                              hideNextButton
-                              hidePrevButton
-                              boundaryCount={1}
-                              variant="outlined"
-                              color="secondary"
-                              count={Math.ceil(totalReviews / perPage)}
-                              page={paginationModel.page + 1}
-                              onChange={handlePageChange}
-                              sx={{
-                                marginLeft: 'auto',
-                                marginRight: 'auto'
-                              }}
-                            />
-                            <Typography variant='h5' align='center' sx={{ paddingBottom: 2 }}>Total: {totalReviews} reviews</Typography>
-                          </Stack>
-                        }
-                      </div>
-                    </div> : <div style={{ minHeight: 500, display: 'flex', justifyContent: 'center', alignItems: "center" }}><CustomNoRowsOverlay text="No Reviews yet" /></div>}
-                  <div className="doc-review review-listing">
-
-                    <ul className="comments-list">
-                      {
-                        doctorReviews.map((reviews: ReviewTypes, index: number) => {
-                          const { createdAt, updatedAt } = reviews;
-                          const online = reviews?.role == 'doctors' ? reviews?.doctorProfile?.online : reviews?.patientProfile?.online
-                          const idle = reviews?.role == 'doctors' ? reviews?.patientProfile?.idle : reviews?.doctorProfile?.idle
-                          const profileImage = reviews?.role == 'doctors' ? reviews?.doctorProfile?.profileImage : reviews?.patientProfile?.profileImage;
-                          const authorName = reviews?.role == 'doctors' ? reviews?.doctorProfile?.fullName : reviews?.patientProfile?.fullName;
-                          const formattedDate =
-                            createdAt == updatedAt ?
-                              `Reviewed ${dayjs(createdAt).fromNow()}` :
-                              `Reviewed Updated ${dayjs(updatedAt).fromNow()}`;
-                          return (
-                            <li key={`${reviews._id}`}>
-                              <div className="comment" >
-                                <StyledBadge
-                                  overlap="circular"
-                                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                                  variant="dot"
-                                  online={online!}
-                                  idle={idle}
-                                  style={{ width: 58, height: 58 }}
-                                >
-                                  <Avatar style={{ width: 58, height: 58 }} alt="" src={`${profileImage}`} >
-                                    <img src={reviews?.role == 'doctors' ? doctors_profile : patient_profile} alt="" />
-                                  </Avatar>
-                                </StyledBadge>
-
-                                <div className="comment-body">
-                                  <div className="meta-data">
-                                    <span className="comment-author">
+                    <div className="card-body pt-0">
+                      <div className="tab-content pt-0">
+                        <div >
+                          {
+                            isLoading ?
+                              <div style={{ minHeight: '50vh' }}>
+                                <CircleToBlockLoading color={theme.palette.primary.main} size="small"
+                                  style={{
+                                    minWidth: '100%',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                  }} />
+                              </div> :
+                              <Fragment>
+                                {totalReviews !== 0 ?
+                                  <div style={{ position: 'relative' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
                                       {
-                                        reviews?.role == 'doctors' ?
-                                          'Dr.' :
-                                          `${reviews?.patientProfile?.gender !== ""
-                                            ? `${reviews?.patientProfile?.gender}. ` : ''}`}
-                                      {authorName}
-                                    </span>
+                                        <Stack spacing={2}>
+                                          <Pagination
+                                            showFirstButton
+                                            showLastButton
+                                            hideNextButton
+                                            hidePrevButton
+                                            boundaryCount={1}
+                                            variant="outlined"
+                                            color="secondary"
+                                            count={Math.ceil(totalReviews / perPage)}
+                                            page={paginationModel.page + 1}
+                                            onChange={handlePageChange}
+                                            sx={{
+                                              marginLeft: 'auto',
+                                              marginRight: 'auto'
+                                            }}
+                                          />
+                                          <Typography variant='h5' align='center' sx={{ paddingBottom: 2 }}>Total: {totalReviews} reviews</Typography>
+                                        </Stack>
+                                      }
+                                    </div>
+                                  </div> : <div style={{ minHeight: 500, display: 'flex', justifyContent: 'center', alignItems: "center" }}><CustomNoRowsOverlay text="No Reviews yet" /></div>}
+                                <div className="doc-review review-listing">
 
-                                    <span className="comment-date">{`#${reviews?.id}`}</span>
-                                    <span className="comment-date">{formattedDate}</span>
-                                    <div className="review-count rating">
-                                      {reviews?.rating}
-                                      <Rating
-                                        name="read-only"
-                                        precision={0.5}
-                                        value={reviews?.rating}
-                                        readOnly
-                                        className='star-span'
-                                        size="small"
-                                        sx={{
-                                          color: 'warning.main',
-                                        }}
-                                      />
+                                  <ul className="comments-list">
+                                    {
+                                      doctorReviews.map((reviews: ReviewTypes, index: number) => {
+                                        const { createdAt, updatedAt } = reviews;
+                                        const online = reviews?.role == 'doctors' ? reviews?.doctorProfile?.online : reviews?.patientProfile?.online
+                                        const idle = reviews?.role == 'doctors' ? reviews?.patientProfile?.idle : reviews?.doctorProfile?.idle
+                                        const profileImage = reviews?.role == 'doctors' ? reviews?.doctorProfile?.profileImage : reviews?.patientProfile?.profileImage;
+                                        const authorName = reviews?.role == 'doctors' ? reviews?.doctorProfile?.fullName : reviews?.patientProfile?.fullName;
+                                        const formattedDate =
+                                          createdAt == updatedAt ?
+                                            `Reviewed ${dayjs(createdAt).fromNow()}` :
+                                            `Reviewed Updated ${dayjs(updatedAt).fromNow()}`;
+                                        return (
+                                          <li key={`${reviews._id}`}>
+                                            <div className="comment" >
+                                              <StyledBadge
+                                                overlap="circular"
+                                                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                                variant="dot"
+                                                online={online!}
+                                                idle={idle}
+                                                style={{ width: 58, height: 58 }}
+                                              >
+                                                <Avatar style={{ width: 58, height: 58 }} alt="" src={`${profileImage}`} >
+                                                  <img src={reviews?.role == 'doctors' ? doctors_profile : patient_profile} alt="" />
+                                                </Avatar>
+                                              </StyledBadge>
+
+                                              <div className="comment-body">
+                                                <div className="meta-data">
+                                                  <span className="comment-author">
+                                                    {
+                                                      reviews?.role == 'doctors' ?
+                                                        'Dr.' :
+                                                        `${reviews?.patientProfile?.gender !== ""
+                                                          ? `${reviews?.patientProfile?.gender}. ` : ''}`}
+                                                    {authorName}
+                                                  </span>
+
+                                                  <span className="comment-date">{`#${reviews?.id}`}</span>
+                                                  <span className="comment-date">{formattedDate}</span>
+                                                  <div className="review-count rating">
+                                                    {reviews?.rating}
+                                                    <Rating
+                                                      name="read-only"
+                                                      precision={0.5}
+                                                      value={reviews?.rating}
+                                                      readOnly
+                                                      className='star-span'
+                                                      size="small"
+                                                      sx={{
+                                                        color: 'warning.main',
+                                                      }}
+                                                    />
+                                                  </div>
+                                                </div>
+                                                {reviews?.recommend ?
+                                                  <p className="recommended">
+                                                    <i className="far fa-thumbs-up" /> I recommend the doctor
+                                                  </p> :
+                                                  <p className="not-recommended">
+                                                    <i className="far fa-thumbs-down" /> Not recommend
+                                                  </p>
+                                                }
+                                                <p className="comment-content">
+                                                  Title: {reviews.title}
+                                                </p>
+                                                <p className="comment-content">
+                                                  Message: {reviews.body}
+                                                </p>
+                                                <div className="comment-reply">
+                                                  {
+                                                    showReplyForm && replyWatch(`parentId`) == reviews?._id ?
+                                                      <>
+                                                        <Link className="comment-btn" href="" onClick={(e) => { removeClicked(e) }}>
+                                                          <i className="fa fa-trash" /> Remove
+                                                        </Link>
+                                                      </> :
+                                                      <>
+                                                        {
+                                                          !userProfile ?
+                                                            <>
+                                                              Login in to reply
+                                                            </> :
+                                                            <>
+                                                              {
+                                                                reviews?.authorId !== userProfile?._id &&
+                                                                reviews?.replies.length < 5 &&
+                                                                <Link className="comment-btn" href="" onClick={(e) => { replyClicked(e, reviews) }}>
+                                                                  <i className="fas fa-reply" /> Reply
+                                                                </Link>
+                                                              }
+                                                            </>
+                                                        }
+                                                      </>
+                                                  }
+                                                  <p className="recommend-btn">
+                                                    <span>Recommend?</span>
+                                                    <Link href="" className={`like-btn ${reviews?.recommend ? 'like-btn-active' : ''}`} style={{ pointerEvents: 'none' }} onClick={(e) => { e.preventDefault() }}>
+                                                      <i className="far fa-thumbs-up" /> Yes
+                                                    </Link>
+                                                    <Link href="" className={`dislike-btn ${reviews?.recommend ? '' : 'dislike-btn-active'}`} style={{ pointerEvents: 'none' }} onClick={(e) => { e.preventDefault() }}>
+                                                      <i className="far fa-thumbs-down" /> No
+                                                    </Link>
+                                                  </p>
+                                                </div>
+
+                                                {
+                                                  showReplyForm && replyWatch(`parentId`) == reviews?._id &&
+                                                  <form noValidate onSubmit={replyHandleSubmit(onReplySubmit)} style={{ marginTop: 20 }}>
+
+                                                    <Fragment key={index}>
+                                                      <div className="form-group">
+                                                        <TextField
+                                                          required
+                                                          label="Title of your reply"
+                                                          size="small"
+                                                          autoComplete='off'
+                                                          fullWidth
+                                                          error={replyErrors?.['title'] == undefined ? false : true}
+                                                          helperText={replyErrors?.['title'] && replyErrors?.['title']?.['message'] as ReactNode}
+                                                          placeholder="If you could say it in one sentence, what would you say?"
+                                                          {
+                                                          ...replyRegister(`title`, {
+                                                            required: "This field is required",
+                                                          })
+                                                          }
+                                                        />
+                                                      </div>
+                                                      <div className="form-group">
+                                                        <TextField
+                                                          required
+                                                          disabled={userProfile?._id == reviews?.doctorId ? false : (!userProfile || profile?._id === userProfile?._id)}
+                                                          label="Your reply"
+                                                          size="small"
+                                                          autoComplete='off'
+                                                          fullWidth
+                                                          multiline
+                                                          maxRows={3}
+                                                          minRows={8}
+                                                          onKeyDown={(e) => {
+                                                            if (replyWatch('body').length > maxLength) {
+                                                              if (e.key !== 'Backspace') {
+                                                                e.preventDefault()
+                                                              }
+                                                            }
+                                                          }}
+                                                          error={replyErrors?.['body'] == undefined ? false : true}
+                                                          helperText={replyErrors?.['body'] && replyErrors?.['body']?.['message'] as ReactNode}
+                                                          placeholder="Reply"
+                                                          {
+                                                          ...replyRegister(`body`, {
+                                                            required: "This field is required",
+                                                            maxLength: maxLength,
+                                                            minLength: minLength
+                                                          })
+                                                          }
+                                                          InputProps={{
+                                                            sx: {
+                                                              '& textarea': {
+                                                                resize: 'both', // Enables resizing
+                                                                overflow: 'auto', // Ensures scrollbars appear when needed
+                                                              },
+                                                            },
+                                                          }}
+                                                        />
+                                                        {replyErrors?.['body'] && replyErrors?.['body']?.type === "minLength" && (
+                                                          <FormHelperText error={true}>Min length is {minLength} characters.</FormHelperText>
+                                                        )}
+                                                        {replyErrors?.['body'] && replyErrors?.['body']?.type === "maxLength" && (
+                                                          <FormHelperText error={true}>Max length is {maxLength} characters.</FormHelperText>
+                                                        )}
+                                                        <div className="d-flex justify-content-between mt-3">
+                                                          <small className="text-muted">
+                                                            <span id="chars">{replyWatch(`body`) ?
+                                                              (maxLength - replyWatch(`body`).length) >= 0 ? (maxLength - watch(`body`).length) + ' characters remaining' : '' :
+                                                              maxLength + ' characters remaining'
+                                                            }</span>
+                                                          </small>
+                                                        </div>
+                                                      </div>
+                                                      <hr />
+                                                      <div className="submit-section">
+                                                        <button type="submit" className="btn btn-primary submit-btn"
+                                                          disabled={userProfile?._id == reviews?.doctorId ? false : (!userProfile || profile?._id === userProfile?._id)}
+                                                          onClick={(e) => {
+                                                            if (userProfile?._id == reviews?.doctorId ? false : (!userProfile || profile?._id === userProfile?._id)) {
+                                                              e.preventDefault()
+                                                              setLoginDialog(true)
+                                                            }
+                                                          }}>
+                                                          {
+                                                            !userProfile ?
+                                                              `Login to add review` :
+                                                              profile?._id === userProfile?._id ?
+                                                                userProfile?._id == reviews?.doctorId ?
+                                                                  `Reply to ${authorName}` :
+                                                                  `You can't reply to your own account.` :
+                                                                `Reply to ${authorName}`}
+                                                        </button>
+                                                      </div>
+                                                    </Fragment>
+
+                                                  </form>
+                                                }
+                                              </div>
+                                            </div>
+                                            {reviews?.replies.length !== 0 &&
+                                              <ul className="comments-reply">
+                                                {
+                                                  reviews?.replies.map((replies: RepliesType, index: number) => {
+                                                    const { createdAt: repliesCreatedAt } = replies;
+                                                    const repliesOnline = replies?.role == 'doctors' ? replies?.doctorProfile?.online : replies?.patientProfile?.online
+                                                    const repliesIdle = replies?.role == 'doctors' ? replies?.doctorProfile?.idle : replies?.patientProfile?.idle
+                                                    const repliesProfileImage = replies?.role == 'doctors' ? replies?.doctorProfile?.profileImage : replies?.patientProfile?.profileImage;
+                                                    const repliesAuthorName = replies?.role == 'doctors' ? replies?.doctorProfile?.fullName : replies?.patientProfile?.fullName;
+                                                    const repliesFormattedDate = `Reviewed ${dayjs(repliesCreatedAt).fromNow()}`;
+                                                    return (
+                                                      <li key={`${replies._id} ${index} ${reviews._id}`}>
+                                                        <div className="comment">
+                                                          <StyledBadge
+                                                            overlap="circular"
+                                                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                                            variant="dot"
+                                                            online={repliesOnline!}
+                                                            idle={repliesIdle}
+                                                            style={{ width: 58, height: 58 }}
+                                                          >
+                                                            <Avatar style={{ width: 58, height: 58 }} alt="" src={`${repliesProfileImage}`} >
+                                                              <img src={replies?.role == 'doctors' ? doctors_profile : patient_profile} alt="" />
+                                                            </Avatar>
+                                                          </StyledBadge>
+                                                          <div className="comment-body">
+                                                            <div className="meta-data">
+                                                              <span style={{ display: 'flex', alignItems: "center" }}>
+                                                                <span className="comment-author">
+                                                                  {replies?.role == 'doctors' ? 'Dr.' : `${replies?.patientProfile?.gender !== "" && `${replies?.patientProfile?.gender}. `}`} {repliesAuthorName}
+                                                                </span>
+                                                                {
+                                                                  replies?.authorId == reviews?.doctorId &&
+                                                                  <p style={{ fontSize: '12px', marginBottom: 0, marginLeft: "5px", color: theme?.palette.text.disabled }}>(Main Doctor)</p>
+                                                                }
+                                                              </span>
+
+                                                              <span className="comment-date">{`#${replies?.id}`}</span>
+                                                              <span className="comment-date">
+                                                                {repliesFormattedDate}
+                                                              </span>
+                                                            </div>
+                                                            <p className="comment-content">
+                                                              Title: {replies.title}
+                                                            </p>
+                                                            <p className="comment-content">
+                                                              Message: {replies.body}
+                                                            </p>
+                                                          </div>
+                                                        </div>
+                                                      </li>
+                                                    )
+                                                  })
+                                                }
+                                              </ul>
+                                            }
+                                          </li>
+                                        )
+                                      })
+                                    }
+                                  </ul>
+                                  {totalReviews !== 0 && <div style={{ position: 'relative' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
+                                      {
+                                        <Stack spacing={2}>
+
+                                          <Typography variant='h5' align='center' sx={{ paddingTop: 2 }}>Total: {totalReviews} reviews</Typography>
+                                          <Pagination
+                                            showFirstButton
+                                            showLastButton
+                                            hideNextButton
+                                            hidePrevButton
+                                            boundaryCount={1}
+                                            variant="outlined"
+                                            color="secondary"
+                                            count={Math.ceil(totalReviews / perPage)}
+                                            page={paginationModel.page + 1}
+                                            onChange={handlePageChange}
+                                            sx={{
+                                              marginLeft: 'auto',
+                                              marginRight: 'auto',
+                                              display: 'flex',
+                                              justifyContent: 'center'
+                                            }}
+                                          />
+                                        </Stack>
+                                      }
+                                    </div>
+                                  </div>}
+
+                                </div>
+                              </Fragment>
+                          }
+                          {
+                            userProfile == null ? <>
+                              <span>
+                                <button
+                                  type="button"
+                                  onClick={() => { setLoginDialog(true); }}
+                                  className="btn btn-primary submit-btn">
+                                  {`Login In to add review`}
+                                </button>
+                              </span>
+                            </> : userProfile!._id !== profile?._id &&
+                            <div className="write-review">
+                              <h1 style={{ fontSize: '18px' }}>
+                                {
+                                  doctorReviews &&
+                                    !alreadyHasReview(profile.reviews_array, userProfile.reviews_array) ?
+                                    <>
+                                      {
+                                        profile.patients_id.includes(userProfile._id) ?
+                                          <>Write a review for <strong>Dr. {profile?.firstName} {' '} {profile?.lastName}</strong></> :
+                                          <p style={{ color: theme.palette.secondary.main }}>You Can&apos;t write review for <strong>Dr. {profile?.firstName} {' '} {profile?.lastName}</strong> without any reservation.  </p>}
+                                    </> :
+                                    <>You wrote review for <strong>Dr. {profile?.firstName} {' '} {profile?.lastName}</strong> already</>
+                                }
+
+                              </h1>
+
+                              {
+                                doctorReviews &&
+                                !alreadyHasReview(profile.reviews_array, userProfile.reviews_array) &&
+                                profile.patients_id.includes(userProfile._id) &&
+                                <form noValidate onSubmit={handleSubmit(onSubmitReview)}>
+                                  <div className='form-group'>
+                                    <Controller
+                                      rules={{
+                                        validate: (value) => value !== 0 || 'This field is required.',
+                                        required: 'This field is required.'
+                                      }}
+                                      name='rating'
+                                      control={control}
+                                      render={(props: any) => {
+                                        const { field, fieldState, formState } = props;
+                                        const { ref, onChange, value } = field;
+                                        return (
+                                          <FormControl
+                                            {...field}
+                                            error={errors.rating == undefined ? false : true}
+                                            helpertext={errors.rating && errors['rating']['message'] as ReactNode}
+                                            fullWidth
+                                            required
+                                          >
+                                            <span id="rating" style={{ color: theme.palette.text.color }}>Rating</span>
+                                            <Rating
+                                              ref={ref}
+                                              aria-labelledby='rating'
+                                              name="rating"
+                                              precision={0.5}
+                                              value={parseFloat(value) || 0}  // Ensure the value is a number
+                                              onChange={(_event, newValue) => {
+                                                onChange(newValue === null ? 0 : newValue);
+                                              }}
+                                              className='star-span'
+                                              sx={{
+                                                color: 'warning.main',
+                                              }}
+
+                                            />
+                                            {errors?.rating && <FormHelperText>{errors['rating']['message']}</FormHelperText>}
+                                          </FormControl>
+                                        )
+                                      }} />
+                                  </div>
+                                  <Controller
+                                    rules={{
+                                      validate: (value) => {
+                                        return value !== null ? true : 'This field is required.'; // Only show error if value is null
+                                      }
+                                    }}
+                                    name='recommend'
+                                    control={control}
+                                    render={(props: any) => {
+                                      const { field, } = props;
+                                      return (
+                                        <FormControl
+                                          {...field}
+                                          error={!!errors.recommend}
+                                          fullWidth
+                                          required
+                                          sx={{ display: 'flex', minHeight: 80 }}
+                                        >
+                                          <span className="recommend-btn" style={{ marginBottom: '10px' }}>
+                                            <span style={{ color: theme.palette.text.color }}>Recommend : </span>
+                                            <Link
+                                              href="#"
+                                              className={`like-btn ${watch('recommend') === true ? 'like-btn-active' : ''}`}
+                                              onClick={(e) => {
+                                                e.preventDefault();
+                                                setFormValue('recommend', true, { shouldValidate: true });
+                                              }}
+                                            >
+                                              <i className="far fa-thumbs-up" /> Yes
+                                            </Link>
+                                            <Link
+                                              href="#"
+                                              className={`dislike-btn ${watch('recommend') === false ? 'dislike-btn-active' : ''}`}
+                                              onClick={(e) => {
+                                                e.preventDefault();
+                                                setFormValue('recommend', false, { shouldValidate: true });
+                                              }}
+                                            >
+                                              <i className="far fa-thumbs-down" /> No
+                                            </Link>
+                                            {errors.recommend && <FormHelperText>{errors.recommend.message}</FormHelperText>}
+
+                                          </span>
+                                        </FormControl>
+                                      )
+                                    }}
+                                  />
+                                  <div className="form-group">
+                                    <TextField
+                                      required
+                                      label="Title of your review"
+
+                                      size="small"
+                                      autoComplete='off'
+                                      fullWidth
+                                      error={errors.title == undefined ? false : true}
+                                      helperText={errors.title && errors['title']['message'] as ReactNode}
+                                      placeholder="If you could say it in one sentence, what would you say?"
+                                      {
+                                      ...register('title', {
+                                        required: "This field is required",
+                                      })
+                                      }
+                                    />
+                                  </div>
+                                  <div className="form-group">
+                                    <TextField
+                                      required
+                                      disabled={!userProfile || profile?._id === userProfile?._id}
+                                      label="Your review"
+                                      size="small"
+                                      autoComplete='off'
+                                      fullWidth
+                                      multiline
+                                      maxRows={3}
+                                      minRows={8}
+                                      onKeyDown={(e) => {
+                                        if (watch('body').length > maxLength) {
+                                          if (e.key !== 'Backspace') {
+                                            e.preventDefault()
+                                          }
+                                        }
+                                      }}
+                                      error={errors.body == undefined ? false : true}
+                                      helperText={errors.body && errors['body']['message'] as ReactNode}
+                                      placeholder="Review"
+                                      {
+                                      ...register('body', {
+                                        required: "This field is required",
+                                        maxLength: maxLength,
+                                        minLength: minLength
+                                      })
+                                      }
+                                      InputProps={{
+                                        sx: {
+                                          '& textarea': {
+                                            resize: 'both', // Enables resizing
+                                            overflow: 'auto', // Ensures scrollbars appear when needed
+                                          },
+                                        },
+                                      }}
+                                    />
+                                    {errors.body && errors.body.type === "minLength" && (
+                                      <FormHelperText error={true}>Min length is {minLength} characters.</FormHelperText>
+                                    )}
+                                    {errors.body && errors.body.type === "maxLength" && (
+                                      <FormHelperText error={true}>Max length is {maxLength} characters.</FormHelperText>
+                                    )}
+                                    <div className="d-flex justify-content-between mt-3">
+                                      <small className="text-muted">
+                                        <span id="chars">{watch('body') ?
+                                          (maxLength - watch('body').length) >= 0 ? (maxLength - watch('body').length) + ' characters remaining' : '' :
+                                          maxLength + ' characters remaining'
+                                        }</span>
+                                      </small>
                                     </div>
                                   </div>
-                                  {reviews?.recommend ?
-                                    <p className="recommended">
-                                      <i className="far fa-thumbs-up" /> I recommend the doctor
-                                    </p> :
-                                    <p className="not-recommended">
-                                      <i className="far fa-thumbs-down" /> Not recommend
-                                    </p>
-                                  }
-                                  <p className="comment-content">
-                                    Title: {reviews.title}
-                                  </p>
-                                  <p className="comment-content">
-                                    Message: {reviews.body}
-                                  </p>
-                                  <div className="comment-reply">
-                                    {
-                                      showReplyForm && replyWatch(`parentId`) == reviews?._id ?
-                                        <>
-                                          <Link className="comment-btn" href="" onClick={(e) => { removeClicked(e) }}>
-                                            <i className="fa fa-trash" /> Remove
-                                          </Link>
-                                        </> :
-                                        <>
+                                  <hr />
+                                  <div className="form-group">
+                                    <div className="terms-accept">
+                                      <div className="custom-checkbox">
+                                        <FormControlLabel
+                                          //@ts-ignore
+                                          checked={getValues('terms')}
                                           {
-                                            !userProfile ?
-                                              <>
-                                                Login in to reply
-                                              </> :
-                                              <>
-                                                {
-                                                  reviews?.authorId !== userProfile?._id &&
-                                                  reviews?.replies.length < 5 &&
-                                                  <Link className="comment-btn" href="" onClick={(e) => { replyClicked(e, reviews) }}>
-                                                    <i className="fas fa-reply" /> Reply
-                                                  </Link>
-                                                }
-                                              </>
+                                          ...register('terms', { required: 'Please accept terms and condition first.' })
                                           }
-                                        </>
-                                    }
-                                    <p className="recommend-btn">
-                                      <span>Recommend?</span>
-                                      <Link href="" className={`like-btn ${reviews?.recommend ? 'like-btn-active' : ''}`} style={{ pointerEvents: 'none' }} onClick={(e) => { e.preventDefault() }}>
-                                        <i className="far fa-thumbs-up" /> Yes
-                                      </Link>
-                                      <Link href="" className={`dislike-btn ${reviews?.recommend ? '' : 'dislike-btn-active'}`} style={{ pointerEvents: 'none' }} onClick={(e) => { e.preventDefault() }}>
-                                        <i className="far fa-thumbs-down" /> No
-                                      </Link>
-                                    </p>
+
+                                          required control={<Checkbox disabled={!userProfile || profile?._id === userProfile?._id} />} label="I have read and accept" />
+                                        <Link href=""
+                                          style={{ pointerEvents: !userProfile || profile?._id === userProfile?._id ? 'none' : 'auto' }}
+                                          aria-disabled={!userProfile || profile?._id === userProfile?._id}
+                                          tabIndex={!userProfile || profile?._id === userProfile?._id ? -1 : undefined}
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            setTermsDialog(true)
+                                          }}>Terms &amp; Conditions</Link>
+                                        {errors.terms && errors.terms && (
+                                          <FormHelperText error={true}>Please accept terms and condition first.</FormHelperText>
+                                        )}
+                                      </div>
+                                    </div>
                                   </div>
-
-                                  {
-                                    showReplyForm && replyWatch(`parentId`) == reviews?._id &&
-                                    <form noValidate onSubmit={replyHandleSubmit(onReplySubmit)} style={{ marginTop: 20 }}>
-
-                                      <Fragment key={index}>
-                                        <div className="form-group">
-                                          <TextField
-                                            required
-                                            label="Title of your reply"
-                                            size="small"
-                                            autoComplete='off'
-                                            fullWidth
-                                            error={replyErrors?.['title'] == undefined ? false : true}
-                                            helperText={replyErrors?.['title'] && replyErrors?.['title']?.['message'] as ReactNode}
-                                            placeholder="If you could say it in one sentence, what would you say?"
-                                            {
-                                            ...replyRegister(`title`, {
-                                              required: "This field is required",
-                                            })
-                                            }
-                                          />
-                                        </div>
-                                        <div className="form-group">
-                                          <TextField
-                                            required
-                                            disabled={userProfile?._id == reviews?.doctorId ? false : (!userProfile || profile?._id === userProfile?._id)}
-                                            label="Your reply"
-                                            size="small"
-                                            autoComplete='off'
-                                            fullWidth
-                                            multiline
-                                            maxRows={3}
-                                            minRows={8}
-                                            onKeyDown={(e) => {
-                                              if (replyWatch('body').length > maxLength) {
-                                                if (e.key !== 'Backspace') {
-                                                  e.preventDefault()
-                                                }
-                                              }
-                                            }}
-                                            error={replyErrors?.['body'] == undefined ? false : true}
-                                            helperText={replyErrors?.['body'] && replyErrors?.['body']?.['message'] as ReactNode}
-                                            placeholder="Reply"
-                                            {
-                                            ...replyRegister(`body`, {
-                                              required: "This field is required",
-                                              maxLength: maxLength,
-                                              minLength: minLength
-                                            })
-                                            }
-                                            InputProps={{
-                                              sx: {
-                                                '& textarea': {
-                                                  resize: 'both', // Enables resizing
-                                                  overflow: 'auto', // Ensures scrollbars appear when needed
-                                                },
-                                              },
-                                            }}
-                                          />
-                                          {replyErrors?.['body'] && replyErrors?.['body']?.type === "minLength" && (
-                                            <FormHelperText error={true}>Min length is {minLength} characters.</FormHelperText>
-                                          )}
-                                          {replyErrors?.['body'] && replyErrors?.['body']?.type === "maxLength" && (
-                                            <FormHelperText error={true}>Max length is {maxLength} characters.</FormHelperText>
-                                          )}
-                                          <div className="d-flex justify-content-between mt-3">
-                                            <small className="text-muted">
-                                              <span id="chars">{replyWatch(`body`) ?
-                                                (maxLength - replyWatch(`body`).length) >= 0 ? (maxLength - watch(`body`).length) + ' characters remaining' : '' :
-                                                maxLength + ' characters remaining'
-                                              }</span>
-                                            </small>
-                                          </div>
-                                        </div>
-                                        <hr />
-                                        <div className="submit-section">
-                                          <button type="submit" className="btn btn-primary submit-btn"
-                                            disabled={userProfile?._id == reviews?.doctorId ? false : (!userProfile || profile?._id === userProfile?._id)}
-                                            onClick={(e) => {
-                                              if (userProfile?._id == reviews?.doctorId ? false : (!userProfile || profile?._id === userProfile?._id)) {
-                                                e.preventDefault()
-                                                setLoginDialog(true)
-                                              }
-                                            }}>
-                                            {
-                                              !userProfile ?
-                                                `Login to add review` :
-                                                profile?._id === userProfile?._id ?
-                                                  userProfile?._id == reviews?.doctorId ?
-                                                    `Reply to ${authorName}` :
-                                                    `You can't reply to your own account.` :
-                                                  `Reply to ${authorName}`}
-                                          </button>
-                                        </div>
-                                      </Fragment>
-
-                                    </form>
-                                  }
-                                </div>
-                              </div>
-                              {reviews?.replies.length !== 0 &&
-                                <ul className="comments-reply">
-                                  {
-                                    reviews?.replies.map((replies: RepliesType, index: number) => {
-                                      const { createdAt: repliesCreatedAt } = replies;
-                                      const repliesOnline = replies?.role == 'doctors' ? replies?.doctorProfile?.online : replies?.patientProfile?.online
-                                      const repliesIdle = replies?.role == 'doctors' ? replies?.doctorProfile?.idle : replies?.patientProfile?.idle
-                                      const repliesProfileImage = replies?.role == 'doctors' ? replies?.doctorProfile?.profileImage : replies?.patientProfile?.profileImage;
-                                      const repliesAuthorName = replies?.role == 'doctors' ? replies?.doctorProfile?.fullName : replies?.patientProfile?.fullName;
-                                      const repliesFormattedDate = `Reviewed ${dayjs(repliesCreatedAt).fromNow()}`;
-                                      return (
-                                        <li key={`${replies._id} ${index} ${reviews._id}`}>
-                                          <div className="comment">
-                                            <StyledBadge
-                                              overlap="circular"
-                                              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                                              variant="dot"
-                                              online={repliesOnline!}
-                                              idle={repliesIdle}
-                                              style={{ width: 58, height: 58 }}
-                                            >
-                                              <Avatar style={{ width: 58, height: 58 }} alt="" src={`${repliesProfileImage}`} >
-                                                <img src={replies?.role == 'doctors' ? doctors_profile : patient_profile} alt="" />
-                                              </Avatar>
-                                            </StyledBadge>
-                                            <div className="comment-body">
-                                              <div className="meta-data">
-                                                <span style={{ display: 'flex', alignItems: "center" }}>
-                                                  <span className="comment-author">
-                                                    {replies?.role == 'doctors' ? 'Dr.' : `${replies?.patientProfile?.gender !== "" && `${replies?.patientProfile?.gender}. `}`} {repliesAuthorName}
-                                                  </span>
-                                                  {
-                                                    replies?.authorId == reviews?.doctorId &&
-                                                    <p style={{ fontSize: '12px', marginBottom: 0, marginLeft: "5px", color: theme?.palette.text.disabled }}>(Main Doctor)</p>
-                                                  }
-                                                </span>
-
-                                                <span className="comment-date">{`#${replies?.id}`}</span>
-                                                <span className="comment-date">
-                                                  {repliesFormattedDate}
-                                                </span>
-                                              </div>
-                                              <p className="comment-content">
-                                                Title: {replies.title}
-                                              </p>
-                                              <p className="comment-content">
-                                                Message: {replies.body}
-                                              </p>
-                                            </div>
-                                          </div>
-                                        </li>
-                                      )
-                                    })
-                                  }
-                                </ul>
+                                  <div className="submit-section">
+                                    <button type="submit" className="btn btn-primary submit-btn" disabled={profile?._id === userProfile?._id} onClick={(e) => {
+                                      if (!userProfile || profile?._id === userProfile?._id) {
+                                        e.preventDefault()
+                                        setLoginDialog(true)
+                                        // router.push('/login')
+                                      }
+                                    }}>
+                                      {!userProfile ? `Login to add review` : profile?._id === userProfile?._id ? `You can't add review to your own account.` : `Add Review`}
+                                    </button>
+                                  </div>
+                                </form>
                               }
-                            </li>
-                          )
-                        })
-                      }
-                    </ul>
-                    {totalReviews !== 0 && <div style={{ position: 'relative' }}>
-                      <div style={{ display: 'flex', justifyContent: 'center', minWidth: '100%', }}>
-                        {
-                          <Stack spacing={2}>
-
-                            <Typography variant='h5' align='center' sx={{ paddingTop: 2 }}>Total: {totalReviews} reviews</Typography>
-                            <Pagination
-                              showFirstButton
-                              showLastButton
-                              hideNextButton
-                              hidePrevButton
-                              boundaryCount={1}
-                              variant="outlined"
-                              color="secondary"
-                              count={Math.ceil(totalReviews / perPage)}
-                              page={paginationModel.page + 1}
-                              onChange={handlePageChange}
-                              sx={{
-                                marginLeft: 'auto',
-                                marginRight: 'auto',
-                                display: 'flex',
-                                justifyContent: 'center'
-                              }}
-                            />
-                          </Stack>
-                        }
-                      </div>
-                    </div>}
-
-                  </div>
-                </Fragment>
-            }
-            {
-              userProfile == null ? <>
-                <span>
-                  <button
-                    type="button"
-                    onClick={() => { setLoginDialog(true); }}
-                    className="btn btn-primary submit-btn">
-                    {`Login In to add review`}
-                  </button>
-                </span>
-              </> : userProfile!._id !== profile?._id &&
-              <div className="write-review">
-                <h1 style={{ fontSize: '18px' }}>
-                  {
-                    doctorReviews &&
-                      !alreadyHasReview(profile.reviews_array, userProfile.reviews_array) ?
-                      <>
-                        {
-                          profile.patients_id.includes(userProfile._id) ?
-                            <>Write a review for <strong>Dr. {profile?.firstName} {' '} {profile?.lastName}</strong></> :
-                            <p style={{ color: theme.palette.secondary.main }}>You Can&apos;t write review for <strong>Dr. {profile?.firstName} {' '} {profile?.lastName}</strong> without any reservation.  </p>}
-                      </> :
-                      <>You wrote review for <strong>Dr. {profile?.firstName} {' '} {profile?.lastName}</strong> already</>
-                  }
-
-                </h1>
-
-                {
-                  doctorReviews &&
-                  !alreadyHasReview(profile.reviews_array, userProfile.reviews_array) &&
-                  profile.patients_id.includes(userProfile._id) &&
-                  <form noValidate onSubmit={handleSubmit(onSubmitReview)}>
-                    <div className='form-group'>
-                      <Controller
-                        rules={{
-                          validate: (value) => value !== 0 || 'This field is required.',
-                          required: 'This field is required.'
-                        }}
-                        name='rating'
-                        control={control}
-                        render={(props: any) => {
-                          const { field, fieldState, formState } = props;
-                          const { ref, onChange, value } = field;
-                          return (
-                            <FormControl
-                              {...field}
-                              error={errors.rating == undefined ? false : true}
-                              helpertext={errors.rating && errors['rating']['message'] as ReactNode}
-                              fullWidth
-                              required
-                            >
-                              <span id="rating" style={{ color: theme.palette.text.color }}>Rating</span>
-                              <Rating
-                                ref={ref}
-                                aria-labelledby='rating'
-                                name="rating"
-                                precision={0.5}
-                                value={parseFloat(value) || 0}  // Ensure the value is a number
-                                onChange={(_event, newValue) => {
-                                  onChange(newValue === null ? 0 : newValue);
-                                }}
-                                className='star-span'
-                                sx={{
-                                  color: 'warning.main',
-                                }}
-
-                              />
-                              {errors?.rating && <FormHelperText>{errors['rating']['message']}</FormHelperText>}
-                            </FormControl>
-                          )
-                        }} />
-                    </div>
-                    <Controller
-                      rules={{
-                        validate: (value) => {
-                          return value !== null ? true : 'This field is required.'; // Only show error if value is null
-                        }
-                      }}
-                      name='recommend'
-                      control={control}
-                      render={(props: any) => {
-                        const { field, } = props;
-                        return (
-                          <FormControl
-                            {...field}
-                            error={!!errors.recommend}
-                            fullWidth
-                            required
-                            sx={{ display: 'flex', minHeight: 80 }}
-                          >
-                            <span className="recommend-btn" style={{ marginBottom: '10px' }}>
-                              <span style={{ color: theme.palette.text.color }}>Recommend : </span>
-                              <Link
-                                href="#"
-                                className={`like-btn ${watch('recommend') === true ? 'like-btn-active' : ''}`}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setFormValue('recommend', true, { shouldValidate: true });
-                                }}
-                              >
-                                <i className="far fa-thumbs-up" /> Yes
-                              </Link>
-                              <Link
-                                href="#"
-                                className={`dislike-btn ${watch('recommend') === false ? 'dislike-btn-active' : ''}`}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setFormValue('recommend', false, { shouldValidate: true });
-                                }}
-                              >
-                                <i className="far fa-thumbs-down" /> No
-                              </Link>
-                              {errors.recommend && <FormHelperText>{errors.recommend.message}</FormHelperText>}
-
-                            </span>
-                          </FormControl>
-                        )
-                      }}
-                    />
-                    <div className="form-group">
-                      <TextField
-                        required
-                        label="Title of your review"
-
-                        size="small"
-                        autoComplete='off'
-                        fullWidth
-                        error={errors.title == undefined ? false : true}
-                        helperText={errors.title && errors['title']['message'] as ReactNode}
-                        placeholder="If you could say it in one sentence, what would you say?"
-                        {
-                        ...register('title', {
-                          required: "This field is required",
-                        })
-                        }
-                      />
-                    </div>
-                    <div className="form-group">
-                      <TextField
-                        required
-                        disabled={!userProfile || profile?._id === userProfile?._id}
-                        label="Your review"
-                        size="small"
-                        autoComplete='off'
-                        fullWidth
-                        multiline
-                        maxRows={3}
-                        minRows={8}
-                        onKeyDown={(e) => {
-                          if (watch('body').length > maxLength) {
-                            if (e.key !== 'Backspace') {
-                              e.preventDefault()
-                            }
+                            </div>
                           }
-                        }}
-                        error={errors.body == undefined ? false : true}
-                        helperText={errors.body && errors['body']['message'] as ReactNode}
-                        placeholder="Review"
-                        {
-                        ...register('body', {
-                          required: "This field is required",
-                          maxLength: maxLength,
-                          minLength: minLength
-                        })
-                        }
-                        InputProps={{
-                          sx: {
-                            '& textarea': {
-                              resize: 'both', // Enables resizing
-                              overflow: 'auto', // Ensures scrollbars appear when needed
-                            },
-                          },
-                        }}
-                      />
-                      {errors.body && errors.body.type === "minLength" && (
-                        <FormHelperText error={true}>Min length is {minLength} characters.</FormHelperText>
-                      )}
-                      {errors.body && errors.body.type === "maxLength" && (
-                        <FormHelperText error={true}>Max length is {maxLength} characters.</FormHelperText>
-                      )}
-                      <div className="d-flex justify-content-between mt-3">
-                        <small className="text-muted">
-                          <span id="chars">{watch('body') ?
-                            (maxLength - watch('body').length) >= 0 ? (maxLength - watch('body').length) + ' characters remaining' : '' :
-                            maxLength + ' characters remaining'
-                          }</span>
-                        </small>
-                      </div>
-                    </div>
-                    <hr />
-                    <div className="form-group">
-                      <div className="terms-accept">
-                        <div className="custom-checkbox">
-                          <FormControlLabel
-                            //@ts-ignore
-                            checked={getValues('terms')}
-                            {
-                            ...register('terms', { required: 'Please accept terms and condition first.' })
-                            }
-
-                            required control={<Checkbox disabled={!userProfile || profile?._id === userProfile?._id} />} label="I have read and accept" />
-                          <Link href=""
-                            style={{ pointerEvents: !userProfile || profile?._id === userProfile?._id ? 'none' : 'auto' }}
-                            aria-disabled={!userProfile || profile?._id === userProfile?._id}
-                            tabIndex={!userProfile || profile?._id === userProfile?._id ? -1 : undefined}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setTermsDialog(true)
-                            }}>Terms &amp; Conditions</Link>
-                          {errors.terms && errors.terms && (
-                            <FormHelperText error={true}>Please accept terms and condition first.</FormHelperText>
-                          )}
                         </div>
                       </div>
                     </div>
-                    <div className="submit-section">
-                      <button type="submit" className="btn btn-primary submit-btn" disabled={profile?._id === userProfile?._id} onClick={(e) => {
-                        if (!userProfile || profile?._id === userProfile?._id) {
-                          e.preventDefault()
-                          setLoginDialog(true)
-                          // router.push('/login')
-                        }
-                      }}>
-                        {!userProfile ? `Login to add review` : profile?._id === userProfile?._id ? `You can't add review to your own account.` : `Add Review`}
-                      </button>
-                    </div>
-                  </form>
-                }
+
+                  </div>
+                </div>
               </div>
-            }
-          </div>
-        </div>
-      </div>
-
-
+            </div>
+          </Fragment>
+      }
       <Dialog
         open={termsDialog}
         onClose={() => setTermsDialog(false)}

@@ -1,13 +1,18 @@
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import Link from 'next/link'
-import useScssVar from '@/hooks/useScssVar'
 
 const FaqDetails: FC = (() => {
-  const { muiVar } = useScssVar();
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setIsClient(true);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <section className="faq-inner-page   animate__animated animate__backInUp card" style={{ padding: "20px 10px", }}>
+      <section className={`faq-inner-page  ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'} card`} style={{ padding: "20px 10px", }}>
         <div className="container">
           <div className="row">
             <div className="col-md-12">

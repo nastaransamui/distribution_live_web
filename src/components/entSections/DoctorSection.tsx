@@ -6,7 +6,7 @@ import AOS from 'aos'
 
 import useScssVar from '@/hooks/useScssVar'
 import { CiHeart } from 'react-icons/ci'
-import { Doc03, Doc07, Doc09, Doc11, fifteen_bg_icon1, fifteen_bg_icon2 } from '../../../public/assets/imagepath'
+import { Doc03, Doc07, Doc09, Doc11, doctors_profile, fifteen_bg_icon1, fifteen_bg_icon2 } from '../../../public/assets/imagepath'
 import { useTheme } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { AppState } from '@/redux/store'
@@ -187,7 +187,7 @@ const DoctorSection: FC = (() => {
 
                               <div className="doctor-profile-img">
                                 <img
-                                  src={doctor.profileImage}
+                                  src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile}
                                   className="img-fluid"
                                   alt=""
                                 />

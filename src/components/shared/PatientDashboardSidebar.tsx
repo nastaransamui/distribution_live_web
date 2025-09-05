@@ -26,6 +26,11 @@ import Tooltip from '@mui/material/Tooltip'
 import { useTheme } from '@mui/material'
 import { getSelectedBackgroundColor, StyledBadge } from "@/components/DoctorDashboardSections/ScheduleTiming"
 import Version from './Version'
+import { updateHomeExp } from '@/redux/homeExp'
+import { updateHomeIAT } from '@/redux/homeIAT'
+import { updateHomeRoleName } from '@/redux/homeRoleName'
+import { updateHomeServices } from '@/redux/homeServices'
+import { updateHomeUserId } from '@/redux/homeUserId'
 
 
 const PatientDashboardSidebar: FC = (() => {
@@ -63,7 +68,17 @@ const PatientDashboardSidebar: FC = (() => {
           });
         } else {
           deleteCookie('homeAccessToken')
+          deleteCookie('user_id')
+          deleteCookie('services')
+          deleteCookie('roleName')
+          deleteCookie('iat')
+          deleteCookie('exp')
           dispatch(updateHomeAccessToken(null))
+          dispatch(updateHomeExp(null));
+          dispatch(updateHomeIAT(null))
+          dispatch(updateHomeRoleName(null))
+          dispatch(updateHomeServices(null));
+          dispatch(updateHomeUserId(null));
           toast.info('Logout successfully', {
             position: "bottom-center",
             autoClose: 5000,
@@ -74,7 +89,6 @@ const PatientDashboardSidebar: FC = (() => {
             progress: undefined,
             transition: bounce,
             onClose: () => {
-              dispatch(updateHomeFormSubmit(false))
               router.reload();
             }
           });
@@ -239,7 +253,7 @@ const PatientDashboardSidebar: FC = (() => {
                   <div className={`${homeSideBarOpen ? 'profile-det-info-open' : "profile-det-info-close"}`}>
                     <OverflowTooltip text={`${userProfile?.gender == "" ? "" : `${userProfile?.gender}. `} ${userProfile?.fullName}`} />
                     <OverflowTooltip text={userProfile?.userName || ''} as="h3" />
-                    <OverflowTooltip text={`${userProfile?.roleName?.charAt(0).toUpperCase()}${userProfile?.roleName.slice(1)}`} as="h3" />
+                    <OverflowTooltip text={`${userProfile?.roleName?.charAt(0).toUpperCase()}${userProfile?.roleName?.slice(1)}`} as="h3" />
 
                     <div className="patient-details-open">
                       <h4>

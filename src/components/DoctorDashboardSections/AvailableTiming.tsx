@@ -20,6 +20,7 @@ import { loadStylesheet } from '@/pages/_app';
 import Chip from '@mui/material/Chip';
 import { useTheme } from '@mui/material/styles';
 import _ from 'lodash'
+import BeatLoader from 'react-spinners/BeatLoader';
 export interface EditValueType {
   start: Date;
   end: Date;
@@ -181,20 +182,28 @@ const AvailableTiming: FC = (() => {
 
     return [...eventArray]
   }, [myAppointmentData])
+
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp" style={muiVar}>
-        {
-          isLoading ?
-            < div className="card">
-              <div className="card-body" style={{ height: '100vh' }}>
-                <Box sx={{ minHeight: "90vh", bgcolor: `${theme.palette.background.default} !important` }} className="dataGridOuterBox">
-                  <LoadingComponent boxMinHeight="500px" />
-                </Box>
-              </div>
-            </div> :
-            <>
-              {
+
+      {
+        isLoading ?
+          <BeatLoader color={theme.palette.primary.main} style={{
+            minWidth: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+          }} /> :
+          <>
+            {
+              <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
                 <div className="card">
                   <div className='card-body'>
                     {/* @ts-ignore */}
@@ -223,10 +232,11 @@ const AvailableTiming: FC = (() => {
                     />
                   </div>
                 </div>
-              }
-            </>
-        }
-      </div>
+              </div>
+            }
+          </>
+      }
+
       {
         show && <BootstrapDialog
           TransitionComponent={Transition}
@@ -247,7 +257,9 @@ const AvailableTiming: FC = (() => {
               }, 500);
             }}>
             <Link
-              target='_blank'
+              onClick={() => {
+                sessionStorage.setItem('doctorPatientTabValue', '0')
+              }}
               className="avatar mx-2"
               href={`/doctors/dashboard/patient-profile/${btoa(editValues?.patientId as string)}`}>
               <StyledBadge
@@ -264,7 +276,9 @@ const AvailableTiming: FC = (() => {
             </Link>
             <Typography
               component="a"
-              target='_blank'
+              onClick={() => {
+                sessionStorage.setItem('doctorPatientTabValue', '0')
+              }}
               sx={{
                 color: theme.palette.primary.main,
                 fontSize: '1rem',

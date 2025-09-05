@@ -452,7 +452,7 @@ const RegisterSection: FC = (() => {
                   <img
                     src={`/assets/images/login-banner_${theme.palette.mode}.webp`}
                     className="img-fluid"
-                    alt="Doccure Register"
+                    alt="Health care Register"
                   />
                 </div>
                 <div className="col-md-12 col-lg-6 login-right">

@@ -2,12 +2,12 @@
 import { FC, Fragment, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { formatNumberWithCommas, LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { toast } from 'react-toastify';
-
+import { useRouter } from 'next/router';
 
 import { useTheme } from '@mui/material/styles';
 
@@ -112,10 +112,11 @@ const BillPaymentSuccess: FC = (() => {
                             </div>
                             <div className="card-body">
                               <div className="booking-doc-info" style={{ display: 'flex', justifyContent: 'center' }}>
-                                <Link target="_blank" aria-label='booking-doc' rel="noopener noreferrer" href={`/doctors/profile/${btoa(singleBill?.doctorId)}`} className="booking-doc-img">
+                                <Link target="_blank" aria-label='booking-doc' rel="noopener noreferrer" href={`/doctors/profile/${btoa(singleBill?.doctorId)}`} className="booking-doc-img" style={{ overflow: 'hidden', borderRadius: `5px`, }}>
                                   <Avatar sx={{
                                     width: 'auto',
                                     height: 'auto',
+                                    borderRadius: `5px`,
                                     transition: 'all 2000ms cubic-bezier(0.19, 1, 0.22, 1) 0ms',
                                     "&:hover": {
                                       boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
@@ -163,67 +164,107 @@ const BillPaymentSuccess: FC = (() => {
                               </div>
                               <div className="booking-summary">
                                 <div className="booking-item-wrap">
-                                  <ul className="booking-fee booking-total">
-                                    <li style={{ display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
-                                      <div style={{ display: 'flex' }}>
-                                        <p style={{ marginBottom: "unset" }}>Invoice Id </p>&nbsp;
-                                        <span></span>
-                                      </div>
-                                      <span>{singleBill?.invoiceId}</span>
-                                    </li>
-                                    <li className='booking-total' style={{ display: 'flex', justifyContent: "space-around", borderBottom: `1px solid ${theme.palette.secondary.main}` }}>
-                                      <div>
-                                        <p style={{ marginBottom: "unset" }}>Title</p> &nbsp;
-                                        <span></span>
-                                      </div>
-                                      <span>Price</span>
-                                    </li>
-                                    {
-                                      singleBill?.billDetailsArray.map((bill: BillingDetailsArrayType, index: number) => {
-                                        let singleBillObj: any = Object.entries(bill)
-
-                                        return (
-                                          <li key={index} style={{ display: 'flex', justifyContent: "space-around" }}>
-                                            {
-                                              singleBillObj.map(([key, value]: [string, any], index: number) => {
-                                                if (key !== 'doctorProfile') {
-                                                  if (key === 'title' || key === 'total') {
-                                                    return (
-                                                      <div key={key}>
-                                                        {
-                                                          singleBillObj[index][0] == 'title'
-                                                          && <p style={{ marginBottom: "unset" }}>{singleBillObj[index][1]}</p>
-                                                        } &nbsp;
-                                                        <span>
-                                                          {
-                                                            singleBillObj[index][0] == 'total'
-                                                            && `${singleBill?.currencySymbol} ${formatNumberWithCommas(singleBillObj[index][1])}`
-                                                          }
-                                                        </span>
-                                                      </div>
-                                                    );
-                                                  }
-                                                }
-                                                return null;
-                                              })
+                                  <table className="invoice-table table table-bordered booking-fee booking-total">
+                                    <thead style={{ borderBottom: "none" }}>
+                                      {/*  */}
+                                      <tr>
+                                        {
+                                          Object.keys(singleBill.billDetailsArray[0]).filter((a: string) => {
+                                            if (userProfile?.roleName == 'patient') {
+                                              return a == 'title' || a == 'total'
+                                            } else {
+                                              return a !== 'amount'
                                             }
-                                          </li>
-                                        )
-                                      })
-                                    }
-                                  </ul>
-                                  <div className="booking-total">
-                                    <ul className="booking-total-list">
-                                      <li style={{ display: 'flex', justifyContent: "space-around" }}>
-                                        <span>Total</span>
-                                        <span className="total-cost">
-                                          {singleBill?.currencySymbol || 'THB'}
-                                          {" "}
-                                          {formatNumberWithCommas(singleBill?.total.toString())}
-                                        </span>
-                                      </li>
-                                    </ul>
-                                  </div>
+                                          }).map((pres: string, index: number) => {
+                                            return (
+                                              <th className={'text-center'} key={index}>{`${pres.charAt(0).toLocaleUpperCase()}${pres.slice(1)}`}</th>
+                                            )
+                                          })
+                                        }
+                                      </tr>
+                                    </thead>
+                                    <tbody style={{ borderTop: "none" }}>
+                                      {
+                                        singleBill.billDetailsArray.map((a: BillingDetailsArrayType, index: number) => {
+                                          return (
+                                            <tr key={index}>
+                                              <td style={{ textAlign: userProfile?.roleName == 'patient' ? 'left' : "left" }}>{a.title}</td>
+                                              {
+                                                userProfile?.roleName == 'doctors' &&
+                                                <>
+                                                  <td className="text-center">{formatNumberWithCommas(a.price?.toString()!)}</td>
+                                                  <td className="text-center">{`${a.bookingsFee} %`}</td>
+                                                  <td className="text-center">{`${singleBill?.currencySymbol} ${formatNumberWithCommas(a.bookingsFeePrice.toString())}`}</td>
+                                                </>
+                                              }
+                                              <td style={{ whiteSpace: 'pre', }} className="text-end">
+                                                {`${singleBill?.currencySymbol} ${formatNumberWithCommas(a.total.toString())}`}
+                                              </td>
+                                            </tr>
+                                          )
+                                        })
+                                      }
+
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                              <div className="col-md-6 col-xl-6 ms-auto">
+                                <div className="table-responsive">
+                                  <table className="invoice-table-two table">
+                                    <tbody>
+                                      <tr>
+                                        {
+                                          userProfile?.roleName == 'doctors' && <>
+                                            <th id='totalPriceTH,
+                                      #totalPriceNumber'>Total Price:</th>
+                                            <td style={{ padding: '10px 0px' }} id='totalPriceNumber'>
+                                              <span style={{ paddingRight: '18px' }} >
+                                                {singleBill?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                                  singleBill?.price.toString()
+                                                )}
+                                              </span>
+                                            </td>
+                                          </>
+                                        }
+                                      </tr>
+                                      <tr>
+                                        {
+                                          userProfile?.roleName == 'doctors' ? <>
+                                            <th>Total Fee Price:</th>
+                                            <td style={{ padding: '10px 0px' }}>
+                                              <span style={{ paddingRight: '18px' }}>
+                                                {singleBill?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                                  singleBill?.bookingsFeePrice.toString()
+                                                )}
+                                              </span>
+                                            </td>
+                                          </> :
+                                            <>
+                                              <th>Total:</th>
+                                              <td style={{ padding: '10px 0px' }}>
+                                                <span style={{ paddingRight: '18px' }}>{singleBill?.currencySymbol || 'THB'}&nbsp;
+                                                  {formatNumberWithCommas(
+                                                    singleBill?.total.toString()
+                                                  )}</span>
+                                              </td>
+                                            </>
+                                        }
+                                      </tr>
+                                      <tr>
+                                        {
+                                          userProfile?.roleName == 'doctors' && <>
+                                            <th>Total:</th>
+                                            <td style={{ padding: '10px 0px' }}>
+                                              <span style={{ paddingRight: '18px' }}>{singleBill?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                                singleBill?.total.toString()
+                                              )}</span>
+                                            </td>
+                                          </>
+                                        }
+                                      </tr>
+                                    </tbody>
+                                  </table>
                                 </div>
                               </div>
                             </div>

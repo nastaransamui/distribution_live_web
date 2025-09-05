@@ -13,9 +13,9 @@ const getClinicsStatus = async (currentRouteName: string) => {
   try {
     const data = await fetch(
       `${process.env.NEXT_PUBLIC_adminUrl}/publications/clinicsStatus`,
-      { method: 'GET' }
+      { method: "GET" }
     );
-    const { clinicsstatus } = await data.json();
+    const clinicsstatus = await data.json();
     let currentClinick = clinicsstatus.filter(
       (a: ClinicsStatus) => a.href == currentRouteName
     ) as ClinicsStatus[];
@@ -25,6 +25,7 @@ const getClinicsStatus = async (currentRouteName: string) => {
       return false;
     }
   } catch (error) {
+    console.log("getClinicsStatus error : ", error);
     return false;
   }
 };

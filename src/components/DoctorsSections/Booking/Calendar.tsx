@@ -1,12 +1,9 @@
 import { FC, Fragment, useEffect, useMemo, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import Link from 'next/link';
 
 
 import { useTheme } from '@mui/material';
-import { addDays } from 'date-fns';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
 import { Calendar as CalendarComponent, DateObject } from "react-multi-date-picker"
 import { AvailableType, TimeType, afterNoonFinish, afterNoonStart, eveningFinish, eveningStart, formatNumberWithCommas, morningFinish, morningStart } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import type { Dayjs, ManipulateType } from 'dayjs';
@@ -26,11 +23,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { LoginBox } from '@/components/AuthSections/LoginSection';
 import { useRouter } from 'next/router';
-import { useSearchParams } from 'next/navigation';
-import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import _ from 'lodash'
 import { Transition } from '@/components/shared/Dialog';
-import isJsonString from '@/helpers/isJson';
 import { loadStylesheet } from '@/pages/_app';
 import { disablePastTime } from '@/components/DoctorDashboardSections/Invoices';
 import { BookingTimeSlotType } from './BookingPage';
@@ -76,7 +70,6 @@ export interface AppointmentReservationType {
 
 
 const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSlot }) => {
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -264,7 +257,7 @@ const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSl
               }
             });
           } else {
-            dispatch(updateHomeFormSubmit(false))
+            // dispatch(updateHomeFormSubmit(false))
             const { newOccupy } = msg;
             router.push(`/doctors/check-out/${btoa(newOccupy._id!)}`)
           }
@@ -303,10 +296,18 @@ const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSl
       })
     }
   }
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-lg-12 col-md-12" style={muiVar}>
+      <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__zoomInDown' : 'pre-anim-hidden'}`} style={muiVar}>
         <div className="booking-header">
           <h1 className="booking-title">Select Available Slots</h1>
         </div>
@@ -498,7 +499,8 @@ const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSl
           </div>
         </div>
         <div className="submit-section proceed-btn text-end" style={{ marginTop: 40 }}>
-          {occupyTime &&
+          {
+            occupyTime &&
             <Button
               disabled={bookingTimeSlot?.doctorProfile?._id === userProfile?._id || userProfile?.roleName == 'doctors'}
               onClick={(e) => {
@@ -517,7 +519,8 @@ const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSl
                     `You can't reserve with doctor user please create patient user.` :
                     <>Next <i className="feather-arrow-right-circle" />
                     </>}
-            </Button>}
+            </Button>
+          }
         </div>
       </div>
 

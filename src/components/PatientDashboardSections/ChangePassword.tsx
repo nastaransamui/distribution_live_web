@@ -147,10 +147,17 @@ const ChangePassword: FC = (() => {
     });
     return () => subscription.unsubscribe();
   }, [passwordClearError, passwordSetError, passwordWatch]);
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp" style={muiVar}>
+      <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
         <div className="card">
           <div className="card-body">
             <h5 className="card-title" style={{ marginBottom: 20 }}>Change Password</h5>

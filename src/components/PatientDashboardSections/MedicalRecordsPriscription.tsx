@@ -147,10 +147,11 @@ export const PrintComponent = forwardRef<HTMLDivElement, Props>((props, ref) => 
                                 prescriptionsArray.map((a: PrescriptionsArrayType, index: number) => {
                                   return (
                                     <tr key={index}>
-                                      <td style={{ color: '#000' }} >{a.medicine}</td>
-                                      <td style={{ color: '#000' }} className="text-center">#{a.medicine_id}</td>
-                                      <td style={{ color: '#000' }} className="text-center">{a.quantity}</td>
-                                      <td style={{ color: '#000', display: 'block', whiteSpace: 'pre' }} className="text-center" dangerouslySetInnerHTML={{ __html: a.description }}></td>
+                                      <td style={{ color: '#000', verticalAlign: "midle" }} >{a.medicine}</td>
+                                      <td style={{ color: '#000', verticalAlign: "midle" }} className="text-center">#{a.medicine_id}</td>
+                                      <td style={{ color: '#000', verticalAlign: "midle" }} className="text-center">{a.quantity}</td>
+                                      <td style={{ color: '#000', verticalAlign: "midle" }} className="text-center" dangerouslySetInnerHTML={{ __html: a.description }}></td>
+                                      {/*  display: 'block', whiteSpace: 'pre'  */}
                                     </tr>
                                   )
                                 })
@@ -373,7 +374,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
           const online = row?.patientProfile?.online || false
           return (
             <>
-              <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}>
+              <Link onClick={(e) => e.preventDefault()} className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

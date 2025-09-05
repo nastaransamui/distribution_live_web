@@ -1,13 +1,20 @@
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 
 
 const TermsDetails: FC = (() => {
   const { muiVar } = useScssVar();
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setIsClient(true);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <section className="terms-section   animate__animated animate__backInUp" style={muiVar}>
+      <section className={`terms-section   ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
         <div className="card" style={{ padding: "20px 10px" }}>
           <div className="container">
             <div className="row">

@@ -7,6 +7,7 @@ import { ChatDataType } from "../../../@types/chatTypes";
 import { Image_placeholder } from "@/public/assets/imagepath";
 import _ from 'lodash'
 import { useRouter } from "next/router";
+import { getCookie } from "cookies-next";
 
 
 type UseFetchUserRoomsProps = {
@@ -34,7 +35,13 @@ const useFetchUserRooms = ({
 }: UseFetchUserRoomsProps) => {
   const router = useRouter();
   useEffect(() => {
-    if (!homeSocket?.current || userProfile?._id == null || userProfile?._id == undefined) return;
+    if (
+      !homeSocket?.current ||
+      userProfile?._id == null ||
+      userProfile?._id == undefined ||
+      !getCookie('user_id') ||
+      !router.asPath.includes('chat')
+    ) return;
     const socket = homeSocket.current;
 
     socket.emit('getUserRooms', { userId: userProfile?._id })
@@ -117,13 +124,14 @@ const useFetchUserRooms = ({
     })
 
     return () => {
+      socket.off("getUserRooms");
       socket.off("getUserRoomsReturn");
       socket.off("updateGetUserRooms");
       setShowEmptyRoomInSearchList([])
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket, reload, router, routerRoomId, userProfile?._id])
+  }, [homeSocket, reload, router.pathname, routerRoomId, userProfile?._id])
 }
 
 export default useFetchUserRooms;

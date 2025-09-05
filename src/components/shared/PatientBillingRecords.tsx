@@ -64,13 +64,17 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
     currencySymbol,
     bookingsFee,
     bookingsFeePrice,
-    billKeys
+    billKeys,
+    isSameDoctor
   } = printProps
 
-  const router = useRouter();
+
   const currentDate = dayjs();
   const isDue = status !== 'Paid' && (dayjs(dueDate).isBefore(currentDate, 'day') || dayjs(dueDate).isSame(currentDate, 'day'))
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
+  const theme = useTheme();
+  const isFirefox = typeof navigator !== "undefined" && /firefox/i.test(navigator.userAgent);
+
   return (
     <div ref={ref} >
       <Fragment >
@@ -143,25 +147,36 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                       <div className="col-md-12">
                         <div className="table-responsive">
                           <table className="invoice-table table table-bordered" style={{ color: '#000' }}>
-                            <thead style={{ borderBottom: "none" }}>
+                            <thead style={{ borderBottom: isFirefox ? `2px solid ${theme.palette.primary.main}` : "none", }}>
                               <tr>
                                 {
-                                  billKeys.filter((a: string) => {
-                                    if (homeRoleName == 'patient') {
-                                      return a == 'title' || a == 'total'
-                                    } else {
-                                      return a !== 'amount'
-                                    }
-                                  }).map((pres: string, index: number) => {
-                                    return (
-                                      <th className={index !== 0 ? "text-center" : ''} key={index}>
-                                        {
-                                          pres == 'bookingFee' ? "Percent" : pres == "bookingsFeePrice" ? "Fee Price" :
-                                            `${pres.charAt(0).toLocaleUpperCase()}${pres.slice(1)}`
-                                        }
-                                      </th>
-                                    )
-                                  })
+                                  billKeys.
+                                    // filter((a: string) => {
+                                    //   if (homeRoleName == 'patient' || !isSameDoctor) {
+                                    //     return a == 'title' || a == 'total'
+                                    //   } else {
+                                    //     return a !== 'amount'
+                                    //   }
+                                    // }).
+                                    map((pres: string, index: number) => {
+                                      return (
+                                        <th
+                                          className={index !== 0 ? "text-center" : ''}
+                                          key={index}
+                                          style={{
+                                            color:
+                                              (homeRoleName == 'patient' || !isSameDoctor) &&
+                                                (pres == 'price' || pres == 'bookingsFee' || pres == 'bookingsFeePrice') ?
+                                                'transparent' : theme.palette.primary.main
+                                          }}
+                                        >
+                                          {
+                                            pres == 'bookingsFee' ? "Percent" : pres == "bookingsFeePrice" ? "Percent Amount" :
+                                              `${pres.charAt(0).toLocaleUpperCase()}${pres.slice(1)}`
+                                          }
+                                        </th>
+                                      )
+                                    })
                                 }
                               </tr>
                             </thead>
@@ -172,18 +187,18 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                                     <tr key={index}>
                                       <td style={{ color: '#000' }} >{a.title}</td>
                                       {
-                                        homeRoleName == 'doctors' &&
+                                        // homeRoleName == 'doctors' && isSameDoctor &&
                                         <>
-                                          <td style={{ color: '#000' }} className="text-center">
+                                          <td style={{ color: homeRoleName == 'doctors' && isSameDoctor ? '#000' : 'transparent' }} className="text-center">
                                             {`${currencySymbol} ${formatNumberWithCommas(a.price?.toString()!)}`}
                                           </td>
-                                          <td style={{ color: '#000' }} className="text-center">{`${a.bookingsFee} %`}</td>
-                                          <td style={{ color: '#000' }} className="text-center">
+                                          <td style={{ color: homeRoleName == 'doctors' && isSameDoctor ? '#000' : 'transparent' }} className="text-center">{`${a.bookingsFee} %`}</td>
+                                          <td style={{ color: homeRoleName == 'doctors' && isSameDoctor ? '#000' : 'transparent' }} className="text-center">
                                             {`${currencySymbol} ${formatNumberWithCommas(a.bookingsFeePrice.toString())}`}
                                           </td>
                                         </>
                                       }
-                                      <td style={{ color: '#000', display: 'block', whiteSpace: 'pre' }} className="text-center">
+                                      <td style={{ color: '#000', verticalAlign: 'midle', whiteSpace: 'pre', alignItems: "center" }} className="text-center">
                                         {`${currencySymbol} ${formatNumberWithCommas(a.total.toString())}`}
                                       </td>
                                     </tr>
@@ -195,9 +210,9 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                         </div>
                       </div>
 
-                      <div style={{ maxWidth: '50%' }}>
+                      <div style={{ maxWidth: '50%', position: 'relative' }}>
 
-                        <div style={{ top: billDetailsArray.length == 5 ? '650px' : '600px', left: '150px' }} className={
+                        <div style={{ top: 50, left: '50px' }} className={
                           `${isDue
                             ? "rubber_stamp_await"
                             : status == "Paid"
@@ -213,7 +228,7 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                             <tbody>
                               <tr>
                                 {
-                                  homeRoleName == 'doctors' && <>
+                                  homeRoleName == 'doctors' && isSameDoctor && <>
                                     <th>Total Price:</th>
                                     <td style={{ padding: '10px 20px', color: "#000" }}>
                                       <span>
@@ -227,7 +242,7 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                               </tr>
                               <tr>
                                 {
-                                  homeRoleName == 'doctors' ? <>
+                                  homeRoleName == 'doctors' && isSameDoctor ? <>
                                     <th>Total Fee Price:</th>
                                     <td style={{ padding: '10px 20px', color: "#000" }}>
                                       <span>
@@ -239,7 +254,7 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                                   </> :
                                     <>
                                       <th>Total:</th>
-                                      <td style={{ padding: '10px 70px', color: "#000" }}>
+                                      <td style={{ padding: '10px 35px', color: "#000" }}>
                                         <span>{currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                           total
                                         )}</span>
@@ -249,12 +264,14 @@ export const PrintBillComponent = forwardRef<HTMLDivElement, PrintProps>((props,
                               </tr>
                               <tr>
                                 {
-                                  homeRoleName == 'doctors' && <>
-                                    <th>Total:</th>
+                                  homeRoleName == 'doctors' && isSameDoctor && <>
+                                    <th>Total:d</th>
                                     <td style={{ padding: '10px 20px', color: "#000" }}>
-                                      <span>{currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                        total
-                                      )}</span>
+                                      <span>
+                                        {currencySymbol || 'THB'}
+                                        &nbsp;
+                                        {formatNumberWithCommas(total)}
+                                      </span>
                                     </td>
                                   </>
                                 }
@@ -345,12 +362,11 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
   });
 
   const printButtonClicked = (row: any) => {
-
-    const { doctorProfile, patientProfile } = row
+    const { doctorProfile, patientProfile, doctorId: rowDoctorId } = row
     const { firstName, lastName, country, city, state, address1, address2 } = doctorProfile
     const { gender, firstName: paFirstName, lastName: paLastName, country: paCountry,
       city: paCity, state: paState, address1: paAddress1, address2: paAddress2 } = patientProfile
-
+    const isSameDoctor = userProfile?._id == rowDoctorId;
     setPrintProps(() => {
       let newState = {}
       newState = {
@@ -375,7 +391,8 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         bookingsFee: row?.bookingsFee,
         bookingsFeePrice: row?.bookingsFeePrice,
         billKeys: Object.keys(row.billDetailsArray[0]),
-        billDetailsArray: row.billDetailsArray
+        billDetailsArray: row.billDetailsArray,
+        isSameDoctor
       }
       return newState
     })
@@ -437,7 +454,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
           </Link>
         }
       },
-      {
+      userType == 'patient' || router.asPath.includes('/patient-profile') ? {
         field: 'doctorProfile.fullName',
         headerName: "Doctor",
         width: 250,
@@ -473,16 +490,16 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
               </Link>
               <Stack >
                 <Link href={`/doctors/profile/${btoa(row?.doctorId)}`}
-                  target='_blank'
-                  style={{ marginBottom: -20, zIndex: 1 }}>
+                  target='_blank' style={{ justifyContent: 'center', display: 'flex' }}>
                   {doctorName}
-                </Link><br />
+                </Link>
                 <small> {row?.doctorProfile?.specialities[0]?.specialities}</small>
+
               </Stack>
             </>
           )
         },
-      },
+      } : null,
       userType == 'doctor' ? {
         field: 'patientProfile.fullName',
         headerName: "Patient",
@@ -504,7 +521,12 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
           const online = row?.patientProfile?.online || false;
           return (
             <>
-              <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
+              <Link className="avatar mx-2" onClick={(e) => {
+                if (router.asPath.includes('patient-profile')) {
+                  e.preventDefault()
+                }
+                sessionStorage.setItem('doctorPatientTabValue', '3')
+              }} href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -517,6 +539,12 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
               </Link>
               <Stack>
                 <Link
+                  onClick={(e) => {
+                    if (router.asPath.includes('patient-profile')) {
+                      e.preventDefault()
+                    }
+                    sessionStorage.setItem('doctorPatientTabValue', '3')
+                  }}
                   href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}
                   style={{ color: theme.palette.secondary.main, maxWidth: '100%', minWidth: '100%' }}>
                   {`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}
@@ -605,14 +633,15 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         filterable: true,
         filterOperators: createCustomOperators().number,
         renderCell: (params: GridRenderCellParams) => {
-          const isSameDoctor = userProfile?._id == params?.row?.doctorId;
+
+
           return (
             <Stack >
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>
-                {isSameDoctor ? formatNumberWithCommas(params?.row?.total) : 'N/A'}
+                {formatNumberWithCommas(params?.row?.total)}
               </span>
               <span className="d-block">
-                <span style={{ justifyContent: 'center', display: 'flex' }}>{isSameDoctor && params?.row?.currencySymbol}</span>
+                <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.currencySymbol}</span>
               </span>
             </Stack>
           )
@@ -842,7 +871,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                   setShowDelete(true)
                 }}
                 icon={
-                  params.row.status === 'Paid' ? (
+                  params.row.status === 'Paid' || !isSameDoctor ? (
                     <DeleteForever sx={{ color: theme.palette.text.disabled }} />
                   ) : (
                     <DeleteForever sx={{ color: 'crimson' }} />

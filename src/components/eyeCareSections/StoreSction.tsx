@@ -82,7 +82,7 @@ const StoreSection: FC = (() => {
                 <h2>
                   <span>Our</span> Store
                 </h2>
-                <p>Great Reasons For People Choose Doccure Store</p>
+                <p>Great Reasons For People Choose Health care Store</p>
               </div>
               <ul className="store-tab nav">
                 <li>

@@ -24,7 +24,7 @@ const WaySection: FC = (() => {
             <div className="row align-items-end">
               <div className="col-lg-7 col-md-12">
                 <div className="section-inner-header way-inner-header mb-0">
-                  <h2>Be on Your Way to Feeling Better with the Doccure</h2>
+                  <h2>Be on Your Way to Feeling Better with the Health care</h2>
                   <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                     eiusmod tempor incididunt ut labore et dolore magna aliqua.
