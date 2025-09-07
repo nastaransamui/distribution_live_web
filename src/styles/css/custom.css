@@ -2511,7 +2511,6 @@ chat-attachment-list,
 .book-btn1 {
   background-color: var(--secondaryMain);
   border: 2px solid var(--primaryDark);
-  color: #ffffff;
   font-size: 16px;
   text-align: center;
   font-weight: 500;
@@ -2521,7 +2520,6 @@ chat-attachment-list,
 .book-btn1:hover {
   background-color: #01cae4;
   border-color: var(--primaryDark);
-  color: #ffffff;
 }
 
 .search-btn {
@@ -5648,7 +5646,7 @@ table .table-hover tbody tr:hover td {
   font-size: 14px;
   color: var(--color);
   width: 100%;
-  border-top: 1px solid var(--secondaryMain);
+
   -webkit-transition: all 0.35s ease;
   -ms-transition: all 0.35s ease;
   transition: all 0.35s ease;
@@ -5839,7 +5837,25 @@ table .table-hover tbody tr:hover td {
     -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    /* border-left: 1px solid var(--secondaryMain);
+    border-bottom: 1px solid var(--secondaryMain);
+    border-right: 1px solid var(--secondaryMain); */
   }
+}
+
+.header .header-nav .main-nav li > ul > li:nth-child(1) > a {
+  border: 1px solid var(--secondaryMain);
+  border-radius: 5px 5px 0px 0px;
+}
+
+.header .header-nav .main-nav li > ul > li:nth-child(2) > a {
+  border-right: 1px solid var(--secondaryMain);
+  border-left: 1px solid var(--secondaryMain);
+}
+
+.header .header-nav .main-nav li > ul > li:nth-child(3) > a {
+  border: 1px solid var(--secondaryMain);
+  border-radius: 0px 0px 5px 5px;
 }
 
 .header .header-nav .main-nav li a {
@@ -5869,7 +5885,7 @@ table .table-hover tbody tr:hover td {
 @media (min-width: 992px) {
   .header .header-nav .main-nav li .submenu::before {
     border: 7px solid var(--bgDefault);
-    border-color: transparent transparent var(--bgDefault) var(--bgDefault);
+    border-color: transparent transparent var(--secondaryMain) var(--secondaryMain);
     content: "";
     transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
@@ -5878,7 +5894,7 @@ table .table-hover tbody tr:hover td {
     -webkit-transform: rotate(135deg);
     -ms-transform: rotate(135deg);
     position: absolute;
-    top: 2px;
+    top: 1px;
     left: 45px;
     -webkit-box-shadow: -2px 2px 2px -1px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: -2px 2px 2px -1px rgba(0, 0, 0, 0.1);
@@ -6041,12 +6057,12 @@ table .table-hover tbody tr:hover td {
 .header .header-nav .header-navbar-rht li .dropdown-menu::before {
   content: "";
   border: 7px solid var(--bgPaper);
-  border-color: transparent transparent var(--bgPaper) var(--bgPaper);
+  border-color: transparent transparent var(--primaryMain) var(--primaryMain);
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
   -ms-transform: rotate(135deg);
   position: absolute;
-  top: -5px;
+  top: -7px;
   right: 17px;
   -webkit-box-shadow: -2px 2px 2px -1px rgba(0, 0, 0, 0.1);
   -moz-box-shadow: -2px 2px 2px -1px rgba(0, 0, 0, 0.1);
@@ -6173,6 +6189,7 @@ table .table-hover tbody tr:hover td {
   -ms-transition: all 0.2s ease;
   transition: all 0.2s ease;
   background-color: var(--bgPaper);
+  border: 1px solid var(--primaryMain);
 }
 
 @media (min-width: 992px) {
@@ -7075,9 +7092,8 @@ table .table-hover tbody tr:hover td {
 
 @media (min-width: 992px) {
   .header-one .main-menu-wrapper .main-nav li > ul {
-    background: #ffffff;
-    box-shadow: 0px 4px 4px rgba(196, 196, 196, 0.25);
-    border-radius: 0px 0px 6px 5px;
+    box-shadow: 0px 1px 1px rgba(196, 196, 196, 0.25);
+    border-radius: 5px;
     display: block;
     font-size: 14px;
     min-width: 200px;
@@ -7250,11 +7266,11 @@ table .table-hover tbody tr:hover td {
   transition: all 0.35s ease;
   width: 100%;
   position: relative;
-  border-top: 1px solid var(--secondaryMain);
 }
 @media (min-width: 992px) {
   .header-one .main-menu-wrapper .main-nav > li .submenu::before {
-    border-color: transparent transparent var(--bgPaper) var(--bgPaper) !important;
+    border-color: transparent transparent var(--secondaryMain)
+      var(--secondaryMain) !important;
   }
 }
 
@@ -7825,8 +7841,34 @@ table .table-hover tbody tr:hover td {
 .megamenu-wrapper {
   padding: 25px 25px 0;
   background-color: var(--bgPaper);
+  border: 1px solid var(--secondaryMain);
+  border-radius: 5px;
+  position: relative;
   /* min-width: 110%; */
 }
+.megamenu-wrapper:before {
+    border: 7px solid var(--bgDefault);
+    border-color: transparent transparent var(--secondaryMain) var(--secondaryMain);
+    content: "";
+    transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+    -ms-transform: rotate(135deg);
+    position: absolute;
+    top: 0px;
+    left: 35%;
+    -webkit-box-shadow: -2px 2px 2px -1px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: -2px 2px 2px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: -2px 2px 2px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .megamenu-wrapper .row .col-lg-2 .single-demo .demo-img{
+    border-top: 1px solid var(--secondaryMain);
+    border-bottom: 1px solid var(--secondaryMain);
+    padding-bottom: 10px;
+  }
 
 .single-demo {
   transition: 0.4s;
@@ -7922,6 +7964,7 @@ table .table-hover tbody tr:hover td {
 
 @media (min-width: 992px) {
   .header .header-nav .main-nav li > ul.mega-submenu {
+    border-radius: 5px !important;
     padding: 0;
     border: 0;
     display: block;
@@ -8283,6 +8326,7 @@ table .table-hover tbody tr:hover td {
 @media (min-width: 992px) {
   .header.header-ten .main-menu-wrapper .main-nav li > ul {
     background: var(--bgDefault);
+    border-radius: 5px !important;
     box-shadow: 0px 4px 4px rgba(196, 196, 196, 0.25);
     border-radius: 0px 0px 6px 5px;
     display: block;
@@ -8476,7 +8520,7 @@ table .table-hover tbody tr:hover td {
   transition: all 0.35s ease;
   width: 100%;
   position: relative;
-  border-top: 1px solid var(--secondaryLight);
+  /* border-top: 1px solid var(--secondaryLight); */
 }
 
 .header.header-ten .main-menu-wrapper .main-nav > li .submenu li a.active {
@@ -8526,11 +8570,11 @@ table .table-hover tbody tr:hover td {
 @media (min-width: 992px) {
   .header.header-ten .main-menu-wrapper .main-nav > li .submenu::before {
     border: 7px solid var(--bgDefault);
-    border-color: transparent transparent var(--bgDefault) var(--bgDefault);
+    border-color: transparent transparent var(--secondaryMain) var(--secondaryMain);
     box-shadow: -2px 2px 2px -1px rgba(0, 0, 0, 0.1);
     content: "";
     position: absolute;
-    top: 2px;
+    top:1px;
     left: 45px;
     -webkit-transform-origin: 0 0;
     transform-origin: 0 0;
@@ -19344,10 +19388,8 @@ call-btn:focus {
   min-height: calc(100vh - 324px);
   max-height: calc(100vh - 324px);
   overflow-y: auto;
-  
 }
-.chat-users-list .chat-scroll{
-  
+.chat-users-list .chat-scroll {
   box-shadow: inset -1px 0 0 var(--secondaryMain);
 }
 
@@ -19868,14 +19910,14 @@ call-btn:focus {
   width: 80px;
 }
 
-.chat-attachment-left-side{
+.chat-attachment-left-side {
   display: flex;
   align-items: center;
   flex: 1 1 calc(50% - 10px);
   box-sizing: border-box;
   text-align: center;
 }
-.chat-attachment-left-side img{
+.chat-attachment-left-side img {
   height: 30px;
   width: 30px;
 }
@@ -20059,7 +20101,6 @@ chat-attachment-list li {
   text-align: center;
   min-width: 300px;
 }
-
 
 .call-box .call-wrapper .call-user h4 {
   font-size: 24px;
@@ -22687,6 +22728,7 @@ span.call-duration.float-end {
   color: var(--color);
   font-size: 13px;
   display: flex;
+  padding-bottom: 10px;
 }
 
 @media (max-width: 767.98px) {
@@ -24423,6 +24465,7 @@ span.call-duration.float-end {
 .invoice-table-two tr td {
   color: var(--color);
   font-weight: 500;
+  vertical-align: middle;
 }
 
 .invoice-table-two {
@@ -39098,7 +39141,7 @@ ul.benifits-col li i {
 }
 
 .booking-doctor-info h4 a:hover {
-  color: #0e82fd;
+  color: var(--secondaryMain);
 }
 
 .booking-doctor-info p {
@@ -46234,10 +46277,9 @@ svg.feather {
 }
 
 @media (max-width: 767px) {
-
-.new-chat-cont-right .chat-header {
-  border-left: 1px solid var(--secondaryMain);
-}
+  .new-chat-cont-right .chat-header {
+    border-left: 1px solid var(--secondaryMain);
+  }
 }
 
 .new-chat-cont-right .chat-header {
@@ -46279,7 +46321,7 @@ svg.feather {
   border-radius: 15px 15px 0px 0px;
   color: var(--color);
 }
-.chat-header-with-small small{
+.chat-header-with-small small {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -46287,50 +46329,50 @@ svg.feather {
 }
 @media (max-width: 767px) {
   .new-chat-cont-left .chat-header-with-small,
-  .new-chat-cont-left .chat-search{
+  .new-chat-cont-left .chat-search {
     border-right-color: transparent !important;
   }
-  .chat-users-list .chat-scroll{
+  .chat-users-list .chat-scroll {
     box-shadow: none !important;
     max-height: 0px !important;
     min-height: 0px !important;
     visibility: hidden;
     transition: all 0.5s ease-in-out;
   }
-  .new-chat-window .new-chat-cont-right .chat-footer{
+  .new-chat-window .new-chat-cont-right .chat-footer {
     margin-left: 0px !important;
     transition: all 0.5s ease-in-out;
   }
-  .new-chat-cont-left{
+  .new-chat-cont-left {
     max-height: 0px !important;
     transition: all 0.5s ease-in-out;
   }
-  .new-chat-cont-left-active{
+  .new-chat-cont-left-active {
     max-height: calc(56px + 100vh) !important;
     transition: all 0.5s ease-in-out;
   }
-  .chat-users-list .chat-scroll-active{
+  .chat-users-list .chat-scroll-active {
     max-height: 72vh !important;
     min-height: 72vh !important;
     visibility: visible;
     /* border: 1px solid var(--secondaryMain); */
     transition: all 0.5s ease-in-out;
   }
-  .new-chat-cont-left-active{
+  .new-chat-cont-left-active {
     max-height: 88vh !important;
     min-height: 88vh !important;
     transition: all 0.5s ease-in-out;
   }
-  .new-chat-cont-right{
+  .new-chat-cont-right {
     margin-top: -1px;
     transition: all 0.5s ease-in-out;
   }
-  .chat-users-list-active{
+  .chat-users-list-active {
     border-bottom: 1px solid var(--secondaryMain);
   }
 }
 
-.new-chat-cont-left .chat-header-with-small{
+.new-chat-cont-left .chat-header-with-small {
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -46355,8 +46397,8 @@ svg.feather {
   display: flex;
 }
 
-@media (max-width: 600px){
-  .new-chat-cont-right .chat-header .chat-options{
+@media (max-width: 600px) {
+  .new-chat-cont-right .chat-header .chat-options {
     width: unset;
   }
 }
@@ -46373,8 +46415,12 @@ svg.feather {
   position: relative;
 }
 
-.new-chat-window .new-chat-cont-left .chat-users-list a.media .delete-whole-chat,
-.chat-msg-attachments .delete-whole-chat{
+.new-chat-window
+  .new-chat-cont-left
+  .chat-users-list
+  a.media
+  .delete-whole-chat,
+.chat-msg-attachments .delete-whole-chat {
   position: absolute;
   left: 0;
   top: 0;
@@ -46393,40 +46439,49 @@ svg.feather {
   justify-content: center;
 }
 
-.new-chat-window .new-chat-cont-left .chat-users-list a.media .delete-whole-chat  button:nth-of-type(2){
+.new-chat-window
+  .new-chat-cont-left
+  .chat-users-list
+  a.media
+  .delete-whole-chat
+  button:nth-of-type(2) {
   display: none;
 }
 .delete-whole-chat:has(+ .chat-msg-attachments) button:nth-of-type(2) {
   display: none;
 }
-.msg-box div .edit-chat{
+.msg-box div .edit-chat {
   position: absolute;
 }
 /* On Hover, Show with Animation */
-.new-chat-window .new-chat-cont-left .chat-users-list a.media:hover .delete-whole-chat,
+.new-chat-window
+  .new-chat-cont-left
+  .chat-users-list
+  a.media:hover
+  .delete-whole-chat,
 .chat-msg-attachments:hover .delete-whole-chat {
   visibility: visible;
   opacity: 1;
   transform: scale(1);
-  transition-delay: 0s; 
+  transition-delay: 0s;
   max-width: 30px;
 }
-.msg-box div .delete-whole-chat{
+.msg-box div .delete-whole-chat {
   position: absolute;
   left: 0;
-   top: 0px;
-   background-color: var(--bgPaper);
-   border-radius: 5px 5px 0px 0px;
-   width: 100%;
-   visibility: hidden;
+  top: 0px;
+  background-color: var(--bgPaper);
+  border-radius: 5px 5px 0px 0px;
+  width: 100%;
+  visibility: hidden;
   opacity: 0;
   transition: all 0.2s ease-in-out;
 }
-.msg-box div:hover .delete-whole-chat{
+.msg-box div:hover .delete-whole-chat {
   visibility: visible;
   opacity: 1;
   top: -28px;
-  transition-delay: 0s; 
+  transition-delay: 0s;
 }
 
 .new-chat-window .new-chat-cont-left .chat-users-list a.media:last-child {
@@ -46514,26 +46569,23 @@ svg.feather {
   /* border-left: 1px solid var(--secondaryMain); */
 }
 @media (max-width: 767px) {
-
   .new-chat-window .new-chat-cont-right .chat-body {
     border-left: 1px solid var(--secondaryMain);
   }
-  }
+}
 .chat-users-list .chat-scroll {
   max-height: calc(100vh - 10px);
   min-height: calc(100vh - 10px);
   overflow-y: auto;
 }
 
-.chat-body .chat-scroll{
+.chat-body .chat-scroll {
   max-height: calc(100vh - 10px);
   min-height: calc(100vh - 10px);
   display: flex;
   flex-direction: column-reverse; /* Keeps the latest message at the bottom */
   overflow-y: auto;
-
 }
-
 
 .MuiDrawer-paper::-webkit-scrollbar {
   width: 0px; /* Hides scrollbar width */
@@ -46704,7 +46756,7 @@ svg.feather {
   border-radius: 0.25rem;
   padding: 10px 15px;
   background-color: var(--bgPaper);
-  
+
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -46725,7 +46777,11 @@ svg.feather {
   border-right: 1px solid var(--secondaryMain);
 }
 
-.new-chat-window .new-chat-cont-left .chat-users-list a.media:hover .MuiAvatar-root{
+.new-chat-window
+  .new-chat-cont-left
+  .chat-users-list
+  a.media:hover
+  .MuiAvatar-root {
   background-color: var(--bgPaper);
 }
 
@@ -46738,13 +46794,17 @@ svg.feather {
   .last-chat-time {
   color: var(--color);
 }
-.new-chat-window .new-chat-cont-left .chat-users-list a.media.active:hover{
+.new-chat-window .new-chat-cont-left .chat-users-list a.media.active:hover {
   border-right: transparent;
 }
 .new-chat-window .new-chat-cont-left .chat-users-list a.media.active {
   background-color: var(--bgDefault);
 }
-.new-chat-window .new-chat-cont-left .chat-users-list a.media.active .MuiAvatar-root{
+.new-chat-window
+  .new-chat-cont-left
+  .chat-users-list
+  a.media.active
+  .MuiAvatar-root {
   background-color: var(--bgPaper);
 }
 
@@ -46763,39 +46823,39 @@ svg.feather {
     position: relative;
   }
 }
-.chat-right-footer-show-attachment-div{
+.chat-right-footer-show-attachment-div {
   display: flex;
   align-items: center;
   gap: 8px;
   padding-bottom: 15px;
   padding-top: 5px;
 }
-.chat-right-footer-show-attachment-inner-div{
+.chat-right-footer-show-attachment-inner-div {
   position: relative;
   display: inline-block;
 }
-.chat-right-footer-show-attachment-img{
+.chat-right-footer-show-attachment-img {
   width: 50px;
   height: 50px;
   border-radius: 5px;
   object-fit: cover;
   cursor: pointer;
 }
-.dr-autocomplete-form-control{
+.dr-autocomplete-form-control {
   background-color: var(--bgDefault);
   border: 1px solid var(--secondaryMain);
   border-radius: 50px;
   color: var(--color);
   padding: 5px 10px 3px 36px;
 }
-.dr-autocomplete-form-control-open{
+.dr-autocomplete-form-control-open {
   padding-left: 36px;
   background-color: var(--bgDefault);
   border-bottom-color: transparent;
   border-radius: 15px 15px 0px 0px;
 }
 
-.totalTypo{
+.totalTypo {
   padding-top: 10px !important;
   padding-bottom: 10px !important;
 }
@@ -46831,13 +46891,15 @@ svg.feather {
   }
 }
 
-.dataGridOuterBox{
+.dataGridOuterBox {
   height: auto;
   background-color: var(--bgPaper);
   border-radius: 16px;
   margin-bottom: 16px;
   margin-top: 16px;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
   padding: 16px;
   transition: all 1s linear;
 }
@@ -46887,13 +46949,13 @@ svg.feather {
   padding-top: 10px;
 }
 
-.recorder-container .buttons  {
+.recorder-container .buttons {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
 }
 
-.call-items{
+.call-items {
   display: flex;
   justify-content: space-around !important;
 }

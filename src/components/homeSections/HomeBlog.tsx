@@ -43,7 +43,7 @@ const HomeBlog: FC = (() => {
                     <li><i className="far fa-clock"></i> 4 Dec 2019</li>
                   </ul>
                   <h3 className="blog-title">
-                    <Link href="/blog/blog-details">Doccure – Making your clinic painless visit?</Link></h3>
+                    <Link href="/blog/blog-details">Health care – Making your clinic painless visit?</Link></h3>
                   <p className="mb-0">Lorem ipsum dolor sit amet, consectetur em adipiscing elit, sed do eiusmod tempor.</p>
                 </div>
               </div>

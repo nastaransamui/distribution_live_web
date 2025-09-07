@@ -21,7 +21,8 @@ import { useDropzone } from 'react-dropzone';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
 import randomstring from 'randomstring'
-
+import AnimationWrapper from '@/shared/AnimationWrapper';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 //Mui
 import FormControl from '@mui/material/FormControl';
@@ -242,16 +243,13 @@ function StyledDropzone(props: any) {
 const ProfileSetting: FC = (() => {
   const { muiVar, bounce } = useScssVar();
   const matches = useMediaQuery('(max-width:370px)');
-  const theme = useTheme();
-  const [boxMinHeight, setBoxMinHeight] = useState<string>('300px')
-
+  const theme = useTheme()
   const [images, setImages] = useState<{ clinicImage: File, clinicImageName: string, random: string }[]>([]);
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const userData = useSelector((state: AppState) => state.userData.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [uploadImage, setUploadImage] = useState(doctors_profile)
-  // const [specialities, setSpecialities] = useState<SpecialitiesType[]>([])
   const specialities = useSelector((state: AppState) => state.specialities.value)
   const dispatch = useDispatch();
   const router = useRouter();
@@ -513,256 +511,271 @@ const ProfileSetting: FC = (() => {
 
   return (
     <Fragment>
-      {/* <div className="col-md-7 col-lg-8 col-xl-9" style={muiVar} > */}
       <div className="col-md-12 col-lg-12 col-xl-12">
 
         <form noValidate onSubmit={handleSubmit(onProfileSubmit)}>
-          <div className="card  animate__animated animate__backInDown">
-            <div className="card-body">
-              <h4 className="card-title">Basic Information</h4>
-              <div className="row form-row">
-                <div className="col-md-12">
-                  <div className="form-group">
-                    <div className="change-avatar">
-                      <div className="profile-img">
-                        {/* <img src={userProfile?.profileImage == "" ? uploadImage : uploadImage.startsWith('blob') ? uploadImage : userProfile?.profileImage} alt="" /> */}
-                        <Avatar variant="square" sx={{
-                          height: { md: `100px`, xs: '80px' },
-                          width: { md: `100px`, xs: '80px' },
-                          objectFit: 'cover',
-                          borderRadius: '4px',
-                        }} alt="" src={
-                          userDoctorProfile?.profileImage == "" ?
-                            uploadImage : uploadImage.startsWith('blob') ?
-                              uploadImage :
-                              `${userDoctorProfile?.profileImage}`}
-                          key={userDoctorProfile?.profileImage}
-                        >
-                          <img src={doctors_profile} alt="" />
-                        </Avatar>
-                      </div>
-                      <div className="upload-img">
-                        <div className="change-photo-btn">
-                          <label htmlFor='profile'><i className="fa fa-upload"></i> Upload Photo</label>
-                          <input type="file" id='profile' className="upload" accept="image/png, image/jpg, image/jpeg" onChange={uploadFile} />
+          <AnimationWrapper fallbackMs={1500}>
+            {
+              !isClient ?
+                <BeatLoader color={theme.palette.primary.main} style={{
+                  minWidth: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }} />
+                :
+                <div className={`card   ${isClient ? 'animate__animated animate__backInDown' : 'pre-anim-hidden'} `}>
+                  <div className="card-body">
+                    <h4 className="card-title">Basic Information</h4>
+                    <div className="row form-row">
+                      <div className="col-md-12">
+                        <div className="form-group">
+                          <div className="change-avatar">
+                            <div className="profile-img">
+                              {/* <img src={userProfile?.profileImage == "" ? uploadImage : uploadImage.startsWith('blob') ? uploadImage : userProfile?.profileImage} alt="" /> */}
+                              <Avatar variant="square" sx={{
+                                height: { md: `100px`, xs: '80px' },
+                                width: { md: `100px`, xs: '80px' },
+                                objectFit: 'cover',
+                                borderRadius: '4px',
+                              }} alt="" src={
+                                userDoctorProfile?.profileImage == "" ?
+                                  uploadImage : uploadImage.startsWith('blob') ?
+                                    uploadImage :
+                                    `${userDoctorProfile?.profileImage}`}
+                                key={userDoctorProfile?.profileImage}
+                              >
+                                <img src={doctors_profile} alt="" />
+                              </Avatar>
+                            </div>
+                            <div className="upload-img">
+                              <div className="change-photo-btn">
+                                <label htmlFor='profile'><i className="fa fa-upload"></i> Upload Photo</label>
+                                <input type="file" id='profile' className="upload" accept="image/png, image/jpg, image/jpeg" onChange={uploadFile} />
+                              </div>
+                              <small className="form-text text-muted">
+                                Allowed JPG, GIF or PNG. Max size of 2MB
+                              </small>
+                            </div>
+                          </div>
                         </div>
-                        <small className="form-text text-muted">
-                          Allowed JPG, GIF or PNG. Max size of 2MB
-                        </small>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="form-group">
+                          <TextField
+                            required
+                            id="userName"
+                            autoComplete='off'
+                            disabled
+                            label="Email ID"
+                            error={errors.userName == undefined ? false : true}
+                            helperText={errors.userName && errors['userName']['message'] as ReactNode}
+                            {
+                            ...register('userName', {
+                              required: "This field is required",
+                            })
+                            }
+                            fullWidth
+                            size='small'
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="form-group">
+                          <TextField
+                            required
+                            id="firstName"
+                            label="First Name"
+                            error={errors.firstName == undefined ? false : true}
+                            helperText={errors.firstName && errors['firstName']['message'] as ReactNode}
+                            {
+                            ...register('firstName', {
+                              required: "This field is required",
+                            })
+                            }
+                            fullWidth
+                            size='small'
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="form-group">
+                          <TextField
+                            required
+                            id="lastName"
+                            label="Last Name"
+                            error={errors.lastName == undefined ? false : true}
+                            helperText={errors.lastName && errors['lastName']['message'] as ReactNode}
+                            {
+                            ...register('lastName', {
+                              required: "This field is required",
+                            })
+                            }
+                            fullWidth
+                            size='small'
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="form-group">
+                          <Controller
+                            rules={{
+                              validate: (val) => {
+                                if (val !== undefined) {
+                                  return matchIsValidTel(val)
+                                }
+                              }
+                            }}
+                            name='mobileNumber'
+                            control={control}
+                            render={(props: any) => {
+                              const { field, fieldState, formState } = props;
+                              const { ref, onChange } = field;
+                              return (
+                                <MuiTelInput
+                                  {...field}
+                                  InputLabelProps={{ shrink: true }}
+                                  defaultCountry={userData?.countryCode}
+                                  helperText={fieldState.invalid ? "Mobile Number is invalid" : ""}
+                                  error={fieldState.invalid}
+                                  label="Mobile"
+                                  required
+                                  fullWidth
+                                  size='small'
+                                />
+                              )
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="form-group">
+                          <Controller
+                            // rules={{ required: 'This field is required' }}
+                            name='gender'
+                            control={control}
+                            render={(props: any) => {
+                              const { field, fieldState, formState } = props;
+                              const { ref, onChange, value } = field;
+                              const { defaultValues } = formState;
+                              return (
+                                <FormControl fullWidth >
+                                  <InputLabel id="gender-label" htmlFor="gender" size='small'>
+                                    Gender
+                                  </InputLabel>
+                                  <Select
+                                    labelId="gender"
+                                    inputProps={{
+                                      id: 'gender',
+                                      name: 'gender',
+                                      autoComplete: 'off'
+                                    }}
+                                    label="Gender"
+                                    error={errors.gender == undefined ? false : true}
+                                    value={value}
+                                    onChange={(e: SelectChangeEvent) => {
+                                      onChange(e)
+                                    }}
+                                    renderValue={(value) => `${value == 'Mr' ? `👨` : `👩`} ${value}`}
+                                    size='small'
+                                  >
+                                    <MenuItem value="Mr">👨 Mr</MenuItem>
+                                    <MenuItem value="Mrs">👩 Mrs</MenuItem>
+                                    <MenuItem value="Mss">👩 Mss</MenuItem>
+                                  </Select>
+                                  {
+                                    errors.gender &&
+                                    <FormHelperText error>{errors.gender && errors['gender']['message'] as ReactNode}</FormHelperText>
+                                  }
+                                </FormControl>
+                              )
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="form-group mb-0">
+                          <Controller
+                            // rules={{ required: 'This field is required' }}
+                            name='dob'
+                            control={control}
+                            render={(props: any) => {
+                              const { field, fieldState, formState } = props;
+                              const { ref, onChange, value } = field;
+                              const { defaultValues } = formState;
+                              return (
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                  <MobileDatePicker
+                                    closeOnSelect
+                                    disableFuture
+                                    format="DD MMM YYYY"
+                                    onChange={(event: any) => {
+                                      onChange(dayjs(event).format(`YYYY-MM-DDTHH:mm:ss`));
+                                    }}
+                                    slotProps={{
+                                      textField: {
+                                        inputProps: { value: value == '' ? 'Date of Birth' : dayjs(value).format('DD MMM YYYY') },
+                                        fullWidth: true,
+                                        required: false,
+                                        label: 'Date of Birth',
+                                        error: errors.dob == undefined ? false : true,
+                                        helperText: errors.dob && errors['dob']['message'] as ReactNode,
+                                        size: 'small'
+                                      },
+                                    }}
+
+                                    value={dayjs(defaultValues.dob)}
+                                  />
+                                </LocalizationProvider>
+                              )
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <TextField
-                      required
-                      id="userName"
-                      autoComplete='off'
-                      disabled
-                      label="Email ID"
-                      error={errors.userName == undefined ? false : true}
-                      helperText={errors.userName && errors['userName']['message'] as ReactNode}
-                      {
-                      ...register('userName', {
-                        required: "This field is required",
-                      })
-                      }
-                      fullWidth
-                      size='small'
-                    />
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <TextField
-                      required
-                      id="firstName"
-                      label="First Name"
-                      error={errors.firstName == undefined ? false : true}
-                      helperText={errors.firstName && errors['firstName']['message'] as ReactNode}
-                      {
-                      ...register('firstName', {
-                        required: "This field is required",
-                      })
-                      }
-                      fullWidth
-                      size='small'
-                    />
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <TextField
-                      required
-                      id="lastName"
-                      label="Last Name"
-                      error={errors.lastName == undefined ? false : true}
-                      helperText={errors.lastName && errors['lastName']['message'] as ReactNode}
-                      {
-                      ...register('lastName', {
-                        required: "This field is required",
-                      })
-                      }
-                      fullWidth
-                      size='small'
-                    />
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <Controller
-                      rules={{
-                        validate: (val) => {
-                          if (val !== undefined) {
-                            return matchIsValidTel(val)
-                          }
+            }
+          </AnimationWrapper>
+
+          <AnimationWrapper fallbackMs={1500}>
+            {
+              !isClient ?
+                <></>
+                :
+                <div className={`card   ${isClient ? 'animate__animated  animate__backInUp' : 'pre-anim-hidden'}`}>
+                  <div className="card-body">
+                    <h4 className="card-title">About Me</h4>
+                    <div className="form-group mb-0">
+                      <TextField
+                        required
+                        id="aboutMe"
+                        inputProps={{
+                          autoComplete: 'off',
+                          "aria-label": "About Me",
+                          id: "aboutMe",
+                          name: "aboutMe",
+                        }}
+                        label="About Me"
+                        defaultValue={userDoctorProfile?.aboutMe}
+                        multiline
+                        minRows={6}
+                        fullWidth
+                        error={errors.aboutMe == undefined ? false : true}
+                        helperText={errors.aboutMe && errors['aboutMe']['message'] as ReactNode}
+                        {
+                        ...register('aboutMe', {
+                          required: "This field is required",
+                        })
                         }
-                      }}
-                      name='mobileNumber'
-                      control={control}
-                      render={(props: any) => {
-                        const { field, fieldState, formState } = props;
-                        const { ref, onChange } = field;
-                        return (
-                          <MuiTelInput
-                            {...field}
-                            InputLabelProps={{ shrink: true }}
-                            defaultCountry={userData?.countryCode}
-                            helperText={fieldState.invalid ? "Mobile Number is invalid" : ""}
-                            error={fieldState.invalid}
-                            label="Mobile"
-                            required
-                            fullWidth
-                            size='small'
-                          />
-                        )
-                      }}
-                    />
+                        size='small'
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <Controller
-                      // rules={{ required: 'This field is required' }}
-                      name='gender'
-                      control={control}
-                      render={(props: any) => {
-                        const { field, fieldState, formState } = props;
-                        const { ref, onChange, value } = field;
-                        const { defaultValues } = formState;
-                        return (
-                          <FormControl fullWidth >
-                            <InputLabel id="gender-label" htmlFor="gender" size='small'>
-                              Gender
-                            </InputLabel>
-                            <Select
-                              labelId="gender"
-                              inputProps={{
-                                id: 'gender',
-                                name: 'gender',
-                                autoComplete: 'off'
-                              }}
-                              label="Gender"
-                              error={errors.gender == undefined ? false : true}
-                              value={value}
-                              onChange={(e: SelectChangeEvent) => {
-                                onChange(e)
-                              }}
-                              renderValue={(value) => `${value == 'Mr' ? `👨` : `👩`} ${value}`}
-                              size='small'
-                            >
-                              <MenuItem value="Mr">👨 Mr</MenuItem>
-                              <MenuItem value="Mrs">👩 Mrs</MenuItem>
-                              <MenuItem value="Mss">👩 Mss</MenuItem>
-                            </Select>
-                            {
-                              errors.gender &&
-                              <FormHelperText error>{errors.gender && errors['gender']['message'] as ReactNode}</FormHelperText>
-                            }
-                          </FormControl>
-                        )
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="form-group mb-0">
-                    <Controller
-                      // rules={{ required: 'This field is required' }}
-                      name='dob'
-                      control={control}
-                      render={(props: any) => {
-                        const { field, fieldState, formState } = props;
-                        const { ref, onChange, value } = field;
-                        const { defaultValues } = formState;
-                        return (
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <MobileDatePicker
-                              closeOnSelect
-                              disableFuture
-                              format="DD MMM YYYY"
-                              onChange={(event: any) => {
-                                onChange(dayjs(event).format(`YYYY-MM-DDTHH:mm:ss`));
-                              }}
-                              slotProps={{
-                                textField: {
-                                  inputProps: { value: value == '' ? 'Date of Birth' : dayjs(value).format('DD MMM YYYY') },
-                                  fullWidth: true,
-                                  required: false,
-                                  label: 'Date of Birth',
-                                  error: errors.dob == undefined ? false : true,
-                                  helperText: errors.dob && errors['dob']['message'] as ReactNode,
-                                  size: 'small'
-                                },
-                              }}
+            }
+          </AnimationWrapper>
 
-                              value={dayjs(defaultValues.dob)}
-                            />
-                          </LocalizationProvider>
-                        )
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-          <div className="card animate__animated animate__backInUp">
-            <div className="card-body">
-              <h4 className="card-title">About Me</h4>
-              <div className="form-group mb-0">
-                <TextField
-                  required
-                  id="aboutMe"
-                  inputProps={{
-                    autoComplete: 'off',
-                    "aria-label": "About Me",
-                    id: "aboutMe",
-                    name: "aboutMe",
-                  }}
-                  label="About Me"
-                  defaultValue={userDoctorProfile?.aboutMe}
-                  multiline
-                  minRows={6}
-                  fullWidth
-                  error={errors.aboutMe == undefined ? false : true}
-                  helperText={errors.aboutMe && errors['aboutMe']['message'] as ReactNode}
-                  {
-                  ...register('aboutMe', {
-                    required: "This field is required",
-                  })
-                  }
-                  size='small'
-                />
-              </div>
-            </div>
-          </div>
-
-
-          <div className="card">
+          <div className={`card   ${isClient ? 'animate__animated  animate__backInUp' : 'pre-anim-hidden'}`}>
             <div className="card-body">
               <h4 className="card-title">Clinic Info</h4>
               <div className="row form-row">
@@ -852,7 +865,7 @@ const ProfileSetting: FC = (() => {
             </div>
           </div>
 
-          <div className="card">
+          <div className={`card   ${isClient ? 'animate__animated  animate__backInUp' : 'pre-anim-hidden'}`}>
             <div className="card-body">
               <h4 className="card-title">Contact Details</h4>
               <div className="row form-row">
@@ -997,7 +1010,7 @@ const ProfileSetting: FC = (() => {
           </div>
 
 
-          <div className="card">
+          <div className={`card   ${isClient ? 'animate__animated  animate__backInUp' : 'pre-anim-hidden'}`}>
             <div className="card-body">
               <h4 className="card-title">Financial</h4>
               <div className="row form-row">
@@ -1049,7 +1062,7 @@ const ProfileSetting: FC = (() => {
             </div>
           </div>
 
-          <div className="card services-card">
+          <div className={`card  services-card ${isClient ? 'animate__animated  animate__backInUp' : 'pre-anim-hidden'}`}  >
             <div className="card-body">
               <h4 className="card-title">Services and Specialization</h4>
               <div className='row form-row'>
@@ -1124,13 +1137,14 @@ const ProfileSetting: FC = (() => {
                               }}
                               label="Speciality"
                               error={errors.specialities == undefined ? false : true}
-                              value={value.length == 0 ? '' : value[0]?.specialities}
+                              value={value.length == 0 ? '' : value[0]?._id}
                             >
                               {
                                 specialities.map((spec, index) => {
                                   return (
-                                    <MenuItem key={spec._id}
-                                      value={spec.specialities}
+                                    <MenuItem
+                                      key={spec._id}
+                                      value={spec._id}
                                       divider
                                       onClick={() => {
                                         removeSpecialities(0)

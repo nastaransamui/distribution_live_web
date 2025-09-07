@@ -2,7 +2,7 @@
 import { FocusEvent, FC, Fragment, useEffect, useState, ChangeEvent } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
-import { Dashboard1, Dashboard2, Dashboard6, Dashboard5, Graph1, Graph2, Graph3, Graph4, } from '@/public/assets/imagepath';
+import { Dashboard1, Dashboard2, Dashboard6, Dashboard5, Graph1, Graph2, } from '@/public/assets/imagepath';
 
 import PatientProfileTabs from '@/components/DoctorDashboardSections/PatientProfileTabs';
 import TextField from '@mui/material/TextField';
@@ -14,6 +14,9 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { toast } from 'react-toastify';
 import { DoctorPatientInitialLimitsAndSkipsTypes, DoctorPatientProfileTypes, PatientProfileExtendType, doctorPatientInitialLimitsAndSkips } from '../DoctorPatientProfile/DoctorPatientProfile';
+import AnimationWrapper from '@/shared/AnimationWrapper';
+import BeatLoader from 'react-spinners/BeatLoader';
+import { useTheme } from '@mui/material';
 export interface VitalTypeObject {
   value: number;
   date: Date;
@@ -32,7 +35,7 @@ export interface VitalSignTypes {
 
 const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) => {
   const { muiVar, bounce } = useScssVar();
-
+  const theme = useTheme()
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -96,30 +99,35 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
   }
 
   useEffect(() => {
-    if (homeSocket?.current !== undefined) {
-      let userId = userProfile?._id
-      // Get vital sing on entrance of page
-      homeSocket.current.emit('getVitalSign', { userId, limit: 1, skip: 0, sort: { date: -1 } })
-      homeSocket.current.once('getVitalSignReturn', (msg: { status: number, message?: string, vitalSign: VitalSignTypes[] }) => {
-        const { status, message, vitalSign } = msg;
-        if (status !== 200) {
-          toast.error(message || `Error ${status} find Vital signs`, {
-            position: "bottom-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: bounce,
-            onClose: () => {
+    if (!homeSocket?.current || userProfile == null) return;
+    const socket = homeSocket.current;
+    let userId = userProfile?._id
+    // Get vital sing on entrance of page
+    socket.emit('getVitalSign', { userId, limit: 1, skip: 0, sort: { date: -1 } })
+    socket.once('getVitalSignReturn', (msg: { status: number, message?: string, vitalSign: VitalSignTypes[] }) => {
+      const { status, message, vitalSign } = msg;
+      if (status !== 200) {
+        toast.error(message || `Error ${status} find Vital signs`, {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          transition: bounce,
+          onClose: () => {
 
-            }
-          });
-        } else {
-          setvitalSign(vitalSign)
-        }
-      })
+          }
+        });
+      } else {
+        setvitalSign(vitalSign)
+      }
+    })
+
+    return () => {
+      socket.off('getVitalSign')
+      socket.off('getVitalSignReturn')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeSocket, userProfile?._id])
@@ -162,176 +170,202 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
     setIsmobile(typeof window !== 'undefined' && window.mobileCheck())
   }, [])
 
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
+
   return (
     <Fragment>
       <div className="col-md-12 col-lg-12 col-xl-12" style={muiVar}>
         <div>
-          <div className="row">
-            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   animate__animated animate__backInDown">
-              <div className="card">
-                <div className="card-body text-center">
-                  <div className="mb-3">
-                    <img src={Dashboard1} width={55} alt='' />
-                  </div>
-                  <h5>Heart Rate</h5>
-                  <h6>
-                    <TextField
-                      name='heartRate'
-                      onBlur={onBlurTex}
-                      value={values.heartRate || ''}
-                      onChange={vitalChange}
-                      size='small'
-                      variant="standard"
-                      autoComplete='off'
-                      onKeyDown={(e) => {
-                        const allowKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Backspace', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight']
-                        if (!allowKeys.includes(e.key)) {
-                          e.preventDefault()
-                        }
-                      }}
-                      placeholder={values?.heartRate == undefined || values?.heartRate == 0 ? '--' : ''}
-                      InputProps={{
-                        disableUnderline: true,
-                        autoComplete: 'off'
-                      }}
-                      inputProps={{
-                        style: {
-                          marginRight: -30,
-                        }
-                      }}
-                      sx={{ maxWidth: 35, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900, } }} />
-                    <sub style={{ marginLeft: 4 }}>bpm</sub></h6>
-                </div>
-              </div>
-            </div>
-            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   animate__animated animate__backInDown">
-              <div className="card">
-                <div className="card-body text-center">
-                  <div className="mb-3">
-                    <img src={Dashboard2} width={55} alt='' />
-                  </div>
-                  <h5>Body Temperature</h5>
-                  <h6>
-                    <TextField
-                      name='bodyTemp'
-                      onBlur={onBlurTex}
-                      value={values?.bodyTemp || ''}
-                      onChange={vitalChange}
-                      onKeyDown={(e) => {
-                        const allowKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Backspace', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight']
-                        if (!allowKeys.includes(e.key)) {
-                          e.preventDefault()
-                        }
-                      }}
-                      size='small'
-                      variant="standard"
-                      placeholder={values?.bodyTemp == undefined || values?.bodyTemp == 0 ? '--' : ''}
-                      InputProps={{
-                        disableUnderline: true,
-                        autoComplete: 'off'
-                      }}
-                      sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} /> <sub>C</sub></h6>
-                </div>
-              </div>
-            </div>
-            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   animate__animated animate__backInDown">
-              <div className="card">
-                <div className="card-body text-center">
-                  <div className="mb-3">
-                    <img src={Dashboard5} width={55} alt='' />
-                  </div>
-                  <h5>Weight</h5>
-                  <h6>
-                    <TextField
-                      name='weight'
-                      onBlur={onBlurTex}
-                      value={values?.weight || ''}
-                      onChange={vitalChange}
-                      onKeyDown={(e) => {
-                        const allowKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Backspace', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight']
-                        if (!allowKeys.includes(e.key)) {
-                          e.preventDefault()
-                        }
-                      }}
-                      size='small'
-                      variant="standard"
-                      placeholder={values?.weight == undefined || values?.weight == 0 ? '--' : ''}
-                      InputProps={{
-                        disableUnderline: true,
-                        autoComplete: 'off'
-                      }}
-                      sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} />
-                    <sub>Kg</sub>
-                  </h6>
-                </div>
-              </div>
-            </div>
-            <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   animate__animated animate__backInDown">
-              <div className="card">
-                <div className="card-body text-center">
-                  <div className="mb-3">
-                    <img src={Dashboard6} width={55} alt='' />
-                  </div>
-                  <h5>Height</h5>
-                  <h6>
-                    <TextField
-                      name='height'
-                      onBlur={onBlurTex}
-                      value={values?.height || ''}
-                      onChange={vitalChange}
-                      onKeyDown={(e) => {
-                        const allowKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Backspace', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight']
-                        if (!allowKeys.includes(e.key)) {
-                          e.preventDefault()
-                        }
-                      }}
-                      size='small'
-                      variant="standard"
-                      placeholder={values?.height == undefined || values?.height == 0 ? '--' : ''}
-                      InputProps={{
-                        disableUnderline: true,
-                        autoComplete: 'off'
-                      }}
-                      sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} />
-                    <sub>cm</sub>
-                  </h6>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="row patient-graph-col   animate__animated animate__backInUp">
-            <div className="col-12">
-              <div className="card">
-                <div className="card-header">
-                  <h4 className="card-title">Graph Status</h4>
-                </div>
-                <div className="card-body pt-2 pb-2 mt-1 mb-1">
-                  <div className="row">
-                    <div className="col-12 col-md-6 col-lg-6 col-xl-6 patient-graph-box">
-                      <Link href="/patient/dashboard/bmi-status" className="graph-box" data-bs-target="#graph1">
-                        <div>
-                          <h4>BMI Status</h4>
+          <AnimationWrapper fallbackMs={1500}>
+            {
+              !isClient ?
+                <BeatLoader color={theme.palette.primary.main} style={{
+                  minWidth: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }} />
+                :
+                <div className="row">
+                  <div className={`col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top    ${isClient ? 'animate__animated animate__backInDown' : 'pre-anim-hidden'}`}>
+                    <div className="card">
+                      <div className="card-body text-center">
+                        <div className="mb-3">
+                          <img src={Dashboard1} width={55} alt='' />
                         </div>
-                        <div className="graph-img imgColorSecondary">
-                          <img src={Graph1} alt='' />
-                        </div>
-                        <div className="graph-status-result mt-3">
-                        </div>
-                      </Link>
+                        <h5>Heart Rate</h5>
+                        <h6>
+                          <TextField
+                            name='heartRate'
+                            onBlur={onBlurTex}
+                            value={values.heartRate || ''}
+                            onChange={vitalChange}
+                            size='small'
+                            variant="standard"
+                            autoComplete='off'
+                            onKeyDown={(e) => {
+                              const allowKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Backspace', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight']
+                              if (!allowKeys.includes(e.key)) {
+                                e.preventDefault()
+                              }
+                            }}
+                            placeholder={values?.heartRate == undefined || values?.heartRate == 0 ? '--' : ''}
+                            InputProps={{
+                              disableUnderline: true,
+                              autoComplete: 'off'
+                            }}
+                            inputProps={{
+                              style: {
+                                marginRight: -30,
+                              }
+                            }}
+                            sx={{ maxWidth: 35, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900, } }} />
+                          <sub style={{ marginLeft: 4 }}>bpm</sub></h6>
+                      </div>
                     </div>
-                    <div className="col-12 col-md-6 col-lg-6 col-xl-6 patient-graph-box">
-                      <Link href="/patient/dashboard/clinical-signs-history" className="graph-box pink-graph" data-bs-target="#graph2">
-                        <div>
-                          <h4>Clinical Signs History (last five record)</h4>
+                  </div>
+
+                  <div className={`col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   ${isClient ? 'animate__animated animate__backInDown' : 'pre-anim-hidden'}`}>
+                    <div className="card">
+                      <div className="card-body text-center">
+                        <div className="mb-3">
+                          <img src={Dashboard2} width={55} alt='' />
                         </div>
-                        <div className="graph-img imgColorPrimary">
-                          <img src={Graph2} alt='' />
-                        </div>
-                        <div className="graph-status-result mt-3">
-                        </div>
-                      </Link>
+                        <h5>Body Temperature</h5>
+                        <h6>
+                          <TextField
+                            name='bodyTemp'
+                            onBlur={onBlurTex}
+                            value={values?.bodyTemp || ''}
+                            onChange={vitalChange}
+                            onKeyDown={(e) => {
+                              const allowKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Backspace', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight']
+                              if (!allowKeys.includes(e.key)) {
+                                e.preventDefault()
+                              }
+                            }}
+                            size='small'
+                            variant="standard"
+                            placeholder={values?.bodyTemp == undefined || values?.bodyTemp == 0 ? '--' : ''}
+                            InputProps={{
+                              disableUnderline: true,
+                              autoComplete: 'off'
+                            }}
+                            sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} /> <sub>C</sub></h6>
+                      </div>
                     </div>
-                    {/* <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-graph-box">
+                  </div>
+                  <div className={`col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   ${isClient ? 'animate__animated animate__backInDown' : 'pre-anim-hidden'}`}>
+                    <div className="card">
+                      <div className="card-body text-center">
+                        <div className="mb-3">
+                          <img src={Dashboard5} width={55} alt='' />
+                        </div>
+                        <h5>Weight</h5>
+                        <h6>
+                          <TextField
+                            name='weight'
+                            onBlur={onBlurTex}
+                            value={values?.weight || ''}
+                            onChange={vitalChange}
+                            onKeyDown={(e) => {
+                              const allowKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Backspace', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight']
+                              if (!allowKeys.includes(e.key)) {
+                                e.preventDefault()
+                              }
+                            }}
+                            size='small'
+                            variant="standard"
+                            placeholder={values?.weight == undefined || values?.weight == 0 ? '--' : ''}
+                            InputProps={{
+                              disableUnderline: true,
+                              autoComplete: 'off'
+                            }}
+                            sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} />
+                          <sub>Kg</sub>
+                        </h6>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={`col-12 col-md-6 col-lg-4 col-xl-3 patient-dashboard-top   ${isClient ? 'animate__animated animate__backInDown' : 'pre-anim-hidden'}`}>
+                    <div className="card">
+                      <div className="card-body text-center">
+                        <div className="mb-3">
+                          <img src={Dashboard6} width={55} alt='' />
+                        </div>
+                        <h5>Height</h5>
+                        <h6>
+                          <TextField
+                            name='height'
+                            onBlur={onBlurTex}
+                            value={values?.height || ''}
+                            onChange={vitalChange}
+                            onKeyDown={(e) => {
+                              const allowKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'Backspace', 'Enter', 'Delete', 'ArrowLeft', 'ArrowRight']
+                              if (!allowKeys.includes(e.key)) {
+                                e.preventDefault()
+                              }
+                            }}
+                            size='small'
+                            variant="standard"
+                            placeholder={values?.height == undefined || values?.height == 0 ? '--' : ''}
+                            InputProps={{
+                              disableUnderline: true,
+                              autoComplete: 'off'
+                            }}
+                            sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} />
+                          <sub>cm</sub>
+                        </h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            }
+          </AnimationWrapper>
+          <AnimationWrapper fallbackMs={1500}>
+            {
+              !isClient ?
+                <></>
+                :
+                <div className={`row patient-graph-col   ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
+                  <div className="col-12">
+                    <div className="card">
+                      <div className="card-header">
+                        <h4 className="card-title">Graph Status</h4>
+                      </div>
+                      <div className="card-body pt-2 pb-2 mt-1 mb-1">
+                        <div className="row">
+                          <div className="col-12 col-md-6 col-lg-6 col-xl-6 patient-graph-box">
+                            <Link href="/patient/dashboard/bmi-status" className="graph-box" data-bs-target="#graph1">
+                              <div>
+                                <h4>BMI Status</h4>
+                              </div>
+                              <div className="graph-img imgColorSecondary">
+                                <img src={Graph1} alt='' />
+                              </div>
+                              <div className="graph-status-result mt-3">
+                              </div>
+                            </Link>
+                          </div>
+                          <div className="col-12 col-md-6 col-lg-6 col-xl-6 patient-graph-box">
+                            <Link href="/patient/dashboard/clinical-signs-history" className="graph-box pink-graph" data-bs-target="#graph2">
+                              <div>
+                                <h4>Clinical Signs History (last five record)</h4>
+                              </div>
+                              <div className="graph-img imgColorPrimary">
+                                <img src={Graph2} alt='' />
+                              </div>
+                              <div className="graph-status-result mt-3">
+                              </div>
+                            </Link>
+                          </div>
+                          {/* <div className="col-12 col-md-6 col-lg-4 col-xl-3 patient-graph-box">
                       <Link href="#" onClick={(e) => e.preventDefault()} className="graph-box sky-blue-graph" data-bs-target="#graph3">
                         <div>
                           <h4>FBC Status</h4>
@@ -355,15 +389,24 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                         </div>
                       </Link>
                     </div> */}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
+            }
+          </AnimationWrapper>
+        </div>
+        <AnimationWrapper fallbackMs={1500}>
+          {
+            !isClient ?
+              <></>
+              :
+              <div className={`col-md-12 col-lg-12 col-xl-12 dct-appoinment    ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} >
+                <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='patient' />
               </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-12 col-lg-12 col-xl-12 dct-appoinment    animate__animated animate__backInUp" >
-          <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='patient' />
-        </div>
+          }
+        </AnimationWrapper>
       </div>
     </Fragment>
   )

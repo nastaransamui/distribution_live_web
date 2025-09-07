@@ -78,15 +78,15 @@ const SeeBilling: FC<{ singleBill: BillingTypeWithDoctorProfile }> = (({ singleB
           :
           <div className="card">
             <div className="card-header" style={{ display: 'flex' }}>
-              <h4 className="card-title mb-0">View The Bill</h4>
               <a href="" className="link" aria-label='back'
                 onClick={(e) => {
                   e.preventDefault();
                   router.back()
                 }}
-                style={{ ...threeOptionMain, marginLeft: 'auto' }}>
+                style={{ ...threeOptionMain, marginRight: 'auto' }}>
                 <ArrowBackIcon />
               </a>
+              <h4 className="card-title mb-0">View The Bill</h4>
             </div>
             <form noValidate className="card-body">
               <div className="row">

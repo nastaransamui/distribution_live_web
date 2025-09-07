@@ -2,7 +2,7 @@
 import { FC, Fragment, useEffect, useMemo } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
-import { doctor_13, doctor_14, doctor_15, doctor_16, ecgwave, hexagon_group_1, hexagon_group_2 } from '../../../public/assets/imagepath';
+import { doctor_13, doctor_14, doctor_15, doctor_16, doctors_profile, ecgwave, hexagon_group_1, hexagon_group_2 } from '../../../public/assets/imagepath';
 import { Typography, useTheme } from '@mui/material';
 import AOS from 'aos'
 import { useSelector } from 'react-redux';
@@ -137,7 +137,7 @@ const OurDoctors: FC = (() => {
                               <div className="listing-img">
                                 <Link href="/doctors/search" aria-label='profile'>
                                   <img
-                                    src={doctor.profileImage}
+                                    src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile}
                                     className="img-fluid"
                                     alt=""
                                   />

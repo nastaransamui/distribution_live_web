@@ -110,7 +110,8 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                 <div className="invoice-content" style={{
                   background: '#fff',
                   fontSize: '16px',
-                  width: '100%'
+                  width: '100%',
+                  height: '100%'
                 }}>
                   <div className="invoice-item">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: "center" }}>
@@ -646,7 +647,9 @@ const Invoices: FC = (() => {
 
           return (
             <>
-              <Link className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
+              <Link onClick={() => {
+                sessionStorage.setItem('doctorPatientTabValue', '0')
+              }} className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -658,7 +661,9 @@ const Invoices: FC = (() => {
                 </StyledBadge>
               </Link>
               <Stack>
-                <Link
+                <Link onClick={() => {
+                  sessionStorage.setItem('doctorPatientTabValue', '0')
+                }}
                   href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}
                   style={{ color: theme.palette.secondary.main, maxWidth: '100%', minWidth: '100%' }}>
                   {`${patientProfile?.gender == '' ? '' : patientProfile?.gender + '.'}`}{patientProfile?.fullName}
@@ -917,8 +922,16 @@ const Invoices: FC = (() => {
         }
       })
     }
-
   }
+
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
 
   return (
     <Fragment>
@@ -926,7 +939,7 @@ const Invoices: FC = (() => {
         {isPrinting && <PrintInvoiceComponent ref={printRef} printProps={printProps} />}
       </iframe>
 
-      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp">
+      <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
         {
           isLoading ?
             <div className="card">

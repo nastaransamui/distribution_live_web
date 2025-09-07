@@ -20,7 +20,7 @@ const ChatLeftUsers: FC = (() => {
       <div className="chat-users-list">
         <div className="chat-scroll" >
           {
-            isLoading ? <LoadingComponent /> : userChatData.length == 0 &&
+            isLoading ? <LoadingComponent boxMinHeight="inherit" /> : userChatData.length == 0 &&
               <div className='start-chat-div'>Start chat</div>
           }
           <Fragment>

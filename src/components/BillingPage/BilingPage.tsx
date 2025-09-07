@@ -9,8 +9,6 @@ import { base64regex } from '../DoctorsSections/Profile/PublicProfilePage'
 import { toast } from 'react-toastify'
 import useScssVar from '@/hooks/useScssVar'
 import _ from 'lodash'
-import { AppointmentReservationType } from '../DoctorsSections/CheckOut/PaymentSuccess'
-import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection'
 import PatientDashboardSidebar from '../shared/PatientDashboardSidebar'
 import { doctorPatientInitialLimitsAndSkips, DoctorPatientInitialLimitsAndSkipsTypes, PatientProfileExtendType } from '../PrescriptionsPage/PrescriptionPage'
 import AddBilling, { BillingType } from '../DoctorDashboardSections/AddBilling'
@@ -18,22 +16,25 @@ import EditBilling, { BillingTypeWithDoctorProfile } from '../DoctorDashboardSec
 import SeeBilling from '../PatientDashboardSections/SeeBilling'
 import DoctorDashboardSidebar from '../shared/DoctorDashboardSidebar'
 
+import { useTheme } from '@mui/material/styles';
+import BeatLoader from 'react-spinners/BeatLoader'
+
 export interface PatientProfileExtendBillingType extends PatientProfile {
   user: PatientProfile
   singleBilling: BillingType
 }
 export interface DoctorPatientProfileBillingTypes {
-  doctorPatientProfile: PatientProfileExtendBillingType;
   userType: 'doctor' | 'patient';
   pageType: 'edit' | 'add' | 'see'
 }
 
-const BillingPage: FC<DoctorPatientProfileBillingTypes> = (({ doctorPatientProfile, userType, pageType }) => {
+const BillingPage: FC<DoctorPatientProfileBillingTypes> = (({ userType, pageType }) => {
   const searchParams = useSearchParams();
+  const theme = useTheme();
   const { bounce, } = useScssVar();
   const encryptID = searchParams.get('_id')
   const router = useRouter()
-  const [profile, setProfile] = useState<any>(doctorPatientProfile);
+  const [profile, setProfile] = useState<any>();
   const [singleBill, setSingleBill] = useState<BillingTypeWithDoctorProfile>();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   // const userProfile = useSelector((state: AppState) => state.userProfile.value)
@@ -73,9 +74,7 @@ const BillingPage: FC<DoctorPatientProfileBillingTypes> = (({ doctorPatientProfi
                 homeSocket.current.once(`updatefindDocterPatientProfileById`, () => {
                   setReload(!reload)
                 })
-                if (!_.isEqual(user, doctorPatientProfile)) {
-                  setProfile(user)
-                }
+                setProfile(user)
               }
             })
           } else if (pageType == 'see') {
@@ -128,9 +127,8 @@ const BillingPage: FC<DoctorPatientProfileBillingTypes> = (({ doctorPatientProfi
                 homeSocket.current.once(`updatefindBillingForDoctorProfileById`, () => {
                   setReload(!reload)
                 })
-                if (!_.isEqual(user, doctorPatientProfile)) {
-                  setProfile(user)
-                }
+                setProfile(user)
+
               }
             })
           }
@@ -148,7 +146,7 @@ const BillingPage: FC<DoctorPatientProfileBillingTypes> = (({ doctorPatientProfi
   return (
     <Fragment>
       {userType == 'doctor' ?
-        <DoctorDashboardSidebar /> :
+        <>{profile && <PatientSidebarDoctorDashboard doctorPatientProfile={profile} />}</> :
         <PatientDashboardSidebar />
       }
 
@@ -157,7 +155,17 @@ const BillingPage: FC<DoctorPatientProfileBillingTypes> = (({ doctorPatientProfi
           case 'add':
             return <AddBilling doctorPatientProfile={profile} />
           case 'edit':
-            return <EditBilling singleBill={profile?.singleBill} />
+            return <>
+              {
+                !profile ?
+                  <BeatLoader color={theme.palette.primary.main} style={{
+                    minWidth: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }} /> :
+                  <EditBilling singleBill={profile?.singleBill} />
+              }
+            </>
           default:
             return <>{singleBill && <SeeBilling singleBill={singleBill} />}</>
         }

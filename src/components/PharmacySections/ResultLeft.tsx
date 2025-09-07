@@ -63,8 +63,8 @@ const ResultLeft: FC = (() => {
                   </label>
                 </div>
               </div>
-              <div className="btn-search">
-                <button type="button" className="btn w-100">Search</button>
+              <div >
+                <button type="button" className="btn book-btn1 w-100">Search</button>
               </div>
             </div>
           </div>

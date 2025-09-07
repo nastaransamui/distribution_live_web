@@ -1,4 +1,4 @@
-import { FC, Fragment, ReactNode } from 'react'
+import { FC, Fragment, ReactNode, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import FeatherIcon from 'feather-icons-react'
 import TextField from '@mui/material/TextField'
@@ -85,12 +85,20 @@ const ContactSection: FC = (() => {
     })
 
   }
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
       <section className="contact-section" style={{ ...muiVar, backgroundColor: theme.palette.background.default }}>
         <div className="container">
           <div className="row">
-            <div className="col-lg-5 col-md-12 card   animate__animated animate__backInUp" style={{ padding: '20px 30px' }}>
+            <div className={`col-lg-5 col-md-12 card    ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={{ padding: '20px 30px' }}>
               <div className="section-inner-header contact-inner-header">
                 <h1>Get in touch</h1>
                 <h2>Have Any Question?</h2>
@@ -135,7 +143,7 @@ const ContactSection: FC = (() => {
                 </div>
               </div>
             </div>
-            <div className="col-lg-7 col-md-12 d-flex   animate__animated animate__backInUp">
+            <div className={`col-lg-7 col-md-12 d-flex    ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
               <div className="card contact-form-card w-100" style={{ border: `1px solid ${theme.palette.secondary.light}` }}>
                 <div className="card-body">
                   <form noValidate onSubmit={handleSubmit(onRegisterSubmit)}>

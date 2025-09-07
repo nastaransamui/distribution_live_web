@@ -225,7 +225,9 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
             dispatch(updateHomeRoleName(roleName));
             dispatch(updateHomeIAT(iat));
             dispatch(updateHomeExp(exp))
+
             roleName == 'patient' ? dispatch(updateUserDoctorProfile(userProfile)) : dispatch(updateUserPatientProfile(userProfile))
+
             toast.info('Login successfully', {
               position: "bottom-center",
               autoClose: 5000,

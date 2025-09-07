@@ -12,6 +12,9 @@ import useScssVar from '@/hooks/useScssVar'
 import _ from 'lodash'
 import { AppointmentReservationType } from '../DoctorsSections/CheckOut/PaymentSuccess'
 import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection'
+import BeatLoader from 'react-spinners/BeatLoader'
+import { useTheme } from '@mui/material/styles';
+
 
 export interface DoctorPatientInitialLimitsAndSkipsTypes {
   appointMentsLimit: number;
@@ -46,15 +49,19 @@ export interface PatientProfileExtendType extends PatientProfile {
 export interface DoctorPatientProfileTypes {
   doctorPatientProfile: PatientProfileExtendType
 }
-const DoctorPatientProfile: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile }) => {
+const DoctorPatientProfile: FC = (() => {
   const searchParams = useSearchParams();
-  const { bounce, } = useScssVar();
+  const homeSideBarOpen = useSelector((state: AppState) => state.homeSideBarOpen.value)
+
+  const { bounce, muiVar } = useScssVar();
   const encryptID = searchParams.get('_id')
   const router = useRouter()
-  const [profile, setProfile] = useState<PatientProfileExtendType>(doctorPatientProfile);
+  const [profile, setProfile] = useState<PatientProfileExtendType>();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [reload, setReload] = useState<boolean>(false)
   const [dataGridFilters, setDataGridFilters] = useState<DoctorPatientInitialLimitsAndSkipsTypes>(doctorPatientInitialLimitsAndSkips);
+
+  const theme = useTheme();
 
   useEffect(() => {
     let active = true;
@@ -83,9 +90,8 @@ const DoctorPatientProfile: FC<DoctorPatientProfileTypes> = (({ doctorPatientPro
               homeSocket.current.once(`updatefindDocterPatientProfileById`, () => {
                 setReload(!reload)
               })
-              if (!_.isEqual(user, doctorPatientProfile)) {
-                setProfile(user)
-              }
+              setProfile(user)
+
             }
           })
         }
@@ -103,12 +109,42 @@ const DoctorPatientProfile: FC<DoctorPatientProfileTypes> = (({ doctorPatientPro
   useEffect(() => {
     setIsmobile(typeof window !== 'undefined' && window.mobileCheck())
   }, [])
+
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
+
   return (
     <Fragment>
-      <PatientSidebarDoctorDashboard doctorPatientProfile={profile} />
+      <div
+        className={`content ${homeSideBarOpen ? 'content-padding-open' : 'content-padding-close'}`}
+        style={muiVar}>
 
-      <div className="col-md-12 col-lg-12 col-xl-12 dct-appoinment    animate__animated animate__backInUp" >
-        <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='doctor' />
+        {
+          profile == null ?
+            <BeatLoader color={theme.palette.primary.main} style={{
+              display: 'flex',
+              justifyContent: 'center',
+            }} /> :
+            <>
+              <div className="container-fluid">
+                <div className="row">
+                  <PatientSidebarDoctorDashboard doctorPatientProfile={profile} />
+
+                  <div className={`col-md-12 col-lg-12 col-xl-12 dct-appoinment ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} >
+                    {
+                      profile && isClient && <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='doctor' />
+                    }
+                  </div>
+
+                </div>
+              </div>
+            </>}
       </div>
     </Fragment>
   )

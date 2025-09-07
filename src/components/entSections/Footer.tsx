@@ -108,7 +108,7 @@ const Footer: FC = (() => {
                           </div>
                           <div className="contact-content-fift">
                             <h6>Email</h6>
-                            <span>Doccure@example.com</span>
+                            <span>mjcode2020@gmail.com</span>
                           </div>
                         </div>
                       </li>

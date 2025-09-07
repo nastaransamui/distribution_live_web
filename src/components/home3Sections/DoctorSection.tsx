@@ -4,7 +4,7 @@ import useScssVar from "@/hooks/useScssVar";
 import dynamic from 'next/dynamic'
 import Link from 'next/link';
 import { Rating, useTheme } from "@mui/material";
-import { Doc01, Doc02, Doc03, Doc04 } from "@/public/assets/imagepath";
+import { Doc01, Doc02, Doc03, Doc04, doctors_profile } from "@/public/assets/imagepath";
 import { useSelector } from "react-redux";
 import { AppState } from "@/redux/store";
 import { formatNumberWithCommas } from "../DoctorDashboardSections/ScheduleTiming";
@@ -174,7 +174,9 @@ const DoctorSection: FC = (() => {
                             <div className="item" key={index}>
                               <div className="our-doctors-card">
                                 <div className="doctors-header">
-                                  <Link href="#" aria-label="our doctor"><img src={doctor.profileImage} className="img-fluid" alt="" /></Link>
+                                  <Link href="#" aria-label="our doctor">
+                                    <img src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile} className="img-fluid" alt="" />
+                                  </Link>
                                   <div className="img-overlay">
                                     <span>
                                       {

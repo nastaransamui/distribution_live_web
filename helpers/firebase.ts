@@ -22,7 +22,7 @@ export const getFcmToken = async (): Promise<string | null> => {
   try {
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
-      alert("Please give notification permission for better result.");
+      // alert("Please give notification permission for better result.");
       return null;
     }
 
@@ -41,7 +41,7 @@ export const getFcmToken = async (): Promise<string | null> => {
 
     return token || null;
   } catch (error) {
-    console.error("FCM setup failed:", error);
+    // console.error("FCM setup failed:", error);
     return null;
   }
 };

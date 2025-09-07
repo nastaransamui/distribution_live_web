@@ -8,7 +8,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { doctors_profile } from '@/public/assets/imagepath';
 import dayjs from 'dayjs'
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
@@ -39,6 +40,7 @@ import { FiThumbsUp } from 'react-icons/fi';
 import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
 import { UserPatientProfileTypeValue } from '@/redux/userPatientProfile';
 import Box from '@mui/material/Box';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 
 export interface GoogleInfoType {
@@ -53,7 +55,11 @@ export interface BillingTypeWithDoctorPatientProfile extends BillingType {
   doctorProfile?: DoctorProfileType;
   patientProfile?: UserPatientProfileTypeValue;
 }
-const BillCheckOut: FC = (() => {
+
+interface BillCheckOutProps {
+  serverSingleBill: BillingTypeWithDoctorPatientProfile
+}
+const BillCheckOut: FC<BillCheckOutProps> = (({ serverSingleBill }) => {
 
   const router = useRouter()
   const theme = useTheme();
@@ -62,9 +68,9 @@ const BillCheckOut: FC = (() => {
   const [paymentInfo, setPaymentInfo] = useState<any>({
     totalPriceStatus: 'FINAL',
     totalPriceLabel: 'Total',
-    totalPrice: '0',
-    currencyCode: 'THB',
-    countryCode: 'TH',
+    totalPrice: Number(serverSingleBill?.total).toFixed(2),
+    currencyCode: serverSingleBill.currencySymbol,
+    countryCode: serverSingleBill?.doctorProfile?.currency[0]?.iso2,
   })
   const [showInfoWidget, setShowInfoWidget] = useState<boolean>(true);
   const [showPaymentWidget, setShowPaymentWidget] = useState<boolean>(false);
@@ -117,35 +123,14 @@ const BillCheckOut: FC = (() => {
                 setValue('firstName', newSingleBill[0]?.patientProfile?.firstName)
                 setValue('lastName', newSingleBill[0]?.patientProfile?.lastName)
                 setValue('mobileNumber', newSingleBill[0]?.patientProfile?.mobileNumber)
-                if (newSingleBill[0].status == "Paid" && newSingleBill[0].paymentToken !== '') {
-                  if (typeof singleBill == 'undefined') {
-                    dispatch(updateHomeFormSubmit(true))
-                    toast.info('This bill payed already.', {
-                      position: "bottom-center",
-                      autoClose: 5000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                      transition: bounce,
-                      toastId: 'paidAlready',
-                      onClose: () => {
-                        toast.dismiss('paidAlready')
-                        dispatch(updateHomeFormSubmit(false))
-                        router.push(`/patient/payment-success/${btoa(newSingleBill[0]?._id!)}`)
-                      }
-                    });
-                  }
-                } else {
-                  setPaymentInfo({
-                    totalPriceStatus: 'FINAL',
-                    totalPriceLabel: 'Total',
-                    totalPrice: Number(newSingleBill[0].total).toFixed(2),
-                    currencyCode: newSingleBill[0]?.currencySymbol || 'THB',
-                    countryCode: newSingleBill[0]?.doctorProfile?.currency[0]?.iso2,
-                  })
-                }
+                setPaymentInfo({
+                  totalPriceStatus: 'FINAL',
+                  totalPriceLabel: 'Total',
+                  totalPrice: Number(newSingleBill[0].total).toFixed(2),
+                  currencyCode: newSingleBill[0]?.currencySymbol || 'THB',
+                  countryCode: newSingleBill[0]?.doctorProfile?.currency[0]?.iso2,
+                })
+
               }
 
               homeSocket.current.once(`updateGetSingleBillingForPatientReturn`, () => {
@@ -275,24 +260,28 @@ const BillCheckOut: FC = (() => {
     setShowInfoWidget(false)
     setShowPaymentWidget(true)
   }
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-6 col-lg-7 animate__animated animate__backInUp">
-        {
-          !singleBill || userProfile == null ?
-            <>
-              <div className="card">
-                <div className="card-body">
-                  <div className="table-responsive">
-                    <Box sx={{ minHeight: '500px' }} className="dataGridOuterBox">
-                      <LoadingComponent boxMinHeight='500px' />
-                    </Box>
-                  </div>
-                </div>
-              </div>
-            </> :
-            <>
+
+      {
+        !singleBill || userProfile == null ?
+          <>
+            <BeatLoader color={theme.palette.primary.main} style={{
+              maxWidth: '50%',
+              display: 'flex',
+              justifyContent: 'center',
+            }} />
+          </> :
+          <>
+            <div className={`col-md-6 col-lg-7 ${isClient ? 'animate__animated animate__backInLeft' : 'pre-anim-hidden'}`}>
               <div className="card">
                 <div className="card-header">
                   <h3 className="card-title" style={{ textAlign: 'center' }}>Due Date: {dayjs(singleBill?.dueDate).format(`MMM D, YYYY`)}</h3>
@@ -484,6 +473,9 @@ const BillCheckOut: FC = (() => {
                                 transactionInfo: paymentInfo,
                               }}
                               onCancel={reason => { console.log(reason) }}
+                              onError={(e) => {
+                                console.log(e)
+                              }}
                               onLoadPaymentData={paymentRequest => {
                                 const { paymentMethodData } = paymentRequest
                                 const { tokenizationData } = paymentMethodData
@@ -517,24 +509,20 @@ const BillCheckOut: FC = (() => {
                   </form>
                 </div>
               </div>
-            </>
-        }
-      </div>
-      <div className="col-md-5 col-lg-4 theiaStickySidebar animate__animated animate__backInUp" >
-        {
-          !singleBill || userProfile == null ?
-            <>
-              <div className="card">
-                <div className="card-body">
-                  <div className="table-responsive">
-                    <Box sx={{ minHeight: '500px' }} className="dataGridOuterBox">
-                      <LoadingComponent boxMinHeight='500px' />
-                    </Box>
-                  </div>
-                </div>
-              </div>
-            </> :
-            <>
+            </div>
+          </>
+      }
+      {
+        !singleBill || userProfile == null ?
+          <>
+            <BeatLoader color={theme.palette.primary.main} style={{
+              maxWidth: '50%',
+              display: 'flex',
+              justifyContent: 'center',
+            }} />
+          </> :
+          <>
+            <div className={`col-md-5 col-lg-4 theiaStickySidebar ${isClient ? 'animate__animated animate__backInRight' : 'pre-anim-hidden'}`} >
               <StickyBox offsetTop={20} offsetBottom={20}>
 
                 <div className="card booking-card">
@@ -651,9 +639,9 @@ const BillCheckOut: FC = (() => {
                   </div>
                 </div>
               </StickyBox>
-            </>
-        }
-      </div>
+            </div>
+          </>
+      }
       <Dialog
         open={termsDialog}
         onClose={() => setTermsDialog(false)}

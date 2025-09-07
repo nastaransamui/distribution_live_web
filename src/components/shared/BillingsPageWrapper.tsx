@@ -1,5 +1,5 @@
 import { AppState } from '@/redux/store'
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import PatientBillingRecords from './PatientBillingRecords'
 import { useRouter } from 'next/router'
@@ -16,9 +16,16 @@ const BillingsPageWrapper: FC = () => {
     ...(userProfile?.roleName == 'patient' ? { patientId: userProfile?._id } : undefined),
     ...(userProfile?.roleName == 'doctors' ? { doctorId: userProfile?._id } : undefined),
   }
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
-    <div className="col-md-12 col-lg-12 col-xl-12   animate__animated animate__backInUp" style={{ minHeight: '100vh' }}>
+    <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={{ minHeight: '100vh' }}>
 
       <PatientBillingRecords
         userType={router.asPath.startsWith('/doctors') ? 'doctor' : 'patient'}

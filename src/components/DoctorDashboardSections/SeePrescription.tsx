@@ -43,16 +43,16 @@ const SeePrescription: FC<{ singlePrescription: PrescriptionsTypeWithDoctorProfi
       <div className="col-md-12 col-lg-12 col-xl-12 animate__animated animate__backInUp">
         <div className="card">
           <div className="card-header" style={{ display: 'flex' }}>
-            <h4 className="card-title mb-0">Prescription</h4>
             <a href="" className="link"
               aria-label='back'
               onClick={(e) => {
                 e.preventDefault();
                 router.back()
               }}
-              style={{ ...threeOptionMain, marginLeft: 'auto' }}>
+              style={{ ...threeOptionMain, marginRight: 'auto' }}>
               <ArrowBackIcon />
             </a>
+            <h4 className="card-title mb-0">Prescription</h4>
           </div>
           <form noValidate className="card-body">
             <div className="row">

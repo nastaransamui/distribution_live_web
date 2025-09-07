@@ -25,12 +25,13 @@ import { ErrorComponent } from '@/pages/404';
 import { updateHomeSideBarOpen } from '@/redux/homeSideBarOpen';
 import DashboardFooter from '@/components/sections/DashboardFooter';
 
+import { getAndDispatchUserData, handleProtectedAuth, setThemeCookiesNoRedirect } from '@/helpers/getServerSidePropsHelpers';
+
+
 const FavouritPage: NextPage = (props: any) => {
   const homeSideBarOpen = useSelector((state: AppState) => state.homeSideBarOpen.value)
   const { muiVar } = useScssVar();
-  if (props.error) {
-    return <ErrorComponent errorCode={props.errorCode} errorText={props.error} />;
-  }
+
   return (
     <>
       <Head>
@@ -43,7 +44,7 @@ const FavouritPage: NextPage = (props: any) => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
-      <BreadCrumb subtitle='Favourites' title='Favourites' />
+      <BreadCrumb subtitle='Favourites' title='Favourites' currentPath={props.currentPath} />
       <div className={`content ${homeSideBarOpen ? 'content-padding-open' : 'content-padding-close'}`} style={muiVar}>
         <div className="container-fluid">
           <div className="row">
@@ -59,187 +60,26 @@ const FavouritPage: NextPage = (props: any) => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx) => {
-    try {
-      let props = {}
-      const result = await fetch('http://ip-api.com/json/', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        }
-      })
-      const userData = await result.json();
-      if (userData['status'] == 'success') {
-        store.dispatch(updateUserData(userData))
-      }
-      if (hasCookie('homeThemeType', ctx)) {
-        store.dispatch(updateHomeThemeType(getCookie('homeThemeType', ctx)))
-      }
-      if (hasCookie('homeThemeName', ctx)) {
-        store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
-      }
-      if (hasCookie('homeMiniSidebarOpen', ctx)) {
-        store.dispatch(updateHomeSideBarOpen(getCookie('homeMiniSidebarOpen', ctx)))
-      }
-      if (hasCookie('homeAccessToken', ctx)) {
-        const accessToken = getCookie('homeAccessToken', ctx);
-        const user_id = getCookie('user_id', ctx);
-        const services = getCookie('services', ctx);
-        const roleName = getCookie('roleName', ctx)
-        const iat = getCookie('iat', ctx)
-        const exp = getCookie('exp', ctx);
-        const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/api/singlePatient?_id=${user_id}`, {
-          method: "GET",
-          headers: {
-            'Accept': 'application/json',
-            Authorization: `Bearer ${accessToken}`
-          }
-        })
-        // Check if the response is JSON
-        const contentType = res.headers.get("content-type");
-        if (!res.ok) {
-          return {
-            props: { ...props, error: `API Error: ${res.status} - ${res.statusText}`, errorCode: 502 },
-          };
-        }
+    let props: any = {}
+    // 1) quick geo-ip fetch (best-effort)
+    await getAndDispatchUserData(ctx, store)
 
-        if (!contentType || !contentType.includes("application/json")) {
-          return {
-            props: { ...props, error: `Invalid response from API`, errorCode: 415 },
-          };
-        }
+    // 2) ensure theme cookies exist (fetch if any missing). Might return homeRedirect.
+    await setThemeCookiesNoRedirect(ctx, store)
 
-        const data = await res.json();
-
-
-        if (data.error) {
-          deleteCookie('homeAccessToken', ctx);
-          deleteCookie('user_id', ctx);
-          deleteCookie('services', ctx);
-          deleteCookie('roleName', ctx);
-          deleteCookie('iat', ctx);
-          deleteCookie('exp', ctx);
-          return {
-            ...props,
-            redirect: {
-              destination: `/`,
-              permanent: false,
-            },
-          }
-        }
-        if (roleName == 'doctors') {
-          store.dispatch(updateHomeAccessToken(accessToken))
-          store.dispatch(updateHomeUserId(user_id))
-          store.dispatch(updateHomeServices(services))
-          store.dispatch(updateHomeRoleName(roleName))
-          store.dispatch(updateHomeIAT(iat))
-          store.dispatch(updateHomeExp(exp))
-          store.dispatch(updateUserDoctorProfile(data))
-        } else {
-          return {
-            redirect: {
-              destination: `/${roleName}/dashboard`,
-              permanent: false,
-            },
-          }
-        }
-
-      } else {
-        return {
-          ...props,
-          redirect: {
-            destination: `/login`,
-            permanent: false,
-          },
-        }
-      }
+    const r = await handleProtectedAuth(ctx, store);
+    if (r?.redirectToLogin) {
       return {
-        props
-      }
-    } catch (error) {
-      let props = {}
-      console.log(error)
-      if (hasCookie('homeThemeType', ctx)) {
-        store.dispatch(updateHomeThemeType(getCookie('homeThemeType', ctx)))
-      }
-      if (hasCookie('homeThemeName', ctx)) {
-        store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
-      }
-      if (hasCookie('homeAccessToken', ctx)) {
-        const accessToken = getCookie('homeAccessToken', ctx);
-        const user_id = getCookie('user_id', ctx);
-        const services = getCookie('services', ctx);
-        const roleName = getCookie('roleName', ctx)
-        const iat = getCookie('iat', ctx)
-        const exp = getCookie('exp', ctx);
-        const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/api/singlePatient?_id=${user_id}`, {
-          method: "GET",
-          headers: {
-            'Accept': 'application/json',
-            Authorization: `Bearer ${accessToken}`
-          }
-        })
-        // Check if the response is JSON
-        const contentType = res.headers.get("content-type");
-        if (!res.ok) {
-          return {
-            props: { ...props, error: `API Error: ${res.status} - ${res.statusText}`, errorCode: 502 },
-          };
+        redirect: {
+          destination: '/login',
+          permanent: false
         }
-
-        if (!contentType || !contentType.includes("application/json")) {
-          return {
-            props: { ...props, error: `Invalid response from API`, errorCode: 415 },
-          };
-        }
-
-        const data = await res.json();
-
-
-        if (data.error) {
-          deleteCookie('homeAccessToken', ctx);
-          deleteCookie('user_id', ctx);
-          deleteCookie('services', ctx);
-          deleteCookie('roleName', ctx);
-          deleteCookie('iat', ctx);
-          deleteCookie('exp', ctx);
-          return {
-            ...props,
-            redirect: {
-              destination: `/`,
-              permanent: false,
-            },
-          }
-        }
-        if (roleName == 'doctors') {
-          store.dispatch(updateHomeAccessToken(accessToken))
-          store.dispatch(updateHomeUserId(user_id))
-          store.dispatch(updateHomeServices(services))
-          store.dispatch(updateHomeRoleName(roleName))
-          store.dispatch(updateHomeIAT(iat))
-          store.dispatch(updateHomeExp(exp))
-          store.dispatch(updateUserDoctorProfile(data))
-        } else {
-          return {
-            redirect: {
-              destination: `/${roleName}/dashboard`,
-              permanent: false,
-            },
-          }
-        }
-
-      } else {
-        return {
-          ...props,
-          redirect: {
-            destination: `/login`,
-            permanent: false,
-          },
-        }
-      }
-      return {
-        props
       }
     }
-  })
+    // Add currentPath to props so child components render identically server & client
+    props.currentPath = ctx.resolvedUrl ?? ctx.req?.url ?? '';
+    return { props }
+  }
+)
 
 export default connect((state: AppState) => state)(FavouritPage);

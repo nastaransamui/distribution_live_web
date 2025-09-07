@@ -1,5 +1,5 @@
-import useScssVar from '@/hooks/useScssVar';
-import React, { FC, Fragment } from 'react'
+
+import React, { FC, Fragment, useEffect, useState } from 'react'
 import MuiSwipeableTabs from '../shared/MuiSwipeableTabs';
 import MedicalRecords from './MedicalRecords';
 import MedicalRecordsPriscription from './MedicalRecordsPriscription';
@@ -12,10 +12,17 @@ const MedicalRecordsPrepage: FC = (() => {
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
   const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12 animate__animated animate__backInUp">
+      <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
         <div className="row">
           <div className="card">
             <div className="card-body">

@@ -649,20 +649,34 @@ const Dependent: FC = (() => {
           });
         } else {
           dispatch(updateHomeFormSubmit(false))
-          document.getElementById('delete_modal')?.classList.replace('animate__backInDown', 'animate__backOutDown')
           setDeleteId([])
+          const modal = document.getElementById('delete_modal');
+          modal?.classList.replace('animate__backInDown', 'animate__backOutDown');
+
+          if (document.activeElement && modal?.contains(document.activeElement)) {
+            (document.activeElement as HTMLElement).blur();
+          }
+
+          // hide after animation ends
           setTimeout(() => {
-            window.$('#delete_modal').modal("hide")
+            window.$('#delete_modal').modal("hide");
           }, 500);
         }
       })
     }
 
   }
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp">
+      <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
         {
           isLoading ?
             <div className="card">
@@ -1159,9 +1173,16 @@ const Dependent: FC = (() => {
                     }}> Confirm </button>
                   <button type="button" className="btnLogout" style={muiVar}
                     onClick={() => {
-                      document.getElementById('delete_modal')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+                      const modal = document.getElementById('delete_modal');
+                      modal?.classList.replace('animate__backInDown', 'animate__backOutDown');
+
+                      if (document.activeElement && modal?.contains(document.activeElement)) {
+                        (document.activeElement as HTMLElement).blur();
+                      }
+
+                      // hide after animation ends
                       setTimeout(() => {
-                        window.$('#delete_modal').modal("hide")
+                        window.$('#delete_modal').modal("hide");
                       }, 500);
 
                     }}>Cancell</button>

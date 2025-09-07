@@ -128,57 +128,58 @@ const VerifyEmail: FC = ((props) => {
             router?.query?.token,
             ipAddr,
             userAgent,
-            getValues('password')),
-            fcmToken
-          homeSocket.current.once('verificationEmailReturn', (msg: any) => {
-            if (msg?.status == 200) {
-              const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
-              setCookie('homeAccessToken', accessToken);
-              setCookie('user_id', user_id);
-              setCookie('services', services);
-              setCookie('roleName', roleName);
-              setCookie('iat', iat);
-              setCookie('exp', exp);
-              dispatch(updateHomeAccessToken(accessToken))
-              dispatch(updateHomeUserId(user_id));
-              dispatch(updateHomeServices(services));
-              dispatch(updateHomeRoleName(roleName));
-              dispatch(updateHomeIAT(iat));
-              dispatch(updateHomeExp(exp))
-              roleName == 'patient' ? dispatch(updateUserDoctorProfile(userProfile)) : dispatch(updateUserPatientProfile(userProfile))
-              toast.info('Login successfully', {
-                position: "bottom-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                transition: bounce,
-                onClose: () => {
-                  dispatch(updateHomeFormSubmit(false))
-                  reset()
-                  router.reload();
-                }
-              });
-            } else {
-              toast.info(msg?.reason, {
-                position: "bottom-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                transition: bounce,
-                onClose: () => {
-                  dispatch(updateHomeFormSubmit(false))
-                  reset()
-                  router.reload();
-                }
-              });
-            }
-          })
+            getValues('password'),
+            fcmToken),
+
+            homeSocket.current.once('verificationEmailReturn', (msg: any) => {
+              if (msg?.status == 200) {
+                const { accessToken, user_id, services, roleName, iat, exp, userProfile } = verifyHomeAccessToken(msg?.accessToken)
+                setCookie('homeAccessToken', accessToken);
+                setCookie('user_id', user_id);
+                setCookie('services', services);
+                setCookie('roleName', roleName);
+                setCookie('iat', iat);
+                setCookie('exp', exp);
+                dispatch(updateHomeAccessToken(accessToken))
+                dispatch(updateHomeUserId(user_id));
+                dispatch(updateHomeServices(services));
+                dispatch(updateHomeRoleName(roleName));
+                dispatch(updateHomeIAT(iat));
+                dispatch(updateHomeExp(exp))
+                roleName == 'patient' ? dispatch(updateUserDoctorProfile(userProfile)) : dispatch(updateUserPatientProfile(userProfile))
+                toast.info('Login successfully', {
+                  position: "bottom-center",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  transition: bounce,
+                  onClose: () => {
+                    dispatch(updateHomeFormSubmit(false))
+                    reset()
+                    router.reload();
+                  }
+                });
+              } else {
+                toast.info(msg?.reason, {
+                  position: "bottom-center",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  transition: bounce,
+                  onClose: () => {
+                    dispatch(updateHomeFormSubmit(false))
+                    reset()
+                    router.reload();
+                  }
+                });
+              }
+            })
         }
       }
     }

@@ -14,7 +14,6 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar'
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 
@@ -48,7 +47,8 @@ import { updateHomeRoleName } from '@/redux/homeRoleName';
 import { updateHomeServices } from '@/redux/homeServices';
 import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
-
+import AnimationWrapper from '@/shared/AnimationWrapper';
+import BeatLoader from 'react-spinners/BeatLoader'
 
 
 const ProfileSetting: FC = (() => {
@@ -58,11 +58,7 @@ const ProfileSetting: FC = (() => {
   const router = useRouter();
   const theme = useTheme()
   const [uploadImage, setUploadImage] = useState(patient_profile)
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
-  // const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
-  // const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
-  // const userProfile = homeRoleName == 'doctors' ? userDoctorProfile : userPatientProfile;
 
   const userData = useSelector((state: AppState) => state.userData.value)
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
@@ -109,6 +105,7 @@ const ProfileSetting: FC = (() => {
     clearErrors,
     formState: { errors },
     reset,
+    watch,
     control,
     getValues,
     setValue: setFormValue
@@ -227,7 +224,10 @@ const ProfileSetting: FC = (() => {
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    setIsClient(true)
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
   }, [])
 
 
@@ -236,6 +236,30 @@ const ProfileSetting: FC = (() => {
       let profileObj: any = Object.entries(userPatientProfile)
       profileObj.map((a: any) => {
         setFormValue(a[0], a[1])
+        if (a[0] == 'city') {
+          setInputValue((prevState) => {
+            return {
+              ...prevState,
+              city: a[1]
+            }
+          })
+        }
+        if (a[0] == 'state') {
+          setInputValue((prevState) => {
+            return {
+              ...prevState,
+              state: a[1]
+            }
+          })
+        }
+        if (a[0] == 'country') {
+          setInputValue((prevState) => {
+            return {
+              ...prevState,
+              country: a[1]
+            }
+          })
+        }
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -300,15 +324,19 @@ const ProfileSetting: FC = (() => {
   }
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp" style={muiVar}>
-        <div className="card">
-          <div className="card-body">
-            {
-              !isClient ? <CircleToBlockLoading color={theme.palette.primary.main} size="small" style={{
-                minWidth: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-              }} /> :
+
+      <AnimationWrapper fallbackMs={1500}>
+        <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
+          {!isClient ?
+            <BeatLoader color={theme.palette.primary.main} style={{
+              minWidth: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+            }} />
+            : <div className="card">
+              <div className="card-body">
+                {/* {
+                !isClient  : */}
 
                 <form noValidate onSubmit={handleSubmit(onProfileSubmit)}>
                   <div className="row form-row">
@@ -356,6 +384,9 @@ const ProfileSetting: FC = (() => {
                           }
                           fullWidth
                           size='small'
+                          InputLabelProps={{
+                            shrink: !!watch("firstName"), // shrinks only if value not empty
+                          }}
                         />
                       </div>
                     </div>
@@ -374,6 +405,9 @@ const ProfileSetting: FC = (() => {
                           }
                           fullWidth
                           size='small'
+                          InputLabelProps={{
+                            shrink: !!watch("lastName"), // shrinks only if value not empty
+                          }}
                         />
                       </div>
                     </div>
@@ -574,6 +608,9 @@ const ProfileSetting: FC = (() => {
                           }
                           fullWidth
                           size='small'
+                          InputLabelProps={{
+                            shrink: !!watch("address1"), // shrinks only if value not empty
+                          }}
                         />
                       </div>
                     </div>
@@ -587,6 +624,9 @@ const ProfileSetting: FC = (() => {
                           }
                           fullWidth
                           size='small'
+                          InputLabelProps={{
+                            shrink: !!watch("address2"), // shrinks only if value not empty
+                          }}
                         />
                       </div>
                     </div>
@@ -674,6 +714,9 @@ const ProfileSetting: FC = (() => {
                           }
                           fullWidth
                           size='small'
+                          InputLabelProps={{
+                            shrink: !!watch("zipCode"), // shrinks only if value not empty
+                          }}
                         />
                       </div>
                     </div>
@@ -692,10 +735,11 @@ const ProfileSetting: FC = (() => {
                   </div>
                 </form>
 
-            }
-          </div>
+                {/* } */}
+              </div>
+            </div>}
         </div>
-      </div>
+      </AnimationWrapper>
       <div className="modal fade  animate__animated animate__backInDown" id="delete_modal" aria-hidden="true" role="dialog" style={muiVar}>
         <div className="modal-dialog modal-dialog-centered" role="document" >
           <div className="modal-content" >

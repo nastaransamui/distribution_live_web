@@ -76,8 +76,9 @@ const MuiSwipeableTabs: React.FC<MuiSwipeableTabsProps> = ((
     setValue(index);
   };
 
+
   return (
-    <Box >
+    <Box key={steps.toString()}>
       <AppBar position="static">
         <Tabs
           value={value}
@@ -87,6 +88,11 @@ const MuiSwipeableTabs: React.FC<MuiSwipeableTabsProps> = ((
           variant="fullWidth"
           sx={{
             color: '#000'
+          }}
+          TabIndicatorProps={{
+            sx: {
+              minWidth: `${100 / steps.length}%`
+            }
           }}
         >
           {

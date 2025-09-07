@@ -21,7 +21,7 @@ const Testimonals: FC = (() => {
         name: "Martin Philips",
         title: "“ Awesome Impact ”",
         body: `After suffering from a heart condition for a number of years I was very happy
-        to meet Doccure, from the first consultation where he believed there was a
+        to meet Health care, from the first consultation where he believed there was a
         solution...`,
         rating: 3
       },

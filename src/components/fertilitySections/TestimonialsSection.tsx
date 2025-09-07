@@ -26,7 +26,7 @@ const TestimonialsSection: FC = (() => {
         rating: 4,
         name: "Jenifer Robinson",
         body: `After suffering from a heart condition for a number of years I was very happy
-          to meet Doccure, from the first consultation where he believed there was a
+          to meet Health care, from the first consultation where he believed there was a
           solution...`,
         city: "Texas",
         country: 'USA'
@@ -37,7 +37,7 @@ const TestimonialsSection: FC = (() => {
         rating: 3,
         name: "Matthew George",
         body: `After suffering from a heart condition for a number of years I was very happy
-          to meet Doccure, from the first consultation where he believed there was a
+          to meet Health care, from the first consultation where he believed there was a
           solution...`,
         city: "Michigan",
         country: 'USA'
@@ -48,7 +48,7 @@ const TestimonialsSection: FC = (() => {
         rating: 5,
         name: "Jenifer Paul",
         body: `After suffering from a heart condition for a number of years I was very happy
-          to meet Doccure, from the first consultation where he believed there was a
+          to meet Health care, from the first consultation where he believed there was a
           solution...`,
         city: "New Mexico",
         country: 'USA'

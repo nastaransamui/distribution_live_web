@@ -24,13 +24,13 @@ import { updateHomeUserId } from '@/redux/homeUserId';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
 import { ErrorComponent } from '@/pages/404';
 
+import { fetchJSON, getAndDispatchUserData, handleProtectedAuth, setThemeCookiesNoRedirect } from '@/helpers/getServerSidePropsHelpers';
+
 
 const CheckoutPage: NextPage = (props: any) => {
 
   const { muiVar } = useScssVar();
-  if (props.error) {
-    return <ErrorComponent errorCode={props.errorCode} errorText={props.error} />;
-  }
+
   return (
     <>
       <Head>
@@ -43,14 +43,14 @@ const CheckoutPage: NextPage = (props: any) => {
         <meta name="emotion-insertion-point" content="" />
         <title>Welcome to Health Care page</title>
       </Head>
-      <BreadCrumb title='Checkout' subtitle='Checkout' />
+      <BreadCrumb title='Checkout' subtitle='Checkout' currentPath={props.currentPath} />
       <div className="content content-space" style={muiVar}>
         <div className="container">
           <div className="row">
             <div className="content">
               <div className="container">
                 <div className="row">
-                  <BillCheckOut />
+                  <BillCheckOut serverSingleBill={props.serverSingleBill} />
                 </div>
               </div>
             </div>
@@ -65,164 +65,87 @@ const CheckoutPage: NextPage = (props: any) => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx) => {
+    let props: any = {}
+    // 1) quick geo-ip fetch (best-effort)
+    await getAndDispatchUserData(ctx, store)
+
+    // 2) ensure theme cookies exist (fetch if any missing). Might return homeRedirect.
+    await setThemeCookiesNoRedirect(ctx, store)
+
+    const r = await handleProtectedAuth(ctx, store);
+    if (r?.redirectToLogin) {
+      return {
+        redirect: {
+          destination: '/login',
+          permanent: false
+        }
+      }
+    }
+    // Add currentPath to props so child components render identically server & client
+    props.currentPath = ctx.resolvedUrl ?? ctx.req?.url ?? '';
     try {
-      const result = await fetch('http://ip-api.com/json/', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        }
-      })
-
-
-      let props: any = {}
-      const userData = await result.json();
-      if (userData['status'] == 'success') {
-        store.dispatch(updateUserData(userData))
-      }
-      if (hasCookie('homeThemeType', ctx)) {
-        store.dispatch(updateHomeThemeType(getCookie('homeThemeType', ctx)))
-      }
-      if (hasCookie('homeThemeName', ctx)) {
-        store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
-      }
-
-      if (hasCookie('homeAccessToken', ctx)) {
-        const accessToken = getCookie('homeAccessToken', ctx);
-        const user_id = getCookie('user_id', ctx);
-        const services = getCookie('services', ctx);
-        const roleName = getCookie('roleName', ctx)
-        const iat = getCookie('iat', ctx)
-        const exp = getCookie('exp', ctx);
-        const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/api/singlePatient?_id=${user_id}`, {
-          method: "GET",
-          headers: {
-            'Accept': 'application/json',
-            Authorization: `Bearer ${accessToken}`
-          }
-        })
-        // Check if the response is JSON
-        const contentType = res.headers.get("content-type");
-        if (!res.ok) {
-          return {
-            props: { ...props, error: `API Error: ${res.status} - ${res.statusText}`, errorCode: 502 },
-          };
-        }
-
-        if (!contentType || !contentType.includes("application/json")) {
-          return {
-            props: { ...props, error: `Invalid response from API`, errorCode: 415 },
-          };
-        }
-
-        const data = await res.json();
-
-
-        if (data.error) {
-          deleteCookie('homeAccessToken', ctx);
-          deleteCookie('user_id', ctx);
-          deleteCookie('services', ctx);
-          deleteCookie('roleName', ctx);
-          deleteCookie('iat', ctx);
-          deleteCookie('exp', ctx);
-          return {
-            ...props,
-            redirect: {
-              destination: `/`,
-              permanent: false,
-            },
-          }
-        }
-        if (roleName == 'patient') {
-          store.dispatch(updateHomeAccessToken(accessToken))
-          store.dispatch(updateHomeUserId(user_id))
-          store.dispatch(updateHomeServices(services))
-          store.dispatch(updateHomeRoleName(roleName))
-          store.dispatch(updateHomeIAT(iat))
-          store.dispatch(updateHomeExp(exp))
-          store.dispatch(updateUserPatientProfile(data))
-        } else {
-          return {
-            redirect: {
-              destination: `/${roleName}/dashboard`,
-              permanent: false,
-            },
-          }
-        }
-      } else {
+      const { query } = ctx;
+      const { _id: encryptID } = query;
+      const billing_id = atob(encryptID as string)
+      const patientId = getCookie('user_id', ctx);
+      const accessTokenCookies = getCookie("homeAccessToken", ctx);
+      if (!patientId || !accessTokenCookies) {
         return {
-          ...props,
           redirect: {
             destination: `/login`,
             permanent: false,
           },
-        }
+        };
       }
-      return {
-        props
+      if (!encryptID || !billing_id) {
+        return {
+          redirect: {
+            destination: `/patient/dashboard/billings`,
+            permanent: false,
+          },
+        };
       }
-    } catch (error) {
-      console.log(error)
-      let props = {}
-      if (hasCookie('homeThemeType', ctx)) {
-        store.dispatch(updateHomeThemeType(getCookie('homeThemeType', ctx)))
-      }
-      if (hasCookie('homeThemeName', ctx)) {
-        store.dispatch(updateHomeThemeName(getCookie('homeThemeName', ctx)))
-      }
-
-      if (hasCookie('homeAccessToken', ctx)) {
-        const accessToken = getCookie('homeAccessToken', ctx);
-        const user_id = getCookie('user_id', ctx);
-        const services = getCookie('services', ctx);
-        const roleName = getCookie('roleName', ctx)
-        const iat = getCookie('iat', ctx)
-        const exp = getCookie('exp', ctx);
-        const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/api/singlePatient?_id=${user_id}`, {
+      const resBody = await fetchJSON(
+        `${process.env.NEXT_PUBLIC_adminUrl}/api/getSingleBillingForPatient?billing_id=${billing_id}&patientId=${patientId}`,
+        {
           method: "GET",
           headers: {
-            'Accept': 'application/json',
-            Authorization: `Bearer ${accessToken}`
-          }
-        })
-        const data = await res.json();
-
-
-        if (data.error) {
-          deleteCookie('homeAccessToken', ctx);
-          deleteCookie('user_id', ctx);
-          deleteCookie('services', ctx);
-          deleteCookie('roleName', ctx);
-          deleteCookie('iat', ctx);
-          deleteCookie('exp', ctx);
-          return {
-            ...props,
-            redirect: {
-              destination: `/`,
-              permanent: false,
-            },
-          }
+            Accept: "application/json",
+            Authorization: `Bearer ${accessTokenCookies}`,
+          },
         }
-        if (roleName == 'patient') {
-          store.dispatch(updateHomeAccessToken(accessToken))
-          store.dispatch(updateHomeUserId(user_id))
-          store.dispatch(updateHomeServices(services))
-          store.dispatch(updateHomeRoleName(roleName))
-          store.dispatch(updateHomeIAT(iat))
-          store.dispatch(updateHomeExp(exp))
-          store.dispatch(updateUserPatientProfile(data))
-        } else {
-          return {
-            redirect: {
-              destination: `/${roleName}/dashboard`,
-              permanent: false,
-            },
-          }
-        }
+      );
+
+      if (resBody.status !== 200) {
+        return {
+          redirect: {
+            destination: `/patient/dashboard/billings`,
+            permanent: false,
+          },
+        };
+      } else if (
+        resBody.singleBill[0].status == 'Paid'
+      ) {
+        return {
+          redirect: {
+            destination: `/patient/payment-success/${btoa(resBody.singleBill[0]?._id!)}`,
+            permanent: false,
+          },
+        };
+      } else {
+        props.serverSingleBill = resBody.singleBill[0]
       }
+
+    } catch (error) {
       return {
-        props
-      }
+        redirect: {
+          destination: `/patient/dashboard/billings`,
+          permanent: false,
+        },
+      };
     }
-  })
+    return { props }
+  }
+)
 
 export default connect((state: AppState) => state)(CheckoutPage);

@@ -1,15 +1,22 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { aboutimg1, aboutimg2, aboutimg3 } from '../../../public/assets/imagepath';
 import { PhoneIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
 
 const AboutSection: FC = (() => {
   const { muiVar } = useScssVar();
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setIsClient(true);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <section className="about-section   animate__animated animate__backInUp card" style={muiVar}>
+      <section className={`about-section  ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'} card`} style={muiVar}>
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6 col-md-12">

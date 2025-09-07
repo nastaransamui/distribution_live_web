@@ -335,7 +335,7 @@ const DoctorDashboardSidebar: FC = (() => {
             <div className="profile-sidebar">
               <div className="widget-profile pro-widget-content">
                 <div className="profile-info-widget">
-                  <Link href="#" className={`booking-doc-img ${homeSideBarOpen ? "booking-doc-img-open" : 'booking-doc-img-close'}`} aria-label='book'>
+                  {userProfile !== null && <Link href="#" className={`booking-doc-img ${homeSideBarOpen ? "booking-doc-img-open" : 'booking-doc-img-close'}`} aria-label='book'>
                     <StyledBadge
                       overlap="circular"
                       anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
@@ -347,12 +347,12 @@ const DoctorDashboardSidebar: FC = (() => {
                         <img src={doctors_profile} alt="" className="rounded-circle" />
                       </Avatar>
                     </StyledBadge>
-                  </Link>
+                  </Link>}
                   <div className={`${homeSideBarOpen ? 'profile-det-info-open' : "profile-det-info-close"}`}>
                     <OverflowTooltip text={`Dr. ${userProfile?.fullName}`} />
                     <OverflowTooltip text={userDoctorProfile?.specialities?.[0]?.specialities || ''} as="h2" />
                     <OverflowTooltip text={userProfile?.userName || ''} as="h3" />
-                    <OverflowTooltip text={`${userProfile?.roleName?.charAt(0).toUpperCase()}${userProfile?.roleName.slice(1)}`} as="h3" />
+                    <OverflowTooltip text={`${userProfile?.roleName?.charAt(0).toUpperCase()}${userProfile?.roleName?.slice(1)}`} as="h3" />
 
                     <div className="patient-details-open">
                       <h4>

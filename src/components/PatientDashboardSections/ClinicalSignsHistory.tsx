@@ -100,40 +100,55 @@ const ClinicalSignsHistory: FC = (() => {
   }, [lengths, vitalSign])
 
   useEffect(() => {
-    if (homeSocket.current !== undefined) {
-      //Get vital Sign on change database
-      homeSocket.current.on('getVitalSignFromAdmin', (msg: any) => {
-        setvitalSign(msg)
-      })
-      let userId = userProfile?._id
-      // Get vital sing on entrance of page
-      homeSocket.current.emit('getVitalSign', { userId, limit: 5, skip: 0, sort: { date: -1 } })
-      homeSocket.current.once('getVitalSignReturn', (msg: { status: number, message?: string, vitalSign: ExtendedVitalSignTypes[] }) => {
-        const { status, message, vitalSign } = msg;
-        if (status !== 200) {
-          toast.error(message || `Error ${status} find Vital signs`, {
-            position: "bottom-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            transition: bounce,
-            onClose: () => {
+    if (!homeSocket?.current || userProfile == null) return;
+    const socket = homeSocket.current;
+    //Get vital Sign on change database
+    socket.on('getVitalSignFromAdmin', (msg: any) => {
+      setvitalSign(msg)
+    })
+    let userId = userProfile?._id
+    // Get vital sing on entrance of page
+    socket.emit('getVitalSign', { userId, limit: 5, skip: 0, sort: { date: -1 } })
+    socket.once('getVitalSignReturn', (msg: { status: number, message?: string, vitalSign: ExtendedVitalSignTypes[] }) => {
+      const { status, message, vitalSign } = msg;
+      if (status !== 200) {
+        toast.error(message || `Error ${status} find Vital signs`, {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          transition: bounce,
+          onClose: () => {
 
-            }
-          });
-        } else {
-          setvitalSign(vitalSign)
-        }
-      })
+          }
+        });
+      } else {
+        setvitalSign(vitalSign)
+      }
+    })
+
+    return () => {
+      socket.off('getVitalSign')
+      socket.off('getVitalSignReturn')
+      socket.off('getVitalSignFromAdmin')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeSocket, userProfile?._id])
+
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
-      <div className="col-md-12 col-lg-12 col-xl-12 animate__animated animate__backInUp">
+      <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
         <div className="card">
           <div className="card-body ">
             {

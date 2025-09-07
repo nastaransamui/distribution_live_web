@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useState, useRef, ReactNode, useEffect } from 'react'
+import { FC, Fragment, useState, ReactNode, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
 
@@ -14,15 +14,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
-import { AppointmentReservationType } from '../DoctorsSections/CheckOut/PaymentSuccess';
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
-import { formatNumberWithCommas, LoadingComponent } from './ScheduleTiming';
+import { formatNumberWithCommas } from './ScheduleTiming';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
+import BeatLoader from 'react-spinners/BeatLoader';
+import _ from 'lodash';
 
 
 
@@ -226,130 +225,135 @@ const Accounts: FC = (() => {
   }
 
 
+  const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setTimeout(() => setIsClient(true), 20);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
 
-      <div className="col-md-12 col-lg-12 col-xl-12  animate__animated animate__backInUp" style={muiVar}>
-        {isLoading ?
-          <div className="card">
-            <div className="card-body">
-              <div className="table-responsive">
-                <Box sx={{ minHeight: "500px" }} className="dataGridOuterBox">
-                  <LoadingComponent boxMinHeight="500px" />
-                </Box>
-              </div>
-            </div>
-          </div>
-          : <>
-            <div className="row">
-              <div className="col-lg-12 d-flex">
-                <div className="card flex-fill">
-                  <div className="card-header">
-                    <div className="row">
-                      <div className="col-sm-6">
-                        <h3 className="card-title">Bank Account</h3>
-                        <small style={{ color: theme.palette.secondary.main }}>We Encrypt these sensative data.</small>
-                        {
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={() => setShowBankName(!showBankName)}
-
-                          >
-                            {showBankName ? <Visibility color='primary' /> : <VisibilityOff color='secondary' />}
-                          </IconButton>
-                        }
-                      </div>
-                      <div className="col-sm-6">
-                        <div className="text-end">
-                          <Link
-                            title="Edit Details"
-                            className="btn view-btn"
-                            href=""
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setFormValue('userId', userProfile?._id!)
-                              if (typeof bankData !== 'undefined') {
-                                const profileEntries = Object.entries(bankData) as [keyof BankType, BankType[keyof BankType]][]; // Explicitly type the entries
-
-                                profileEntries.forEach(([key, value]) => {
-                                  setFormValue(key, value); // Ensure key is passed as a string
-                                });
-                              }
-
-                              setEdit(true)
-                            }}
-                          >
-                            <i className="fas fa-pencil" /> Edit Details
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="card-body">
-                    <div className="profile-view-bottom">
+      <div className="col-md-12 col-lg-12 col-xl-12" style={muiVar}>
+        {
+          isLoading ?
+            <BeatLoader color={theme.palette.primary.main} style={{
+              minWidth: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+            }} />
+            : <>
+              <div className="row">
+                <div className={`col-lg-12 d-flex ${isClient ? 'animate__animated animate__backInDown' : 'pre-anim-hidden'}`}>
+                  <div className="card flex-fill">
+                    <div className="card-header">
                       <div className="row">
-                        <div className="col-lg-4 col-md-4 col-sm-6">
-                          <div className="info-list">
-                            <div className="title">Bank Name</div>
-                            <div className="text" id="bank_name">
-                              {bankData?.bankName ? showBankName ? bankData?.bankName : "*".repeat(bankData.bankName.length) : '---'}
-                            </div>
+                        <div className="col-sm-6">
+                          <h3 className="card-title">Bank Account</h3>
+                          <small style={{ color: theme.palette.secondary.main }}>We Encrypt these sensative data.</small>
+                          {
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={() => setShowBankName(!showBankName)}
+
+                            >
+                              {showBankName ? <Visibility color='primary' /> : <VisibilityOff color='secondary' />}
+                            </IconButton>
+                          }
+                        </div>
+                        <div className="col-sm-6">
+                          <div className="text-end">
+                            <Link
+                              title="Edit Details"
+                              className="btn view-btn"
+                              href=""
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setFormValue('userId', userProfile?._id!)
+                                if (typeof bankData !== 'undefined') {
+                                  const profileEntries = Object.entries(bankData) as [keyof BankType, BankType[keyof BankType]][]; // Explicitly type the entries
+
+                                  profileEntries.forEach(([key, value]) => {
+                                    setFormValue(key, value); // Ensure key is passed as a string
+                                  });
+                                }
+
+                                setEdit(true)
+                              }}
+                            >
+                              <i className="fas fa-pencil" /> Edit Details
+                            </Link>
                           </div>
                         </div>
-                        <div className="col-lg-4 col-md-4 col-sm-6">
-                          <div className="info-list">
-                            <div className="title">Branch Name</div>
-                            <div className="text" id="branch_name">
-                              {bankData?.branchName ? showBankName ? bankData?.branchName : "*".repeat(bankData.branchName.length) : '---'}
+                      </div>
+                    </div>
+                    <div className="card-body">
+                      <div className="profile-view-bottom">
+                        <div className="row">
+                          <div className="col-lg-4 col-md-4 col-sm-6">
+                            <div className="info-list">
+                              <div className="title">Bank Name</div>
+                              <div className="text" id="bank_name">
+                                {bankData?.bankName ? showBankName ? bankData?.bankName : "*".repeat(bankData.bankName.length) : '---'}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="col-lg-4 col-md-4 col-sm-6">
-                          <div className="info-list">
-                            <div className="title">Account Number</div>
-                            <div className="text" id="account_no">
-                              {bankData?.accountNumber ? showBankName ? bankData?.accountNumber : "*".repeat(bankData.accountNumber.length) : '---'}
+                          <div className="col-lg-4 col-md-4 col-sm-6">
+                            <div className="info-list">
+                              <div className="title">Branch Name</div>
+                              <div className="text" id="branch_name">
+                                {bankData?.branchName ? showBankName ? bankData?.branchName : "*".repeat(bankData.branchName.length) : '---'}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="col-lg-4 col-md-4 col-sm-6">
-                          <div className="info-list">
-                            <div className="title">Account Name</div>
-                            <div className="text" id="account_name">
-                              {bankData?.accountName ? showBankName ? bankData?.accountName : "*".repeat(bankData.accountName.length) : '---'}
+                          <div className="col-lg-4 col-md-4 col-sm-6">
+                            <div className="info-list">
+                              <div className="title">Account Number</div>
+                              <div className="text" id="account_no">
+                                {bankData?.accountNumber ? showBankName ? bankData?.accountNumber : "*".repeat(bankData.accountNumber.length) : '---'}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="col-lg-4 col-md-4 col-sm-6">
-                          <div className="info-list">
-                            <div className="title">Swift Code</div>
-                            <div className="text" id="account_name">
-                              {bankData?.swiftCode ? showBankName ? bankData?.swiftCode : "*".repeat(bankData.swiftCode.length) : '---'}
+                          <div className="col-lg-4 col-md-4 col-sm-6">
+                            <div className="info-list">
+                              <div className="title">Account Name</div>
+                              <div className="text" id="account_name">
+                                {bankData?.accountName ? showBankName ? bankData?.accountName : "*".repeat(bankData.accountName.length) : '---'}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="col-lg-4 col-md-4 col-sm-6">
-                          <div className="info-list">
-                            <div className="title">Bank Identifier Codes</div>
-                            <div className="text" id="account_name">
-                              {bankData?.BICcode ? showBankName ? bankData?.BICcode : "*".repeat(bankData.BICcode.length) : '---'}
+                          <div className="col-lg-4 col-md-4 col-sm-6">
+                            <div className="info-list">
+                              <div className="title">Swift Code</div>
+                              <div className="text" id="account_name">
+                                {bankData?.swiftCode ? showBankName ? bankData?.swiftCode : "*".repeat(bankData.swiftCode.length) : '---'}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="col-lg-4 col-md-4 col-sm-6">
-                          <div className="info-list">
-                            <div className="title">Created Date</div>
-                            <div className="text" id="account_name">
-                              {!bankData ? '---' : dayjs(bankData?.createdAt).format('YYYY MM DD HH:mm')}
+                          <div className="col-lg-4 col-md-4 col-sm-6">
+                            <div className="info-list">
+                              <div className="title">Bank Identifier Codes</div>
+                              <div className="text" id="account_name">
+                                {bankData?.BICcode ? showBankName ? bankData?.BICcode : "*".repeat(bankData.BICcode.length) : '---'}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="col-lg-4 col-md-4 col-sm-6">
-                          <div className="info-list">
-                            <div className="title">Last Update</div>
-                            <div className="text" id="account_name">
-                              {!bankData ? '---' : dayjs(bankData?.updateAt).format('YYYY MM DD HH:mm')}
+                          <div className="col-lg-4 col-md-4 col-sm-6">
+                            <div className="info-list">
+                              <div className="title">Created Date</div>
+                              <div className="text" id="account_name">
+                                {!bankData ? '---' : _.isEmpty(bankData) ? '---' : dayjs(bankData?.createdAt).format('YYYY MM DD HH:mm')}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-lg-4 col-md-4 col-sm-6">
+                            <div className="info-list">
+                              <div className="title">Last Update</div>
+                              <div className="text" id="account_name">
+                                {!bankData ? '---' : _.isEmpty(bankData) ? '---' : dayjs(bankData?.updateAt).format('YYYY MM DD HH:mm')}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -357,252 +361,251 @@ const Accounts: FC = (() => {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="col-lg-12 d-flex">
-                <div className="card flex-fill">
-                  <div className="card-header" style={{ padding: '1.2rem 1.5rem' }}>
-                    <div className="row">
-                      <div className="col-sm-12">
-                        <h3 className="card-title">
-                          {
-                            reservationsAndTotals?.totalReservations !== 0 ?
-                              `Total Reservations ${reservationsAndTotals?.totalReservations}` :
-                              'No Reservations Yet'
-                          }
-                        </h3>
+                <div className={`col-lg-12 d-flex ${isClient ? 'animate__animated animate__zoomInDown' : 'pre-anim-hidden'}`}>
+                  <div className="card flex-fill">
+                    <div className="card-header" style={{ padding: '1.2rem 1.5rem' }}>
+                      <div className="row">
+                        <div className="col-sm-12">
+                          <h3 className="card-title">
+                            {
+                              reservationsAndTotals?.totalReservations !== 0 ?
+                                `Total Reservations ${reservationsAndTotals?.totalReservations}` :
+                                'No Reservations Yet'
+                            }
+                          </h3>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="card-body">
-                    <div className="row">
-                      <Divider variant="middle" sx={{ m: 2 }}>
-                        <Typography variant="body1">
-                          Awaiting Request
-                          {
-                            `(${!!reservationsAndTotals?.AwaitingRequest ?
-                              formatNumberWithCommas(
-                                String(reservationsAndTotals?.AwaitingRequest?.totalBookings))
-                              : `0`} booking${reservationsAndTotals?.AwaitingRequest?.totalBookings == 1 ? '' : 's'})`
-                          }
-                        </Typography>
-                      </Divider>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-success-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                    <div className="card-body">
+                      <div className="row">
+                        <Divider variant="middle" sx={{ m: 2 }}>
+                          <Typography variant="body1">
+                            Awaiting Request
                             {
-                              !!reservationsAndTotals?.AwaitingRequest ?
-                                formatNumberWithCommas(String(reservationsAndTotals?.AwaitingRequest?.totalAmount)) : `0.00`
+                              `(${!!reservationsAndTotals?.AwaitingRequest ?
+                                formatNumberWithCommas(
+                                  String(reservationsAndTotals?.AwaitingRequest?.totalBookings))
+                                : `0`} booking${reservationsAndTotals?.AwaitingRequest?.totalBookings == 1 ? '' : 's'})`
                             }
-                          </span> Total Sale
+                          </Typography>
+                        </Divider>
+                        <div className="col-lg-4">
+                          <div className="account-card bg-success-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!reservationsAndTotals?.AwaitingRequest ?
+                                  formatNumberWithCommas(String(reservationsAndTotals?.AwaitingRequest?.totalAmount)) : `0.00`
+                              }
+                            </span> Total Sale
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-warning-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                        <div className="col-lg-4">
+                          <div className="account-card bg-warning-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!reservationsAndTotals?.AwaitingRequest ?
+                                  formatNumberWithCommas(String(reservationsAndTotals?.AwaitingRequest?.totalPrice)) : `0.00`
+                              }
+                            </span> Total Doctor Fee
+                          </div>
+                        </div>
+                        <div className="col-lg-4">
+                          <div className="account-card bg-purple-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!reservationsAndTotals?.AwaitingRequest ?
+                                  formatNumberWithCommas(String(reservationsAndTotals?.AwaitingRequest?.totalBookingsFeePrice)) : `0.00`
+                              }
+                            </span> Total Bookings Fee Price
+                          </div>
+                        </div>
+                        <Divider variant="middle" sx={{ m: 2 }}>
+                          <Typography variant="body1">
+                            Pending
                             {
-                              !!reservationsAndTotals?.AwaitingRequest ?
-                                formatNumberWithCommas(String(reservationsAndTotals?.AwaitingRequest?.totalPrice)) : `0.00`
+                              `(${!!reservationsAndTotals?.Pending ?
+                                formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalBookings)) : `0`} booking${reservationsAndTotals?.Pending?.totalBookings == 1 ? '' : 's'})`
                             }
-                          </span> Total Doctor Fee
+                          </Typography>
+                        </Divider>
+                        <div className="col-lg-4">
+                          <div className="account-card bg-success-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!reservationsAndTotals?.Pending ?
+                                  formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalAmount)) : `0.00`
+                              }
+                            </span> Total Sale
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-purple-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                        <div className="col-lg-4">
+                          <div className="account-card bg-warning-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!reservationsAndTotals?.Pending ?
+                                  formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalPrice)) : `0.00`
+                              }
+                            </span> Total Doctor Fee
+                          </div>
+                        </div>
+                        <div className="col-lg-4">
+                          <div className="account-card bg-purple-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!reservationsAndTotals?.Pending ?
+                                  formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalBookingsFeePrice)) : `0.00`
+                              }
+                            </span> Total Bookings Fee Price
+                          </div>
+                        </div>
+                        <Divider variant="middle" sx={{ m: 2 }}>
+                          <Typography variant="body1">
+                            Paid
                             {
-                              !!reservationsAndTotals?.AwaitingRequest ?
-                                formatNumberWithCommas(String(reservationsAndTotals?.AwaitingRequest?.totalBookingsFeePrice)) : `0.00`
+                              `(${!!reservationsAndTotals?.Paid ?
+                                formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalBookings)) : `0`} booking${reservationsAndTotals?.Paid?.totalBookings == 1 ? '' : 's'})`
                             }
-                          </span> Total Bookings Fee Price
+                          </Typography>
+                        </Divider>
+                        <div className="col-lg-4">
+                          <div className="account-card bg-success-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!reservationsAndTotals?.Paid ?
+                                  formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalAmount)) : `0.00`
+                              }
+                            </span> Total Sale
+                          </div>
                         </div>
-                      </div>
-                      <Divider variant="middle" sx={{ m: 2 }}>
-                        <Typography variant="body1">
-                          Pending
-                          {
-                            `(${!!reservationsAndTotals?.Pending ?
-                              formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalBookings)) : `0`} booking${reservationsAndTotals?.Pending?.totalBookings == 1 ? '' : 's'})`
-                          }
-                        </Typography>
-                      </Divider>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-success-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!reservationsAndTotals?.Pending ?
-                                formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalAmount)) : `0.00`
-                            }
-                          </span> Total Sale
+                        <div className="col-lg-4">
+                          <div className="account-card bg-warning-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!reservationsAndTotals?.Paid ?
+                                  formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalPrice)) : `0.00`
+                              }
+                            </span> Total Doctor Fee
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-warning-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!reservationsAndTotals?.Pending ?
-                                formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalPrice)) : `0.00`
-                            }
-                          </span> Total Doctor Fee
+                        <div className="col-lg-4">
+                          <div className="account-card bg-purple-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!reservationsAndTotals?.Paid ?
+                                  formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalBookingsFeePrice)) : `0.00`
+                              }
+                            </span> Total Bookings Fee Price
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-purple-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!reservationsAndTotals?.Pending ?
-                                formatNumberWithCommas(String(reservationsAndTotals?.Pending?.totalBookingsFeePrice)) : `0.00`
-                            }
-                          </span> Total Bookings Fee Price
-                        </div>
-                      </div>
-                      <Divider variant="middle" sx={{ m: 2 }}>
-                        <Typography variant="body1">
-                          Paid
-                          {
-                            `(${!!reservationsAndTotals?.Paid ?
-                              formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalBookings)) : `0`} booking${reservationsAndTotals?.Paid?.totalBookings == 1 ? '' : 's'})`
-                          }
-                        </Typography>
-                      </Divider>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-success-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!reservationsAndTotals?.Paid ?
-                                formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalAmount)) : `0.00`
-                            }
-                          </span> Total Sale
-                        </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-warning-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!reservationsAndTotals?.Paid ?
-                                formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalPrice)) : `0.00`
-                            }
-                          </span> Total Doctor Fee
-                        </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-purple-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!reservationsAndTotals?.Paid ?
-                                formatNumberWithCommas(String(reservationsAndTotals?.Paid?.totalBookingsFeePrice)) : `0.00`
-                            }
-                          </span> Total Bookings Fee Price
-                        </div>
-                      </div>
 
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-lg-12 d-flex">
-                <div className="card flex-fill">
-                  <div className="card-header" style={{ padding: '1.2rem 1.5rem' }}>
-                    <div className="row">
-                      <div className="col-sm-12">
-                        <h3 className="card-title">
-                          {
-                            billingsAndTotals?.totalBillings !== 0 ?
-                              `Total: Bills ${billingsAndTotals?.totalBillings}` :
-                              "No Bill Yet"
-                          }
-                        </h3>
                       </div>
-                    </div>
-                  </div>
-                  <div className="card-body">
-                    <div className="row">
-                      <Divider variant="middle" sx={{ m: 2 }}>
-                        <Typography variant="body1">
-                          Pending
-                          {
-                            !!billingsAndTotals?.Pending && `( ${billingsAndTotals?.Pending?.totalBillings} Bills)`
-                          }
-
-                        </Typography>
-                      </Divider>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-success-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!billingsAndTotals?.Pending ?
-                                formatNumberWithCommas(String(billingsAndTotals?.Pending?.totalAmount)) : `0.00`
-                            }
-                          </span> Total Sale
-                        </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-warning-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!billingsAndTotals?.Pending ?
-                                formatNumberWithCommas(String(billingsAndTotals?.Pending?.totalPrice)) : `0.00`
-                            }
-                          </span>Total Doctor Fee
-                        </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-purple-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!billingsAndTotals?.Pending ?
-                                formatNumberWithCommas(String(billingsAndTotals?.Pending?.totalBookingsFeePrice)) : `0.00`
-                            }
-                          </span>Total Bookings Fee Price
-                        </div>
-                      </div>
-                      <Divider variant="middle" sx={{ m: 2 }}>
-                        <Typography variant="body1">
-                          Paid
-                          {
-                            !!billingsAndTotals?.Paid && `(${billingsAndTotals?.Paid?.totalBillings} Bookings)`
-                          }
-                        </Typography>
-                      </Divider>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-success-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!billingsAndTotals?.Paid ?
-                                formatNumberWithCommas(String(billingsAndTotals?.Paid?.totalAmount)) : `0.00`
-                            }
-                          </span>Total Sale
-                        </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-warning-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!billingsAndTotals?.Paid ?
-                                formatNumberWithCommas(String(billingsAndTotals?.Paid?.totalPrice)) : `0.00`
-                            }
-                          </span> Total Doctor Fee
-                        </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <div className="account-card bg-purple-light">
-                          <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
-                            {
-                              !!billingsAndTotals?.Paid ?
-                                formatNumberWithCommas(String(billingsAndTotals?.Paid?.totalBookingsFeePrice)) : `0.00`
-                            }
-                          </span> Total Bookings Fee Price
-                        </div>
-                      </div>
-
                     </div>
                   </div>
                 </div>
+
+                <div className={`col-lg-12 d-flex ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
+                  <div className="card flex-fill">
+                    <div className="card-header" style={{ padding: '1.2rem 1.5rem' }}>
+                      <div className="row">
+                        <div className="col-sm-12">
+                          <h3 className="card-title">
+                            {
+                              billingsAndTotals?.totalBillings !== 0 ?
+                                `Total: Bills ${billingsAndTotals?.totalBillings}` :
+                                "No Bill Yet"
+                            }
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="card-body">
+                      <div className="row">
+                        <Divider variant="middle" sx={{ m: 2 }}>
+                          <Typography variant="body1">
+                            Pending
+                            {
+                              !!billingsAndTotals?.Pending && `( ${billingsAndTotals?.Pending?.totalBillings} Bills)`
+                            }
+
+                          </Typography>
+                        </Divider>
+                        <div className="col-lg-4">
+                          <div className="account-card bg-success-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!billingsAndTotals?.Pending ?
+                                  formatNumberWithCommas(String(billingsAndTotals?.Pending?.totalAmount)) : `0.00`
+                              }
+                            </span> Total Sale
+                          </div>
+                        </div>
+                        <div className="col-lg-4">
+                          <div className="account-card bg-warning-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!billingsAndTotals?.Pending ?
+                                  formatNumberWithCommas(String(billingsAndTotals?.Pending?.totalPrice)) : `0.00`
+                              }
+                            </span>Total Doctor Fee
+                          </div>
+                        </div>
+                        <div className="col-lg-4">
+                          <div className="account-card bg-purple-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!billingsAndTotals?.Pending ?
+                                  formatNumberWithCommas(String(billingsAndTotals?.Pending?.totalBookingsFeePrice)) : `0.00`
+                              }
+                            </span>Total Bookings Fee Price
+                          </div>
+                        </div>
+                        <Divider variant="middle" sx={{ m: 2 }}>
+                          <Typography variant="body1">
+                            Paid
+                            {
+                              !!billingsAndTotals?.Paid && `(${billingsAndTotals?.Paid?.totalBillings} Bookings)`
+                            }
+                          </Typography>
+                        </Divider>
+                        <div className="col-lg-4">
+                          <div className="account-card bg-success-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!billingsAndTotals?.Paid ?
+                                  formatNumberWithCommas(String(billingsAndTotals?.Paid?.totalAmount)) : `0.00`
+                              }
+                            </span>Total Sale
+                          </div>
+                        </div>
+                        <div className="col-lg-4">
+                          <div className="account-card bg-warning-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!billingsAndTotals?.Paid ?
+                                  formatNumberWithCommas(String(billingsAndTotals?.Paid?.totalPrice)) : `0.00`
+                              }
+                            </span> Total Doctor Fee
+                          </div>
+                        </div>
+                        <div className="col-lg-4">
+                          <div className="account-card bg-purple-light">
+                            <span>{userDoctorProfile?.currency[0]?.currency_symbol} {" "}
+                              {
+                                !!billingsAndTotals?.Paid ?
+                                  formatNumberWithCommas(String(billingsAndTotals?.Paid?.totalBookingsFeePrice)) : `0.00`
+                              }
+                            </span> Total Bookings Fee Price
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
-            </div>
-
-          </>}
+            </>}
       </div>
 
       {edit && <BootstrapDialog

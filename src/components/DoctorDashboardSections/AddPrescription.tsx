@@ -130,15 +130,15 @@ const AddPrescription: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile 
       <div className="col-md-12 col-lg-12 col-xl-12 animate__animated animate__backInUp">
         <div className="card">
           <div className="card-header" style={{ display: 'flex' }}>
-            <h4 className="card-title mb-0">Add Prescription</h4>
             <a href="" className="link" aria-label='back'
               onClick={(e) => {
                 e.preventDefault();
                 router.back()
               }}
-              style={{ ...threeOptionMain, marginLeft: 'auto' }}>
+              style={{ ...threeOptionMain, marginRight: 'auto' }}>
               <ArrowBackIcon />
             </a>
+            <h4 className="card-title mb-0">Add Prescription</h4>
           </div>
           <form noValidate onSubmit={handleSubmit(onPrescriptionSubmit)} className="card-body">
             <div className="row">
@@ -284,8 +284,8 @@ const AddPrescription: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile 
               <div className="col-md-12">
                 <div className="submit-section">
                   <button type="submit" className="btn btn-primary submit-btn">Save</button>
-                  <button type="reset" className="btn btn-primary submit-btn"
-                    onClick={() => { reset() }}>Clear</button>
+                  {/* <button type="reset" className="btn btn-primary submit-btn"
+                    onClick={() => { reset() }}>Clear</button> */}
                 </div>
               </div>
             </div>

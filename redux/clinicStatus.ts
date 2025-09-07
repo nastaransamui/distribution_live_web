@@ -28,10 +28,7 @@ export const clinicStatusSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(HYDRATE, (state, action: AnyAction) => {
-      return {
-        ...state,
-        ...action.payload.clinicStatus.value,
-      };
+      return action.payload.clinicStatus || state;
     });
   },
 });

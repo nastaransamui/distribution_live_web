@@ -98,50 +98,50 @@ const ChatRightHeader: FC = (() => {
               }}>
                 <i className="material-icons">videocam</i>
               </Link>
+              <Link href="#" id="more_vert" onClick={(e) => {
+                e.preventDefault();
+                handleClick(e)
+              }}>
+                <i className="material-icons" >more_vert</i>
+              </Link>
+              <Menu
+
+                style={muiVar}
+                id="long-menu"
+                MenuListProps={{
+                  'aria-labelledby': 'long-button',
+                }}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                slotProps={{
+                  root: {
+                    style: {
+                      marginTop: 21,
+                      marginLeft: -25
+                    }
+                  },
+                  paper: {
+                    style: {
+                      maxHeight: ITEM_HEIGHT * 4.5,
+                      width: '20ch',
+                      backgroundColor: theme.palette.background.paper,
+                      boxShadow: 'none',
+                      backgroundImage: 'none'
+                    }
+                  }
+                }}
+              >
+                {menuOptions.map((option) => (
+                  <MenuItem key={option.text} onClick={(e) => {
+                    handleClose({ callBack: option.callBack })
+                  }} >
+                    <option.icon style={{ color: option.iconColor, }} /> {option.text}
+                  </MenuItem>
+                ))}
+              </Menu>
             </>
           }
-          <Link href="#" id="more_vert" onClick={(e) => {
-            e.preventDefault();
-            handleClick(e)
-          }}>
-            <i className="material-icons" >more_vert</i>
-          </Link>
-          <Menu
-
-            style={muiVar}
-            id="long-menu"
-            MenuListProps={{
-              'aria-labelledby': 'long-button',
-            }}
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            slotProps={{
-              root: {
-                style: {
-                  marginTop: 21,
-                  marginLeft: -25
-                }
-              },
-              paper: {
-                style: {
-                  maxHeight: ITEM_HEIGHT * 4.5,
-                  width: '20ch',
-                  backgroundColor: theme.palette.background.paper,
-                  boxShadow: 'none',
-                  backgroundImage: 'none'
-                }
-              }
-            }}
-          >
-            {menuOptions.map((option) => (
-              <MenuItem key={option.text} onClick={(e) => {
-                handleClose({ callBack: option.callBack })
-              }} >
-                <option.icon style={{ color: option.iconColor, }} /> {option.text}
-              </MenuItem>
-            ))}
-          </Menu>
         </div>
       </div>
     </Fragment >
