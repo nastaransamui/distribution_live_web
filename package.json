@@ -64,10 +64,11 @@
     "flickity": "2.3.0",
     "google-maps-react": "^2.0.6",
     "html2canvas": "^1.4.1",
-    "jsonwebtoken": "8.5.1",
+    "jose": "^6.1.0",
     "jspdf": "^2.5.2",
     "jss": "^10.10.0",
     "jss-rtl": "^0.3.0",
+    "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "mui-tel-input": "^4.0.0",
     "next": "13.4.12",
@@ -130,7 +131,6 @@
     "yet-another-react-lightbox": "^3.12.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.2.0",
     "@types/body-scroll-lock": "^3.1.2",
     "@types/react-virtualized": "^9.21.28",
     "@types/react-window": "^1.8.8"

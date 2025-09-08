@@ -195,7 +195,9 @@ export function useHomeSocket({
     }
 
     async function onGetUserProfileFromAdmin(msg: string) {
-      var { accessToken, user_id, services, roleName, iat, exp, userProfile: newUserProfile } = verifyHomeAccessToken(msg)
+      const payload = verifyHomeAccessToken(msg);
+      if (payload == null) return;
+      var { accessToken, user_id, services, roleName, iat, exp, userProfile: newUserProfile } = payload
       if (getCookie('user_id') !== user_id) return;
       const { isActive } = newUserProfile;
       if (accessToken == '' || !isActive) {

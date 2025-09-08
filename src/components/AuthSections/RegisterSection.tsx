@@ -100,6 +100,7 @@ const RegisterSection: FC = (() => {
   })
 
   const onRegisterSubmit = (data: FormType) => {
+    if (!homeSocket.current) return;
     delete data.repeatPassword;
     data.email = data.email.toLowerCase();
     dispatch(updateHomeFormSubmit(true))
