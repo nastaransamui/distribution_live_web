@@ -9,18 +9,7 @@ import '@/styles/css/bootstrap.min.css'
 import '@/styles/css/all.min.css';
 import '@/styles/css/feather.css'
 import '@/styles/css/custom.css'
-// import '@/styles/css/aos.css'
-// import 'read-more-less-react/dist/index.css'
-// import 'react-toastify/dist/ReactToastify.css';
-// import 'animate.css';
-// import 'owl.carousel/dist/assets/owl.carousel.css';
-// import 'owl.carousel/dist/assets/owl.theme.default.css';
-// import "yet-another-react-lightbox/styles.css";
-// import 'react-big-calendar/lib/css/react-big-calendar.css'
-// import 'react-virtualized/styles.css';
-// import "react-multi-date-picker/styles/backgrounds/bg-dark.css"
 
-// import "vanilla-cookieconsent/dist/cookieconsent.css";
 //next
 import type { AppProps } from 'next/app'
 
@@ -35,14 +24,11 @@ import { wrapper } from '@/redux/store'
 
 
 //theme
-import { CacheProvider } from '@emotion/react';
 import createEmotionCache from '@/theme/createEmotionCache'
 import { EmotionCache } from '@emotion/react';
 import AppWrapper from '@/theme/AppWrapper';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { AppCacheProvider } from '@mui/material-nextjs/v13-pagesRouter'
-import { StyledEngineProvider } from '@mui/material/styles';
 import useFirebaseNotifications from '@/hooks/useFirebaseNotifications'
 import { getFcmToken } from '@/helpers/firebase'
 import { ChatProvider } from '@/hooks/useChat'
