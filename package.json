@@ -44,7 +44,6 @@
     "aos": "^2.3.4",
     "autosuggest-highlight": "^3.3.4",
     "cookies-next": "^2.1.2",
-    "date-arithmetic": "^4.1.0",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.9",
     "dayjs-precise-range": "^1.0.1",
