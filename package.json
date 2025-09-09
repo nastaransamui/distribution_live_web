@@ -48,7 +48,6 @@
     "dayjs": "^1.11.9",
     "dayjs-precise-range": "^1.0.1",
     "dexie": "^3.2.4",
-    "dexie-react-hooks": "^1.1.6",
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.6",
     "feather-icons-react": "^0.6.2",
