@@ -7,18 +7,18 @@ import {
 } from '../../../public/assets/imagepath';
 import useScssVar from '@/hooks/useScssVar';
 
-import TouchBallLoading from 'react-loadingg/lib/TouchBallLoading';
 import Tooltip from '@mui/material/Tooltip';
 //redux
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
-
+import { useTheme } from '@mui/material';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 const Specialities: FC = (() => {
 
   const { muiVar } = useScssVar();
   const specialities = useSelector((state: AppState) => state.specialities.value)
-
+  const theme = useTheme();
   return (
     <Fragment>
       <section className="specialities-section" style={muiVar}>
@@ -39,10 +39,11 @@ const Specialities: FC = (() => {
             {
               specialities.length == 0 ?
                 <div className="form-search-btn aos" data-aos="fade-up" style={{ display: 'flex', justifyContent: 'center' }}>
-                  <TouchBallLoading
-                    size="large"
+                  <BeatLoader
+
                     style={{ position: 'relative' }}
-                    color={muiVar['--secondaryMain']} /></div> :
+                    color={theme.palette.secondary.main} />
+                </div> :
                 <Fragment>
                   {
                     specialities.map((spec) => {

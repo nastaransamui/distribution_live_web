@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import { DoctorProfileType, } from '@/components/SearchDoctorSections/SearchDoctorSection';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween'
@@ -14,6 +14,14 @@ export interface DoctorPublicProfileBusinessHoursType {
 const DoctorPublicProfileBusinessHoursTap: FC<DoctorPublicProfileBusinessHoursType> = (({ profile }) => {
 
   dayjs.extend(isBetween);
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
 
@@ -21,7 +29,7 @@ const DoctorPublicProfileBusinessHoursTap: FC<DoctorPublicProfileBusinessHoursTy
         <div className="tab-content pt-0">
           <div >
             <div className="row">
-              <div className="col-md-6 offset-md-3">
+              <div className={`col-md-12   ${isClient ? 'animate__animated animate__slideInRight' : 'pre-anim-hidden'}`}>
                 <div className="widget business-widget">
                   <div className="widget-content">
                     <div className="listing-hours">

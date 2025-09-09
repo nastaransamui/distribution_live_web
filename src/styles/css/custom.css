@@ -18257,6 +18257,7 @@ call-btn:focus {
   border: 1px solid var(--secondaryMain);
   margin-bottom: 0;
   padding: 20px;
+  border-radius: 4px;
 }
 
 .listing-day {

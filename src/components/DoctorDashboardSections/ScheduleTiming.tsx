@@ -21,7 +21,6 @@ import Button from '@mui/material/Button'
 import { styled, useTheme, darken, lighten } from '@mui/material/styles';
 
 import Box from '@mui/material/Box';
-import SwipeableViews from 'react-swipeable-views';
 import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -46,7 +45,6 @@ import { AppState } from '@/redux/store';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 
 //liberies
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import { toast } from 'react-toastify';
 
 
@@ -1620,25 +1618,18 @@ const SlotSwipeable: FC<SlotSwipeableType> = ({ saveTodb, updateDb, getConfirmDb
     }
   }
   return (
-    <div className="tab-content schedule-cont">
-      {/* @ts-ignore */}
-      <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={tabIndex}
-        onChangeIndex={handleChangeIndex}
-        style={{ textAlign: 'center' }}
-      >
-        {/* @ts-ignore */}
-        {
-          doctorAvailableTimeSlot !== null ?
-            doctorAvailableTimeSlot.availableSlots.length == 0 ? <></> :
-              <>{doctorAvailableTimeSlot.availableSlots.length !== 0 &&
-                doctorAvailableTimeSlot.availableSlots
-                  .sort((a: AvailableType, b: AvailableType) => dayjs(a.startDate).isBefore(b.startDate) ? -1 : 1)
-                  .map((slot: AvailableType, slotIndex: number) => {
-                    return (
-                      <TabPanel key={slotIndex} value={tabIndex} index={slotIndex} dir={theme.direction}>
-                        <Fragment>
+    <div className="tab-content schedule-cont" style={{ overflowX: 'hidden' }}>
+      {
+        doctorAvailableTimeSlot !== null ?
+          doctorAvailableTimeSlot.availableSlots.length == 0 ? <></> :
+            <>{doctorAvailableTimeSlot.availableSlots.length !== 0 &&
+              doctorAvailableTimeSlot.availableSlots
+                .sort((a: AvailableType, b: AvailableType) => dayjs(a.startDate).isBefore(b.startDate) ? -1 : 1)
+                .map((slot: AvailableType, slotIndex: number) => {
+                  return (
+                    <TabPanel key={slotIndex} value={tabIndex} index={slotIndex} dir={theme.direction}>
+                      <Fragment>
+                        <div className='animate__animated animate__lightSpeedInRight'>
                           <Typography variant='h4'
                             sx={{
                               fontSize: { xl: '18px !important', lg: '16px !important', md: `16px !important`, sm: `17px !important`, xs: `14px !important` }
@@ -1746,45 +1737,46 @@ const SlotSwipeable: FC<SlotSwipeableType> = ({ saveTodb, updateDb, getConfirmDb
                               })
                             }
                           </>
-                        </Fragment>
-                      </TabPanel>
-                    )
-                  })}
+                        </div>
+                      </Fragment>
+                    </TabPanel>
+                  )
+                })}
 
-                {doctorAvailableTimeSlot !== null &&
-                  <Grid container className="submit-section" spacing={1} sx={{ mt: 2 }}>
-                    <Grid item lg={doctorAvailableTimeSlot._id == '' ? 12 : 6}>
-                      <Button fullWidth className="btn btn-primary submit-btn" sx={{ boxShadow: "none", mb: 2, lineHeight: '16px' }} onClick={() => {
-                        if (doctorAvailableTimeSlot._id == '') {
-                          saveTodb()
-                        } else {
-                          updateDb()
-                        }
-                      }}>
-                        {doctorAvailableTimeSlot._id == '' ? `Save` : 'Update'}
-                      </Button>
+              {doctorAvailableTimeSlot !== null &&
+                <Grid container className="submit-section" spacing={1} sx={{ mt: 2 }}>
+                  <Grid item lg={doctorAvailableTimeSlot._id == '' ? 12 : 6}>
+                    <Button fullWidth className="btn btn-primary submit-btn" sx={{ boxShadow: "none", mb: 2, lineHeight: '16px' }} onClick={() => {
+                      if (doctorAvailableTimeSlot._id == '') {
+                        saveTodb()
+                      } else {
+                        updateDb()
+                      }
+                    }}>
+                      {doctorAvailableTimeSlot._id == '' ? `Save` : 'Update'}
+                    </Button>
 
-                    </Grid>
-                    {
-                      doctorAvailableTimeSlot._id !== '' &&
-                      <Grid item lg={doctorAvailableTimeSlot._id == '' ? 12 : 6}>
-                        <Button fullWidth
-                          className="btnDelete btn-primary submit-btn"
-                          sx={{ boxShadow: "none", mb: 2, lineHeight: '16px' }}
-                          onClick={() => { getConfirmDb() }} >
-
-                          Delete Whole Slots
-                        </Button>
-                      </Grid>
-                    }
                   </Grid>
-                }
-              </> :
-            <>
-              <Typography component='a' >You need to add at least one schedule timing to appear in search result.</Typography>
-            </>
-        }
-      </SwipeableViews>
+                  {
+                    doctorAvailableTimeSlot._id !== '' &&
+                    <Grid item lg={doctorAvailableTimeSlot._id == '' ? 12 : 6}>
+                      <Button fullWidth
+                        className="btnDelete btn-primary submit-btn"
+                        sx={{ boxShadow: "none", mb: 2, lineHeight: '16px' }}
+                        onClick={() => { getConfirmDb() }} >
+
+                        Delete Whole Slots
+                      </Button>
+                    </Grid>
+                  }
+                </Grid>
+              }
+            </> :
+          <>
+            <Typography component='a' >You need to add at least one schedule timing to appear in search result.</Typography>
+          </>
+      }
+
     </div>
   )
 }

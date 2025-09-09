@@ -1,14 +1,14 @@
-//@ts-nocheck
-import * as React from 'react';
-import SwipeableViews from 'react-swipeable-views';
-import { useTheme } from '@mui/material/styles';
+
+
+import { SyntheticEvent, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import TabContext from '@mui/lab/TabContext';
 import AppBar from '@mui/material/AppBar';
-import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { useRouter } from 'next/router';
 import _ from 'lodash'
-
+import TabList from '@mui/lab/TabList';
+import { SxProps, Theme, useTheme } from '@mui/material';
 interface TabPanelProps {
   children?: React.ReactNode;
   dir?: string;
@@ -56,78 +56,95 @@ const MuiSwipeableTabs: React.FC<MuiSwipeableTabsProps> = ((
   { steps, activeTab }
 ) => {
   const theme = useTheme();
-  const [value, setValue] = React.useState(activeTab);
   const router = useRouter();
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    event
-    const currentStep = steps[newValue]
+  const storageKey = useMemo(() => {
+    const parts = (router.pathname || '').split('/').filter(Boolean);
+    const base = parts.length >= 3 ? `/${parts.slice(0, 3).join('/')}` : `/${parts.join('/') || ''}`;
+    return `MuiSwipeableTabsActiveStep:${base}`;
+  }, [router.pathname]);
+  const [sxProps, setSxProbs] = useState<SxProps<Theme>>()
+  const [value, setValue] = useState<string>(`${activeTab}`);
+
+  // After hydration, read sessionStorage and update state if needed.
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = sessionStorage.getItem(storageKey);
+      if (stored !== null && stored !== value) {
+        // don't cause mismatch — this runs after hydration
+        setValue(stored);
+      }
+    }
+  }, [storageKey, value]);
+  const handleChangeTab = (event: SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+    sessionStorage.setItem(storageKey, newValue)
+    const currentStep = steps[Number(newValue)]
     let { hasParams, paramsObj } = currentStep
-    if (steps[value]?.isValidated()) {
+    if (steps[Number(value)]?.isValidated()) {
       setValue(newValue);
-    } else {
-      alert(`${steps[value].stepName} need validatieon`)
     }
     //Update url params
     if (hasParams) {
       router.push(`${router.pathname}${`?${btoa(JSON.stringify(paramsObj))}`}`)
     }
-  }
-  const handleChangeIndex = (index: number) => {
-    setValue(index);
   };
 
+  const [isMobile, setIsmobile] = useState(false)
+  useEffect(() => {
+    setIsmobile(typeof window !== 'undefined')
+    if (typeof window !== 'undefined') {
+      setValue(sessionStorage.getItem(storageKey) || '0')
+    }
+  }, [storageKey])
 
+  useLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      setSxProbs({
+        left: `${Number(value) * (100 / steps.length)}% !important`,
+        minWidth: '25%',
+        transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+      })
+    }
+  }, [steps.length, value])
+  console.log(steps)
   return (
     <Box key={steps.toString()}>
-      <AppBar position="static">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="secondary"
-          textColor="inherit"
-          variant="fullWidth"
-          sx={{
-            color: '#000'
-          }}
-          TabIndicatorProps={{
-            sx: {
-              minWidth: `${100 / steps.length}%`
+      <TabContext value={value}>
+        <AppBar position="static">
+          <TabList
+            onChange={handleChangeTab}
+            aria-label="lab API tabs example" textColor="secondary"
+            indicatorColor="secondary"
+            TabIndicatorProps={{
+              sx: sxProps
+            }} >
+            {
+              steps.map((step: StepsType, index: number) => {
+                return (
+                  <Tab key={index} value={`${index}`} label={
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      {typeof step.stepId === "string" ? (
+                        <span>{step.stepId}</span>
+                      ) : (
+                        <>{step.stepId}</>
+                      )}
+                    </div>
+                  } disabled={step.isDisable} sx={{ minWidth: `${100 / steps.length}%` }} />
+                )
+              })
             }
-          }}
-        >
-          {
-            steps.map((step: StepsType, index: number) => {
-              return (
-                <Tab key={index} label={
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    {typeof step.stepId === "string" ? (
-                      <span>{step.stepId}</span>
-                    ) : (
-                      step.stepId
-                    )}
-                  </div>
-                } disabled={step.isDisable} />
-              )
-            })
-          }
-        </Tabs>
-      </AppBar>
-      <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={value}
-        onChangeIndex={handleChangeIndex}
-        slideStyle={{ overflowX: "hidden" }}
-      >
+          </TabList>
+        </AppBar>
         {
           steps.map((step: StepsType, index: number) => {
             return (
-              <TabPanel key={index} index={index} value={value} dir={theme.direction} >
+              <TabPanel key={index} index={index} value={Number(value)} dir={theme.direction} >
                 {step.stepComponent}
               </TabPanel>
             )
           })
         }
-      </SwipeableViews>
+      </TabContext>
     </Box>
   );
 })

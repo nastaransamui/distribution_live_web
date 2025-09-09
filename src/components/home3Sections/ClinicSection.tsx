@@ -14,16 +14,10 @@ import { AppState } from '@/redux/store';
 import {
   Shape1,
   Shape2,
-  Category1,
-  Category2,
-  Category4,
-  Category5,
-  Category3,
 } from '../../../public/assets/imagepath'
 import useScssVar from '@/hooks/useScssVar';
 import { useTheme } from '@mui/material';
-
-import TouchBallLoading from 'react-loadingg/lib/TouchBallLoading';
+import BeatLoader from 'react-spinners/BeatLoader';
 import Tooltip from '@mui/material/Tooltip';
 
 function UrlExists(a: string, b: string) {
@@ -110,10 +104,11 @@ const ClinicSection: FC = (() => {
             {
               specialities.length == 0 ?
                 <div className="form-search-btn aos" data-aos="fade-up" style={{ display: 'flex', justifyContent: 'center' }}>
-                  <TouchBallLoading
-                    size="large"
+                  <BeatLoader
+
                     style={{ position: 'relative' }}
-                    color={muiVar['--primaryMain']} /></div> :
+                    color={theme.palette.primary.main} />
+                </div> :
                 <Fragment>
                   <OwlCarousel {...specialitysettings} key={
                     specialities.map((a) => a?.specialities).toString() +

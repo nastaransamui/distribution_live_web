@@ -745,7 +745,8 @@ const Invoices: FC = (() => {
       </iframe>
       <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
         {
-          isLoading ?
+          // isLoading ?
+          true ?
             <div className="card">
               <div className="card-body">
                 <div className="table-responsive">

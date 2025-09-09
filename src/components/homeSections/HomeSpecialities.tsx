@@ -11,7 +11,7 @@ import { AppState } from '@/redux/store';
 import { useTheme } from "@mui/material";
 
 //utility
-import TouchBallLoading from 'react-loadingg/lib/TouchBallLoading';
+import BeatLoader from 'react-spinners/BeatLoader';
 import Tooltip from '@mui/material/Tooltip';
 
 const HomeSpecialities: FC = (() => {
@@ -68,10 +68,10 @@ const HomeSpecialities: FC = (() => {
                 {
                   specialities.length == 0 ?
                     <div className="form-search-btn aos" data-aos="fade-up" style={{ display: 'flex', justifyContent: 'center' }}>
-                      <TouchBallLoading
-                        size="large"
+                      <BeatLoader
+
                         style={{ position: 'relative' }}
-                        color={muiVar['--primaryMain']} />
+                        color={theme.palette.primary.main} />
                     </div> :
                     <Slider {...settings} key={
                       specialities.map((a) => a?.specialities).toString() +

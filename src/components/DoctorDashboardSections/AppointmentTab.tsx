@@ -2,13 +2,19 @@
 /* eslint-disable react/jsx-key */
 import { FC, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridValueFormatterParams, GridRenderCellParams, GridColumnVisibilityModel, GridFilterModel, GridSortModel, GridValueGetterParams } from '@mui/x-data-grid';
-import CloseIcon from '@mui/icons-material/Close';
-import DoneIcon from '@mui/icons-material/Done';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  GridColumnVisibilityModel,
+  GridFilterModel,
+  GridSortModel,
+  GridValueGetterParams
+} from '@mui/x-data-grid';
+
 import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
-import { PatientImg1, PatientImg2, PatientImg3, PatientImg4, PatientImg5, PatientImg6, patient_profile } from '@/public/assets/imagepath';
+import { patient_profile } from '@/public/assets/imagepath';
 import Stack from '@mui/material/Stack';
 import Link from 'next/link';
 import { AppointmentReservationExtendType } from './Appointment';
@@ -17,10 +23,8 @@ import { AppState } from '@/redux/store';
 
 
 //liberies
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 import { toast } from 'react-toastify';
 import CustomNoRowsOverlay from '@/shared/CustomNoRowsOverlay';
-import Pagination from '@mui/material/Pagination';
 import { LoadingComponent, StyledBadge, formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor } from './ScheduleTiming';
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';

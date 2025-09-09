@@ -96,7 +96,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         },
       };
     } else {
-      console.log(resBody.checkoutData)
       props.checkoutData = resBody.checkoutData[0]
     }
 

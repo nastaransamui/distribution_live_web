@@ -778,7 +778,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
             </div>
           </div> :
           <div className="card">
-            <div ref={dataGridRef} className="tab-content schedule-cont">
+            <div ref={dataGridRef} className="tab-content schedule-cont   animate__animated animate__lightSpeedInRight">
               <Box className="dataGridOuterBox" >
                 <span style={{ position: "relative" }}>
                   <Typography className="totalTypo"

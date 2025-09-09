@@ -735,7 +735,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
             </div>
           </div> :
           <div className="card">
-            <div ref={dataGridRef} className="tab-content schedule-cont">
+            <div ref={dataGridRef} className="tab-content schedule-cont   animate__animated animate__lightSpeedInRight">
               <Box className="dataGridOuterBox" >
                 <Typography className="totalTypo"
                   variant='h5' align='center' gutterBottom >

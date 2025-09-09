@@ -9,15 +9,16 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 
 //utility
-import TouchBallLoading from 'react-loadingg/lib/TouchBallLoading';
 import Tooltip from '@mui/material/Tooltip';
 import AOS from 'aos'
+import { useTheme } from '@mui/material';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 
 const Browser: FC = (() => {
   const { muiVar } = useScssVar();
   const specialities = useSelector((state: AppState) => state.specialities.value)
-
+  const theme = useTheme();
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -38,10 +39,10 @@ const Browser: FC = (() => {
             {
               specialities.length == 0 ?
                 <div className="form-search-btn aos" data-aos="fade-up" style={{ display: 'flex', justifyContent: 'center' }}>
-                  <TouchBallLoading
-                    size="large"
+                  <BeatLoader
+
                     style={{ position: 'relative' }}
-                    color={muiVar['--primaryMain']} />
+                    color={theme.palette.primary.main} />
                 </div> :
                 <Fragment>
                   {

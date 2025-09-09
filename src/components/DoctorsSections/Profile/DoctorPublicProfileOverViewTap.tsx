@@ -1,4 +1,4 @@
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 
 import Link from 'next/link'
 
@@ -12,14 +12,23 @@ export interface DoctorPublicProfileOverViewType {
 
 const DoctorPublicProfileOverViewTap: FC<DoctorPublicProfileOverViewType> = (({ profile }) => {
   dayjs.extend(preciseDiff)
+
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
 
       <div className="card-body pt-0">
         <div className="tab-content pt-0">
-          <div >
-            <div className="row">
-              <div className="col-md-12 col-lg-9">
+          <div className={`location-list   ${isClient ? 'animate__animated animate__slideInRight' : 'pre-anim-hidden'}`}>
+            <div className="row " >
+              <div className={`col-md-12 col-lg-9 `}>
                 {/* About Details */}
                 <div className="widget about-widget">
                   <h1 className="widget-title">About Me</h1>

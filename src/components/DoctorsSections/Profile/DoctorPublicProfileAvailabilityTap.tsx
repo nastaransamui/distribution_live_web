@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useState } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import Lightbox from "yet-another-react-lightbox";
 import Link from 'next/link'
 
@@ -27,13 +27,22 @@ const DoctorPublicProfileAvailabilityTap: FC<DoctorPublicProfileAvailabilityType
     afternoon: false,
     evening: false
   })
+
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true);
+    return () => {
+      setIsClient(false)
+    }
+  }, [])
   return (
     <Fragment>
 
       <div className="card-body pt-0">
         <div className="tab-content pt-0">
           <div >
-            <div className="location-list">
+            <div className={`location-list   ${isClient ? 'animate__animated animate__slideInRight' : 'pre-anim-hidden'}`}>
               <div className="row">
                 <div className="col-md-5">
                   <div className="clinic-content">

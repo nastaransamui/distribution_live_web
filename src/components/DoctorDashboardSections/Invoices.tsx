@@ -13,7 +13,7 @@ import { useTheme, styled } from '@mui/material/styles';
 
 import Divider from '@mui/material/Divider';
 //liberies
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
+import BeatLoader from 'react-spinners/BeatLoader'
 import { toast } from 'react-toastify';
 
 import { Transition, BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
@@ -1153,11 +1153,12 @@ export default Invoices;
 
 export const LoadingComponent: FC<{ boxMinHeight?: string }> = ({ boxMinHeight }) => {
   const theme = useTheme();
-  return <CircleToBlockLoading color={theme.palette.primary.main} size="small"
+  return <BeatLoader color={theme.palette.primary.main}
     style={{
       minWidth: '100%',
       display: 'flex',
       justifyContent: 'center',
+      alignItems: 'center',
       minHeight: boxMinHeight,
     }} />
 }

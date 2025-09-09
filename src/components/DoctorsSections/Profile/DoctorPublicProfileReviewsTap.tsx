@@ -9,7 +9,6 @@ import {
 } from '@/public/assets/imagepath';
 
 import Rating from '@mui/material/Rating';
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 //@mui
 import TextField from '@mui/material/TextField'
 import { useTheme } from "@mui/material/styles";
@@ -371,14 +370,17 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
     replySetValue('replies', reviews.replies);
 
   }
+
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    setTimeout(() => setIsClient(true), 20);
+    setIsClient(true);
     return () => {
       setIsClient(false)
     }
   }, [])
+
+
   return (
     <Fragment>
       {
@@ -387,10 +389,12 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
             minWidth: '100%',
             display: 'flex',
             justifyContent: 'center',
+            minHeight: '30vh',
+            alignItems: 'center'
           }} /> :
           <Fragment>
-            <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'} full-height`}>
-              <div className="doc-review review-listing  full-height" >
+            <div className={`col-md-12 col-lg-12 col-xl-12  full-height   ${isClient ? 'animate__animated animate__slideInRight' : 'pre-anim-hidden'}`}>
+              <div className="doc-review review-listing  full-height" style={{ margin: `0px 24px 24px 24px` }} >
                 <div className="card" style={{ padding: 10, minHeight: 'inherit', display: 'flex', justifyContent: 'center' }}>
                   <div style={{ display: 'flex', justifyContent: 'center', }}>
 
@@ -400,11 +404,13 @@ export const DoctorPublicProfileReviewsTap: FC<DoctorPublicProfileReviewsType> =
                           {
                             isLoading ?
                               <div style={{ minHeight: '50vh' }}>
-                                <CircleToBlockLoading color={theme.palette.primary.main} size="small"
+                                <BeatLoader color={theme.palette.primary.main}
                                   style={{
                                     minWidth: '100%',
                                     display: 'flex',
                                     justifyContent: 'center',
+                                    alignItems: 'center',
+                                    minHeight: '50vh'
                                   }} />
                               </div> :
                               <Fragment>

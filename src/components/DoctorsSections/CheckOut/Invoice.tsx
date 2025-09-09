@@ -10,7 +10,6 @@ import { AppState } from '@/redux/store';
 import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { toast } from 'react-toastify';
 
-import CircleToBlockLoading from 'react-loadingg/lib/CircleToBlockLoading';
 
 import dayjs from 'dayjs'
 import { useTheme } from '@mui/material/styles';

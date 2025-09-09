@@ -101,7 +101,6 @@ const PaymentSuccess: FC = (() => {
       setIsClient(false)
     }
   }, [])
-  console.log({ reservation })
 
   return (
     <Fragment>

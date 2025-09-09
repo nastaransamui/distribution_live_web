@@ -119,7 +119,6 @@ const PatientReviews: FC<PatientReviewsType> = (({ profile }) => {
       socket.on('getAuthorReviewsReturn', handleReviews)
     }
     return () => {
-      console.log('return')
       isMounted = false;
       // socket.off('getAuthorReviewsReturn', handleReviews);
       // socket.off(`updateGetAuthorReviews`)
