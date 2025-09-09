@@ -43,7 +43,6 @@
     "@types/uuid": "^9.0.4",
     "aos": "^2.3.4",
     "autosuggest-highlight": "^3.3.4",
-    "axios": "^1.6.7",
     "body-scroll-lock": "^4.0.0-beta.0",
     "cookies-next": "^2.1.2",
     "cssnano": "^7.0.6",
