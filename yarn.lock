@@ -4487,11 +4487,6 @@ react-flickity-component@^4.0.7:
     imagesloaded "^4.1.4"
     prop-types "^15.7.2"
 
-react-grid-gallery@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/react-grid-gallery/-/react-grid-gallery-1.0.1.tgz#51e9e920cb83df6c61fbd1f2c7eed7db3b6e5a1b"
-  integrity sha512-+fVd6fH9tm0W+UMgzRHET/gmzSs2/l2sGOuELLaHXMto6UhuZdscj9ILHOYe7hn0GBRUJiczMllsEs7OJz9uPA==
-
 react-hook-form@^7.45.4:
   version "7.54.2"
   resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.54.2.tgz#8c26ed54c71628dff57ccd3c074b1dd377cfb211"
