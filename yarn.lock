@@ -4465,11 +4465,6 @@ react-dropzone@^14.2.3:
     file-selector "^2.1.0"
     prop-types "^15.8.1"
 
-react-easy-infinite-scroll-hook@^2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/react-easy-infinite-scroll-hook/-/react-easy-infinite-scroll-hook-2.1.4.tgz#6b61ba1d9dbf17a28d5b99e7513e281b4b61159f"
-  integrity sha512-sRbQGWh4BjSvCHTUGQwqf6PtMsOJWYl+RQ7h7BagmNpoWRi+Q/X8qwMZJ5WyzZS6U5vi3OrSGAfjLFPKp73jrg==
-
 react-element-popper@^2.1.6:
   version "2.1.7"
   resolved "https://registry.yarnpkg.com/react-element-popper/-/react-element-popper-2.1.7.tgz#924aac2dd8d8f0efa344987690fa462cab00e710"
