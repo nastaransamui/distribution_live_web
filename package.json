@@ -41,11 +41,8 @@
     "@types/react-slick": "^0.23.10",
     "@types/react-swipeable-views": "^0.13.6",
     "@types/uuid": "^9.0.4",
-    "animate.css": "^4.1.1",
     "aos": "^2.3.4",
     "autosuggest-highlight": "^3.3.4",
-    "axios": "^1.6.7",
-    "body-scroll-lock": "^4.0.0-beta.0",
     "cookies-next": "^2.1.2",
     "cssnano": "^7.0.6",
     "date-arithmetic": "^4.1.0",
@@ -128,7 +125,6 @@
     "yet-another-react-lightbox": "^3.12.0"
   },
   "devDependencies": {
-    "@types/body-scroll-lock": "^3.1.2",
     "@types/react-virtualized": "^9.21.28",
     "@types/react-window": "^1.8.8"
   },
