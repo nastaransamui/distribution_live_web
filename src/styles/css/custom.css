@@ -46960,3 +46960,64 @@ svg.feather {
   display: flex;
   justify-content: space-around !important;
 }
+
+.ReactTags__selected{
+  display: flex;
+  padding-block: 10px;
+  gap: 8px;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+.ReactTags__tag{
+  background-color: var(--bgDefault);
+  cursor: pointer !important;
+  padding: 10px;
+  border: 1px solid var(--secondaryMain);
+  border-radius: 5px;
+  color: var(--color);
+  display: flex;
+}
+.ReactTags__remove{
+  margin-left: 10px;
+  background-color: transparent;
+}
+.ReactTags__remove svg {
+  fill: var(--secondaryMain);
+}
+.ReactTags__error{
+  color: crimson;
+}
+.ReactTags__tagInput{
+  position: relative;
+}
+.ReactTags__tagInputField{
+  color: var(--color);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 3px 8px;          /* inner padding like an input */
+  border-radius: 8px;
+  border: 1px solid var(--textDisabled);
+  min-height: 40px; 
+  background: var(--bgPaper);
+  min-width: 100%;
+}
+.ReactTags__tagInputField::placeholder{
+  color: var(--color) !important;
+}
+.ReactTags__tagInputField:hover{
+    border: 1px solid var(--secondaryMain);
+}
+.ReactTags__clearAll{
+  position: absolute;
+  top:2px;
+  right: 3px;
+ height: 36px !important;
+  border: unset !important;
+  border-color: transparent !important;
+}
+.ReactTags__clearAll:hover{
+  transform: unset;
+  border: unset !important;
+  border-color: var(--primaryMain) !important;
+}

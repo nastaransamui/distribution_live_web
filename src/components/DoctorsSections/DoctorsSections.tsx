@@ -9,9 +9,7 @@ import {
   featureImg3,
   featureImg4
 } from '../../../public/assets/imagepath';
-import { FiCalendar, FiClock, FiDollarSign, FiInfo, FiThumbsUp } from 'react-icons/fi';
-import dayjs from 'dayjs';
-import MapContainer from '@/shared/MapContainer';
+
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -19,13 +17,7 @@ import FormControl from '@mui/material/FormControl';
 
 import Lightbox from "yet-another-react-lightbox";
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useDispatch, useSelector } from 'react-redux';
-import { useSearchParams } from 'next/navigation';
-import { AppState } from '@/redux/store';
-import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
-import { toast } from 'react-toastify';
-import { DoctorProfileType, useContainerDimensions } from '../SearchDoctorSections/SearchDoctorSection';
-import throttle from 'lodash/throttle';
+
 import Grid from '@mui/material/Grid';
 const data = [{
   id: 1,
@@ -190,24 +182,10 @@ const data = [{
 const DoctorsSections: FC = (() => {
 
   const matches = useMediaQuery('(max-width:991px)');
-  const { muiVar, bounce } = useScssVar();
-  const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [reload, setReload] = useState<boolean>(false)
-  const searchParams = useSearchParams()
-  const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
-  const specialities = searchParams.get('specialities')
-  const keyWord = searchParams.get('keyWord')
-  const gender = searchParams.get('gender')
-  const available = searchParams.get('available')
-  const country = searchParams.get('country')
-  const state = searchParams.get('state')
-  const city = searchParams.get('city')
-  const [limit, setLimit] = useState<number>(15)
-  const [skip, setSkip] = useState<number>(0)
+  const { muiVar } = useScssVar();
+
   const [dispalyType, setDispalyType] = useState<'list' | 'grid'>('list')
-  const [doctorResults, setDoctorResults] = useState<DoctorProfileType[] | []>([])
-  const [totalDoctors, setTotalDoctors] = useState<number>(0)
+
   const [sortBy, setSortBy] = useState('profile.userName');
   const componentRef = useRef<any>()
 
@@ -876,7 +854,6 @@ const DoctorsSections: FC = (() => {
               <div className="col-xl-6 col-lg-12 map-right grid-list-map" style={{ marginTop: matches ? -10 : 40, maxHeight: '80vh', minHeight: "80vh" }}>
                 <div id="map" className="map-listing" >
                   <div style={{ height: '10vh', width: '100%', }}>
-                    <MapContainer places={data} center={{ lat: -24.9923319, lng: 135.2252427 }} />
                   </div>
                 </div>
               </div>
@@ -1280,10 +1257,7 @@ const DoctorsSections: FC = (() => {
               <div className="col-xl-5 col-lg-12 map-right grid-list-map" style={{ marginTop: 40, maxHeight: '80vh', minHeight: "80vh" }}>
                 <div id="map" className="map-listing">
                   <div style={{ height: '10vh', width: '100%' }}>
-                    <MapContainer
-                      places={data}
-                      center={{ lat: -24.9923319, lng: 135.2252427 }}
-                    />
+
                   </div>
                 </div>
               </div>

@@ -410,6 +410,9 @@ const Checkout: FC<CheckoutComponentProps> = (({ checkoutDataServer }) => {
                           required
                           control={
                             <Checkbox
+                              disableFocusRipple
+                              disableRipple
+                              disableTouchRipple
                               disabled={!userProfile || checkoutData?.doctorId === userProfile?._id}
                             />} label="I have read and accept" />
                         <Link href=""

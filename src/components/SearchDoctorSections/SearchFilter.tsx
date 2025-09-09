@@ -1,6 +1,6 @@
 import { FC, Fragment, useEffect, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import FeatherIcon from "feather-icons-react";
+import { X } from 'feather-icons-react';
 import TextField from "@mui/material/TextField";
 import IconButton from '@mui/material/IconButton'
 import { useTheme } from "@mui/material";
@@ -176,7 +176,7 @@ const SearchFilter: FC<{ setPage: SetPage; filters: Filters; setFilters: SetFilt
                         });
                         setPage(1);
                       }}>
-                        <FeatherIcon icon="x" style={{ color: theme.palette.secondary.main }} />
+                        <X style={{ color: theme.palette.secondary.main }} />
                       </IconButton>
                     }
                   </InputAdornment>

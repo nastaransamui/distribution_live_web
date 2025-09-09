@@ -54,8 +54,8 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
   }, [isPrinting]);
 
   const handlePrint = useReactToPrint({
-    // content: () => printRef.current,
-    onBeforeGetContent: () => {
+    contentRef: printRef,
+    onBeforePrint: () => {
       return new Promise((resolve) => {
         promiseResolveRef.current = resolve;
 
@@ -98,7 +98,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
       }
       return newState
     })
-    handlePrint(null, () => printRef.current);
+    handlePrint();
   }
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)

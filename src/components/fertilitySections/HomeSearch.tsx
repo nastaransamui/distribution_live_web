@@ -6,7 +6,7 @@ import { banner_six_2, } from "../../../public/assets/imagepath";
 import { BanSixIconFiveSvg, BanSixIconFourSvg, BanSixIconOneSvg, BanSixIconSixSvg, BanSixIconThreeSvg, BanSixIconTwoSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import TextField from '@mui/material/TextField'
 import InputAdornment from "@mui/material/InputAdornment";
-import FeatherIcon from "feather-icons-react";
+import { Filter, X, Search } from 'feather-icons-react';
 import { useTheme } from "@mui/material";
 import { useRouter } from 'next/router';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -131,19 +131,17 @@ const HomeSearch: FC = (() => {
                               <IconButton aria-label='search' disableTouchRipple onClick={() => {
                                 keyWord !== '' && setKeyWord('')
                               }}>
-                                {keyWord == '' ? <FeatherIcon
-                                  icon="search"
+                                {keyWord == '' ? <Search
                                   style={{ width: "16px", color: theme.palette.secondary.main }}
                                 /> :
-                                  <FeatherIcon
-                                    icon="x"
+                                  <X
                                     style={{ width: "16px", color: theme.palette.secondary.main }}
                                   />}
                               </IconButton>
                             </InputAdornment>,
                           endAdornment: <InputAdornment position='end'>
                             <IconButton aria-label='filter' disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
-                              <FeatherIcon icon="filter" style={{ width: "16px", color: theme.palette.secondary.main }} />
+                              <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
                             </IconButton>
                           </InputAdornment>,
                         }}

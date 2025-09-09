@@ -220,8 +220,8 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
   }, [isPrinting]);
 
   const handlePrint = useReactToPrint({
-    // content: () => printRef.current,
-    onBeforeGetContent: () => {
+    contentRef: printRef,
+    onBeforePrint: () => {
       return new Promise((resolve) => {
         promiseResolveRef.current = resolve;
 
@@ -262,7 +262,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
       }
       return newState
     })
-    handlePrint(null, () => printRef.current);
+    handlePrint();
   }
 
   const [deleteId, setDeleteId] = useState<string>()

@@ -326,8 +326,8 @@ const Invoices: FC = (() => {
   }, [isPrinting]);
 
   const handlePrint = useReactToPrint({
-    // content: () => printRef.current,
-    onBeforeGetContent: () => {
+    contentRef: printRef,
+    onBeforePrint: () => {
       return new Promise((resolve) => {
         promiseResolveRef.current = resolve;
 
@@ -370,7 +370,7 @@ const Invoices: FC = (() => {
       }
       return newState
     })
-    handlePrint(null, () => printRef.current);
+    handlePrint();
   }
 
   const [paginationModel, setPaginationModel] = useState({

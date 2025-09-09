@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { FC, Fragment } from "react";
 import Link from "next/link";
-import FeatherIcon from 'feather-icons-react';
 import { useTheme } from "@mui/material";
 import useScssVar from "@/hooks/useScssVar";
 import Button from "@mui/material/Button";
 import { BlogIMG11, BlogIMG12, BlogIMG13, BlogIMG14 } from "@/public/assets/imagepath";
+import { Calendar, User } from "feather-icons-react";
 
 
 const LatestArticle: FC = (() => {
@@ -42,10 +42,10 @@ const LatestArticle: FC = (() => {
                     <div className="articles-content">
                       <ul className="articles-list nav">
                         <li>
-                          <i><FeatherIcon icon="user" /></i> John Doe
+                          <User /> John Doe
                         </li>
                         <li>
-                          <i><FeatherIcon icon="calendar" /></i> 13 Aug, 2023
+                          <Calendar /> 13 Aug, 2023
                         </li>
                       </ul>
                       <h3>
@@ -85,10 +85,10 @@ const LatestArticle: FC = (() => {
                     <div className="articles-content">
                       <ul className="articles-list nav">
                         <li>
-                          <i><FeatherIcon icon="user" /></i> Darren Elder
+                          <User /> Darren Elder
                         </li>
                         <li>
-                          <i ><FeatherIcon icon="calendar" /></i> 10 Sep, 2023
+                          <Calendar /> 10 Sep, 2023
                         </li>
                       </ul>
                       <h4>
@@ -128,10 +128,10 @@ const LatestArticle: FC = (() => {
                     <div className="articles-content">
                       <ul className="articles-list nav">
                         <li>
-                          <i ><FeatherIcon icon="user" /></i> Ruby Perrin
+                          <User /> Ruby Perrin
                         </li>
                         <li>
-                          <i ><FeatherIcon icon="calendar" /></i> 30 Oct, 2023
+                          <Calendar /> 30 Oct, 2023
                         </li>
                       </ul>
                       <h4>
@@ -171,10 +171,10 @@ const LatestArticle: FC = (() => {
                     <div className="articles-content">
                       <ul className="articles-list nav">
                         <li>
-                          <i  ><FeatherIcon icon="user" /></i> Sofia Brient
+                          <User /> Sofia Brient
                         </li>
                         <li>
-                          <i ><FeatherIcon icon="calendar" /></i> 08 Nov, 2023
+                          <Calendar /> 08 Nov, 2023
                         </li>
                       </ul>
                       <h4>

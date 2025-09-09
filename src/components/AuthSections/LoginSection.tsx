@@ -238,7 +238,7 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
               progress: undefined,
               transition: bounce,
               onClose: () => {
-                dispatch(updateHomeFormSubmit(false))
+                // dispatch(updateHomeFormSubmit(false))
                 reset()
                 router.reload();
               }

@@ -1,6 +1,6 @@
 import { FC, Fragment, ReactNode, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import FeatherIcon from 'feather-icons-react'
+import { MapPin, Phone, Mail } from "react-feather";
 import TextField from '@mui/material/TextField'
 import { AppState } from '@/redux/store';
 import { useDispatch, useSelector, } from 'react-redux';
@@ -107,7 +107,7 @@ const ContactSection: FC = (() => {
                 <div className="card-body">
                   <div className="contact-icon">
                     <i >
-                      <FeatherIcon icon="map-pin" style={{ width: "44px", height: "44px" }} />
+                      <MapPin style={{ width: "44px", height: "44px" }} />
                     </i>
                   </div>
                   <div className="contact-details">
@@ -120,7 +120,7 @@ const ContactSection: FC = (() => {
                 <div className="card-body">
                   <div className="contact-icon">
                     <i>
-                      <FeatherIcon icon="phone" style={{ width: "44px", height: "44px" }} />
+                      <Phone style={{ width: "44px", height: "44px" }} />
                     </i>
                   </div>
                   <div className="contact-details">
@@ -133,7 +133,7 @@ const ContactSection: FC = (() => {
                 <div className="card-body">
                   <div className="contact-icon">
                     <i>
-                      <FeatherIcon icon="mail" style={{ width: "44px", height: "44px" }} />
+                      <Mail style={{ width: "44px", height: "44px" }} />
                     </i>
                   </div>
                   <div className="contact-details">

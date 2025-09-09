@@ -6,7 +6,7 @@ const bundleAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 const nextConfig = {
-  transpilePackages: ["mui-tel-input"],
+  transpilePackages: ["mui-tel-input", "feather-icons-react"],
   productionBrowserSourceMaps: true,
   async headers() {
     return [

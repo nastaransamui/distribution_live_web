@@ -16,7 +16,7 @@ import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 //Utitlies
 import useScssVar from '@/hooks/useScssVar'
 import { doctors_profile } from '@/public/assets/imagepath';
-import { TagsInput } from "react-tag-input-component";
+import { WithContext as ReactTags, Tag } from 'react-tag-input'
 import { useDropzone } from 'react-dropzone';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
@@ -267,7 +267,8 @@ const ProfileSetting: FC = (() => {
     control,
     getValues,
     setValue: setFormValue,
-    setError
+    setError,
+    watch
   } = useForm({
     defaultValues: {
       ...userDoctorProfile,
@@ -401,7 +402,7 @@ const ProfileSetting: FC = (() => {
     state: false,
     country: false,
   })
-
+  const services = watch('specialitiesServices') || [];
   const uploadFile = (e: any) => {
     var fileToRead: any = document.getElementById("profile");
     if (fileToRead !== null) {
@@ -1069,7 +1070,7 @@ const ProfileSetting: FC = (() => {
                 <div className="col-md-6">
                   <div className="form-group">
                     <h4>Services</h4>
-                    <TagsInput
+                    {/* <TagsInput
                       // @ts-ignore
                       value={getValues('specialitiesServices')}
                       onChange={(tag) => {
@@ -1096,6 +1097,46 @@ const ProfileSetting: FC = (() => {
                           if (value !== '') {
                             setFormValue('specialitiesServices', [value])
                             e.target.value = "";
+                          }
+                        }
+                      }}
+                    /> */}
+                    <ReactTags
+                      id="specialitiesServices"
+                      maxTags={10}
+                      inputProps={{ autoComplete: "off" }}
+                      classNames={{
+                        clearAll: 'ReactTags__clearAll btn btn-danger'
+                      }}
+                      tags={services.map((a) => {
+                        return {
+                          id: a,
+                          text: a,
+                          className: ''
+                        }
+                      })}
+                      handleAddition={(tag: Tag) => {
+                        setFormValue('specialitiesServices', [...services, tag.text])
+
+                      }}
+                      handleDelete={(index) => {
+                        setFormValue('specialitiesServices', services.filter((_, i) => i !== index));
+                      }}
+                      onClearAll={() => setFormValue('specialitiesServices', [])}
+                      inputFieldPosition="top"
+                      editable
+                      clearAll
+                      autoFocus={false}
+                      handleInputBlur={(value, _) => {
+                        if (services?.length !== 0) {
+                          if (!services?.includes(value) && value !== '') {
+                            let newValue = [...services, value]
+                            setFormValue('specialitiesServices', newValue)
+                          }
+                        } else {
+                          if (value !== '') {
+                            setFormValue('specialitiesServices', [value])
+
                           }
                         }
                       }}

@@ -288,8 +288,8 @@ const Invoices: FC = (() => {
   }, [isPrinting]);
 
   const handlePrint = useReactToPrint({
-    // content: () => printRef.current,
-    onBeforeGetContent: () => {
+    contentRef: printRef,
+    onBeforePrint: () => {
       return new Promise((resolve) => {
         promiseResolveRef.current = resolve;
 
@@ -332,7 +332,7 @@ const Invoices: FC = (() => {
       }
       return newState
     })
-    handlePrint(null, () => printRef.current);
+    handlePrint();
   }
 
   const [paginationModel, setPaginationModel] = useState({
@@ -745,8 +745,7 @@ const Invoices: FC = (() => {
       </iframe>
       <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
         {
-          // isLoading ?
-          true ?
+          isLoading ?
             <div className="card">
               <div className="card-body">
                 <div className="table-responsive">

@@ -420,7 +420,11 @@ const BillCheckOut: FC<BillCheckOutProps> = (({ serverSingleBill }) => {
 
                             required
                             control={
-                              <Checkbox disabled={!userProfile} />} label="I have read and accept" />
+                              <Checkbox
+                                disableFocusRipple
+                                disableRipple
+                                disableTouchRipple
+                                disabled={!userProfile} />} label="I have read and accept" />
                           <Link href=""
                             style={{ pointerEvents: !userProfile ? 'none' : 'auto' }}
                             aria-disabled={!userProfile}

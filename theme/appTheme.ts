@@ -164,6 +164,9 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
         palette[color].palette.primary.contrastText
       };
       }
+          .Toastify__toast{
+            justify-content: flex-start !important
+          }
       .Toastify__progress-bar--warning {
         background-color: ${
           mode === "dark"
@@ -181,12 +184,16 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
        }
       }
       .Toastify__toast-container {
-        min-width: 40%;
+        min-width: 30%;
         display: inline-block;
       }
-      .Toastify__progress-bar--error{
-        background: ${palette[color].palette.secondary.main} !important
-      }
+          .Toastify__toast-theme--dark,
+           .Toastify__toast-theme--light {
+            width: 100% !important;
+          }
+        .Toastify__progress-bar--error{
+          background: crimson !important
+        }
       .Toastify__progress-bar--info{
         background: ${palette[color].palette.secondary.main} !important
       }

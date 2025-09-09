@@ -2,7 +2,7 @@
 import React, { useEffect, Fragment, FC, useMemo } from 'react';
 import Link from 'next/link';
 import AOS from 'aos'
-import FeatherIcon from 'feather-icons-react';
+import { MapPin } from "react-feather";
 import dynamic from 'next/dynamic'
 import useScssVar from '@/hooks/useScssVar';
 import { Doc03, Doc04, Doc05, doctors_profile } from '@/public/assets/imagepath';
@@ -181,7 +181,7 @@ const Doctors: FC = (() => {
                                   </div>
                                   <div className="doc-pro-location">
                                     <p>
-                                      <i><FeatherIcon icon="map-pin" style={{ color: muiVar['--color'] }} /></i> {doctor.city}, {doctor.country}
+                                      <MapPin color={muiVar["--color"] as string} /> {doctor.city}, {doctor.country}
                                     </p>
                                   </div>
                                 </div>
@@ -228,7 +228,7 @@ const Doctors: FC = (() => {
                                   </div>
                                   <div className="doc-pro-location">
                                     <p>
-                                      <i><FeatherIcon icon="map-pin" style={{ color: muiVar['--color'] }} /></i> {doctor.city},<br /> {doctor.country}
+                                      <MapPin color={muiVar["--color"] as string} /> {doctor.city},<br /> {doctor.country}
                                     </p>
                                   </div>
                                 </div>
@@ -280,7 +280,7 @@ export const BestDoctorSkeletonHome: FC = (() => {
           </div>
           <div className="doc-pro-location">
             <p>
-              <i><FeatherIcon icon="map-pin" style={{ color: muiVar['--color'] }} /></i>
+              <MapPin color={muiVar["--color"] as string} />
               <Skeleton animation="wave" sx={{ minHeight: '26px', minWidth: '100px' }} />
             </p>
           </div>

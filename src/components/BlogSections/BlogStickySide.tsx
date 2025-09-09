@@ -3,16 +3,16 @@ import { FC, Fragment } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import StickyBox from "react-sticky-box";
 import Link from 'next/link';
-import { BlogIMG02, BlogIMG03, BlogIMG04, BlogIMG05, BlogIMG06, BlogIMG01, IMG_th01, IMG_th02, IMG_th03, IMG_th04, IMG_th05, IMG_th06 } from '../../../public/assets/imagepath';
+import { BlogIMG02, BlogIMG03, BlogIMG04, BlogIMG05, BlogIMG01 } from '../../../public/assets/imagepath';
 import TextField from '@mui/material/TextField'
 import InputAdornment from "@mui/material/InputAdornment";
-import FeatherIcon from "feather-icons-react";
+import { Search } from "react-feather";
 import { useTheme } from '@mui/material';
 import dayjs from 'dayjs';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
-import Switch, { SwitchProps } from '@mui/material/Switch';
+import Switch from '@mui/material/Switch';
 import { useRouter } from 'next/router';
 
 export interface SlideProps {
@@ -60,7 +60,7 @@ const BlogListSearch: FC = (() => {
               size="small"
               InputProps={{
                 endAdornment: <InputAdornment position="end">
-                  <i ><FeatherIcon icon="search" style={{ color: theme.palette.secondary.main }} /></i>
+                  <Search style={{ color: theme.palette.secondary.main }} />
                 </InputAdornment>
               }}
             />

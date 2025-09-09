@@ -8,7 +8,8 @@ import { health_care_1, heart_2, heart_bg, home5banner_img } from '../../../publ
 import { useTheme } from "@mui/material";
 import TextField from '@mui/material/TextField'
 import InputAdornment from "@mui/material/InputAdornment";
-import FeatherIcon from "feather-icons-react";
+
+import { Search, Filter, X } from "react-feather";
 import AOS from 'aos'
 import { useRouter } from "next/router";
 
@@ -139,19 +140,17 @@ const HomeBanner: FC = (() => {
                               <IconButton aria-label="search" disableTouchRipple onClick={() => {
                                 keyWord !== '' && setKeyWord('')
                               }}>
-                                {keyWord == '' ? <FeatherIcon
-                                  icon="search"
+                                {keyWord == '' ? <Search
                                   style={{ width: "16px", color: theme.palette.secondary.main }}
                                 /> :
-                                  <FeatherIcon
-                                    icon="x"
+                                  <X
                                     style={{ width: "16px", color: theme.palette.secondary.main }}
                                   />}
                               </IconButton>
                             </InputAdornment>,
                           endAdornment: <InputAdornment position='end'>
                             <IconButton aria-label="filter" disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
-                              <FeatherIcon icon="filter" style={{ width: "16px", color: theme.palette.secondary.main }} />
+                              <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
                             </IconButton>
                           </InputAdornment>,
                         }}

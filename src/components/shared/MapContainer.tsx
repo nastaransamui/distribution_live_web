@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, useState, Fragment } from 'react'
-import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
+import { useState } from 'react'
+// import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
 import { useTheme } from '@mui/material';
 
 
@@ -24,8 +24,7 @@ export const MapContainer = (props: any) => {
 
   return (
     <div className="map-container" >
-      {/* @ts-ignore */}
-      <Map
+      {/* <Map
         google={props.google}
         className="map"
         zoom={4}
@@ -35,7 +34,6 @@ export const MapContainer = (props: any) => {
         {props.places.map((place: any, i: number) => {
           return (
             <Marker
-              // @ts-ignore
               icon={{
                 url: `/assets/images/marker_${theme.palette.primary.main.slice(1)}.webp`,
               }}
@@ -46,7 +44,6 @@ export const MapContainer = (props: any) => {
             />
           );
         })}
-        {/* @ts-ignore */}
         <InfoWindow
           marker={state.activeMarker}
           visible={state.showingInfoWindow}
@@ -110,11 +107,11 @@ export const MapContainer = (props: any) => {
             </div>
           </div>
         </InfoWindow>
-      </Map>
+      </Map> */}
     </div>
   );
 };
 
-export default GoogleApiWrapper({
-  apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY as string,
-})(MapContainer);
+// export default GoogleApiWrapper({
+//   apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY as string,
+// })(MapContainer);

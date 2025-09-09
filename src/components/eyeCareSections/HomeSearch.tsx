@@ -20,7 +20,7 @@ import { useForm } from 'react-hook-form';
 import { AppState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import FeatherIcon from "feather-icons-react";
+import { Filter, X, Search } from 'feather-icons-react';
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Box from '@mui/material/Box'
@@ -128,12 +128,10 @@ const HomeSearch: FC = (() => {
                               <IconButton disableTouchRipple onClick={() => {
                                 keyWord !== '' && setKeyWord('')
                               }}>
-                                {keyWord == '' ? <FeatherIcon
-                                  icon="search"
+                                {keyWord == '' ? <Search
                                   style={{ width: "16px", color: theme.palette.secondary.main }}
                                 /> :
-                                  <FeatherIcon
-                                    icon="x"
+                                  <X
                                     style={{ width: "16px", color: theme.palette.secondary.main }}
                                   />}
                               </IconButton>
@@ -141,7 +139,7 @@ const HomeSearch: FC = (() => {
                           endAdornment: <InputAdornment position='end'>
                             <IconButton disableTouchRipple
                               onClick={() => setShowFilter(!showFilter)}>
-                              <FeatherIcon icon="filter" style={{ width: "16px", color: theme.palette.secondary.main }} />
+                              <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
                             </IconButton>
                           </InputAdornment>,
                         }}

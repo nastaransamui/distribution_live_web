@@ -9,7 +9,7 @@ import {
   bansixteenimg2
 } from "../../../public/assets/imagepath";
 import { useTheme } from '@mui/material';
-import FeatherIcon from "feather-icons-react";
+import { Search, X, Filter } from "react-feather";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Box from '@mui/material/Box'
@@ -125,12 +125,10 @@ const HomeSearch: FC = (() => {
                               <IconButton disableTouchRipple onClick={() => {
                                 keyWord !== '' && setKeyWord('')
                               }}>
-                                {keyWord == '' ? <FeatherIcon
-                                  icon="search"
+                                {keyWord == '' ? <Search
                                   style={{ width: "16px", color: theme.palette.secondary.main }}
                                 /> :
-                                  <FeatherIcon
-                                    icon="x"
+                                  <X
                                     style={{ width: "16px", color: theme.palette.secondary.main }}
                                   />}
                               </IconButton>
@@ -138,7 +136,7 @@ const HomeSearch: FC = (() => {
                           endAdornment: <InputAdornment position='end'>
                             <IconButton disableTouchRipple
                               onClick={() => setShowFilter(!showFilter)}>
-                              <FeatherIcon icon="filter" style={{ width: "16px", color: theme.palette.secondary.main }} />
+                              <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
                             </IconButton>
                           </InputAdornment>,
                         }}

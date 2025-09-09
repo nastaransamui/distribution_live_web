@@ -2,7 +2,6 @@
 import { FC, Fragment, useEffect } from 'react'
 import Link from 'next/link'
 import AOS from 'aos'
-import FeatherIcon from "feather-icons-react";
 import { logo } from '../../../public/assets/imagepath'
 import useScssVar from '@/hooks/useScssVar';
 import { useRouter } from 'next/router';
@@ -17,6 +16,7 @@ import SendIcon from '@mui/icons-material/Send';
 //redux
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
+import { Mail, MapPin, PhoneCall } from 'feather-icons-react';
 
 
 const Footer: FC = (() => {
@@ -136,21 +136,21 @@ const Footer: FC = (() => {
                       <div className="footer-address">
                         <p>
                           <i>
-                            <FeatherIcon icon="map-pin" style={{ width: "16px", height: "16px" }} />
+                            <MapPin style={{ width: "16px", height: "16px" }} />
                           </i> Thailand
                         </p>
                       </div>
                       <div className="footer-address">
                         <p>
                           <i>
-                            <FeatherIcon icon="phone-call" style={{ width: "16px", height: "16px" }} />
+                            <PhoneCall style={{ width: "16px", height: "16px" }} />
                           </i> +66(0)870 624648
                         </p>
                       </div>
                       <div className="footer-address mb-0">
                         <p>
                           <i>
-                            <FeatherIcon icon="mail" style={{ width: "16px", height: "16px" }} />
+                            <Mail style={{ width: "16px", height: "16px" }} />
                           </i> mjcode2020@gmail.com
                         </p>
                       </div>

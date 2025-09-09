@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 
 //Mui
 import { useTheme } from "@mui/material";
-import FeatherIcon from "feather-icons-react";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Box from '@mui/material/Box'
@@ -23,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { useForm } from 'react-hook-form';
 import GeoLocationAutocomplete from '@/shared/GeoLocationAutocomplete';
+import { Filter, Search, X } from 'feather-icons-react';
 
 
 const HomeSearch: FC = (() => {
@@ -101,19 +101,17 @@ const HomeSearch: FC = (() => {
                           <IconButton aria-label='search' disableTouchRipple onClick={() => {
                             keyWord !== '' && setKeyWord('')
                           }}>
-                            {keyWord == '' ? <FeatherIcon
-                              icon="search"
+                            {keyWord == '' ? <Search
                               style={{ width: "16px", color: theme.palette.secondary.main }}
                             /> :
-                              <FeatherIcon
-                                icon="x"
+                              <X
                                 style={{ width: "16px", color: theme.palette.secondary.main }}
                               />}
                           </IconButton>
                         </InputAdornment>,
                       endAdornment: <InputAdornment position='end'>
                         <IconButton aria-label='filter' disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
-                          <FeatherIcon icon="filter" style={{ width: "16px", color: theme.palette.secondary.main }} />
+                          <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
                         </IconButton>
                       </InputAdornment>,
                     }}

@@ -16,7 +16,6 @@ import {
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material';
 import TextField from '@mui/material/TextField'
-import FeatherIcon from "feather-icons-react";
 import { useRouter } from 'next/router';
 import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl';
@@ -31,6 +30,7 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { useForm } from 'react-hook-form';
 import GeoLocationAutocomplete from '@/shared/GeoLocationAutocomplete';
+import { Filter, Search, X } from 'feather-icons-react';
 
 
 
@@ -159,19 +159,17 @@ const HomeSearch: FC = (() => {
                               <IconButton aria-label="search" disableTouchRipple onClick={() => {
                                 keyWord !== '' && setKeyWord('')
                               }}>
-                                {keyWord == '' ? <FeatherIcon
-                                  icon="search"
+                                {keyWord == '' ? <Search
                                   style={{ width: "16px", color: theme.palette.secondary.main }}
                                 /> :
-                                  <FeatherIcon
-                                    icon="x"
+                                  <X
                                     style={{ width: "16px", color: theme.palette.secondary.main }}
                                   />}
                               </IconButton>
                             </InputAdornment>,
                           endAdornment: <InputAdornment position='end'>
                             <IconButton aria-label="filter" disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
-                              <FeatherIcon icon="filter" style={{ width: "16px", color: theme.palette.secondary.main }} />
+                              <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
                             </IconButton>
                           </InputAdornment>,
                         }}

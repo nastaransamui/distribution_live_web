@@ -174,7 +174,7 @@ const DoctorDashboardSidebar: FC = (() => {
             progress: undefined,
             transition: bounce,
             onClose: () => {
-              dispatch(updateHomeFormSubmit(false))
+              // dispatch(updateHomeFormSubmit(false))
               router.reload();
             }
           });

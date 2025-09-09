@@ -346,8 +346,8 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
   }, [isPrinting]);
 
   const handlePrint = useReactToPrint({
-    // content: () => printRef.current,
-    onBeforeGetContent: () => {
+    contentRef: printRef,
+    onBeforePrint: () => {
       return new Promise((resolve) => {
         promiseResolveRef.current = resolve;
 
@@ -396,7 +396,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
       }
       return newState
     })
-    handlePrint(null, () => printRef.current);
+    handlePrint();
   }
   const perPage = 5
   const [paginationModel, setPaginationModel] = useState({

@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { FC, useState, useEffect, Fragment, ReactNode, useRef, useCallback, useMemo } from 'react';
-import FeatherIcon from 'feather-icons-react';
+
 import Link from 'next/link';
 
 //next 
@@ -38,6 +38,7 @@ import { updateHomeIAT } from '@/redux/homeIAT';
 import { updateHomeExp } from '@/redux/homeExp';
 import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
 import { updateUserPatientProfile } from '@/redux/userPatientProfile';
+import { Lock, User } from 'feather-icons-react';
 const MINUTES_FOR_IDLE = 20;
 
 const Header: FC = () => {
@@ -96,7 +97,7 @@ const Header: FC = () => {
           progress: undefined,
           transition: bounce,
           onClose: () => {
-            dispatch(updateHomeFormSubmit(false))
+            // dispatch(updateHomeFormSubmit(false))
             router.reload();
           }
         });
@@ -657,14 +658,14 @@ const HomeAndCardioAuth: FC<{ navbar: boolean }> = ((navbar) => {
           href="/login"
           className={"btn reg-btn"}>
           <i className="me-2">
-            {router.pathname.includes("veterinaryhome") ? <FeatherIcon icon="user" /> : <FeatherIcon icon="lock" />}
+            {router.pathname.includes("veterinaryhome") ? <User /> : <Lock />}
           </i>
           Log In
         </Link>
       </li>
       <li className={`register-btn`}>
         <Link href="/register" className={`btn reg-btn`}>
-          <i className="me-2"><FeatherIcon icon="user" /></i>
+          <i className="me-2"><User /></i>
           Sign Up
         </Link>
       </li>
@@ -688,9 +689,9 @@ const VeterLoginRegisterAuth: FC = (() => {
         >
           <i className="me-2">
             {router.pathname == "/veterinaryhome" ? (
-              <FeatherIcon icon="user" />
+              <User />
             ) : (
-              <FeatherIcon icon="lock" />
+              <Lock />
             )}
           </i>
           Log In
@@ -707,7 +708,7 @@ const VeterLoginRegisterAuth: FC = (() => {
             router.pathname == "/veterinaryhome" ?
               "btn btn-primary reg-btn reg-btn-fourteen" :
               "btn reg-btn"}>
-          <i className="me-2"><FeatherIcon icon="user" /></i>
+          <i className="me-2"><User /></i>
           Sign Up
         </Link>
       </li>
@@ -724,7 +725,7 @@ const PaediatricAuth: FC = (() => {
       </li>
       <li className="login-in-fourteen">
         <Link href="/register" className=" reg-btn-thirteen"><span>Sign Up</span>
-          <div className="user-icon-header"><i><FeatherIcon icon="user" /></i></div>
+          <div className="user-icon-header"><i><User /></i></div>
         </Link>
       </li>
     </ul>
@@ -736,13 +737,13 @@ const EyecareAuth: FC = (() => {
     <ul className="nav header-navbar-rht">
       <li className="nav-item">
         <Link className={`nav-link header-login `} href="/register">
-          <i className="me-2"><FeatherIcon icon="lock" /></i>
+          <i className="me-2"><Lock /></i>
           Register
         </Link>
       </li>
       <li className="nav-item">
         <Link className="nav-link header-login" href="/login">
-          <i className="me-2"><FeatherIcon icon="user" /></i>
+          <i className="me-2"><User /></i>
           Login
         </Link>
       </li>
@@ -760,9 +761,9 @@ const FertilityAuth: FC = (() => {
           className={"btn reg-btn"}>
           <i className="me-2">
             {router.pathname == "veterinaryhome" ? (
-              <FeatherIcon icon="user" />
+              <User />
             ) : (
-              <FeatherIcon icon="lock" />
+              <Lock />
             )}
           </i>
           Log In
@@ -770,7 +771,7 @@ const FertilityAuth: FC = (() => {
       </li>
       <li className={`register-btn`}>
         <Link href="/register" className={`btn reg-btn`}>
-          <i className="me-2"><FeatherIcon icon="user" /></i>
+          <i className="me-2"><User /></i>
           Sign Up
         </Link>
       </li>
@@ -797,10 +798,10 @@ const CosmeticAuth: FC = (() => {
     <ul className="nav header-navbar-rht">
       <li className="login-link"><Link href="/login">Login / Signup</Link></li>
       <li className="login-in-sixteen">
-        <Link href="/login" className="btn reg-btn"><i className="me-2"><FeatherIcon icon="lock" /></i>Login<span></span><span></span><span></span><span></span></Link>
+        <Link href="/login" className="btn reg-btn"><i className="me-2"><Lock /></i>Login<span></span><span></span><span></span><span></span></Link>
       </li>
       <li className="login-in-sixteen">
-        <Link href="/register" className="btn btn-primary reg-btn reg-btn-sixteen"><i className="me-2"><FeatherIcon icon="user" /></i>Sign Up</Link>
+        <Link href="/register" className="btn btn-primary reg-btn reg-btn-sixteen"><i className="me-2"><User /></i>Sign Up</Link>
       </li>
     </ul>
   )

@@ -89,9 +89,7 @@ const MuiSwipeableTabs: React.FC<MuiSwipeableTabsProps> = ((
     }
   };
 
-  const [isMobile, setIsmobile] = useState(false)
   useEffect(() => {
-    setIsmobile(typeof window !== 'undefined')
     if (typeof window !== 'undefined') {
       setValue(sessionStorage.getItem(storageKey) || '0')
     }
@@ -106,7 +104,7 @@ const MuiSwipeableTabs: React.FC<MuiSwipeableTabsProps> = ((
       })
     }
   }, [steps.length, value])
-  console.log(steps)
+
   return (
     <Box key={steps.toString()}>
       <TabContext value={value}>
