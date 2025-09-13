@@ -384,8 +384,8 @@ const ProfileSetting: FC = (() => {
                           }
                           fullWidth
                           size='small'
-                          InputLabelProps={{
-                            shrink: !!watch("firstName"), // shrinks only if value not empty
+                          slotProps={{
+                            inputLabel: { shrink: !!watch("firstName"), }
                           }}
                         />
                       </div>
@@ -405,8 +405,8 @@ const ProfileSetting: FC = (() => {
                           }
                           fullWidth
                           size='small'
-                          InputLabelProps={{
-                            shrink: !!watch("lastName"), // shrinks only if value not empty
+                          slotProps={{
+                            inputLabel: { shrink: !!watch("lastName"), }
                           }}
                         />
                       </div>
@@ -579,7 +579,9 @@ const ProfileSetting: FC = (() => {
                             return (
                               <MuiTelInput
                                 {...field}
-                                InputLabelProps={{ shrink: true }}
+                                slotProps={{
+                                  inputLabel: { shrink: true }
+                                }}
                                 defaultCountry={userData?.countryCode}
                                 helperText={fieldState.invalid ? "Mobile Number is invalid" : ""}
                                 error={fieldState.invalid}
@@ -596,20 +598,18 @@ const ProfileSetting: FC = (() => {
                     <div className="col-12 col-md-6">
                       <div className="form-group">
                         <TextField
-                          // required
                           id="address1"
                           label="Address 1"
                           error={errors.address1 == undefined ? false : true}
                           helperText={errors.address1 && errors['address1']['message'] as ReactNode}
                           {
                           ...register('address1', {
-                            // required: "This field is required",
                           })
                           }
                           fullWidth
                           size='small'
-                          InputLabelProps={{
-                            shrink: !!watch("address1"), // shrinks only if value not empty
+                          slotProps={{
+                            inputLabel: { shrink: !!watch("address1"), }
                           }}
                         />
                       </div>
@@ -624,8 +624,8 @@ const ProfileSetting: FC = (() => {
                           }
                           fullWidth
                           size='small'
-                          InputLabelProps={{
-                            shrink: !!watch("address2"), // shrinks only if value not empty
+                          slotProps={{
+                            inputLabel: { shrink: !!watch("address2"), }
                           }}
                         />
                       </div>
@@ -696,7 +696,6 @@ const ProfileSetting: FC = (() => {
                     <div className="col-12 col-md-6">
                       <div className="form-group">
                         <TextField
-                          // required
                           id="zipCode"
                           label="Zip Code"
                           onKeyDown={(e) => {
@@ -709,13 +708,12 @@ const ProfileSetting: FC = (() => {
                           helperText={errors.zipCode && errors['zipCode']['message'] as ReactNode}
                           {
                           ...register('zipCode', {
-                            // required: "This field is required",
                           })
                           }
                           fullWidth
                           size='small'
-                          InputLabelProps={{
-                            shrink: !!watch("zipCode"), // shrinks only if value not empty
+                          slotProps={{
+                            inputLabel: { shrink: !!watch("zipCode"), }
                           }}
                         />
                       </div>
@@ -752,19 +750,24 @@ const ProfileSetting: FC = (() => {
                   imidiately and deactivate your account and logout.
                   we keep internal data for 6 month and then delete.
                 </p>
-                <span style={{ display: 'flex', justifyContent: 'center' }}><button type="button" className="btnLogin mx-1"
-                  onClick={() => {
-                    document.getElementById('delete_modal')?.classList.replace('animate__backInDown', 'animate__backOutDown')
-
-                    setTimeout(() => {
-                      window.$('#delete_modal').modal("hide")
-                      confirmDeleteClick()
-                    }, 500);
-
-                  }}>Delete </button>
-                  <button type="button" className="btnLogout" style={muiVar}
+                <span style={{ display: 'flex', justifyContent: 'center' }}>
+                  <button type="button" className="btnLogin mx-1"
+                    id="delete-button"
                     onClick={() => {
                       document.getElementById('delete_modal')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+                      document.getElementById('cancel-button')?.blur()
+                      document.getElementById('delete-button')?.blur()
+                      setTimeout(() => {
+                        window.$('#delete_modal').modal("hide")
+                        confirmDeleteClick()
+                      }, 500);
+
+                    }}>Delete </button>
+                  <button type="button" className="btnLogout" id='cancel-button' style={muiVar}
+                    onClick={() => {
+                      document.getElementById('delete_modal')?.classList.replace('animate__backInDown', 'animate__backOutDown')
+                      document.getElementById('cancel-button')?.blur()
+                      document.getElementById('delete-button')?.blur()
                       setTimeout(() => {
                         window.$('#delete_modal').modal("hide")
                       }, 500);

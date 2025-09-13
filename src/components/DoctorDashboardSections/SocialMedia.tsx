@@ -140,7 +140,6 @@ const SocialMedia: FC = (() => {
                           socialErrorIndex = socialError[index]
                         }
                         let registerName: any = `socialMedia.${index}.link`
-
                         return (
                           <div className="row" key={field.id}>
                             <div className="col-md-12 col-lg-12">
@@ -151,7 +150,7 @@ const SocialMedia: FC = (() => {
                                     size='small'
                                     id={`${socialName}`}
                                     error={socialError?.[index] == undefined ? false : true}
-                                    helperText={socialError && socialErrorIndex?.[socialName]?.['message'] as ReactNode}
+                                    helperText={socialError && socialErrorIndex && socialErrorIndex["link"]?.['message'] as ReactNode}
                                     {
                                     ...control.register(registerName,
                                       {
@@ -166,11 +165,13 @@ const SocialMedia: FC = (() => {
                                     label={`${socialName.charAt(0).toUpperCase() + socialName.slice(1)} URL`}
                                     autoComplete='off'
                                     fullWidth
-                                    InputProps={{
-                                      endAdornment:
-                                        <InputAdornment position="end" >
-                                          {getSocialIcon(field.platform)}
-                                        </InputAdornment>,
+                                    slotProps={{
+                                      input: {
+                                        endAdornment:
+                                          <InputAdornment position="end" >
+                                            {getSocialIcon(field.platform)}
+                                          </InputAdornment>,
+                                      }
                                     }}
                                   />
                                 </FormControl>

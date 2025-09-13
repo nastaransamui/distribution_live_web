@@ -1,10 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect } from 'react'
-import dynamic from 'next/dynamic'
+import { FC, Fragment, useCallback, useRef } from 'react'
 import Link from 'next/link';
-const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
-  ssr: false,
-})
 
 //redux
 import { useSelector } from 'react-redux';
@@ -19,6 +15,11 @@ import useScssVar from '@/hooks/useScssVar';
 import { useTheme } from '@mui/material';
 import BeatLoader from 'react-spinners/BeatLoader';
 import Tooltip from '@mui/material/Tooltip';
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
+
 
 function UrlExists(a: string, b: string) {
   return typeof a === 'string' && typeof b === 'string'
@@ -67,20 +68,36 @@ const ClinicSection: FC = (() => {
       }
     }
   }
-  // remove extra button on rerun
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (specialities.length !== 0) {
-        let m = document.getElementById('slide-nav-1')!
-        if (m !== null && m.childNodes.length >= 2) {
-          m.childNodes.forEach((child) => {
-            m.removeChild(child)
-          })
-        }
-      }
-    }
-  }, [specialities])
 
+  const clinicSettings: SwiperOptions = {
+    slidesPerView: 6,
+    spaceBetween: 15,
+    loop: false,
+
+    modules: [Navigation, FreeMode],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+    breakpoints: {
+      1200: { slidesPerView: 6 },
+      992: { slidesPerView: 3 },
+      800: { slidesPerView: 3 },
+      776: { slidesPerView: 2 },
+      567: { slidesPerView: 2 },
+      200: { slidesPerView: 1 },
+    },
+  };
+
+  const swiperRef = useRef<SwiperInstance | null>(null);
+
+  const handlePrev = useCallback(() => {
+    swiperRef.current?.slidePrev();
+  }, []);
+
+  const handleNext = useCallback(() => {
+    swiperRef.current?.slideNext();
+  }, []);
   return (
     <Fragment>
       <section className="clinics-section" style={muiVar}>
@@ -97,7 +114,15 @@ const ClinicSection: FC = (() => {
               </div>
             </div>
             <div className="col-md-6 text-end aos aos-init aos-animate">
-              <div className="owl-nav slide-nav-1 text-end nav-control" id='slide-nav-1' />
+              <div className="owl-nav slide-nav-1 text-end nav-control" id='slide-nav-1'>
+
+                <button className='owl-prev' onClick={handlePrev}>
+                  <i className="fas fa-chevron-left custom-arrow" />
+                </button>
+                <button className='owl-next' onClick={handleNext}>
+                  <i className="fas fa-chevron-right custom-arrow" />
+                </button>
+              </div>
             </div>
           </div>
           <div className="clinics owl-theme aos owl-loaded owl-drag aos-init aos-animate" data-aos="fade-up">
@@ -110,12 +135,16 @@ const ClinicSection: FC = (() => {
                     color={theme.palette.primary.main} />
                 </div> :
                 <Fragment>
-                  <OwlCarousel {...specialitysettings} key={
-                    specialities.map((a) => a?.specialities).toString() +
-                    specialities.map((a) => a?.image).toString() +
-                    specialities.map((a) => a?.imageId).toString() +
-                    specialities.map((a) => a?.users_id).toString()
-                  }>
+                  <Swiper
+                    {...clinicSettings}
+                    onSwiper={(swiper) => {
+                      swiperRef.current = swiper;
+                    }} key={
+                      specialities.map((a) => a?.specialities).toString() +
+                      specialities.map((a) => a?.image).toString() +
+                      specialities.map((a) => a?.imageId).toString() +
+                      specialities.map((a) => a?.users_id).toString()
+                    }>
                     {
                       specialities.map((spec) => {
                         let img = document.getElementById(spec.imageId) as any
@@ -130,7 +159,7 @@ const ClinicSection: FC = (() => {
                             `/assets/images/clinics/${spec.imageId}_scale.webp` :
                             `/assets/images/clinics/defaultBg.webp`
                         return (
-                          <div className="item" key={spec._id}>
+                          <SwiperSlide className="item" key={spec._id}>
                             <div className="clinic-item">
                               <div className="clinics-card">
                                 <div className="clinics-img">
@@ -152,11 +181,11 @@ const ClinicSection: FC = (() => {
                                 <Link href="/doctors/search" aria-label='clinics-icons'><i className="fas fa-long-arrow-alt-right" /></Link>
                               </div>
                             </div>
-                          </div>
+                          </SwiperSlide>
                         )
                       })
                     }
-                  </OwlCarousel>
+                  </Swiper>
                 </Fragment>
             }
           </div>

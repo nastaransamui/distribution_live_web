@@ -1,19 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useEffect, Fragment, FC, useMemo } from 'react';
+import React, { FC, Fragment, useCallback, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import AOS from 'aos'
 import { MapPin } from "react-feather";
-import dynamic from 'next/dynamic'
 import useScssVar from '@/hooks/useScssVar';
 import { Doc03, Doc04, Doc05, doctors_profile } from '@/public/assets/imagepath';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import Skeleton from '@mui/material/Skeleton';
 import { formatNumberWithCommas } from '../DoctorDashboardSections/ScheduleTiming';
-
-const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
-  ssr: false,
-})
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 const Doctors: FC = (() => {
   const { muiVar } = useScssVar()
@@ -26,39 +25,25 @@ const Doctors: FC = (() => {
     });
 
   }, []);
-  const doctersettings = {
-    items: 3,
-    loop: true,
-    margin: 15,
-    dots: false,
-    nav: true,
-    navContainer: '.slide-nav-2',
-    navText: ['<i class="fas fa-chevron-left custom-arrow"></i>', '<i class="fas fa-chevron-right custom-arrow"></i>'],
-    navElement: "button    aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
-    autoplay: false,
-    infinite: "true",
 
-    slidestoscroll: 1,
-    rtl: "true",
-    rows: 1,
-    responsive: {
-      1049: {
-        items: 4
-      },
-      800: {
-        items: 3
-      },
-      776: {
-        items: 2
-      },
-      567: {
-        items: 2
-      },
-      200: {
-        items: 1
-      }
-    }
-  }
+  const doctersettings: SwiperOptions = {
+    slidesPerView: 3,
+    spaceBetween: 15,
+    loop: false,
+
+    modules: [Navigation, FreeMode],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+    breakpoints: {
+      1049: { slidesPerView: 4 },
+      800: { slidesPerView: 3 },
+      776: { slidesPerView: 2 },
+      567: { slidesPerView: 2 },
+      200: { slidesPerView: 1 },
+    },
+  };
 
   const dummyDoctorData = useMemo(() => {
     return [
@@ -119,7 +104,15 @@ const Doctors: FC = (() => {
       }
     ]
   }, [])
+  const swiperRef = useRef<SwiperInstance | null>(null);
 
+  const handlePrev = useCallback(() => {
+    swiperRef.current?.slidePrev();
+  }, []);
+
+  const handleNext = useCallback(() => {
+    swiperRef.current?.slideNext();
+  }, []);
   return (
     <Fragment>
       <section className="our-doctors-section" style={muiVar}>
@@ -131,15 +124,26 @@ const Doctors: FC = (() => {
               </div>
             </div>
             <div className="col-md-6 aos" data-aos="fade-up">
-              <div className="owl-nav slide-nav-2 text-end nav-control" />
+              <div className="owl-nav slide-nav-2 text-end nav-control" >
+
+                <button className='owl-prev' onClick={handlePrev}>
+                  <i className="fas fa-chevron-left custom-arrow" />
+                </button>
+                <button className='owl-next' onClick={handleNext}>
+                  <i className="fas fa-chevron-right custom-arrow" />
+                </button>
+              </div>
             </div>
           </div>
           <div
             className="doctor-slider-one owl-theme aos"
             data-aos="fade-up"
           >
-            {/* Doctor Item */}
-            <OwlCarousel {...doctersettings}>
+            <Swiper
+              {...doctersettings}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }}>
               {
                 bestDoctors == null ?
                   <BestDoctorSkeletonHome /> :
@@ -148,7 +152,7 @@ const Doctors: FC = (() => {
                       {
                         dummyDoctorData.map((doctor, index) => {
                           return (
-                            <div className="item" key={index}>
+                            <SwiperSlide className="item" key={index}>
                               <div className="doctor-profile-widget">
                                 <div className="doc-pro-img">
                                   <Link href="/doctors/search" aria-label='doctor-profile'>
@@ -186,7 +190,7 @@ const Doctors: FC = (() => {
                                   </div>
                                 </div>
                               </div>
-                            </div>
+                            </SwiperSlide>
                           )
                         })
                       }
@@ -195,7 +199,7 @@ const Doctors: FC = (() => {
                       {
                         bestDoctors.map((doctor, index) => {
                           return (
-                            <div className="item" key={index}>
+                            <SwiperSlide className="item" key={index}>
                               <div className="doctor-profile-widget">
                                 <div className="doc-pro-img">
                                   <Link href={`/doctors/profile/${btoa(doctor?._id)}`} aria-label='doctor-profile'>
@@ -233,13 +237,13 @@ const Doctors: FC = (() => {
                                   </div>
                                 </div>
                               </div>
-                            </div>
+                            </SwiperSlide>
                           )
                         })
                       }
                     </>
               }
-            </OwlCarousel>
+            </Swiper>
           </div>
         </div>
       </section>

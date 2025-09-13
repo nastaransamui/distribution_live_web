@@ -1,72 +1,29 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useMemo } from 'react';
-import dynamic from 'next/dynamic';
+import { FC, Fragment, useMemo, useRef } from 'react';
 import useScssVar from '@/hooks/useScssVar';
 import { testimonial2, client04, client03, client06_small, client07 } from '@/public/assets/imagepath';
 import { AppState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 import { EyeTestimonialImagesSkeleton, EyeTestimonialSkeleton } from '../eyeCareSections/Testimonials';
-
-
-const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 
 const TestimonialSection: FC = (() => {
   const { muiVar } = useScssVar();
-  const testimonialsettings = {
-    items: 1,
-    loop: true,
-    margin: 15,
-    dots: true,
-    nav: true,
-    dotData: true,
-    callbacks: true,
-    onInitialized: () => {
-      $('.owl-carousel').each(function () {
-        // Find each set of dots in this carousel
-        $(this).find('.owl-dots').each(function (index) {
-          // Add aria-label to the dots container
-          $(this).attr('aria-label', index + 1);
 
-          // Add aria-label to each dot button
-          $(this).find('.owl-dot').each(function (dotIndex) {
-            $(this).attr('aria-label', `Slide ${dotIndex + 1}`);
-          });
-        });
-      });
+  const doctersettings: SwiperOptions = {
+    slidesPerView: 1,
+    spaceBetween: 15,
+    loop: false,
+
+    modules: [Navigation, FreeMode],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
     },
-    navContainer: ".slide-nav-1",
-    navText: [
-      '<i class="fas fa-chevron-left custom-arrow"></i>',
-      '<i class="fas fa-chevron-right custom-arrow"></i>',
-    ],
-
-    autoplay: false,
-    infinite: "true",
-
-    slidestoscroll: 1,
-    rtl: "true",
-    rows: 1,
-    responsive: {
-      0: {
-        items: 1
-      },
-      500: {
-        items: 1
-      },
-      575: {
-        items: 1
-      },
-      768: {
-        items: 1
-      },
-      1000: {
-        items: 1
-      },
-      1300: {
-        items: 1
-      }
-    }
   };
   const lastReviewsData = useSelector((state: AppState) => state.lastReviewsData)
   const { lastReviews } = lastReviewsData;
@@ -119,6 +76,7 @@ const TestimonialSection: FC = (() => {
     ]
   }, [])
   const dummyImages = [client04, client03, client06_small, client07]
+  const swiperRef = useRef<SwiperInstance | null>(null);
 
   return (
     <Fragment>
@@ -154,7 +112,11 @@ const TestimonialSection: FC = (() => {
               </div>
             </div>
             <div className="col-md-7">
-              <OwlCarousel {...testimonialsettings}>
+              <Swiper
+                {...doctersettings}
+                onSwiper={(swiper) => {
+                  swiperRef.current = swiper;
+                }}>
                 {
                   lastReviews == null ?
                     (<EyeTestimonialSkeleton />) :
@@ -162,39 +124,43 @@ const TestimonialSection: FC = (() => {
                       (
                         dummyReviewData.map((review, index) => {
                           return (
-                            <div className="testimonial-wrap" key={index}>
-                              <h3>{review.title}</h3>
-                              <p style={{
-                                minHeight: '270px',
-                                alignContent: 'center',
-                              }}>{review.body}</p>
-                              <div className="testimonial-user">
-                                <h4>{review.name}</h4>
-                                <p>{review.city}, {review.country}</p>
+                            <SwiperSlide key={index}>
+                              <div className="testimonial-wrap" >
+                                <h3>{review.title}</h3>
+                                <p style={{
+                                  minHeight: '270px',
+                                  alignContent: 'center',
+                                }}>{review.body}</p>
+                                <div className="testimonial-user">
+                                  <h4>{review.name}</h4>
+                                  <p>{review.city}, {review.country}</p>
+                                </div>
                               </div>
-                            </div>
+                            </SwiperSlide>
                           )
                         })
                       ) :
                       (
                         lastReviews.map((review, index) => {
                           return (
-                            <div className="testimonial-wrap" key={index}>
-                              <h3>{review.title}</h3>
-                              <p style={{
-                                minHeight: '270px',
-                                alignContent: 'center',
-                              }}>{review.body}</p>
-                              <div className="testimonial-user">
-                                <h4>{review.authorProfile?.fullName}</h4>
-                                <p>{review?.authorProfile?.city}, {review?.authorProfile?.country}</p>
+                            <SwiperSlide key={index}>
+                              <div className="testimonial-wrap" >
+                                <h3>{review.title}</h3>
+                                <p style={{
+                                  minHeight: '270px',
+                                  alignContent: 'center',
+                                }}>{review.body}</p>
+                                <div className="testimonial-user">
+                                  <h4>{review.authorProfile?.fullName}</h4>
+                                  <p>{review?.authorProfile?.city}, {review?.authorProfile?.country}</p>
+                                </div>
                               </div>
-                            </div>
+                            </SwiperSlide>
                           )
                         })
                       )
                 }
-              </OwlCarousel>
+              </Swiper>
             </div>
           </div>
         </div>

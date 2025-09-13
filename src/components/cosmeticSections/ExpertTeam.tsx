@@ -1,38 +1,40 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useMemo } from 'react'
-import dynamic from 'next/dynamic'
+import { FC, Fragment, useCallback, useMemo, useRef } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { Doc04, Doc03, Doc02, Doc01, doctors_profile } from '../../../public/assets/imagepath';
 import { AppState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 import Skeleton from "@mui/material/Skeleton"
-const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false })
-
-
+import { SwiperOptions } from 'swiper/types';
+import { EffectCoverflow, FreeMode, Navigation } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 const ExpertTeam: FC = (() => {
   const { muiVar } = useScssVar();
   const bestDoctorsData = useSelector((state: AppState) => state.bestDoctorsData)
   const { bestDoctors } = bestDoctorsData;
-  const settings = {
-    margin: 0,
-    center: true,
-    loop: true,
-    nav: false,
-    dots: false,
-    responsive: {
-      0: {
-        items: 1
-      },
-      768: {
-        items: 1,
-        margin: 15,
-      },
-      1000: {
-        items: 3,
-      }
-    }
+  const doctersettings: SwiperOptions = {
+    slidesPerView: 3,
+    spaceBetween: 50,
+    loop: false,
+    initialSlide: 1,
+
+    modules: [Navigation, FreeMode, EffectCoverflow],
+    effect: 'coverflow',
+    grabCursor: true,
+    centeredSlides: true,
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+    breakpoints: {
+      1000: { slidesPerView: 3 },
+      776: { slidesPerView: 1, spaceBetween: 15 },
+      0: { slidesPerView: 1 },
+    },
   };
+
 
   const dummyDoctorData = useMemo(() => {
     return [
@@ -58,6 +60,9 @@ const ExpertTeam: FC = (() => {
       },
     ]
   }, [])
+
+  const swiperRef = useRef<SwiperInstance | null>(null);
+
   return (
     <Fragment>
       <section className="experts-section-sixteen" style={muiVar}>
@@ -71,22 +76,26 @@ const ExpertTeam: FC = (() => {
             </div>
           </div>
           <div className="slider slider-sixteen aos" data-aos="zoom-in-up">
-            <div className=" owl-carousel custome_slides owl-loaded owl-drag" id="slide-experts">
-              <OwlCarousel id="customer-testimonoals" {...settings}>
-                {
-                  bestDoctors == null ?
+            <Swiper
+              {...doctersettings}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }} id="slide-experts">
+              {
+                bestDoctors == null ?
+                  <>
+                    {
+                      Array.from(Array(2).keys()).map((i) => (
+                        <CosmeticDoctorsSkeleton key={i} />
+                      ))
+                    }
+                  </> :
+                  bestDoctors.length == 0 ?
                     <>
                       {
-                        Array.from(Array(2).keys()).map((i) => (
-                          <CosmeticDoctorsSkeleton key={i} />
-                        ))
-                      }
-                    </> :
-                    bestDoctors.length == 0 ?
-                      <>
-                        {
-                          dummyDoctorData.map((doctor, index) => {
-                            return (
+                        dummyDoctorData.map((doctor, index) => {
+                          return (
+                            <SwiperSlide key={index}>
                               <div className="test_imgs" key={index}>
                                 <div className="main-reviewimages">
                                   <img src={doctor.img} alt="" className="img-fluid" />
@@ -96,14 +105,16 @@ const ExpertTeam: FC = (() => {
                                   <span>{doctor.speciality}</span>
                                 </div>
                               </div>
-                            )
-                          })
-                        }
-                      </> :
-                      <>
-                        {
-                          bestDoctors.map((doctor, index) => {
-                            return (
+                            </SwiperSlide>
+                          )
+                        })
+                      }
+                    </> :
+                    <>
+                      {
+                        bestDoctors.map((doctor, index) => {
+                          return (
+                            <SwiperSlide key={index}>
                               <div className="test_imgs" key={index}>
                                 <div className="main-reviewimages">
                                   <img src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile} alt="" className="img-fluid" />
@@ -113,13 +124,14 @@ const ExpertTeam: FC = (() => {
                                   <span>{doctor?.specialities?.[0]?.specialities}</span>
                                 </div>
                               </div>
-                            )
-                          })
-                        }
-                      </>
-                }
-              </OwlCarousel>
-            </div>
+                            </SwiperSlide>
+                          )
+                        })
+                      }
+                    </>
+              }
+            </Swiper>
+            {/* </div> */}
           </div>
         </div>
       </section>

@@ -143,9 +143,7 @@ const Checkout: FC<CheckoutComponentProps> = (({ checkoutDataServer }) => {
           progress: undefined,
           transition: bounce,
           toastId: 'submit-reservation',
-          onClose: () => {
-            toast.dismiss('submit-reservation')
-          }
+          onClose: () => { }
         });
       } else {
         const { newReservationId } = msg;
@@ -161,8 +159,7 @@ const Checkout: FC<CheckoutComponentProps> = (({ checkoutDataServer }) => {
           transition: bounce,
           toastId: 'submit-done',
           onClose: () => {
-            toast.dismiss('submit-done')
-            router.push(`/doctors/payment-success/${btoa(newReservationId)}`)
+            router.replace(`/doctors/payment-success/${encodeURIComponent(btoa(newReservationId))}`)
           }
         });
       }
@@ -383,7 +380,10 @@ const Checkout: FC<CheckoutComponentProps> = (({ checkoutDataServer }) => {
                               return (
                                 <MuiTelInput
                                   {...field}
-                                  InputLabelProps={{ shrink: true }}
+
+                                  slotProps={{
+                                    inputLabel: { shrink: true }
+                                  }}
                                   defaultCountry={userData?.countryCode}
                                   helperText={fieldState.invalid ? "Mobile Number is invalid" : ""}
                                   error={fieldState.invalid}

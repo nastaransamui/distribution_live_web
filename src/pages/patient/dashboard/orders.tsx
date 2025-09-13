@@ -12,7 +12,10 @@ import DashboardFooter from '@/components/sections/DashboardFooter';
 import Orders from '@/components/PatientDashboardSections/Orders';
 import useScssVar from '@/hooks/useScssVar';
 import { getAndDispatchUserData, handleProtectedAuth, setThemeCookiesNoRedirect } from '@/helpers/getServerSidePropsHelpers';
-
+/**
+ * 
+ * @returns redirect permanantly to /doctors/search
+ */
 const OrdersPage: NextPage = (props: any) => {
   const homeSideBarOpen = useSelector((state: AppState) => state.homeSideBarOpen.value)
 
@@ -53,17 +56,23 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     // 2) ensure theme cookies exist (fetch if any missing). Might return homeRedirect.
     await setThemeCookiesNoRedirect(ctx, store)
 
-    const r = await handleProtectedAuth(ctx, store);
-    if (r?.redirectToLogin) {
-      return {
-        redirect: {
-          destination: '/login',
-          permanent: false
-        }
-      }
-    }
+    // const r = await handleProtectedAuth(ctx, store);
+    // if (r?.redirectToLogin) {
+    //   return {
+    //     redirect: {
+    //       destination: '/login',
+    //       permanent: false
+    //     }
+    //   }
+    // }
     props.currentPath = ctx.resolvedUrl ?? ctx.req?.url ?? '';
-    return { props }
+    return {
+      props,
+      redirect: {
+        destination: '/patient/dashboard',
+        permanent: true,
+      },
+    }
   }
 )
 

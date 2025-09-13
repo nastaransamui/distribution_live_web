@@ -23,9 +23,20 @@ import getClinicsStatus from '@/helpers/getClinicsStatus';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import { LazyLoadWrapper } from '.';
 import { getAndDispatchUserData, setAuthCookiesNoRedirect, setThemeCookiesNoRedirect } from '@/helpers/getServerSidePropsHelpers';
-
+import { useEffect } from 'react';
+import { useTheme } from '@mui/material';
 
 const Home: NextPage = () => {
+  const theme = useTheme();
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const body = document.getElementById('body')
+      if (body) {
+        body.style.backgroundColor = theme.palette.background.paper
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme.palette])
 
   return (
     <>

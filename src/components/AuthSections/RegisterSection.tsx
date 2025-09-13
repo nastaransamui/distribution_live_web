@@ -380,7 +380,6 @@ const RegisterSection: FC = (() => {
   return (
     <Fragment>
       {openUserType && <BootstrapDialog
-        TransitionComponent={Transition}
         onClose={() => {
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
           setTimeout(() => {
@@ -540,7 +539,7 @@ const RegisterSection: FC = (() => {
                               <MuiTelInput
                                 {...field}
                                 size='small'
-                                InputLabelProps={{ shrink: true }}
+                                slotProps={{ inputLabel: { shrink: true } }}
                                 defaultCountry={userData?.countryCode}
                                 helperText={fieldState.invalid ? "Tel is invalid" : ""}
                                 error={fieldState.invalid}
@@ -575,7 +574,8 @@ const RegisterSection: FC = (() => {
                                 helperText={errors.email && errors['email']['message'] as ReactNode}
                                 fullWidth
                                 ref={ref}
-                                inputProps={{ style: { textTransform: 'lowercase' }, autoComplete: 'email' }}
+
+                                slotProps={{ htmlInput: { style: { textTransform: 'lowercase' }, autoComplete: 'email' } }}
                                 onChange={(e: any) => {
                                   e.target.value = e.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
                                   onChange(e)
@@ -600,20 +600,22 @@ const RegisterSection: FC = (() => {
                             }
                           })}
                           type={showPassword ? 'text' : 'password'}
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">
-                              <IconButton
-                                disableFocusRipple
-                                disableRipple
-                                disableTouchRipple
-                                onClick={handleClickShowPassword}
-                                onMouseDown={handleMouseDownPassword}
-                                edge="end"
-                                aria-label='toggle password'
-                              >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
+                          slotProps={{
+                            input: {
+                              endAdornment: <InputAdornment position="end">
+                                <IconButton
+                                  disableFocusRipple
+                                  disableRipple
+                                  disableTouchRipple
+                                  onClick={handleClickShowPassword}
+                                  onMouseDown={handleMouseDownPassword}
+                                  edge="end"
+                                  aria-label='toggle password'
+                                >
+                                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            }
                           }}
                           fullWidth
                         />
@@ -634,20 +636,22 @@ const RegisterSection: FC = (() => {
                             }
                           })}
                           type={showRepeatPassword ? 'text' : 'password'}
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">
-                              <IconButton
-                                disableFocusRipple
-                                disableRipple
-                                disableTouchRipple
-                                onClick={handleClickShowRepeatPassword}
-                                onMouseDown={handleMouseDownRepeatPassword}
-                                edge="end"
-                                aria-label='toggle repeat password'
-                              >
-                                {showRepeatPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
+                          slotProps={{
+                            input: {
+                              endAdornment: <InputAdornment position="end">
+                                <IconButton
+                                  disableFocusRipple
+                                  disableRipple
+                                  disableTouchRipple
+                                  onClick={handleClickShowRepeatPassword}
+                                  onMouseDown={handleMouseDownRepeatPassword}
+                                  edge="end"
+                                  aria-label='toggle repeat password'
+                                >
+                                  {showRepeatPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            }
                           }}
                           fullWidth
                         />

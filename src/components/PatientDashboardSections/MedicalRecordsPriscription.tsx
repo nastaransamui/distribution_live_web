@@ -7,7 +7,17 @@ import utc from 'dayjs/plugin/utc'
 import { doctors_profile, logo, patient_profile } from '@/public/assets/imagepath';
 import { useRouter } from 'next/router';
 import useScssVar from '@/hooks/useScssVar';
-import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridRenderCellParams, GridColumnVisibilityModel, GridAlignment, GridFilterModel, GridSortModel, GridValueFormatterParams } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridColDef,
+  GridActionsCellItem,
+  GridRowParams,
+  GridRenderCellParams,
+  GridColumnVisibilityModel,
+  GridAlignment,
+  GridFilterModel,
+  GridSortModel,
+} from '@mui/x-data-grid';
 import Stack from '@mui/material/Stack';
 import Link from 'next/link';
 import { PrescriptionsArrayType, PrescriptionsType } from '../DoctorDashboardSections/AddPrescription';
@@ -16,7 +26,7 @@ import { AppState } from '@/redux/store';
 import { useReactToPrint } from 'react-to-print';
 import { toast } from 'react-toastify';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
-import CustomPagination from '../shared/CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from '../shared/CustomPagination';
 import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
 
 import Avatar from '@mui/material/Avatar';
@@ -28,12 +38,13 @@ import DialogContent from '@mui/material/DialogContent';
 import { BootstrapDialog, Transition, BootstrapDialogTitle } from '../shared/Dialog';
 import { PatientProfile } from '../DoctorDashboardSections/MyPtients';
 import { useTheme } from '@mui/material/styles';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 export interface MedicalRecordsPriscriptionType {
   patientProfile: PatientProfile;
+  userType?: string
 }
 
 interface Props {
@@ -186,7 +197,7 @@ export const PrintComponent = forwardRef<HTMLDivElement, Props>((props, ref) => 
 })
 PrintComponent.displayName = "PrintComponent"
 
-const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patientProfile }) => {
+const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patientProfile, userType }) => {
   dayjs.extend(utc)
   dayjs.extend(timezone)
   const { muiVar, bounce } = useScssVar();
@@ -237,7 +248,6 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
 
 
   const printButtonClicked = (row: any) => {
-
     const { doctorProfile } = row
     const { firstName, lastName, country, city, state, address1, address2 } = doctorProfile
     const { gender, firstName: paFirstName, lastName: paLastName, country: paCountry, city: paCity, state: paState, address1: paAddress1, address2: paAddress2 } = patientProfile
@@ -289,7 +299,6 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
   const [mongoFilterModel, setMongoFilterModel] = useState<DataGridMongoDBQuery>({});
 
 
-
   const columns: GridColDef[] = useMemo(() => {
     return [
       {
@@ -303,15 +312,13 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.id
-        },
       },
 
       {
         field: 'doctorProfile.fullName',
         headerName: `Doctor Name`,
         width: 250,
+        flex: 1,
         minWidth: 250,
         align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
@@ -319,9 +326,8 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueFormatter(params: GridValueFormatterParams) {
-          const { api, id } = params;
-          let fullName = api.getCellValue(id as string, 'doctorProfile')?.fullName
+        valueFormatter(_, row) {
+          let fullName = row?.doctorProfile?.fullName;
           return ` Dr. ${fullName}`
         },
         renderCell: (params: GridRenderCellParams) => {
@@ -329,7 +335,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
           const profileImage = row?.doctorProfile?.profileImage == '' ? doctors_profile : row?.doctorProfile?.profileImage
           const online = row?.doctorProfile?.online || false
           return (
-            <>
+            <span style={{ display: 'flex', minHeight: '100%', minWidth: '100%', alignItems: 'center' }}>
               <Link aria-label='profile' className=" mx-2" target='_blank' href={`/doctors/profile/${btoa(row.doctorId)}`} >
                 <StyledBadge
                   overlap="circular"
@@ -350,7 +356,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                 </Link>
                 <small>{row?.doctorProfile?.specialities[0]?.specialities}</small>
               </Stack>
-            </>
+            </span>
           )
         }
       },
@@ -358,22 +364,19 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
         field: 'patientProfile.fullName',
         headerName: `Patient Name`,
         width: 200,
+        flex: 1,
         headerAlign: 'center',
         searchAble: false,
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
-          return row?.patientProfile?.fullName
-        },
         sortComparator: (v1: any, v2: any) => v1.toLowerCase() > v2.toLowerCase() ? 1 : -1,
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           const profileImage = row?.patientProfile?.profileImage == '' ? patient_profile : row?.patientProfile?.profileImage
           const online = row?.patientProfile?.online || false
           return (
-            <>
+            <span style={{ display: 'flex', minHeight: '100%', minWidth: '100%', alignItems: 'center' }}>
               <Link onClick={(e) => e.preventDefault()} className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`}>
                 <StyledBadge
                   overlap="circular"
@@ -385,7 +388,10 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                   <Avatar alt="" src={profileImage} />
                 </StyledBadge>
               </Link>
-              <Link onClick={(e) => e.preventDefault()} href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`} >{`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}</Link></>
+              <Link onClick={(e) => e.preventDefault()} href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`} >
+                {`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}
+              </Link>
+            </span>
           )
         }
       },
@@ -400,14 +406,13 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueGetter(_: any, row: any) {
           return row.createdAt ? dayjs(row.createdAt).toDate() : null;
         },
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`DD MMM YYYY`)}</span>
               <span className="d-block">
                 <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`HH:mm`)}</span>
@@ -427,14 +432,13 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueGetter(_: any, row: any) {
           return row.updateAt ? dayjs(row.updateAt).toDate() : null;
         },
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`DD MMM YYYY`)}</span>
               <span className="d-block">
                 <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`HH:mm`)}</span>
@@ -452,10 +456,6 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
         searchAble: false,
         sortable: false,
         filterable: false,
-        valueGetter: (params) => {
-          const prescriptionsArray = params?.row?.prescriptionsArray;
-          return prescriptionsArray.length;
-        },
         sortComparator: (v1: any, v2: any) => {
           return v1 > v2 ? -1 : 1
         },
@@ -515,7 +515,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                 style={{ color: theme.palette.primary.main }}>
 
               </i>} label="Print" />,
-          router.asPath.startsWith('/doctors') ? (
+          router.asPath.startsWith('/doctors') && (
             <GridActionsCellItem
               key="view-action"
               onClick={() => {
@@ -529,7 +529,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
               disabled={params.row?.doctorId !== userProfile?._id}
               label="View"
             />
-          ) : <></>,
+          ),
           <GridActionsCellItem
             key="view-action"
             onClick={() => {
@@ -540,11 +540,11 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                 `/doctors/dashboard/editprescription/${encodedId}`)
             }}
             icon={<i className="far fa-eye" style={{ color: theme.palette.secondary.main }}></i>} label="View" />,
-        ]
+        ].filter(Boolean)
       }
     ]
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [theme.palette]);
 
 
   const handleChangePage = (
@@ -639,48 +639,42 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
 
 
   useEffect(() => {
-    let isActive = true;
-    if (isActive) {
-      let userId = patientProfile?._id
-      if (homeSocket.current !== undefined) {
-        homeSocket?.current.emit('getPrescriptionRecord', { userId: userId, paginationModel, sortModel, mongoFilterModel });
-        homeSocket.current.once('getPrescriptionRecordReturn', (msg: {
-          status: number,
-          message?: string,
-          priscriptionRecords: PrescriptionsType[],
-          totalPrescriptions: number
-        }) => {
-          const { status, message, priscriptionRecords, totalPrescriptions } = msg;
-          if (status !== 200) {
-            toast.error(message || `Error ${status} find Reservation`, {
-              position: "bottom-center",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              transition: bounce,
-              toastId: "prescription-toast",
-              onClose: () => {
-                setIsLoading(false)
-                toast.dismiss('prescription-toast')
-              }
-            });
-          } else {
-            setRow(priscriptionRecords)
-            setRowCount(totalPrescriptions)
-            homeSocket.current.once(`updateGetPrescriptionRecord`, () => {
-              setReload(!reload)
-            })
+    if (patientProfile?._id == undefined || homeSocket.current == undefined) return;
+    let userId = patientProfile?._id
+
+    homeSocket?.current.emit('getPrescriptionRecord', { userId: userId, paginationModel, sortModel, mongoFilterModel });
+    homeSocket.current.once('getPrescriptionRecordReturn', (msg: {
+      status: number,
+      message?: string,
+      priscriptionRecords: PrescriptionsType[],
+      totalPrescriptions: number
+    }) => {
+      const { status, message, priscriptionRecords, totalPrescriptions } = msg;
+      if (status !== 200) {
+        toast.error(message || `Error ${status} find Reservation`, {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          transition: bounce,
+          toastId: "prescription-toast",
+          onClose: () => {
             setIsLoading(false)
+            toast.dismiss('prescription-toast')
           }
         });
+      } else {
+        setRow(priscriptionRecords)
+        setRowCount(totalPrescriptions)
+        homeSocket.current.once(`updateGetPrescriptionRecord`, () => {
+          setReload(!reload)
+        })
+        setIsLoading(false)
       }
-    }
-    return () => {
-      isActive = false;
-    }
+    });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeSocket, patientProfile?._id, paginationModel, sortModel, mongoFilterModel, reload])
@@ -737,14 +731,21 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
           <div className="card">
             <div ref={dataGridRef} className="tab-content schedule-cont   animate__animated animate__lightSpeedInRight">
               <Box className="dataGridOuterBox" >
-                <Typography className="totalTypo"
-                  variant='h5' align='center' gutterBottom >
-                  {
-                    rowCount !== 0 ?
-                      `Total Priscription: ${rowCount}` :
-                      `Not any Priscription yet`
-                  }
-                </Typography>
+                <span style={{ position: "relative", display: 'flex', justifyContent: 'center' }}>
+                  <Typography className="totalTypo"
+                    variant='h5' align='center' gutterBottom sx={{ marginLeft: userType == 'doctor' ? 'auto' : 'unset' }}>
+                    {
+                      rowCount !== 0 ?
+                        `Total Priscription: ${rowCount}` :
+                        `Not any Priscription yet`
+                    }
+                  </Typography>
+                  {userType == 'doctor' && <div className="text-end" style={{ marginLeft: 'auto' }}>
+                    <Link href={`/doctors/dashboard/add-prescription/${btoa(patientProfile._id)}`} className="add-new-btn">
+                      Add Prescription
+                    </Link>
+                  </div>}
+                </span>
                 <div className="table-responsive" style={{ height: paginationModel?.pageSize == 5 ? 600 : 1000, width: '100%' }}>
 
 
@@ -768,10 +769,11 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                       setColumnVisibilityModel(newModel)
                     }}
                     loading={isLoading}
-                    experimentalFeatures={{ ariaV7: true }}
+                    showToolbar
                     slots={{
-                      toolbar: CustomToolbar,
-                      pagination: CustomPagination,
+                      toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                      pagination: CustomPagination as CustomPaginationSlotType,
                       noResultsOverlay: CustomNoRowsOverlay,
                       noRowsOverlay: CustomNoRowsOverlay
                     }}
@@ -781,7 +783,7 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                         deleteId: [],
                         deleteClicked: () => { },
                         columnVisibilityModel: columnVisibilityModel,
-                      },
+                      } as CustomToolbarPropsType,
                       pagination: {
                         onRowsPerPageChange: handleChangeRowsPerPage,
                         page: paginationModel.page,
@@ -795,20 +797,6 @@ const MedicalRecordsPriscription: FC<MedicalRecordsPriscriptionType> = (({ patie
                           },
                         },
                       },
-                      filterPanel: {
-                        filterFormProps: {
-                          deleteIconProps: {
-                            sx: {
-                              justifyContent: 'flex-start'
-                            },
-                          },
-                        },
-                      },
-                      baseCheckbox: {
-                        inputProps: {
-                          name: "select-checkbox"
-                        }
-                      }
                     }}
                     getRowId={(params) => params._id}
                     rows={rows}

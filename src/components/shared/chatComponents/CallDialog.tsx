@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material'
 import IconButton from "@mui/material/IconButton";
 import Link from "next/link";
 import { FC, useEffect } from "react";
-import { LiveAudioVisualizer } from "react-audio-visualize";
+// import { LiveAudioVisualizer } from "react-audio-visualize";
 import { BootstrapDialog, Transition } from "../Dialog";
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
@@ -29,12 +29,12 @@ export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, cal
     chatInputValue,
     fakeMediaRecorder,
     audioBlob,
-    recordingTime,
-    startRecording,
-    isRecording,
-    stopRecording,
-    togglePauseResume,
-    isPaused,
+    // recordingTime,
+    // startRecording,
+    // isRecording,
+    // stopRecording,
+    // togglePauseResume,
+    // isPaused,
     handleDownload,
     clearRecording,
   } = useChat();
@@ -61,15 +61,16 @@ export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, cal
         <div className="call-box incoming-box">
 
           <div className="recorder-container">
-            <p>Recording Time: {recordingTime}s</p>
+            {/* <p>Recording Time: {recordingTime}s</p> */}
 
             <div className="buttons">
               <IconButton
                 disableFocusRipple
                 disableRipple
                 disableTouchRipple
-                disabled={isRecording}
-                onClick={startRecording}>
+              // disabled={isRecording}
+              // onClick={startRecording}
+              >
                 {/* 🎙 */}
                 <RadioButtonCheckedIcon sx={{ fontSize: 36, color: 'crimson' }} />
               </IconButton>
@@ -77,33 +78,39 @@ export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, cal
                 disableFocusRipple
                 disableRipple
                 disableTouchRipple
-                disabled={!isRecording}
-                onClick={stopRecording}>
+              // disabled={!isRecording}
+              // onClick={stopRecording}
+              >
                 <StopCircleIcon sx={{ fontSize: 36, color: 'primary.main' }} />
               </IconButton>
               <IconButton
                 disableFocusRipple
                 disableRipple
                 disableTouchRipple
-                disabled={!isRecording}
-                onClick={togglePauseResume}>
-                {isPaused ?
-                  <PlayCircleIcon sx={{ fontSize: 36, color: "secondary.main" }} /> :
-                  <PauseCircleFilledIcon sx={{ fontSize: 36, color: "secondary.main" }} />}
+              // disabled={!isRecording}
+              // onClick={togglePauseResume}
+              >
+                {
+                  // isPaused ?
+                  true ?
+                    <PlayCircleIcon sx={{ fontSize: 36, color: "secondary.main" }} /> :
+                    <PauseCircleFilledIcon sx={{ fontSize: 36, color: "secondary.main" }} />}
               </IconButton>
             </div>
 
-            {fakeMediaRecorder && isRecording && (
-              <span style={{ textAlign: 'center', display: 'flex', padding: '10px 0px', width: '100%', justifyContent: 'center' }}>
-                <LiveAudioVisualizer
+            {fakeMediaRecorder &&
+              //  isRecording &&
+              (
+                <span style={{ textAlign: 'center', display: 'flex', padding: '10px 0px', width: '100%', justifyContent: 'center' }}>
+                  {/* <LiveAudioVisualizer
                   mediaRecorder={fakeMediaRecorder}
                   width={100}
                   height={5}
                   barColor={theme.palette.secondary.main}
 
-                />
-              </span>
-            )}
+                /> */}
+                </span>
+              )}
             {audioBlob && (
               <div className="audio-player">
                 <p>Recorded Audio:</p>
@@ -146,7 +153,7 @@ export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, cal
                 <h4>{callReceiverUserData?.roleName == "doctors" && "Dr. "} {callReceiverUserData?.fullName}</h4>
                 <span>{callType} call {isAnswer ? "Connected" : "Connecting..."}</span>
               </div>
-              {fakeMediaRecorder && (
+              {/* {fakeMediaRecorder && (
                 <LiveAudioVisualizer
                   mediaRecorder={fakeMediaRecorder}
                   width={100}
@@ -154,7 +161,7 @@ export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, cal
                   barColor={theme.palette.primary.main}
 
                 />
-              )}
+              )} */}
               <div className="call-items">
                 <Link
                   href="#"

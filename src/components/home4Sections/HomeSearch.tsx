@@ -88,7 +88,7 @@ const HomeSearch: FC = (() => {
                     >
                       {/* <div className="row"> */}
                       <Grid container spacing={{ lg: 1, xl: 1, md: 1, sm: 2, xs: 1 }}>
-                        <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                        <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                           <TextField
                             required
                             id="KeyWord"
@@ -126,33 +126,35 @@ const HomeSearch: FC = (() => {
                               },
                             }}
                             size="small"
-                            InputLabelProps={{
-                              shrink: keyWord !== ''
-                            }}
-                            onChange={(e) => setKeyWord(e.target.value)}
-                            InputProps={{
-                              startAdornment:
-                                <InputAdornment position="start" >
-                                  <IconButton aria-label='search' disableTouchRipple onClick={() => {
-                                    keyWord !== '' && setKeyWord('')
-                                  }}>
-                                    {keyWord == '' ? <Search
-                                      style={{ width: "16px", color: theme.palette.secondary.main }}
-                                    /> :
-                                      <X
+                            slotProps={{
+                              inputLabel: {
+                                shrink: keyWord !== ''
+                              },
+                              input: {
+                                startAdornment:
+                                  <InputAdornment position="start" >
+                                    <IconButton aria-label='search' disableTouchRipple onClick={() => {
+                                      keyWord !== '' && setKeyWord('')
+                                    }}>
+                                      {keyWord == '' ? <Search
                                         style={{ width: "16px", color: theme.palette.secondary.main }}
-                                      />}
+                                      /> :
+                                        <X
+                                          style={{ width: "16px", color: theme.palette.secondary.main }}
+                                        />}
+                                    </IconButton>
+                                  </InputAdornment>,
+                                endAdornment: <InputAdornment position='end'>
+                                  <IconButton aria-label='filter' disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
+                                    <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
                                   </IconButton>
                                 </InputAdornment>,
-                              endAdornment: <InputAdornment position='end'>
-                                <IconButton aria-label='filter' disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
-                                  <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
-                                </IconButton>
-                              </InputAdornment>,
+                              }
                             }}
+                            onChange={(e) => setKeyWord(e.target.value)}
                           />
                         </Grid>
-                        <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                        <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                           <FormControl fullWidth >
                             <InputLabel id="availablity" size='small'
                               sx={{
@@ -251,7 +253,7 @@ const HomeSearch: FC = (() => {
                           transition: `visibility ${showFilter ? `0.75s` : `0s`} ease-in`,
                           transitionDelay: showFilter ? `0.75s` : `0s`,
                         }} >
-                          <Grid item xl={4} lg={6} md={6} sm={6} xs={12}>
+                          <Grid size={{ xl: 4, lg: 6, md: 6, sm: 6, xs: 12 }}>
                             {specialities.length !== 0 &&
                               <FormControl fullWidth size="small">
                                 <InputLabel sx={{
@@ -327,7 +329,7 @@ const HomeSearch: FC = (() => {
                               </FormControl>
                             }
                           </Grid>
-                          <Grid item xl={2} lg={6} md={6} sm={6} xs={12}>
+                          <Grid size={{ xl: 2, lg: 6, md: 6, sm: 6, xs: 12 }}>
                             <FormControl fullWidth size="small">
                               <InputLabel sx={{
                                 color: '#000000',
@@ -391,7 +393,7 @@ const HomeSearch: FC = (() => {
                               </Select>
                             </FormControl>
                           </Grid>
-                          <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                          <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                             <GeoLocationAutocomplete
 
                               textFieldSX={{
@@ -454,7 +456,7 @@ const HomeSearch: FC = (() => {
                               required={false}
                             />
                           </Grid>
-                          <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                          <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                             <GeoLocationAutocomplete
 
                               textFieldSX={{
@@ -517,7 +519,7 @@ const HomeSearch: FC = (() => {
                               required={false}
                             />
                           </Grid>
-                          <Grid item xl={6} lg={12} md={12} sm={12} xs={12}>
+                          <Grid size={{ xl: 6, lg: 12, md: 12, sm: 12, xs: 12 }}>
                             <GeoLocationAutocomplete
 
                               textFieldSX={{

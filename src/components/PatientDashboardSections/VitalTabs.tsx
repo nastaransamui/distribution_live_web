@@ -1,11 +1,15 @@
+/* eslint-disable @next/next/no-img-element */
 import useScssVar from '@/hooks/useScssVar';
 import React, { FC, Fragment, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AppState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material/styles';
-import { DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridFilterModel, GridRenderCellParams, GridRowId, GridRowParams, GridSortModel, GridValueGetterParams } from '@mui/x-data-grid';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import {
+  DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridFilterModel,
+  GridRowId, GridRowParams, GridRowSelectionModel, GridSortModel
+} from '@mui/x-data-grid';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import { VitalTypeObject } from './ClinicalSignsHistory';
 import { toast } from 'react-toastify';
 import Box from '@mui/material/Box';
@@ -13,9 +17,8 @@ import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingCom
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { Controller, useForm } from 'react-hook-form';
-import CustomPagination from '../shared/CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from '../shared/CustomPagination';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
-import { UserPatientProfileType, UserPatientProfileTypeValue } from '@/redux/userPatientProfile';
 import Stack from '@mui/material/Stack';
 import dayjs from 'dayjs';
 import DeleteForever from '@mui/icons-material/DeleteForever';
@@ -26,6 +29,7 @@ import DialogContent from '@mui/material/DialogContent'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import { NumericFormat } from 'react-number-format';
+import muiSelectionModelToArray from '@/helpers/muiSelectionModelToArray';
 
 
 export interface VitalTypeObjectForm {
@@ -95,8 +99,8 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridValueGetterParams) => {
-          return params?.row?.id
+        valueGetter: (_, row) => {
+          return row?.id
         },
       },
       {
@@ -110,8 +114,8 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridValueGetterParams) => {
-          return `${params?.row?.value} ${stepUnit}`
+        valueGetter: (_, row) => {
+          return `${row?.value} ${stepUnit}`
         },
       },
       {
@@ -125,8 +129,8 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter: (params: GridValueGetterParams) => {
-          return params.row?.date ? dayjs(params.row.date).toDate() : null;
+        valueGetter: (_, row) => {
+          return row?.date ? dayjs(row.date).toDate() : null;
         },
         renderCell: (data: any) => {
           const { row } = data;
@@ -162,6 +166,8 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
 
   }, [stepLabel, stepUnit, theme.palette.primary.main, theme.palette.secondary.main]);
   const [deleteId, setDeleteId] = useState<GridRowId[]>([])
+  const [rowSelectionModel, setRowSelectionModel] =
+    useState<GridRowSelectionModel>({ type: 'include', ids: new Set() });
   const handleChangePage = (
     _event: any | null,
     newPage: number) => {
@@ -376,6 +382,16 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
       setEdit(false)
     }, 500);
   }
+
+  // remove ids from select upon change page
+  useEffect(() => {
+    const exists = deleteId.some(id => rows.map(a => a.id).includes(id as number));
+    if (!exists) {
+      setDeleteId([])
+      setRowSelectionModel({ type: 'include', ids: new Set() })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows])
   return (
     <Fragment>
       {
@@ -437,10 +453,11 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
                       setColumnVisibilityModel(newModel)
                     }}
                     loading={isLoading}
-                    experimentalFeatures={{ ariaV7: true }}
+                    showToolbar
                     slots={{
-                      toolbar: CustomToolbar,
-                      pagination: CustomPagination,
+                      toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                      pagination: CustomPagination as CustomPaginationSlotType,
                       noResultsOverlay: CustomNoRowsOverlay,
                       noRowsOverlay: CustomNoRowsOverlay
                     }}
@@ -450,7 +467,7 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
                         deleteId: deleteId,
                         deleteClicked: () => { setShowDelete(true) },
                         columnVisibilityModel: columnVisibilityModel,
-                      },
+                      } as CustomToolbarPropsType,
                       pagination: {
                         onRowsPerPageChange: handleChangeRowsPerPage,
                         page: paginationModel.page,
@@ -464,36 +481,38 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
                           },
                         },
                       },
-                      filterPanel: {
-                        filterFormProps: {
-                          deleteIconProps: {
-                            sx: {
-                              justifyContent: 'flex-start'
-                            },
-                          },
-                        },
-                      },
-                      baseCheckbox: {
-                        inputProps: {
-                          name: "select-checkbox"
-                        }
-                      }
                     }}
                     rows={rows}
                     rowCount={rowCount}
                     columns={columns}
                     checkboxSelection
                     onRowSelectionModelChange={(newRowSelectionModel) => {
-                      const { page, pageSize } = paginationModel
-                      let start = page == 0 ? page : page * pageSize
-                      let end = pageSize * (1 + page)
-                      let currrenPageId = newRowSelectionModel.slice(start, end)
-                      setDeleteId(() => {
-                        let newState = currrenPageId.length > 0 ? [...currrenPageId] : [...newRowSelectionModel]
-                        return newState
-                      });
+                      const { ids, type } = newRowSelectionModel;
+                      setRowSelectionModel(newRowSelectionModel);
+                      if (type == 'include') {
+                        const selectedIdsArray = muiSelectionModelToArray(newRowSelectionModel);
+                        setDeleteId(selectedIdsArray)
+                      } else {
+                        if (ids.size == 0) {
+                          setDeleteId((prevState) => {
+                            prevState = [];
+                            prevState = rows.map((a) => a.id as number);
+                            return [...prevState]
+                          })
+                        } else {
+                          const exists = deleteId.some(id => Array.from(ids).includes(id as number));
+                          if (exists) {
+                            setDeleteId((prevState) => {
+                              return prevState.filter((a) => !Array.from(ids).includes(a))
+                            })
+                          } else {
+                            const allNewIds = rows.map((a) => a.id as number).filter((a) => !Array.from(ids).includes(a))
+                            setDeleteId(allNewIds)
+                          }
+                        }
+                      }
                     }}
-                    rowSelectionModel={deleteId}
+                    rowSelectionModel={rowSelectionModel}
                     paginationModel={paginationModel}
                     pageSizeOptions={[5, 10]}
                     showCellVerticalBorder
@@ -530,7 +549,6 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
           </div>
       }
       {edit && <BootstrapDialog
-        TransitionComponent={Transition}
         onClose={() => {
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
           setTimeout(() => {
@@ -641,7 +659,13 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
                           helperText={errors.date && errors['date']['message'] as ReactNode}
                           fullWidth
                           ref={ref}
-                          inputProps={{ style: { textTransform: 'lowercase' }, autoComplete: 'date' }}
+                          slotProps={{
+                            input: {
+                              style: { textTransform: 'lowercase' },
+                              autoComplete: 'date'
+                            }
+                          }}
+                          // inputProps={{ style: { textTransform: 'lowercase' }, autoComplete: 'date' }}
                           onChange={(e: any) => {
                             onChange(e)
                           }}
@@ -658,7 +682,7 @@ const VitalTabs: FC<VitalSignStepsType> = (({ stepName, stepLabel, stepUnit, ste
         </DialogContent>
       </BootstrapDialog>}
       {showDelete && <BootstrapDialog
-        TransitionComponent={Transition}
+
         onClose={(event, reason) => {
           if (reason == 'backdropClick') return false;
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')

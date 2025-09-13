@@ -27,7 +27,7 @@ import Tab from '@mui/material/Tab';
 import Tooltip from '@mui/material/Tooltip';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CloseIcon from '@mui/icons-material/Close';
-import { DataGrid, GridAlignment, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridAlignment, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel, } from '@mui/x-data-grid';
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
 import { NumericFormat } from 'react-number-format'
@@ -65,10 +65,10 @@ import CustomNoRowsOverlay from '@/shared/CustomNoRowsOverlay';
 import { loadStylesheet } from '@/pages/_app';
 import TextField from '@mui/material/TextField';
 import { Controller, } from 'react-hook-form';
-import CustomPagination from '../shared/CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from '../shared/CustomPagination';
 import { useTimeSlot } from '@/hooks/useTimeSlot';
 import FormHelperText from '@mui/material/FormHelperText';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, globalFilterFunctions } from '../shared/CustomToolbar';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, globalFilterFunctions } from '../shared/CustomToolbar';
 
 import InputAdornment from '@mui/material/InputAdornment';
 import BeatLoader from 'react-spinners/BeatLoader';
@@ -325,7 +325,6 @@ const ScheduleTiming: FC = (() => {
         !_.isEmpty(timeSlot) && setTimeSlot({})
 
         homeSocket.current.once(`updateGetDoctorTimeSlots`, () => {
-          console.log('updateGetDoctorTimeSlots')
           setReload(!reload)
         })
       }
@@ -777,12 +776,12 @@ const CalendarComponent: FC = (() => {
           ]}
         >
           <Grid container className="submit-section" sx={{ padding: 1 }} spacing={1}>
-            <Grid item lg={6} xs={6}>
+            <Grid size={{ lg: 6, xs: 6 }}>
               <Button fullWidth sx={{ lineHeight: '16px', boxShadow: 'none' }} className="btn btn-primary submit-btn"
                 disabled={doctorAvailableTimeSlot !== null && doctorAvailableTimeSlot.availableSlots.length > 0}
                 onClick={handleDeselect}>DESELECT</Button>
             </Grid>
-            <Grid item lg={6} xs={6}>
+            <Grid size={{ lg: 6, xs: 6 }}>
               <Button fullWidth sx={{ lineHeight: '16px', boxShadow: 'none' }} className="btn btn-primary submit-btn"
                 onClick={handleToday}>TODAY</Button>
             </Grid>
@@ -1116,8 +1115,8 @@ const PeriodPlugin: FC = () => {
                         `5px`,
                       mb: 1,
                     }}>
-                      {/* Two period section with close */}
-                      <Grid item sx={{
+
+                      <Grid sx={{
                         flexBasis: { lg: '85%', md: "70%", sm: '100%', xs: '100%' },
                         textAlign: { xl: 'left', lg: 'left', md: 'left', sm: 'left', xs: 'center' }
                       }}>
@@ -1137,7 +1136,7 @@ const PeriodPlugin: FC = () => {
 
                       {/* Add remove slot */}
 
-                      <Grid item sx={{
+                      <Grid sx={{
                         marginLeft: { xl: 'auto', lg: 'auto', md: 'auto', sm: 'unset', xs: 'unset' },
                         pb: { xl: 'unset', lg: 'unset', md: 'unset', sm: 2, xs: 2 },
                         display: 'flex',
@@ -1146,7 +1145,7 @@ const PeriodPlugin: FC = () => {
                         {
                           calendar[0] && calendar[1] ?
                             !isHide ?
-                              <Grid item sx={{
+                              <Grid sx={{
                                 flexBasis: '100%',
                                 display: 'flex'
                               }}>
@@ -1175,7 +1174,7 @@ const PeriodPlugin: FC = () => {
                                   <i className="fa fa-plus-circle"></i> Add Slot
                                 </Link>
                               </Grid> :
-                              <Grid item sx={{
+                              <Grid sx={{
                                 marginLeft: { xl: 'auto', lg: 'auto', md: 'auto', sm: 'unset', xs: 'unset' },
                                 pb: { xl: 'unset', lg: 'unset', md: 'unset', sm: 2, xs: 2 },
                                 display: 'flex',
@@ -1210,9 +1209,12 @@ const PeriodPlugin: FC = () => {
                       {
                         calendar[0] && calendar[1] &&
                         <Fragment>
-                          <Grid container spacing={{ xl: 2, lg: 2, md: 2, sm: 0 }} className='disabled' sx={{ pointerEvents: isHide ? 'none' : 'auto' }}>
+                          <Grid container
+                            spacing={{ xl: 2, lg: 2, md: 2, sm: 0 }}
+                            className='disabled'
+                            sx={{ pointerEvents: isHide ? 'none' : 'auto', minWidth: "100% !important" }}>
                             {/* time selec */}
-                            <Grid item lg={3} md={4} sm={12} xs={12}>
+                            <Grid size={{ lg: 3, md: 4, sm: 12, xs: 12 }}>
 
                               <div className='form-group'>
                                 <FormControl fullWidth >
@@ -1242,7 +1244,7 @@ const PeriodPlugin: FC = () => {
                               </div>
 
                             </Grid>
-                            <Grid item lg={9} md={8} sm={12} xs={12} sx={{ display: 'flex', mt: { lg: -1 }, flexDirection: { xl: 'row', lg: 'row', md: 'row', sm: 'row', xs: 'column' } }}>
+                            <Grid size={{ lg: 9, md: 8, sm: 12, xs: 12 }} sx={{ display: 'flex', mt: { lg: -1 }, flexDirection: { xl: 'row', lg: 'row', md: 'row', sm: 'row', xs: 'column' } }}>
                               <Stack sx={{ width: '-webkit-fill-available', }} direction={widthOnlyXs ? 'row' : 'column'}>
 
                                 <FormControlLabel
@@ -1692,7 +1694,7 @@ const SlotSwipeable: FC<SlotSwipeableType> = ({ saveTodb, updateDb, getConfirmDb
                                                       time.reservations?.length > 0 ?
                                                       <Grid container spacing={2} sx={{ padding: `5px 0px 0px 5px` }}>
                                                         {time.reservations.map((res, resIndex) => (
-                                                          <Grid item xs={4} key={res._id}>
+                                                          <Grid size={{ xs: 4 }} key={res._id}>
                                                             <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>
                                                               {dayjs(res.selectedDate).format(`DD MMM YYYY`)}
                                                             </span>
@@ -1745,7 +1747,7 @@ const SlotSwipeable: FC<SlotSwipeableType> = ({ saveTodb, updateDb, getConfirmDb
 
               {doctorAvailableTimeSlot !== null &&
                 <Grid container className="submit-section" spacing={1} sx={{ mt: 2 }}>
-                  <Grid item lg={doctorAvailableTimeSlot._id == '' ? 12 : 6}>
+                  <Grid size={{ lg: doctorAvailableTimeSlot._id == '' ? 12 : 6 }}>
                     <Button fullWidth className="btn btn-primary submit-btn" sx={{ boxShadow: "none", mb: 2, lineHeight: '16px' }} onClick={() => {
                       if (doctorAvailableTimeSlot._id == '') {
                         saveTodb()
@@ -1759,7 +1761,7 @@ const SlotSwipeable: FC<SlotSwipeableType> = ({ saveTodb, updateDb, getConfirmDb
                   </Grid>
                   {
                     doctorAvailableTimeSlot._id !== '' &&
-                    <Grid item lg={doctorAvailableTimeSlot._id == '' ? 12 : 6}>
+                    <Grid size={{ lg: doctorAvailableTimeSlot._id == '' ? 12 : 6 }}>
                       <Button fullWidth
                         className="btnDelete btn-primary submit-btn"
                         sx={{ boxShadow: "none", mb: 2, lineHeight: '16px' }}
@@ -1898,7 +1900,6 @@ const DialogComponent: FC = (() => {
   return (
     <BootstrapDialog
       sx={{ marginTop: 4 }}
-      TransitionComponent={Transition}
       onClose={(_event: object, reason: string) => {
         if (reason !== 'backdropClick') {
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
@@ -1999,7 +2000,7 @@ const SelectCheckBox = ({ period }: { period: 'morning' | 'afternoon' | 'evening
         <Fragment>
           <Divider>{capitalPeriod} </Divider>
           <Grid container >
-            <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+            <Grid size={{ xl: 6, lg: 6, md: 6, sm: 12, xs: 12 }}>
 
               <FormControlLabel
                 control={<Checkbox checked={periodArray.every(a => a.active)}
@@ -2018,7 +2019,7 @@ const SelectCheckBox = ({ period }: { period: 'morning' | 'afternoon' | 'evening
               />
             </Grid>
             {/* && periodArray.every(item => item.price === periodArray[0].price) */}
-            {periodArray.every(a => a.active) && <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+            {periodArray.every(a => a.active) && <Grid size={12}>
 
               <Controller
                 name={period}
@@ -2094,7 +2095,7 @@ const SelectCheckBox = ({ period }: { period: 'morning' | 'afternoon' | 'evening
               {
                 periodArray.map((timeObjec: TimeType, i: number) => {
                   return (
-                    <Grid item xl={4} lg={4} md={4} sm={4} xs={6} key={i} >
+                    <Grid size={{ xl: 4, lg: 4, md: 4, sm: 4, xs: 6 }} key={i} >
                       <FormControlLabel
                         checked={timeObjec.active}
                         {
@@ -2314,23 +2315,23 @@ const ReservationsComponent: FC = () => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.id
+        valueGetter: (_, row) => {
+          return row?.id
         },
       },
       {
         field: "createdDate",
         headerName: 'Reserve Day',
         width: 170,
+        flex: 1,
         sortable: true,
         searchAble: true,
         align: 'center',
         headerAlign: 'center',
         type: 'date',
         filterOperators: createCustomOperators().date,
-        valueFormatter: (params: GridValueFormatterParams<string>) => {
-          const { value } = params
-          return `${dayjs(value).tz(process.env.NEXT_PUBLIC_TZ).format('YYYY MMM DD HH:mm')}`
+        valueFormatter: (_, row) => {
+          return `${dayjs(row?.createdDate).tz(process.env.NEXT_PUBLIC_TZ).format('YYYY MMM DD HH:mm')}`
         },
       },
       {
@@ -2343,15 +2344,15 @@ const ReservationsComponent: FC = () => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { value } = params
-          return value.charAt(0).toUpperCase() + value.slice(1)
+        valueGetter: (_, row) => {
+          return row?.dayPeriod.charAt(0).toUpperCase() + row?.dayPeriod.slice(1)
         }
       },
       {
         field: 'invoiceId',
         headerName: 'Invoice No',
         width: 200,
+        flex: 1,
         align: 'center',
         headerAlign: 'center',
         searchAble: true,
@@ -2359,8 +2360,8 @@ const ReservationsComponent: FC = () => {
         filterable: true,
         filterOperators: createCustomOperators().string,
         renderCell(params: GridRenderCellParams) {
-          const { value, row } = params
-          return <Link href={`/doctors/dashboard/invoice-view/${btoa(row?._id!)}`}>{value}</Link>
+          const { row } = params
+          return <Link href={`/doctors/dashboard/invoice-view/${btoa(row?._id!)}`}>{row?.invoiceId}</Link>
         }
       },
       {
@@ -2374,15 +2375,14 @@ const ReservationsComponent: FC = () => {
         filterable: true,
         filterOperators: createCustomOperators().date,
         headerAlign: 'center',
-        valueGetter(params: GridValueGetterParams) {
-          const { row } = params;
+        valueGetter: (_, row) => {
           return new Date(row?.selectedDate)
         },
         sortComparator: (v1: any, v2: any) => dayjs(v1).isAfter(dayjs(v2).format('YYYY MM DD HH:mm'), 'minutes') ? 1 : -1,
         renderCell: (params) => {
           const { row } = params
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row?.selectedDate).format(`DD MMM YYYY`)}</span>
               <span className="d-block">{row?.timeSlot?.period}</span>
             </Stack>
@@ -2393,14 +2393,12 @@ const ReservationsComponent: FC = () => {
         field: 'patientProfile.fullName',
         headerName: 'Patient Name',
         width: 200,
+        flex: 1,
         headerAlign: 'center' as GridAlignment,
         searchAble: false,
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridValueGetterParams) {
-          return params?.row?.patientProfile?.fullName
-        },
         sortComparator: (v1: any, v2: any) => v1.toLowerCase() > v2.toLowerCase() ? 1 : -1,
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
@@ -2433,6 +2431,7 @@ const ReservationsComponent: FC = () => {
         field: 'doctorPaymentStatus',
         headerName: `Payment status`,
         width: 180,
+        flex: 1,
         sortable: true,
         searchAble: true,
         align: 'center',
@@ -2589,10 +2588,11 @@ const ReservationsComponent: FC = () => {
                       setColumnVisibilityModel(newModel)
                     }}
                     loading={isLoading}
-                    experimentalFeatures={{ ariaV7: true }}
+                    showToolbar
                     slots={{
-                      toolbar: CustomToolbar,
-                      pagination: CustomPagination,
+                      toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                      pagination: CustomPagination as CustomPaginationSlotType,
                       noResultsOverlay: CustomNoRowsOverlay,
                       noRowsOverlay: CustomNoRowsOverlay
                     }}
@@ -2602,7 +2602,7 @@ const ReservationsComponent: FC = () => {
                         deleteId: [],
                         deleteClicked: () => { },
                         columnVisibilityModel: columnVisibilityModel,
-                      },
+                      } as CustomToolbarPropsType,
                       pagination: {
                         onRowsPerPageChange: handleChangeRowsPerPage,
                         page: paginationModel.page,
@@ -2616,20 +2616,6 @@ const ReservationsComponent: FC = () => {
                           },
                         },
                       },
-                      filterPanel: {
-                        filterFormProps: {
-                          deleteIconProps: {
-                            sx: {
-                              justifyContent: 'flex-start'
-                            },
-                          },
-                        },
-                      },
-                      baseCheckbox: {
-                        inputProps: {
-                          name: "select-checkbox"
-                        }
-                      }
                     }}
                     getRowId={(params) => params._id}
                     rows={rows}

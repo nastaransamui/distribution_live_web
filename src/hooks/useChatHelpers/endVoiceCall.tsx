@@ -16,8 +16,8 @@ type EndVoiceCallProps = {
   setVoiceCallActive: React.Dispatch<React.SetStateAction<boolean>>;
   setCallReceiverUserData: React.Dispatch<React.SetStateAction<ChatUserType | null>>
   setIsAnswerable: React.Dispatch<React.SetStateAction<boolean>>;
-  isRecording: boolean;
-  stopRecording: () => void;
+  // isRecording: boolean;
+  // stopRecording: () => void;
   setShowSnakBar: React.Dispatch<React.SetStateAction<{ show: boolean, text: string }>>;
   setAudioBlob: React.Dispatch<React.SetStateAction<Blob | null>>,
   audioBlobRef: React.MutableRefObject<Blob | null>;
@@ -40,8 +40,8 @@ const endVoiceCall = (
     setVoiceCallActive,
     setCallReceiverUserData,
     setIsAnswerable,
-    isRecording,
-    stopRecording,
+    // isRecording,
+    // stopRecording,
     setShowSnakBar,
     setAudioBlob,
     audioBlobRef,
@@ -81,27 +81,27 @@ const endVoiceCall = (
   setIsAnswerable(false);
   setChatInputValue(updatedChatInputValue);
   setFakeMediaRecorder(null)
-  if (isRecording) {
-    stopRecording();
-    setTimeout(() => {
-      handleDownload({
-        audioBlobRef,
-        setAudioBlob,
-      });
-      clearRecording({
-        audioBlobRef,
-        setAudioBlob,
-      });
-    }, 300);
-  } else {
-    // Clear old blob if not recording
-    setTimeout(() => {
-      clearRecording({
-        audioBlobRef,
-        setAudioBlob,
-      });
-    }, 300);
-  }
+  // if (isRecording) {
+  //   stopRecording();
+  //   setTimeout(() => {
+  //     handleDownload({
+  //       audioBlobRef,
+  //       setAudioBlob,
+  //     });
+  //     clearRecording({
+  //       audioBlobRef,
+  //       setAudioBlob,
+  //     });
+  //   }, 300);
+  // } else {
+  //   // Clear old blob if not recording
+  //   setTimeout(() => {
+  //     clearRecording({
+  //       audioBlobRef,
+  //       setAudioBlob,
+  //     });
+  //   }, 300);
+  // }
 
   setShowSnakBar({
     text: "The call has ended.",

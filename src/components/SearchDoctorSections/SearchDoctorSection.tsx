@@ -71,7 +71,7 @@ export interface DoctorProfileType {
   lastName: string;
   mobileNumber: string;
   gender: string;
-  dob: string;
+  dob: string | Date;
   aboutMe: string;
   clinicName: string;
   clinicAddress: string;

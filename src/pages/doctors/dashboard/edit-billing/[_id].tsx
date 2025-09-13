@@ -11,9 +11,10 @@ import DashboardFooter from '@/components/sections/DashboardFooter';
 import useScssVar from '@/hooks/useScssVar';
 import BillingPage from '@/components/BillingPage/BilingPage';
 import { getAndDispatchUserData, handleProtectedAuth, setThemeCookiesNoRedirect } from '@/helpers/getServerSidePropsHelpers';
-import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
+// import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
 import { getCookie } from 'cookies-next';
+import { Params } from 'next/dist/server/request/params';
 
 
 const AddBillingPage: NextPage = (props: any) => {
@@ -72,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     try {
       const { params } = ctx
       const { _id: encryptID } = params as Params
-      if (!base64regex.test(encryptID)) return { props }
+      if (!base64regex.test(encryptID as string)) return { props }
       let prescription_id = atob(encryptID as string)
       const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/methods/findBillingForDoctorProfileById`, {
         method: "POST",

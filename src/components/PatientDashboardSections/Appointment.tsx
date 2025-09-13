@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect, useMemo, useState } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { Transition, BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
 import DialogContent from '@mui/material/DialogContent';
@@ -236,7 +236,6 @@ const Appointment: FC = (() => {
 
       {
         show && <BootstrapDialog
-          TransitionComponent={Transition}
           onClose={() => {
             document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
             setTimeout(() => {
@@ -428,7 +427,7 @@ const PatientAppointmentShowBox: FC<PatientAppointmentShowBoxType> = (({ myAppoi
                     {doctorProfile?.specialitiesServices &&
                       doctorProfile?.specialitiesServices.map((s: string, i: number) => {
                         return (
-                          <Grid key={s + i} item component="span" aria-label='key specilaities'>{s}</Grid>
+                          <Grid key={s + i} component="span" aria-label='key specilaities'>{s}</Grid>
                         )
                       })
                     }

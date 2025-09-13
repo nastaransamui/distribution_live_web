@@ -18,19 +18,30 @@ const useResizeObserver = ({
 
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
-        if (entry.target === inputGroupRef.current) {
+        if (entry.target === inputGroupRef.current && entry.contentRect.width > 0) {
           setSearchInputWidth(entry.contentRect.width);
         }
-        if (entry.target === chatFooterRef.current) {
+        if (entry.target === chatFooterRef.current && entry.contentRect.height > 0) {
           setFooterHeight(entry.contentRect.height);
         }
       }
     });
 
-    if (inputGroupRef.current) resizeObserver.observe(inputGroupRef.current);
-    if (chatFooterRef.current) resizeObserver.observe(chatFooterRef.current);
+    // Observe elements after a slight delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      if (inputGroupRef.current) {
+        resizeObserver.observe(inputGroupRef.current);
+      }
+      if (chatFooterRef.current) {
+        resizeObserver.observe(chatFooterRef.current);
+      }
+    }, 0);
 
-    return () => resizeObserver.disconnect(); // Cleanup on unmount
+    // Cleanup on unmount
+    return () => {
+      clearTimeout(timeoutId);
+      resizeObserver.disconnect();
+    };
   }, [chatFooterRef, inputGroupRef, setFooterHeight, setSearchInputWidth]);
 }
 

@@ -8,9 +8,12 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { ReviewTypes } from '../DoctorsSections/Profile/DoctorPublicProfileReviewsTap';
 import { toast } from 'react-toastify';
-import { DataGrid, GridColDef, GridColumnVisibilityModel, GridFilterModel, GridRenderCellParams, GridSortModel, GridValueGetterParams } from '@mui/x-data-grid';
+import {
+  DataGrid, GridColDef, GridColumnVisibilityModel, GridFilterModel,
+  GridRenderCellParams, GridSortModel
+} from '@mui/x-data-grid';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
-import CustomPagination from '../shared/CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from '../shared/CustomPagination';
 import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent, StyledBadge } from './ScheduleTiming';
 import Rating from '@mui/material/Rating';
 
@@ -20,7 +23,7 @@ import { doctors_profile, patient_profile } from '@/public/assets/imagepath';
 import Stack from '@mui/material/Stack';
 import RenderExpandableCell from '../shared/RenderExpandableCell';
 import { useTheme } from '@mui/material/styles';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
@@ -35,7 +38,6 @@ const Rates: FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false)
   const theme = useTheme();
-  const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
   const [rowsCount, setRowsCount] = useState<number>(0)
 
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
@@ -74,9 +76,6 @@ const Rates: FC = () => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.id
-        },
       },
       {
         field: 'role',
@@ -89,8 +88,8 @@ const Rates: FC = () => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridValueGetterParams) {
-          const { value } = params
+        valueGetter(_, row) {
+          const value = row.role;
           return value.charAt(0).toUpperCase() + value.slice(1)
         }
       },
@@ -103,10 +102,6 @@ const Rates: FC = () => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
-          return row?.authorProfile?.fullName
-        },
         sortComparator: (v1: any, v2: any) => v1.toLowerCase() > v2.toLowerCase() ? 1 : -1,
         renderCell: (data: any) => {
           const { row } = data;
@@ -116,7 +111,7 @@ const Rates: FC = () => {
               "Dr. " : `${row?.authorProfile.gender !== "" ?
                 `${row?.authorProfile.gender}. ` : ""}`}${row?.authorProfile?.fullName}`
           return (
-            <>
+            <span style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center' }}>
               <Link aria-label='profile' className=" mx-2" onClick={() => {
                 sessionStorage.setItem('doctorPatientTabValue', '0')
               }} href={
@@ -135,7 +130,7 @@ const Rates: FC = () => {
                   </Avatar>
                 </StyledBadge>
               </Link>
-              <Stack >
+              <Stack sx={{ height: '100%', justifyContent: 'center' }}>
                 <Link aria-label='profile' onClick={() => {
                   sessionStorage.setItem('doctorPatientTabValue', '0')
                 }} href={
@@ -147,7 +142,7 @@ const Rates: FC = () => {
                 </Link>
                 <small> {row?.authorProfile?.userName}</small>
               </Stack>
-            </>
+            </span>
           )
         },
       },
@@ -247,10 +242,6 @@ const Rates: FC = () => {
         searchAble: true,
         sortable: true,
         filterable: false,
-        valueGetter: (params) => {
-          const replies = params?.row?.replies;
-          return replies.length;
-        },
         sortComparator: (v1: any, v2: any) => {
           return v1 > v2 ? -1 : 1
         },
@@ -304,8 +295,7 @@ const Rates: FC = () => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridValueGetterParams) {
-          const { row } = params;
+        valueGetter(_, row) {
           return row.createdAt ? dayjs(row.createdAt).toDate() : null;
         },
         renderCell: (data: any) => {
@@ -328,8 +318,7 @@ const Rates: FC = () => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridValueGetterParams) {
-          const { row } = params;
+        valueGetter(_, row) {
           return row.updatedAt ? dayjs(row.updatedAt).toDate() : null;
         },
         renderCell: (data: any) => {
@@ -460,14 +449,6 @@ const Rates: FC = () => {
   }, [columns, filterModel])
 
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (dataGridRef?.current) {
-        setBoxMinHeight(`${dataGridRef.current.clientHeight}px`);
-      }
-    }, 100);
-  }, [paginationModel.pageSize, isLoading]);
-
 
   //Update page for pagination model in case last page delete or result less than page
   useEffect(() => {
@@ -542,10 +523,11 @@ const Rates: FC = () => {
                           setColumnVisibilityModel(newModel)
                         }}
                         loading={isLoading}
-                        experimentalFeatures={{ ariaV7: true }}
+                        showToolbar
                         slots={{
-                          toolbar: CustomToolbar,
-                          pagination: CustomPagination,
+                          toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                          pagination: CustomPagination as CustomPaginationSlotType,
                           noResultsOverlay: CustomNoRowsOverlay,
                           noRowsOverlay: CustomNoRowsOverlay
                         }}
@@ -555,7 +537,7 @@ const Rates: FC = () => {
                             deleteId: [],
                             deleteClicked: () => { },
                             columnVisibilityModel: columnVisibilityModel,
-                          },
+                          } as CustomToolbarPropsType,
                           pagination: {
                             onRowsPerPageChange: handleChangeRowsPerPage,
                             page: paginationModel.page,
@@ -569,20 +551,6 @@ const Rates: FC = () => {
                               },
                             },
                           },
-                          filterPanel: {
-                            filterFormProps: {
-                              deleteIconProps: {
-                                sx: {
-                                  justifyContent: 'flex-start'
-                                },
-                              },
-                            },
-                          },
-                          baseCheckbox: {
-                            inputProps: {
-                              name: "select-checkbox"
-                            }
-                          }
                         }}
                         getRowId={(params) => params._id}
                         rows={rows}

@@ -16,8 +16,8 @@ type UseEndVoiceCallHandlerProps = {
   setVoiceCallActive: React.Dispatch<React.SetStateAction<boolean>>;
   setCallReceiverUserData: React.Dispatch<React.SetStateAction<ChatUserType | null>>
   setIsAnswerable: React.Dispatch<React.SetStateAction<boolean>>;
-  isRecording: boolean;
-  stopRecording: () => void;
+  // isRecording: boolean;
+  // stopRecording: () => void;
   setShowSnakBar: React.Dispatch<React.SetStateAction<{ show: boolean, text: string }>>;
   setAudioBlob: React.Dispatch<React.SetStateAction<Blob | null>>,
   audioBlobRef: React.MutableRefObject<Blob | null>;
@@ -38,8 +38,8 @@ const useEndVoiceCallHandler = ({
   setVoiceCallActive,
   setCallReceiverUserData,
   setIsAnswerable,
-  isRecording,
-  stopRecording,
+  // isRecording,
+  // stopRecording,
   setShowSnakBar,
   setAudioBlob,
   audioBlobRef,
@@ -64,8 +64,8 @@ const useEndVoiceCallHandler = ({
       setVoiceCallActive,
       setCallReceiverUserData,
       setIsAnswerable,
-      isRecording,
-      stopRecording,
+      // isRecording,
+      // stopRecording,
       setShowSnakBar,
       setAudioBlob,
       audioBlobRef,
@@ -86,8 +86,8 @@ const useEndVoiceCallHandler = ({
     setVoiceCallActive,
     setCallReceiverUserData,
     setIsAnswerable,
-    isRecording,
-    stopRecording,
+    // isRecording,
+    // stopRecording,
     setShowSnakBar,
     setAudioBlob,
     audioBlobRef,

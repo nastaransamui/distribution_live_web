@@ -12,7 +12,6 @@ import ScrollToTop from '@/components/sections/ScrollToTop';
 import Footer from '@/components/sections/Footer';
 import LookingFor from '@/components/homeSections/LookingFor';
 import HomeSpecialities from '@/components/homeSections/HomeSpecialities';
-import HomeBookDoctor from '@/components/homeSections/HomeBookDoctor';
 import DoctorSection from '@/components/home3Sections/DoctorSection';
 import HomeFeatures from '@/components/homeSections/HomeFeatures';
 import HomeBlog from '@/components/homeSections/HomeBlog';
@@ -37,7 +36,6 @@ const Home: NextPage = () => {
       <HomeSearch />
       <LookingFor />
       <HomeSpecialities />
-      {/* <HomeBookDoctor /> */}
       <DoctorSection />
       <HomeFeatures />
       <HomeBlog />

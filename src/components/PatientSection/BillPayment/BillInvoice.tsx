@@ -4,7 +4,6 @@ import useScssVar from '@/hooks/useScssVar'
 import { logo } from '@/public/assets/imagepath';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
@@ -51,13 +50,12 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
   const [reload, setReload] = useState<boolean>(false)
   const [singleBill, setSingleBill] = useState<BillingTypeWithDoctorProfileAndPatientProfile>();
 
-  const searchParams = useSearchParams();
-  const encryptID = searchParams.get('_id')
+  const encryptID = router.query._id;
 
   useEffect(() => {
     let active = true;
     if (encryptID) {
-      if (base64regex.test(encryptID)) {
+      if (base64regex.test(encryptID as string)) {
         let _id = atob(encryptID as string)
         if (active && homeSocket?.current) {
           homeSocket.current.emit(`getSingleBillingForPatient`, { billing_id: _id, patientId: homeRoleName == 'doctors' ? doctorPatientProfile._id : userProfile?._id })
@@ -251,6 +249,7 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
       setIsClient(false)
     }
   }, [])
+  const isSameDoctor = singleBill?.doctorId == userProfile?._id
   return (
     <Fragment>
       <div className="content" style={muiVar}>
@@ -347,14 +346,14 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                                 <tr>
                                   {
                                     Object.keys(singleBill.billDetailsArray[0]).filter((a: string) => {
-                                      if (userProfile?.roleName == 'patient') {
+                                      if (userProfile?.roleName == 'patient' || !isSameDoctor) {
                                         return a == 'title' || a == 'total'
                                       } else {
                                         return a !== 'amount'
                                       }
                                     }).map((pres: string, index: number) => {
                                       return (
-                                        <th className={userProfile?.roleName == 'patient' ? pres == 'title' ? 'text-left' : "text-end" : index !== 0 ? "text-center" : ''} key={index}>{`${pres.charAt(0).toLocaleUpperCase()}${pres.slice(1)}`}</th>
+                                        <th className={userProfile?.roleName == 'patient' || !isSameDoctor ? pres == 'title' ? 'text-left' : "text-end" : index !== 0 ? "text-center" : ''} key={index}>{`${pres.charAt(0).toLocaleUpperCase()}${pres.slice(1)}`}</th>
                                       )
                                     })
                                   }
@@ -365,9 +364,9 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                                   singleBill.billDetailsArray.map((a: BillingDetailsArrayType, index: number) => {
                                     return (
                                       <tr key={index}>
-                                        <td style={{ textAlign: userProfile?.roleName == 'patient' ? 'left' : "left" }}>{a.title}</td>
+                                        <td style={{ textAlign: userProfile?.roleName == 'patient' || !isSameDoctor ? 'left' : "left" }}>{a.title}</td>
                                         {
-                                          userProfile?.roleName == 'doctors' &&
+                                          userProfile?.roleName == 'doctors' && isSameDoctor &&
                                           <>
                                             <td className="text-center">{formatNumberWithCommas(a.price?.toString()!)}</td>
                                             <td className="text-center">{`${a.bookingsFee} %`}</td>
@@ -408,7 +407,7 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                               <tbody>
                                 <tr>
                                   {
-                                    userProfile?.roleName == 'doctors' && <>
+                                    userProfile?.roleName == 'doctors' && isSameDoctor && <>
                                       <th id='totalPriceTH,
                                       #totalPriceNumber'>Total Price:</th>
                                       <td style={{ padding: '10px 0px' }} id='totalPriceNumber'>
@@ -423,7 +422,7 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                                 </tr>
                                 <tr>
                                   {
-                                    userProfile?.roleName == 'doctors' ? <>
+                                    userProfile?.roleName == 'doctors' && isSameDoctor ? <>
                                       <th>Total Fee Price:</th>
                                       <td style={{ padding: '10px 0px' }}>
                                         <span style={{ paddingRight: '18px' }}>
@@ -446,7 +445,7 @@ const BillInvoice: FC<any | undefined> = (({ doctorPatientProfile }) => {
                                 </tr>
                                 <tr>
                                   {
-                                    userProfile?.roleName == 'doctors' && <>
+                                    userProfile?.roleName == 'doctors' && isSameDoctor && <>
                                       <th>Total:</th>
                                       <td style={{ padding: '10px 0px' }}>
                                         <span style={{ paddingRight: '18px' }}>{singleBill?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(

@@ -1,21 +1,19 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useEffect, useState } from 'react'
-import Link from 'next/link'
-import ProgressBar from "react-customizable-progressbar";
+import { CircularProgressbarWithChildren } from 'react-circular-progressbar';
+
 import { Icon01, Icon02, Icon03 } from '@/public/assets/imagepath';
 import { useTheme } from '@mui/material';
-import TabContext from '@mui/lab/TabContext';
-import TabPanel from '@mui/lab/TabPanel';
 import DashboardAppoinment from './AppointmentTab';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import dayjs from 'dayjs';
 import AnimationWrapper from '@/shared/AnimationWrapper';
 import BeatLoader from 'react-spinners/BeatLoader';
+import MuiSwipeableTabs from '../shared/MuiSwipeableTabs';
 
 const DashboardMain: FC = (() => {
   const theme = useTheme();
-  const [value, setValue] = useState('1');
   const [isToday, setIsToday] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [total, setTotal] = useState(0);
@@ -51,38 +49,40 @@ const DashboardMain: FC = (() => {
                       <div className="row">
                         <div className="col-md-12 col-lg-4">
                           <div className="dash-widget dct-border-rht">
-                            <ProgressBar
-                              // width={8}
-                              radius={40}
-                              progress={75}
-                              rotate={-183}
-                              strokeWidth={6}
-                              strokeColor={theme.palette.secondary.main}
-                              strokeLinecap="square"
-                              trackStrokeWidth={8}
-                              trackStrokeColor={theme.palette.background.paper}
-                              trackStrokeLinecap="square"
-                              pointerRadius={0}
-                              initialAnimation={true}
-                              transition="1.5s ease 0.5s"
-                              trackTransition="0s ease"
+                            <CircularProgressbarWithChildren
+                              value={75}
+                              strokeWidth={5}
+                              styles={{
+                                root: {
+                                  width: '100px',
+                                  padding: '10px'
+                                },
+                                path: {
+                                  // Path color
+                                  stroke: theme.palette.secondary.main,
+                                  transition: 'stroke-dashoffset 0.5s ease 0s',
+                                  // Rotate the path
+                                  transform: 'rotate(-0.25turn)',
+                                  transformOrigin: 'center center',
+                                },
+                                // Customize the circle behind the path, i.e. the "total progress"
+                                trail: {
+                                  // Trail color
+                                  stroke: theme.palette.background.paper,
+                                },
+                              }}
                             >
                               <div className="indicator-volume">
                                 <img
                                   src={Icon01}
                                   className="img-fluid colorFill"
                                   alt="Patient"
-                                  style={{
-                                    position: "relative",
-                                    top: "-83px",
-                                    left: "45px",
-                                  }}
                                 />
                               </div>
-                            </ProgressBar>
+                            </CircularProgressbarWithChildren>
                             <div
                               className="dash-widget-info"
-                              style={{ position: "relative", top: "-18px" }}
+                              style={{ position: "relative" }}
                             >
                               <h6>Total Patient</h6>
                               <h3>{userProfile !== null && userDoctorProfile?.patients_id?.length}</h3>
@@ -92,38 +92,40 @@ const DashboardMain: FC = (() => {
                         </div>
                         <div className="col-md-12 col-lg-4">
                           <div className="dash-widget dct-border-rht">
-                            <ProgressBar
-                              // width={8}
-                              radius={40}
-                              progress={65}
-                              rotate={-183}
-                              strokeWidth={6}
-                              strokeColor={theme.palette.secondary.light}
-                              strokeLinecap="square"
-                              trackStrokeWidth={8}
-                              trackStrokeColor={theme.palette.background.paper}
-                              trackStrokeLinecap="square"
-                              pointerRadius={0}
-                              initialAnimation={true}
-                              transition="1.5s ease 0.5s"
-                              trackTransition="0s ease"
+                            <CircularProgressbarWithChildren
+                              value={68}
+                              strokeWidth={5}
+                              styles={{
+                                root: {
+                                  width: '100px',
+                                  padding: '10px'
+                                },
+                                path: {
+                                  // Path color
+                                  stroke: theme.palette.secondary.light,
+                                  transition: 'stroke-dashoffset 0.5s ease 0s',
+                                  // Rotate the path
+                                  transform: 'rotate(-0.28turn)',
+                                  transformOrigin: 'center center',
+                                },
+                                // Customize the circle behind the path, i.e. the "total progress"
+                                trail: {
+                                  // Trail color
+                                  stroke: theme.palette.background.paper,
+                                },
+                              }}
                             >
                               <div className="indicator-volume">
                                 <img
                                   src={Icon02}
                                   className="img-fluid colorFill"
                                   alt="Patient"
-                                  style={{
-                                    position: "relative",
-                                    top: "-83px",
-                                    left: "45px",
-                                  }}
                                 />
                               </div>
-                            </ProgressBar>
+                            </CircularProgressbarWithChildren>
                             <div
                               className="dash-widget-info"
-                              style={{ position: "relative", top: "-18px" }}
+                              style={{ position: "relative" }}
                             >
                               <h1>{isToday ? `Today Patients` : `This week Patients`}</h1>
                               <h2>{isLoading ? <BeatLoader color={theme.palette.primary.main} size={10}
@@ -138,21 +140,28 @@ const DashboardMain: FC = (() => {
                         </div>
                         <div className="col-md-12 col-lg-4">
                           <div className="dash-widget">
-                            <ProgressBar
-                              // width={8}
-                              radius={40}
-                              progress={30}
-                              rotate={-183}
-                              strokeWidth={6}
-                              strokeColor={theme.palette.secondary.dark}
-                              strokeLinecap="square"
-                              trackStrokeWidth={8}
-                              trackStrokeColor={theme.palette.background.paper}
-                              trackStrokeLinecap="square"
-                              pointerRadius={0}
-                              initialAnimation={true}
-                              transition="1.5s ease 0.5s"
-                              trackTransition="0s ease"
+                            <CircularProgressbarWithChildren
+                              value={30}
+                              strokeWidth={5}
+                              styles={{
+                                root: {
+                                  width: '100px',
+                                  padding: '10px'
+                                },
+                                path: {
+                                  // Path color
+                                  stroke: theme.palette.secondary.dark,
+                                  transition: 'stroke-dashoffset 0.5s ease 0s',
+                                  // Rotate the path
+                                  transform: 'rotate(-0.28turn)',
+                                  transformOrigin: 'center center',
+                                },
+                                // Customize the circle behind the path, i.e. the "total progress"
+                                trail: {
+                                  // Trail color
+                                  stroke: theme.palette.background.paper,
+                                },
+                              }}
                             >
                               <div className="indicator-volume">
                                 <img
@@ -161,15 +170,13 @@ const DashboardMain: FC = (() => {
                                   alt="Patient"
                                   style={{
                                     position: "relative",
-                                    top: "-83px",
-                                    left: "45px",
                                   }}
                                 />
                               </div>
-                            </ProgressBar>
+                            </CircularProgressbarWithChildren>
                             <div
                               className="dash-widget-info"
-                              style={{ position: "relative", top: "-18px" }}
+                              style={{ position: "relative", }}
                             >
                               <h1>Reservations</h1>
                               <h2>{userProfile !== null && userProfile?.reservations_id?.length}</h2>
@@ -192,50 +199,44 @@ const DashboardMain: FC = (() => {
               <div className="row">
                 <div className={`col-md-12   ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
                   <h1 className="mb-4" style={{ color: theme.palette.secondary.main, fontSize: '18px' }}>{isToday ? `Today Patients` : `This week Patients`}</h1>
-                  <TabContext value={value}>
-                    <div className="appointment-tab">
-                      <ul className="nav nav-tabs nav-tabs-solid nav-tabs-rounded">
-                        <li className="nav-item">
-                          <Link
-                            className={`nav-link ${value == '1' ? 'active' : ''}`}
-                            href="#upcoming-appointments"
-                            data-bs-toggle="tab"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setValue('1')
-                              setIsToday(false)
-                            }}
-                          >
-                            Upcoming
-                          </Link>
-                        </li>
-                        <li className="nav-item">
-                          <Link
-                            className={`nav-link ${value == '2' ? 'active' : ''}`}
-                            href="#today-appointments"
-                            data-bs-toggle="tab"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setValue('2')
-                              setIsToday(true)
-                            }}
-                          >
-                            Today
-                          </Link>
-                        </li>
-                      </ul>
-                      <div className="card card-table mb-0">
-                        <div className="card-body">
-                          <TabPanel value="1" className={`${!isToday && value == "1" ? "animate__animated animate__backInLeft" : ""}`}>
-                            <DashboardAppoinment isLoading={isLoading} setIsLoading={setIsLoading} total={total} setTotal={setTotal} isToday={isToday} />
-                          </TabPanel>
-                          <TabPanel value="2" className={`${isToday && value == "2" ? "animate__animated animate__backInRight" : ""}`}>
-                            <DashboardAppoinment isLoading={isLoading} setIsLoading={setIsLoading} total={total} setTotal={setTotal} isToday={isToday} />
-                          </TabPanel>
-                        </div>
-                      </div>
-                    </div>
-                  </TabContext>
+                  <MuiSwipeableTabs
+                    steps={
+                      [
+                        {
+                          stepName: "Upcoming",
+                          stepComponent:
+                            <DashboardAppoinment
+                              isLoading={isLoading}
+                              setIsLoading={setIsLoading}
+                              total={total}
+                              setTotal={setTotal}
+                              isToday={false}
+                              setIsToday={setIsToday} />,
+                          stepId: 'Upcoming',
+                          isValidated: () => true,
+                          isDisable: false,
+                          hasParams: false,
+                          paramsObj: {}
+                        },
+                        {
+                          stepName: "Today",
+                          stepComponent:
+                            <DashboardAppoinment
+                              isLoading={isLoading}
+                              setIsLoading={setIsLoading}
+                              total={total}
+                              setTotal={setTotal}
+                              isToday={true}
+                              setIsToday={setIsToday} />,
+                          stepId: 'Today',
+                          isValidated: () => true,
+                          isDisable: false,
+                          hasParams: false,
+                          paramsObj: {}
+                        },
+                      ]
+                    }
+                    activeTab={0} />
                 </div>
               </div>
           }

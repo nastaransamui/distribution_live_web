@@ -23,15 +23,25 @@ import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import preciseDiff from 'dayjs-precise-range'
 import { useTheme } from '@mui/material/styles';
-import { DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridFilterModel, GridRenderCellParams, GridRowId, GridRowParams, GridSortModel, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+  GridColumnVisibilityModel,
+  GridFilterModel,
+  GridRenderCellParams,
+  GridRowId,
+  GridRowParams,
+  GridSortModel,
+} from '@mui/x-data-grid';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
 import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
 import Typography from '@mui/material/Typography';
-import CustomPagination from '../shared/CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from '../shared/CustomPagination';
 import Stack from '@mui/material/Stack';
 import RenderExpandableCell from '../shared/RenderExpandableCell';
-import IconButton from '@mui/material/IconButton';
+import ageParts from '@/helpers/ageParts';
 
 export interface FavDoctorProfile {
   totalCount: number;
@@ -88,13 +98,13 @@ const Favourits: FC = (() => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.id
-        },
+        valueGetter: (_, row) => {
+          return row.id
+        }
       },
       {
         field: 'profile.fullName',
-        headerName: `Patient Name`,
+        headerName: `Doctor Name`,
         width: 270,
         align: 'center',
         headerAlign: 'center',
@@ -103,9 +113,6 @@ const Favourits: FC = (() => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.fullName
-        },
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           const profileImage = row?.profileImage == '' ? doctors_profile : row?.profileImage
@@ -124,8 +131,11 @@ const Favourits: FC = (() => {
                   <Avatar alt="" src={`${profileImage}`} >
                     <img src={doctors_profile} alt="" className="avatar avatar-in-schedule-table" />
                   </Avatar>
-                </StyledBadge></Link>
-              <Link href={`/doctors/profile/${btoa(row._id)}`} >{`${row?.gender == '' ? '' : row?.gender + '.'}`}{row?.fullName}</Link>
+                </StyledBadge>
+              </Link>
+              <Link href={`/doctors/profile/${btoa(row._id)}`} >
+                {`${row?.gender == '' ? '' : row?.gender + '.'}`}{row?.fullName}
+              </Link>
             </span>
           )
         }
@@ -139,8 +149,11 @@ const Favourits: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridValueGetterParams) {
-          const { row } = params;
+        valueGetter(_, row) {
+          return row?.specialities?.length == 0 ? '--' : row?.specialities[0]?.specialities
+        },
+        valueFormatter(_, row) {
+          ;
           return row?.specialities?.length == 0 ? '--' : row?.specialities[0]?.specialities
         },
         sortComparator: (v1: any, v2: any) => v1 > v2 ? 1 : -1,
@@ -152,7 +165,7 @@ const Favourits: FC = (() => {
             <>
               {
                 row?.specialities?.length !== 0 ?
-                  <>
+                  <span style={{ display: 'flex', height: '100%', alignItems: 'center' }}>
                     <Link className="avatar mx-2" href="#" onClick={(e) => e.preventDefault()}>
                       <img src={`${specialityImage}`} style={{ width: 30, height: 30 }} alt="" />
                     </Link>
@@ -170,7 +183,7 @@ const Favourits: FC = (() => {
                         </small>
                       </Tooltip>
                     </Stack>
-                  </> :
+                  </span> :
                   <span style={{ display: 'flex', justifyContent: 'center', minWidth: '100%' }}>
                     <Link href="#" onClick={(e) => e.preventDefault()}>{`--`}</Link>
                   </span>
@@ -190,19 +203,14 @@ const Favourits: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().date,
         headerAlign: 'center',
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
-          return row?.lastLogin
-        },
         sortComparator: (v1, v2) => {
           if (v1?.lastLogin || v2?.lastLogin) {
             return dayjs(v1?.lastLogin?.date).isAfter(dayjs(v2?.lastLogin?.date)) ? 1 : -1
           }
           return v1 < v2 ? 1 : -1
         },
-        valueFormatter(params: GridValueFormatterParams) {
-          const { api, id } = params;
-          let lastLogin = api.getCellValue(id as string, 'lastLogin')
+        valueFormatter(_, row) {
+          let lastLogin = row?.lastLogin;
           // let online = api.getCellValue(id as string, 'online')
           return lastLogin == undefined ?
             `This User not login yet` :
@@ -217,7 +225,8 @@ const Favourits: FC = (() => {
                 justifyContent="center"
                 alignItems="center"
                 dangerouslySetInnerHTML={{ __html: formattedValue }}
-                spacing={0} />
+                spacing={0}
+                sx={{ height: '100%', justifyContent: 'center' }} />
             </Fragment>
           )
         }
@@ -233,9 +242,8 @@ const Favourits: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().date,
         headerAlign: 'center',
-        valueGetter: (params) => {
-          const { row } = params;
-          return row?.profile?.dob
+        valueGetter: (_, row) => {
+          return row.dob ? dayjs(row.dob).toDate() : null;
         },
         sortComparator: (v1, v2) => {
           if (typeof v1 !== 'string' && typeof v2 !== 'string') {
@@ -245,20 +253,21 @@ const Favourits: FC = (() => {
         },
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
-          //@ts-ignore
-          let { years, months, days } = dayjs.preciseDiff(row?.dob, dayjs(), true)
+          let { years, } = ageParts(row?.dob ?? null)
           return (
             <Stack direction="column"
               justifyContent="center"
               alignItems="center"
-              spacing={0}>
+              spacing={0}
+              sx={{ height: '100%', justifyContent: 'center' }} >
               <Link href={`#`} onClick={(e) => e.preventDefault()} >
                 {row?.dob !== '' ? dayjs(row?.dob).format('DD MMM YYYY') : '---- -- --'}
               </Link>
-              {row?.dob !== '' && <Link href={`#`} onClick={(e) => e.preventDefault()} >
-                <i className="fas fa-birthday-cake"></i>{"  "}
-                {`${isNaN(years) ? '--' : years} years`}
-              </Link>}
+              {row?.dob !== '' &&
+                <Link href={`#`} onClick={(e) => e.preventDefault()} style={{ color: theme.palette.text.color }} >
+                  <i className="fas fa-birthday-cake"></i>{"  "}
+                  {`${isNaN(years) ? '--' : years} years`}
+                </Link>}
             </Stack>
           )
         }
@@ -274,8 +283,7 @@ const Favourits: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().string,
         headerAlign: 'center',
-        valueGetter: (params: GridValueGetterParams) => {
-          const { row } = params;
+        valueFormatter: (_, row) => {
           return row?.city == "" ? "===" : row?.city;
         },
         renderCell: (params: GridRenderCellParams) => {
@@ -297,8 +305,7 @@ const Favourits: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().string,
         headerAlign: 'center',
-        valueGetter: (params: GridValueGetterParams) => {
-          const { row } = params;
+        valueFormatter: (_, row) => {
           return row?.state == "" ? "===" : row?.state;
         },
         renderCell: (params: GridRenderCellParams) => {
@@ -320,8 +327,7 @@ const Favourits: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().string,
         headerAlign: 'center',
-        valueGetter: (params: GridValueGetterParams) => {
-          const { row } = params;
+        valueFormatter: (_, row) => {
           return row?.country == "" ? "===" : row?.country;
         },
         renderCell: (params: GridRenderCellParams) => {
@@ -611,10 +617,11 @@ const Favourits: FC = (() => {
                         setColumnVisibilityModel(newModel)
                       }}
                       loading={isLoading}
-                      experimentalFeatures={{ ariaV7: true }}
+                      showToolbar
                       slots={{
-                        toolbar: CustomToolbar,
-                        pagination: CustomPagination,
+                        toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                        pagination: CustomPagination as CustomPaginationSlotType,
                         noResultsOverlay: CustomNoRowsOverlay,
                         noRowsOverlay: CustomNoRowsOverlay
                       }}
@@ -624,7 +631,7 @@ const Favourits: FC = (() => {
                           deleteId: [],
                           deleteClicked: () => { },
                           columnVisibilityModel: columnVisibilityModel,
-                        },
+                        } as CustomToolbarPropsType,
                         pagination: {
                           onRowsPerPageChange: handleChangeRowsPerPage,
                           page: paginationModel.page,
@@ -638,20 +645,6 @@ const Favourits: FC = (() => {
                             },
                           },
                         },
-                        filterPanel: {
-                          filterFormProps: {
-                            deleteIconProps: {
-                              sx: {
-                                justifyContent: 'flex-start'
-                              },
-                            },
-                          },
-                        },
-                        baseCheckbox: {
-                          inputProps: {
-                            name: "select-checkbox"
-                          }
-                        }
                       }}
                       getRowId={(params) => params._id}
                       rows={rows}

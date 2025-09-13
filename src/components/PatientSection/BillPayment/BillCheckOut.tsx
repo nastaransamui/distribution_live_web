@@ -87,12 +87,12 @@ const BillCheckOut: FC<BillCheckOutProps> = (({ serverSingleBill }) => {
   const { muiVar, bounce } = useScssVar();
   const searchParams = useSearchParams()
   const dispatch = useDispatch()
-  const encryptId = searchParams.get('_id')
+  const encryptId = router.query._id
 
   useEffect(() => {
     let active = true;
     if (encryptId && active) {
-      if (base64regex.test(encryptId)) {
+      if (base64regex.test(encryptId as string)) {
         let _id = atob(encryptId as string)
 
         if (homeSocket?.current) {

@@ -1,6 +1,5 @@
 import { FC, Fragment, useEffect, useState } from 'react'
 import PageContent from '@/components/DoctorsSections/Profile/PageContent';
-import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/router';
 import { useTheme } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
@@ -16,10 +15,9 @@ export const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-
 
 
 const PublicProfilePage: FC = (() => {
-  const searchParams = useSearchParams();
   const { bounce, muiVar } = useScssVar();
-  const encryptID = searchParams.get('_id')
   const router = useRouter()
+  const { _id: encryptID } = router.query;
   const theme = useTheme();
 
   const [profile, setProfile] = useState<DoctorProfileType | null>(null);
@@ -29,7 +27,7 @@ const PublicProfilePage: FC = (() => {
   useEffect(() => {
     let active = true;
     if (encryptID) {
-      if (base64regex.test(encryptID)) {
+      if (base64regex.test(encryptID as string)) {
         let _id = atob(encryptID as string)
         if (active && homeSocket?.current) {
           homeSocket.current.emit(`findUserById`, { _id })

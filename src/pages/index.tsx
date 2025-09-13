@@ -79,7 +79,6 @@ const Home: NextPage = (props: any) => {
       <LazyLoadWrapper>
         <Doctors />
       </LazyLoadWrapper>
-      {/* <Pricing /> */}
       <WorkSection />
       <LazyLoadWrapper>
         <LatestArticle />

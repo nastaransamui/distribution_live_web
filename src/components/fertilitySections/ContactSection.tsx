@@ -2,7 +2,7 @@
 import { FC, Fragment } from 'react'
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
-import { contact_fourteen, contact_icon2, contact_icon3 } from '../../../public/assets/imagepath';
+import { contact_fourteen, } from '../../../public/assets/imagepath';
 import { ContactIconOneSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import CheckBox from "@mui/icons-material/CheckBox";
 import Typography from "@mui/material/Typography";

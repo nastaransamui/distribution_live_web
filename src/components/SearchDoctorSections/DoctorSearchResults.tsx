@@ -1,5 +1,3 @@
-
-
 /* eslint-disable @next/next/no-img-element */
 import { CSSProperties, FC, Fragment, RefObject, createRef, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
@@ -84,6 +82,7 @@ import { loadStylesheet } from '@/pages/_app';
 import { getCookies, setCookie } from 'cookies-next';
 import { BestDoctorsType } from '@/redux/bestDoctorsData';
 import { BestCardioDoctorsType } from '@/redux/bestCardioDoctors';
+import ageParts from '@/helpers/ageParts';
 
 export interface DoctorSearchResultsPropsType {
   doctorResults: DoctorProfileType[];
@@ -189,7 +188,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
                     justifyContent="center"
                     alignItems="center" spacing={2}>
                     {Array.from(Array(3).keys()).map((i) => (
-                      <Grid item lg={4} xs={12} sm={6} md={4} key={i}>
+                      <Grid size={{ lg: 4, md: 4, sm: 6, xs: 12 }} key={i}>
                         <DoctorGridSearchSkeleton />
                       </Grid>
                     ))
@@ -214,7 +213,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
                       doctorResults.map((doctor: DoctorProfileType, index: number) => {
 
                         return (
-                          <Grid item lg={4} xs={12} sm={6} md={4} sx={{ m: 2 }} role="columnheader" key={index}>
+                          <Grid size={{ lg: 4, md: 4, sm: 6, xs: 12 }} sx={{ m: 2 }} role="columnheader" key={index}>
                             <DoctorListComponent
                               elRefs={elRefs}
                               aria-label="card"
@@ -242,7 +241,7 @@ const DoctorSearchResults: FC<DoctorSearchResultsPropsType> = ((
                         doctorResults.map((doctor: DoctorProfileType, index: number) => {
 
                           return (
-                            <Grid item lg={4} xs={12} sm={6} md={4} role="columnheader" key={index}>
+                            <Grid size={{ lg: 4, md: 4, sm: 6, xs: 12 }} role="columnheader" key={index}>
                               <DoctorGridComponent
                                 elRefs={elRefs}
                                 aria-label="card"
@@ -324,7 +323,7 @@ export const TopFilter: FC<TopFilterType> = (({
   return (
     <Grid container justifyContent="space-between" sx={{ mb: 2 }}>
 
-      <Grid item sx={{
+      <Grid sx={{
         display: 'flex',
         flexDirection: 'column',
         gap: 1,
@@ -357,7 +356,7 @@ export const TopFilter: FC<TopFilterType> = (({
         </div>
 
       </Grid>
-      <Grid item sx={{
+      <Grid sx={{
         display: 'flex',
         flexDirection: 'column',
         gap: 1,
@@ -510,7 +509,6 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
   elRefs,
   expanded,
   doctor }) => {
-  dayjs.extend(preciseDiff)
   const theme = useTheme();
   const [imageTimestamp, setImageTimestamp] = useState(new Date().getTime());
   useEffect(() => {
@@ -542,8 +540,7 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
     });
   };
 
-  // @ts-ignore
-  let { years, } = dayjs.preciseDiff(doctor?.dob, dayjs(), true);
+  let { years } = ageParts(doctor?.dob as "" | Date | undefined ?? null);
   const serviceClicked = (e: any) => {
 
     const target = document.getElementById(`collapseservices_${index}`)!
@@ -631,7 +628,7 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
     <Fragment>
       <ListStyledCard ref={elRefs[index]} id={`${index}_card`} aria-label="card" expanded={expanded} index={index}>
         <Grid container spacing={0}>
-          <Grid item xl={3} lg={2} md={2.87} sm={2} xs={12} >
+          <Grid size={{ xl: 3, lg: 2, md: 2.87, sm: 2, xs: 12 }} >
             <CardMedia sx={{
               '& .MuiBadge-root': {
                 display: 'grid',
@@ -688,7 +685,7 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
               </ul>
             </CardMedia>
           </Grid>
-          <Grid item xl={3} lg={3} md={2.5} sm={3} xs={12} >
+          <Grid size={{ xl: 3, lg: 3, md: 2.5, sm: 3, xs: 12 }} >
             <CardContent sx={{
               flex: '1 0 auto',
               maxHeight: 190,
@@ -732,7 +729,7 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
               </div>
             </CardContent>
           </Grid>
-          <Grid item xl={3} lg={3} md={2.5} sm={3} xs={12}>
+          <Grid size={{ xl: 3, lg: 3, md: 2.5, sm: 3, xs: 12 }}>
             <CardContent id={`${index}_context`}>
               <h2 style={{ fontSize: '14px' }}>About: </h2>
               <Typography component='div' variant="body2" color="text.secondary" id={`${index}_typoGrapy`}>
@@ -747,7 +744,7 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
               </Typography>
             </CardContent>
           </Grid>
-          <Grid item xl={3} lg={4} md={4.03} sm={4} xs={12}>
+          <Grid size={{ xl: 3, lg: 4, md: 4.3, sm: 4, xs: 12 }} >
             <CardContent id={`${index}_context`}>
               <ul >
                 <li style={{ marginBottom: 10 }}>
@@ -755,8 +752,8 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
                     <ClickAwayListener onClickAway={() => handleTooltipClose(index)}>
                       <span>
                         <Tooltip
-                          PopperProps={{
-                            disablePortal: true,
+                          slotProps={{
+                            popper: { disablePortal: true }
                           }}
                           arrow
                           followCursor
@@ -860,7 +857,7 @@ export const DoctorListComponent: React.FC<DoctorListComponentProps> = ({
               {doctor?.specialitiesServices &&
                 doctor?.specialitiesServices.map((s: string, i: number) => {
                   return (
-                    <Grid key={s + i} item component="span" aria-label='key specilaities'>{s}</Grid>
+                    <Grid key={s + i} component="span" aria-label='key specilaities'>{s}</Grid>
                   )
                 })
               }
@@ -1245,8 +1242,8 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
                                   <ClickAwayListener onClickAway={() => handleTooltipClose(index)}>
                                     <span style={{ minWidth: "100%" }}>
                                       <Tooltip
-                                        PopperProps={{
-                                          disablePortal: true,
+                                        slotProps={{
+                                          popper: { disablePortal: true }
                                         }}
                                         arrow
                                         followCursor
@@ -1365,14 +1362,17 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
                     primary={
                       <ClickAwayListener onClickAway={() => { setOpen(false) }}>
                         <Tooltip
-                          TransitionComponent={Zoom}
+                          slotProps={{
+                            transition: Zoom,
+                            popper: { disablePortal: true }
+                          }}
                           title={
                             <Grid container rowGap={1} columnGap={1} sx={{ paddingRight: 1, paddingLeft: 1 }} className="clinic-services"
                               key={doctor?.specialitiesServices?.toString()}>
                               {doctor?.specialitiesServices &&
                                 doctor?.specialitiesServices.map((s: string, i: number) => {
                                   return (
-                                    <Grid key={s + i} item component="span" >{s}</Grid>
+                                    <Grid key={s + i} component="span" >{s}</Grid>
                                   )
                                 })
                               }
@@ -1380,9 +1380,6 @@ export const DoctorGridComponent: React.FC<DoctorGridComponentProps> = ({
                           }
                           arrow
                           placement='top'
-                          PopperProps={{
-                            disablePortal: true,
-                          }}
                           onClose={() => { setOpen(false) }}
                           open={open}
                           disableFocusListener
@@ -1560,7 +1557,9 @@ export const FavButton: FC<FavButtonTypes> = (({ doctor, index }) => {
         </span>
       </Tooltip>
       <Dialog
-        TransitionComponent={Transition}
+        slotProps={{
+          transition: Transition
+        }}
         open={loginDialog}
         onClose={() => {
           document.getElementById('edit_invoice_details1')?.classList.replace('animate__backInDown', 'animate__backOutDown')

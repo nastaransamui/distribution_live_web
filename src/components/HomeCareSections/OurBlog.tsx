@@ -1,44 +1,45 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC } from 'react'
+import { FC, useCallback, useRef } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { blog_18, blog_19, blog_20, blog_bg_14 } from '@/public/assets/imagepath'
 import { useTheme } from "@mui/material";
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
-const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false })
 
 const OurBlog: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme()
-  const options = {
-    items: 5,
-    margin: 30,
-    dots: false,
-    nav: true,
-    smartSpeed: 2000,
-    navText: [
-      `<i class="fas fa-chevron-left" style="color: ${theme.palette.text.color};"></i>`,
-      `<i class="fas fa-chevron-right" style="color: ${theme.palette.text.color};"></i>`,
-    ],
-    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
-    loop: true,
-    responsiveClass: true,
-    responsive: {
-      0: {
-        items: 1,
-      },
-      768: {
-        items: 2,
-      },
-      991: {
-        items: 3,
-      },
-      1170: {
-        items: 3,
-      },
+  const doctersettings: SwiperOptions = {
+    slidesPerView: 5,
+    spaceBetween: 30,
+    loop: false,
+
+    modules: [Navigation, FreeMode],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+    breakpoints: {
+      1170: { slidesPerView: 3 },
+      991: { slidesPerView: 3 },
+      768: { slidesPerView: 2 },
+      0: { slidesPerView: 1 },
     },
   };
+
+  const swiperRef = useRef<SwiperInstance | null>(null);
+
+  const handlePrev = useCallback(() => {
+    swiperRef.current?.slidePrev();
+  }, []);
+
+  const handleNext = useCallback(() => {
+    swiperRef.current?.slideNext();
+  }, []);
 
   return (
     <section className="our-blog-fourteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
@@ -178,1036 +179,193 @@ const OurBlog: FC = (() => {
             <div className="row">
               <div className="col-md-12">
                 <div className="blog-slide-fourteen ">
-                  <OwlCarousel {...options}>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={500}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
+                  <Swiper
+                    {...doctersettings}
+                    onSwiper={(swiper) => {
+                      swiperRef.current = swiper;
+                    }}>
+                    <SwiperSlide>
+                      <div
+                        className="blog-grid-fourteen"
+                        data-aos="fade-up"
+                        data-aos-delay={500}
+                      >
+                        <div className="blog-grig-img">
                           <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
+                            <img src={blog_18} alt="Img" />
                           </Link>
                         </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={600}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_19} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Caregiving</h3>
-                          <span>06 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Navigating the Transition: A Guide to Choosing the
-                            Right Old Age Home
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore factors to consider when selecting age home,
-                          ensuring a seamless transition for your loved ones.
-                          Gain insights into facility options, care services,
-                          and creating a supportive environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            850 views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
+                        <div className="blog-grid-content">
+                          <div className="grid-head">
+                            <h3>Health and Safety</h3>
+                            <span>01 May 2023</span>
+                          </div>
+                          <h4>
+                            <Link href="/blog">
+                              Adapting Homes for Aging Gracefully: Design Tips for
+                              Old Age Comfort
+                            </Link>
+                          </h4>
+                          <p>
+                            Explore practical design tips to make living spaces in
+                            old age homes adaptable and comfortable, enhancing the
+                            quality of life for seniors. Learn about
+                            accessibility, safety features, and creating a warm
+                            environment.
+                          </p>
+                          <div className="grid-footer">
+                            <span>
+                              <i className="feather-eye" />
+                              1k views
+                            </span>
+                            <Link href="/blog">
+                              Discover tips for this
+                              <i className="feather-arrow-right-circle" />
+                            </Link>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={700}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_20} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Physiotherapy</h3>
-                          <span>10 May 2023</span>
-                        </div>
-                        <h4>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <div
+                        className="blog-grid-fourteen"
+                        data-aos="fade-up"
+                        data-aos-delay={600}
+                      >
+                        <div className="blog-grig-img">
                           <Link href="/blog">
-                            Empowering Aging Bodies: The Impact of Physiotherapy
-                            in Old Age Home Wellness
-                          </Link>
-                        </h4>
-                        <p>
-                          Discover the transformative effects of physiotherapy
-                          in home care, focusing on tailored interventions that
-                          address mobility challenges, pain management, and
-                          overall physical health for elderly residents.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            4.5k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
+                            <img src={blog_19} alt="Img" />
                           </Link>
                         </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={800}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
+                        <div className="blog-grid-content">
+                          <div className="grid-head">
+                            <h3>Caregiving</h3>
+                            <span>06 May 2023</span>
+                          </div>
+                          <h4>
+                            <Link href="/blog">
+                              Navigating the Transition: A Guide to Choosing the
+                              Right Old Age Home
+                            </Link>
+                          </h4>
+                          <p>
+                            Explore factors to consider when selecting age home,
+                            ensuring a seamless transition for your loved ones.
+                            Gain insights into facility options, care services,
+                            and creating a supportive environment.
+                          </p>
+                          <div className="grid-footer">
+                            <span>
+                              <i className="feather-eye" />
+                              850 views
+                            </span>
+                            <Link href="/blog">
+                              Discover tips for this
+                              <i className="feather-arrow-right-circle" />
+                            </Link>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </OwlCarousel>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <div
+                        className="blog-grid-fourteen"
+                        data-aos="fade-up"
+                        data-aos-delay={700}
+                      >
+                        <div className="blog-grig-img">
+                          <Link href="/blog">
+                            <img src={blog_20} alt="Img" />
+                          </Link>
+                        </div>
+                        <div className="blog-grid-content">
+                          <div className="grid-head">
+                            <h3>Physiotherapy</h3>
+                            <span>10 May 2023</span>
+                          </div>
+                          <h4>
+                            <Link href="/blog">
+                              Empowering Aging Bodies: The Impact of Physiotherapy
+                              in Old Age Home Wellness
+                            </Link>
+                          </h4>
+                          <p>
+                            Discover the transformative effects of physiotherapy
+                            in home care, focusing on tailored interventions that
+                            address mobility challenges, pain management, and
+                            overall physical health for elderly residents.
+                          </p>
+                          <div className="grid-footer">
+                            <span>
+                              <i className="feather-eye" />
+                              4.5k views
+                            </span>
+                            <Link href="/blog">
+                              Discover tips for this
+                              <i className="feather-arrow-right-circle" />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                      <div
+                        className="blog-grid-fourteen"
+                        data-aos="fade-up"
+                        data-aos-delay={800}
+                      >
+                        <div className="blog-grig-img">
+                          <Link href="/blog">
+                            <img src={blog_18} alt="Img" />
+                          </Link>
+                        </div>
+                        <div className="blog-grid-content">
+                          <div className="grid-head">
+                            <h3>Health and Safety</h3>
+                            <span>01 May 2023</span>
+                          </div>
+                          <h4>
+                            <Link href="/blog">
+                              Adapting Homes for Aging Gracefully: Design Tips for
+                              Old Age Comfort
+                            </Link>
+                          </h4>
+                          <p>
+                            Explore practical design tips to make living spaces in
+                            old age homes adaptable and comfortable, enhancing the
+                            quality of life for seniors. Learn about
+                            accessibility, safety features, and creating a warm
+                            environment.
+                          </p>
+                          <div className="grid-footer">
+                            <span>
+                              <i className="feather-eye" />
+                              1k views
+                            </span>
+                            <Link href="/blog">
+                              Discover tips for this
+                              <i className="feather-arrow-right-circle" />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  </Swiper>
                 </div>
               </div>
             </div>
           </div>
-          <div
-            className="tab-pane fade"
-            id="pills-family"
-            role="tabpanel"
-            aria-labelledby="pills-family-tab"
-          >
-            <div className="row">
-              <div className="col-md-12">
-                <div className="blog-slide-fourteen ">
-                  <OwlCarousel {...options}>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={500}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={600}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_19} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Caregiving</h3>
-                          <span>06 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Navigating the Transition: A Guide to Choosing the
-                            Right Old Age Home
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore factors to consider when selecting age home,
-                          ensuring a seamless transition for your loved ones.
-                          Gain insights into facility options, care services,
-                          and creating a supportive environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            850 views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={700}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_20} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Physiotherapy</h3>
-                          <span>10 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Empowering Aging Bodies: The Impact of Physiotherapy
-                            in Old Age Home Wellness
-                          </Link>
-                        </h4>
-                        <p>
-                          Discover the transformative effects of physiotherapy
-                          in home care, focusing on tailored interventions that
-                          address mobility challenges, pain management, and
-                          overall physical health for elderly residents.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            4.5k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={800}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </OwlCarousel>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="tab-pane fade"
-            id="pills-adult"
-            role="tabpanel"
-            aria-labelledby="pills-adult-tab"
-          >
-            <div className="row">
-              <div className="col-md-12">
-                <div className="blog-slide-fourteen ">
-                  <OwlCarousel {...options}>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={500}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={600}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_19} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Caregiving</h3>
-                          <span>06 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Navigating the Transition: A Guide to Choosing the
-                            Right Old Age Home
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore factors to consider when selecting age home,
-                          ensuring a seamless transition for your loved ones.
-                          Gain insights into facility options, care services,
-                          and creating a supportive environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            850 views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={700}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_20} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Physiotherapy</h3>
-                          <span>10 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Empowering Aging Bodies: The Impact of Physiotherapy
-                            in Old Age Home Wellness
-                          </Link>
-                        </h4>
-                        <p>
-                          Discover the transformative effects of physiotherapy
-                          in home care, focusing on tailored interventions that
-                          address mobility challenges, pain management, and
-                          overall physical health for elderly residents.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            4.5k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={800}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </OwlCarousel>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="tab-pane fade"
-            id="pills-accident"
-            role="tabpanel"
-            aria-labelledby="pills-accident-tab"
-          >
-            <div className="row">
-              <div className="col-md-12">
-                <div className="blog-slide-fourteen ">
-                  <OwlCarousel {...options}>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={500}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={600}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_19} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Caregiving</h3>
-                          <span>06 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Navigating the Transition: A Guide to Choosing the
-                            Right Old Age Home
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore factors to consider when selecting age home,
-                          ensuring a seamless transition for your loved ones.
-                          Gain insights into facility options, care services,
-                          and creating a supportive environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            850 views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={700}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_20} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Physiotherapy</h3>
-                          <span>10 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Empowering Aging Bodies: The Impact of Physiotherapy
-                            in Old Age Home Wellness
-                          </Link>
-                        </h4>
-                        <p>
-                          Discover the transformative effects of physiotherapy
-                          in home care, focusing on tailored interventions that
-                          address mobility challenges, pain management, and
-                          overall physical health for elderly residents.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            4.5k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={800}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </OwlCarousel>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="tab-pane fade"
-            id="pills-fitness"
-            role="tabpanel"
-            aria-labelledby="pills-fitness-tab"
-          >
-            <div className="row">
-              <div className="col-md-12">
-                <div className="blog-slide-fourteen ">
-                  <OwlCarousel {...options}>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={500}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={600}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_19} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Caregiving</h3>
-                          <span>06 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Navigating the Transition: A Guide to Choosing the
-                            Right Old Age Home
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore factors to consider when selecting age home,
-                          ensuring a seamless transition for your loved ones.
-                          Gain insights into facility options, care services,
-                          and creating a supportive environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            850 views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={700}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_20} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Physiotherapy</h3>
-                          <span>10 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Empowering Aging Bodies: The Impact of Physiotherapy
-                            in Old Age Home Wellness
-                          </Link>
-                        </h4>
-                        <p>
-                          Discover the transformative effects of physiotherapy
-                          in home care, focusing on tailored interventions that
-                          address mobility challenges, pain management, and
-                          overall physical health for elderly residents.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            4.5k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={800}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </OwlCarousel>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="tab-pane fade"
-            id="pills-explore"
-            role="tabpanel"
-            aria-labelledby="pills-explore-tab"
-          >
-            <div className="row">
-              <div className="col-md-12">
-                <div className="blog-slide-fourteen ">
-                  <OwlCarousel {...options}>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={500}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={600}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_19} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Caregiving</h3>
-                          <span>06 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Navigating the Transition: A Guide to Choosing the
-                            Right Old Age Home
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore factors to consider when selecting age home,
-                          ensuring a seamless transition for your loved ones.
-                          Gain insights into facility options, care services,
-                          and creating a supportive environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            850 views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={700}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_20} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Physiotherapy</h3>
-                          <span>10 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Empowering Aging Bodies: The Impact of Physiotherapy
-                            in Old Age Home Wellness
-                          </Link>
-                        </h4>
-                        <p>
-                          Discover the transformative effects of physiotherapy
-                          in home care, focusing on tailored interventions that
-                          address mobility challenges, pain management, and
-                          overall physical health for elderly residents.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            4.5k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="blog-grid-fourteen"
-                      data-aos="fade-up"
-                      data-aos-delay={800}
-                    >
-                      <div className="blog-grig-img">
-                        <Link href="/blog">
-                          <img src={blog_18} alt="Img" />
-                        </Link>
-                      </div>
-                      <div className="blog-grid-content">
-                        <div className="grid-head">
-                          <h3>Health and Safety</h3>
-                          <span>01 May 2023</span>
-                        </div>
-                        <h4>
-                          <Link href="/blog">
-                            Adapting Homes for Aging Gracefully: Design Tips for
-                            Old Age Comfort
-                          </Link>
-                        </h4>
-                        <p>
-                          Explore practical design tips to make living spaces in
-                          old age homes adaptable and comfortable, enhancing the
-                          quality of life for seniors. Learn about
-                          accessibility, safety features, and creating a warm
-                          environment.
-                        </p>
-                        <div className="grid-footer">
-                          <span>
-                            <i className="feather-eye" />
-                            1k views
-                          </span>
-                          <Link href="/blog">
-                            Discover tips for this
-                            <i className="feather-arrow-right-circle" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </OwlCarousel>
-                </div>
-              </div>
-            </div>
-          </div>
+
           <div className="owl-nav-button">
+            <div className="owl-nav slide-nav-2 text-end nav-control" >
+
+              <button className='owl-prev' onClick={handlePrev}>
+                <i className="fas fa-chevron-left custom-arrow" />
+              </button>
+              <button className='owl-next' onClick={handleNext}>
+                <i className="fas fa-chevron-right custom-arrow" />
+              </button>
+            </div>
             <Link href="/blog" className="view-all">
               View All Blogs
             </Link>

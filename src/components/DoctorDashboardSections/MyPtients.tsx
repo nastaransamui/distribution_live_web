@@ -19,15 +19,18 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import preciseDiff from 'dayjs-precise-range'
 import { useTheme } from '@mui/material/styles';
-import { DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridFilterModel, GridRenderCellParams, GridRowParams, GridSortModel, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import {
+  DataGrid, GridActionsCellItem, GridColDef,
+  GridColumnVisibilityModel, GridFilterModel, GridRenderCellParams, GridRowParams, GridSortModel,
+} from '@mui/x-data-grid';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent, StyledBadge } from './ScheduleTiming';
-import CustomPagination from '../shared/CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from '../shared/CustomPagination';
 import RenderExpandableCell from '../shared/RenderExpandableCell';
 import { useRouter } from 'next/router';
 import BeatLoader from 'react-spinners/BeatLoader';
+import ageParts from '@/helpers/ageParts';
 
 
 
@@ -87,7 +90,6 @@ export interface MyPatientsProfile {
 const MyPtients: FC = (() => {
   dayjs.extend(utc)
   dayjs.extend(timezone)
-  dayjs.extend(preciseDiff)
   const { muiVar, bounce } = useScssVar();
   const dataGridRef = useRef<any>(null);
   const router = useRouter();
@@ -95,7 +97,6 @@ const MyPtients: FC = (() => {
   const [reload, setReload] = useState<boolean>(false)
   const [patiensDataProfile, setpatiensDataProfile] = useState<PatientProfile[]>([])
   const theme = useTheme();
-  const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
   const [total, setTotal] = useState<number>(0)
 
   // const userProfile = useSelector((state: AppState) => state.userProfile.value)
@@ -133,9 +134,9 @@ const MyPtients: FC = (() => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.id
-        },
+        valueGetter: (_, row) => {
+          return `${row.id}`
+        }
       },
       {
         field: 'profile.fullName',
@@ -148,9 +149,6 @@ const MyPtients: FC = (() => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.fullName
-        },
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           const profileImage = row?.profileImage == '' ? patient_profile : row?.profileImage
@@ -180,7 +178,7 @@ const MyPtients: FC = (() => {
         }
       },
       {
-        field: 'status.lastLogin.date',
+        field: 'lastLogin.date',
         headerName: `Last Login`,
         align: 'center',
         width: 200,
@@ -190,19 +188,14 @@ const MyPtients: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().date,
         headerAlign: 'center',
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
-          return row?.lastLogin
-        },
         sortComparator: (v1, v2) => {
           if (v1?.lastLogin || v2?.lastLogin) {
             return dayjs(v1?.lastLogin?.date).isAfter(dayjs(v2?.lastLogin?.date)) ? 1 : -1
           }
           return v1 < v2 ? 1 : -1
         },
-        valueFormatter(params: GridValueFormatterParams) {
-          const { api, id } = params;
-          let lastLogin = api.getCellValue(id as string, 'lastLogin')
+        valueFormatter(_, row) {
+          let lastLogin = row?.lastLogin
           // let online = api.getCellValue(id as string, 'online')
           return lastLogin == undefined ?
             `This User not login yet` :
@@ -217,7 +210,8 @@ const MyPtients: FC = (() => {
                 justifyContent="center"
                 alignItems="center"
                 dangerouslySetInnerHTML={{ __html: formattedValue }}
-                spacing={0} />
+                spacing={0}
+                sx={{ height: '100%', justifyContent: 'center' }} />
             </Fragment>
           )
         }
@@ -233,9 +227,8 @@ const MyPtients: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().date,
         headerAlign: 'center',
-        valueGetter: (params) => {
-          const { row } = params;
-          return row?.profile?.dob
+        valueGetter: (_, row) => {
+          return row.dob ? dayjs(row?.profile?.dob).toDate() : null;
         },
         sortComparator: (v1, v2) => {
           if (typeof v1 !== 'string' && typeof v2 !== 'string') {
@@ -245,17 +238,19 @@ const MyPtients: FC = (() => {
         },
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
-          //@ts-ignore
-          let { years, months, days } = dayjs.preciseDiff(row?.dob, dayjs(), true)
+          let { years, } = ageParts(row?.dob ?? null)
           return (
             <Stack direction="column"
               justifyContent="center"
               alignItems="center"
-              spacing={0}>
+              spacing={0}
+              sx={{ height: '100%', justifyContent: 'center' }} >
               <Link href={`#`} onClick={(e) => e.preventDefault()} >
                 {row?.dob !== '' ? dayjs(row?.dob).format('DD MMM YYYY') : '---- -- --'}
               </Link>
-              {row?.dob !== '' && <Link href={`#`} onClick={(e) => e.preventDefault()} >
+              {row?.dob !== '' && <Link href={`#`}
+                onClick={(e) => e.preventDefault()}
+                style={{ color: theme.palette.text.color }}>
                 <i className="fas fa-birthday-cake"></i>{"  "}
                 {`${isNaN(years) ? '--' : years} years`}
               </Link>}
@@ -274,8 +269,7 @@ const MyPtients: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().string,
         headerAlign: 'center',
-        valueGetter: (params) => {
-          const { row } = params;
+        valueGetter: (_, row) => {
           return row?.bloodG == '' ? '===' : `🩸 ${row?.bloodG}`
         },
       },
@@ -290,8 +284,7 @@ const MyPtients: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().string,
         headerAlign: 'center',
-        valueGetter: (params: GridValueGetterParams) => {
-          const { row } = params;
+        valueFormatter: (_, row) => {
           return row?.city == "" ? "===" : row?.city;
         },
         renderCell: (params: GridRenderCellParams) => {
@@ -313,8 +306,7 @@ const MyPtients: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().string,
         headerAlign: 'center',
-        valueGetter: (params: GridValueGetterParams) => {
-          const { row } = params;
+        valueFormatter: (_, row) => {
           return row?.state == "" ? "===" : row?.state;
         },
         renderCell: (params: GridRenderCellParams) => {
@@ -336,8 +328,7 @@ const MyPtients: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().string,
         headerAlign: 'center',
-        valueGetter: (params: GridValueGetterParams) => {
-          const { row } = params;
+        valueFormatter: (_, row) => {
           return row?.country == "" ? "===" : row?.country;
         },
         renderCell: (params: GridRenderCellParams) => {
@@ -352,6 +343,7 @@ const MyPtients: FC = (() => {
         field: "actions",
         type: 'actions',
         width: 150,
+        flex: 1,
         searchAble: false,
         sortable: false,
         filterable: false,
@@ -495,13 +487,7 @@ const MyPtients: FC = (() => {
   }, [columns, filterModel])
 
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (dataGridRef?.current) {
-        setBoxMinHeight(`${dataGridRef.current.clientHeight}px`);
-      }
-    }, 100);
-  }, [paginationModel.pageSize, isLoading]);
+
 
 
   //Update page for pagination model in case last page delete or result less than page
@@ -578,10 +564,11 @@ const MyPtients: FC = (() => {
                         setColumnVisibilityModel(newModel)
                       }}
                       loading={isLoading}
-                      experimentalFeatures={{ ariaV7: true }}
+                      showToolbar
                       slots={{
-                        toolbar: CustomToolbar,
-                        pagination: CustomPagination,
+                        toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                        pagination: CustomPagination as CustomPaginationSlotType,
                         noResultsOverlay: CustomNoRowsOverlay,
                         noRowsOverlay: CustomNoRowsOverlay
                       }}
@@ -591,7 +578,7 @@ const MyPtients: FC = (() => {
                           deleteId: [],
                           deleteClicked: () => { },
                           columnVisibilityModel: columnVisibilityModel,
-                        },
+                        } as CustomToolbarPropsType,
                         pagination: {
                           onRowsPerPageChange: handleChangeRowsPerPage,
                           page: paginationModel.page,
@@ -605,20 +592,6 @@ const MyPtients: FC = (() => {
                             },
                           },
                         },
-                        filterPanel: {
-                          filterFormProps: {
-                            deleteIconProps: {
-                              sx: {
-                                justifyContent: 'flex-start'
-                              },
-                            },
-                          },
-                        },
-                        baseCheckbox: {
-                          inputProps: {
-                            name: "select-checkbox"
-                          }
-                        }
                       }}
                       getRowId={(params) => params._id}
                       rows={patiensDataProfile}

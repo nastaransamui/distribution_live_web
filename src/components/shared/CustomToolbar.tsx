@@ -1,10 +1,9 @@
 import React, { FC, Fragment, useCallback, useState } from "react";
 
 //Mui
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container'
 import DeleteForever from "@mui/icons-material/DeleteForever";
-import PaidIcon from '@mui/icons-material/Paid';
 import IconButton from "@mui/material/IconButton";
 
 import dayjs, { Dayjs } from 'dayjs';
@@ -24,25 +23,49 @@ import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { getGridBooleanOperators, getGridDateOperators, getGridNumericOperators, getGridStringOperators, GridColDef, GridColumnVisibilityModel, GridFilterInputValueProps, GridFilterItem, GridFilterModel, GridFilterOperator, GridRowId, GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarFilterButton, useGridRootProps } from "@mui/x-data-grid";
+import {
+  getGridBooleanOperators,
+  getGridDateOperators,
+  getGridNumericOperators,
+  getGridStringOperators,
+  GridColDef,
+  GridColumnVisibilityModel,
+  GridFilterInputValueProps,
+  GridFilterItem,
+  GridFilterModel,
+  GridFilterOperator, GridRowId,
+  GridToolbarColumnsButton,
+  GridToolbarDensitySelector,
+  GridToolbarFilterButton,
+  GridToolbarProps,
+  ToolbarPropsOverrides,
+  useGridRootProps
+} from "@mui/x-data-grid";
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useRouter } from "next/router";
 import Link from "next/link";
-
-var toBoolean = require('to-boolean');
+import Toolbar from "@mui/material/Toolbar";
 dayjs.extend(utc);
 dayjs.extend(timezone)
 
 type InputProps = {
   dispay: string
 }
+const ColumnsButton = GridToolbarColumnsButton;
 
-type CustomToolbarPropsType = {
+const FilterButton = GridToolbarFilterButton;
+
+const DensityButton = GridToolbarDensitySelector;
+export type CustomToolbarSlotType = React.JSXElementConstructor<GridToolbarProps & ToolbarPropsOverrides>;
+export type CustomToolbarPropsType = {
   deleteId: GridRowId[];
   deleteClicked: Function;
   columnVisibilityModel: GridColumnVisibilityModel;
+  differentIcon?: boolean
 }
+// combine grid toolbar props + your custom props
+export type CombinedToolbarProps = GridToolbarProps & CustomToolbarPropsType & Partial<ToolbarPropsOverrides>;
 
 export const StyledBox = styled(Container)<InputProps>(({ theme, dispay }) => ({
   border: '2px solid ',
@@ -51,28 +74,40 @@ export const StyledBox = styled(Container)<InputProps>(({ theme, dispay }) => ({
   marginBottom: 5,
   minHeight: screen.height / 15.2,
   minWidth: '100%',
+  [theme.breakpoints.down("sm")]: {
+    paddingBlock: '10px'
+  },
   display: dispay,
   '--animate-duration': '1s',
   '--animate-delay': '1s'
 }));
 
-const CustomToolbar: FC<CustomToolbarPropsType> = (props) => {
+const CustomToolbar: FC<CombinedToolbarProps> = (props) => {
   const { deleteId, deleteClicked, columnVisibilityModel, } = props
   const router = useRouter()
-
+  const theme = useTheme();
   return (
     <StyledBox
       dispay="flex"
       // disableGutters
       maxWidth='xl'
     >
-      <GridToolbarContainer
+      <Toolbar
         sx={{ display: 'flex', minWidth: '100%', justifyContent: 'space-between' }}>
         {deleteId.length == 0 ?
           <Fragment>
             {/* */}
-            <Grid container spacing={2} direction="row" sx={{ width: '100%', marginTop: 0 }}>
-              <Grid item xl={6} lg={6} md={5} sm={12} xs={12}>
+            <Grid container direction="row" sx={{
+              width: '100%', marginTop: 0,
+            }}>
+              <Grid size={{ xl: 6, lg: 6, md: 5, sm: 12, xs: 12 }} sx={{
+                [theme.breakpoints.down("sm")]: {
+                  flexDirection: 'column !important',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                },
+              }}>
                 <Badge badgeContent={columnVisibilityModel == undefined ? 0 :
                   Object.values(columnVisibilityModel).filter(a => !a).length} color="primary" sx={{
                     '& .MuiBadge-badge': {
@@ -81,19 +116,19 @@ const CustomToolbar: FC<CustomToolbarPropsType> = (props) => {
                       padding: '0 4px',
                     },
                   }}>
-                  <GridToolbarColumnsButton />
+                  <ColumnsButton />
                 </Badge>
-                <GridToolbarFilterButton />
-                <GridToolbarDensitySelector />
+                <FilterButton />
+                <DensityButton />
               </Grid>
-              <Grid item xl={5} lg={6} md={6} sm={12} xs={12} sx={{
+              <Grid size={{ xl: 5, lg: 6, md: 6, sm: 12, xs: 12 }} sx={{
                 display: 'flex',
                 gap: 1,
                 flexDirection: { xs: 'column', sm: 'row' }
               }}>
 
               </Grid>
-              <Grid item xl={4} lg={2} md={1} sm={12} xs={12} sx={{ display: "flex", justifyContent: { sm: 'flex-start', md: "flex-end" } }}>
+              <Grid size={{ xl: 4, lg: 2, md: 1, sm: 12, xs: 12 }} sx={{ display: "flex", justifyContent: { sm: 'flex-start', md: "flex-end" } }}>
 
 
               </Grid>
@@ -126,7 +161,7 @@ const CustomToolbar: FC<CustomToolbarPropsType> = (props) => {
             }
           </>
         }
-      </GridToolbarContainer>
+      </Toolbar>
 
     </StyledBox >
 
@@ -286,7 +321,7 @@ export function createCustomOperators(): CustomOperators {
           };
         },
         InputComponent: NumberFilterInput,
-        InputComponentProps: { type: 'number', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } },
+        InputComponentProps: { type: 'number', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } } as Partial<GridFilterInputValueProps>,
       },
       {
         ...getGridNumericOperators().find((op) => op.value === '>')!,
@@ -302,7 +337,7 @@ export function createCustomOperators(): CustomOperators {
           };
         },
         InputComponent: NumberFilterInput,
-        InputComponentProps: { type: 'number', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } },
+        InputComponentProps: { type: 'number', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } } as Partial<GridFilterInputValueProps>,
       },
       {
         ...getGridNumericOperators().find((op) => op.value === '>')!,
@@ -318,7 +353,7 @@ export function createCustomOperators(): CustomOperators {
           };
         },
         InputComponent: NumberFilterInput,
-        InputComponentProps: { type: 'number', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } },
+        InputComponentProps: { type: 'number', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } } as Partial<GridFilterInputValueProps>,
       },
       {
         ...getGridNumericOperators().find((op) => op.value === '>')!,
@@ -341,7 +376,7 @@ export function createCustomOperators(): CustomOperators {
           };
         },
         InputComponent: BetweenNumberInput,
-        InputComponentProps: { type: 'number', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } },
+        InputComponentProps: { type: 'number', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } } as Partial<GridFilterInputValueProps>,
       }
     ],
     date: [
@@ -359,7 +394,7 @@ export function createCustomOperators(): CustomOperators {
           };
         },
         InputComponent: SingleDateInput,
-        InputComponentProps: { type: 'date', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } },
+        InputComponentProps: { type: 'date', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } } as Partial<GridFilterInputValueProps>,
       },
       {
         ...getGridDateOperators().find((op) => op.value === 'before')!,
@@ -375,7 +410,7 @@ export function createCustomOperators(): CustomOperators {
           };
         },
         InputComponent: SingleDateInput,
-        InputComponentProps: { type: 'date', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } },
+        InputComponentProps: { type: 'date', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } } as Partial<GridFilterInputValueProps>,
       },
       {
         ...getGridDateOperators().find((op) => op.value === 'before')!,
@@ -391,7 +426,7 @@ export function createCustomOperators(): CustomOperators {
           };
         },
         InputComponent: SingleDateInput,
-        InputComponentProps: { type: 'date', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } },
+        InputComponentProps: { type: 'date', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } } as Partial<GridFilterInputValueProps>,
       },
     ],
     string: [
@@ -400,14 +435,14 @@ export function createCustomOperators(): CustomOperators {
         label: "Contains",
         value: "contains",
         InputComponent: StringFilterInput,
-        InputComponentProps: { type: 'text', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } },
+        InputComponentProps: { type: 'text', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } } as Partial<GridFilterInputValueProps>,
       },
       {
         ...getGridStringOperators().find((op) => op.value === 'equals')!,
         label: "Equal",
         value: "equals",
         InputComponent: StringFilterInput,
-        InputComponentProps: { type: 'text', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } },
+        InputComponentProps: { type: 'text', applyFilters: (filterModel: GridFilterModel) => { globalFilterFunctions.applyFilters(filterModel) } } as Partial<GridFilterInputValueProps>,
       },
     ],
     boolean: [
@@ -421,15 +456,16 @@ export function createCustomOperators(): CustomOperators {
           applyFilters: (filterModel: GridFilterModel) => {
             globalFilterFunctions.applyFilters(filterModel)
           }
-        },
+        } as Partial<GridFilterInputValueProps>,
       }
     ]
   }
 }
 
-interface AllFilterInputProps extends GridFilterInputValueProps {
-  applyFilters: (filterModel: GridFilterModel) => void;
-}
+type AllFilterInputProps = GridFilterInputValueProps & {
+  applyFilters?: (filterModel: GridFilterModel) => void;
+  type?: string;
+};
 function NumberFilterInput(props: AllFilterInputProps) {
   const { item, applyValue, focusElementRef, applyFilters } = props;
   const numberRef: React.Ref<any> = React.useRef(null);
@@ -447,9 +483,15 @@ function NumberFilterInput(props: AllFilterInputProps) {
   }
   const rootProps = useGridRootProps();
   rootProps.filterDebounceMs = 0;
+  const theme = useTheme();
   return (
     <Fragment>
-      <FormControl>
+      <FormControl sx={{
+        marginTop: '-8px',
+        [theme.breakpoints.down("sm")]: {
+          width: "100%",
+        },
+      }}>
         <NumericFormat
           customInput={TextField}
           onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -463,7 +505,12 @@ function NumberFilterInput(props: AllFilterInputProps) {
           label="Value"
           onChange={handleFilterChange}
           value={item.value || ''}
-          inputProps={{ 'aria-label': 'description', autoComplete: 'off' }}
+          slotProps={{
+            htmlInput: {
+              'aria-label': 'description',
+              autoComplete: 'off',
+            },
+          }}
           getInputRef={numberRef}
           sx={{
             '& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button': {
@@ -471,14 +518,14 @@ function NumberFilterInput(props: AllFilterInputProps) {
             },
             '& input[type=number]': {
               MozAppearance: 'textfield',
-            },
+            }
           }} />
       </FormControl>
       <div>
         <Button
           variant="contained"
           color="primary"
-          onClick={() => { rootProps.filterModel && applyFilters(rootProps.filterModel) }}
+          onClick={() => { rootProps.filterModel && applyFilters && applyFilters(rootProps.filterModel) }}
           style={{ margin: '8px', float: 'right' }}
         >
           Apply
@@ -515,7 +562,7 @@ function BetweenNumberInput(props: AllFilterInputProps) {
     const newLowerBound = event.target.value;
     updateFilterValue(newLowerBound, filterValueState[1]);
   };
-
+  const theme = useTheme();
   return (
     <Fragment>
       <Box
@@ -523,7 +570,13 @@ function BetweenNumberInput(props: AllFilterInputProps) {
           display: 'inline-flex',
           flexDirection: 'row',
           alignItems: 'end',
-          height: 48,
+          height: 40,
+          [theme.breakpoints.down("sm")]: {
+            flexDirection: 'column',
+            height: 'auto',
+            width: '100%',
+            alignItems: 'stretch'
+          },
         }}
       >
         <TextField
@@ -566,7 +619,7 @@ function BetweenNumberInput(props: AllFilterInputProps) {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => { rootProps.filterModel && applyFilters(rootProps.filterModel) }}
+          onClick={() => { rootProps.filterModel && applyFilters && applyFilters(rootProps.filterModel) }}
           style={{ margin: '8px', float: 'right' }}
         >
           Apply
@@ -590,9 +643,15 @@ function SingleDateInput(props: AllFilterInputProps) {
   }
   const rootProps = useGridRootProps();
   rootProps.filterDebounceMs = 0;
+  const theme = useTheme();
   return (
     <Fragment>
-      <FormControl>
+      <FormControl sx={{
+        maxWidth: '200px', marginTop: '-8px',
+        [theme.breakpoints.down("sm")]: {
+          minWidth: "100%",
+        },
+      }}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <MobileDatePicker
             value={item.value ? dayjs(item.value) : null}
@@ -609,6 +668,11 @@ function SingleDateInput(props: AllFilterInputProps) {
               },
 
             }}
+            sx={{
+              [theme.breakpoints.down("sm")]: {
+                minWidth: "100%",
+              },
+            }}
           />
         </LocalizationProvider>
       </FormControl>
@@ -616,7 +680,7 @@ function SingleDateInput(props: AllFilterInputProps) {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => { rootProps.filterModel && applyFilters(rootProps.filterModel) }}
+          onClick={() => { rootProps.filterModel && applyFilters && applyFilters(rootProps.filterModel) }}
           style={{ margin: '8px', float: 'right' }}
         >
           Apply
@@ -643,15 +707,26 @@ function StringFilterInput(props: AllFilterInputProps) {
   }
   const rootProps = useGridRootProps();
   rootProps.filterDebounceMs = 0;
+  const theme = useTheme();
   return (
     <Fragment>
-      <FormControl>
+      <FormControl sx={{
+        marginTop: '-8px',
+        [theme.breakpoints.down("sm")]: {
+          width: "100%",
+        },
+      }}>
         <TextField
           variant="standard"
           label="Value"
           onChange={handleFilterChange}
           value={item.value || ''}
-          inputProps={{ 'aria-label': 'description', autoComplete: 'off' }}
+          slotProps={{
+            htmlInput: {
+              'aria-label': 'description',
+              autoComplete: 'off',
+            },
+          }}
           ref={stringRef}
           sx={{
             '& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button': {
@@ -666,7 +741,7 @@ function StringFilterInput(props: AllFilterInputProps) {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => { rootProps.filterModel && applyFilters(rootProps.filterModel) }}
+          onClick={() => { rootProps.filterModel && applyFilters && applyFilters(rootProps.filterModel) }}
           style={{ margin: '8px', float: 'right' }}
         >
           Apply
@@ -680,45 +755,56 @@ function BooleanFilterInput(props: AllFilterInputProps) {
   const [selectedValue, setSelectedValue] = useState(item.value === true ? 'true' : item.value || '');
   const rootProps = useGridRootProps();
   rootProps.filterDebounceMs = 0;
+  const theme = useTheme();
   return (
     <Fragment>
-      <InputLabel id="status-label" htmlFor="booleanFilter" size='small'>Value</InputLabel>
-      <Select
-        labelId="status-lable"
-        aria-label="select status"
-        variant="standard"
-        fullWidth
-        inputProps={{
-          name: 'booleanFilter',
-          id: 'booleanFilter',
-          'aria-label': "select status"
-        }}
-        value={selectedValue}
-        label="Value"
-        onChange={(e) => {
-          setSelectedValue(e.target.value);
-          //this is because of issue with data Grid 
-          if (e.target.value == 'true') {
-            applyValue({ ...item, value: toBoolean(e.target.value) });
-          } else {
-            applyValue({ ...item, value: 'false' });
-          }
-        }}
-      >
-        <MenuItem value={'true'}>True</MenuItem>
-        <MenuItem value={'false'}>False</MenuItem>
-      </Select>
-      <div>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => { rootProps.filterModel && applyFilters(rootProps.filterModel) }}
-          // onClick={handleApplyClick}
-          style={{ margin: '8px', float: 'right' }}
+      <FormControl fullWidth sx={{
+        marginTop: '8px',
+        [theme.breakpoints.down("sm")]: {
+          width: "100%",
+        },
+      }}>
+        <Select
+          labelId="status-lable"
+          aria-label="select status"
+          variant="standard"
+          fullWidth
+          inputProps={{
+            name: 'booleanFilter',
+            id: 'booleanFilter',
+            'aria-label': "select status",
+          }}
+          value={selectedValue}
+          label="Value"
+          onChange={(e) => {
+            setSelectedValue(e.target.value);
+            console.log({ tobolean: e.target.value })
+            applyValue({ ...item, value: e.target.value == 'false' ? false : true });
+          }}
+          displayEmpty
+          renderValue={(selected) => {
+            if (selected === "" || selected == null) {
+              // placeholder style
+              return <span style={{ color: theme.palette.text.disabled }}>Select status</span>;
+            }
+            return selected === 'true' ? 'True' : 'False';
+          }}
         >
-          Apply
-        </Button>
-      </div>
+          <MenuItem value={'true'}>True</MenuItem>
+          <MenuItem value={'false'}>False</MenuItem>
+        </Select>
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => { rootProps.filterModel && applyFilters && applyFilters(rootProps.filterModel) }}
+            // onClick={handleApplyClick}
+            style={{ margin: '8px', float: 'right' }}
+          >
+            Apply
+          </Button>
+        </div>
+      </FormControl>
     </Fragment>
   );
 }

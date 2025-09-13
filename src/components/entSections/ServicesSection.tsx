@@ -44,10 +44,11 @@ const ServicesSection: FC = (() => {
                 <div className="doctor-profile-widget-fifteen">
                   <div className="doc-pro-img">
                     <Link href="/doctors/search" aria-label='Search doctor'>
-                      <div className="doctor-profile-img">
+                      <div className="doctor-profile-img" style={{ height: 'unset' }}>
                         <img
                           src={service_service_3}
                           className="img-fluid"
+                          style={{ objectFit: 'cover' }}
                           alt=""
                         />
                       </div>
@@ -71,10 +72,11 @@ const ServicesSection: FC = (() => {
                 <div className="doctor-profile-widget-fifteen">
                   <div className="doc-pro-img">
                     <Link href="/doctors/search" aria-label='Search doctor'>
-                      <div className="doctor-profile-img">
+                      <div className="doctor-profile-img" style={{ height: 'unset' }}>
                         <img
                           src={service_service_2}
                           className="img-fluid"
+                          style={{ objectFit: 'cover' }}
                           alt=""
                         />
                       </div>
@@ -98,10 +100,11 @@ const ServicesSection: FC = (() => {
                 <div className="doctor-profile-widget-fifteen">
                   <div className="doc-pro-img">
                     <Link href="/doctors/search" aria-label='Search doctor'>
-                      <div className="doctor-profile-img">
+                      <div className="doctor-profile-img" style={{ height: 'unset' }}>
                         <img
                           src={service_service_1}
                           className="img-fluid"
+                          style={{ objectFit: 'cover' }}
                           alt=""
                         />
                       </div>

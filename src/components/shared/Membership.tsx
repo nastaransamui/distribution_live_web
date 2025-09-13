@@ -42,41 +42,43 @@ const Membership: FC<MembershipProps> = ((props: MembershipProps) => {
       <div className="card" style={muiVar}>
         <div className="card-body">
           <h4 className="card-title">Memberships</h4>
-          {membershipsFields.map((data: any, index: number) => {
-            return (
-              <div className="membership-info" key={index} >
-                <div className="row form-row membership-cont">
-                  <div className="col-12 col-md-10 col-lg-5">
-                    <div className="form-group">
-                      <TextField
-                        required
-                        id={`membership_${index}`}
-                        label="Membership"
-                        error={errors?.['memberships']?.[index]?.['membership'] == undefined ? false : true}
-                        helperText={errors?.['memberships']?.[index]?.['membership'] && errors['memberships'][index]['membership']['message'] as ReactNode}
-                        {
-                        ...control.register(`memberships.${index}.membership`, {
-                          required: `This field is required `,
-                        })
-                        }
-                        fullWidth
-                        size='small'
-                      />
+          <div className="membership-info" >
+            <div className="row form-row membership-cont">
+              {membershipsFields.map((data: any, index: number) => {
+                return (
+                  <Fragment key={index}>
+                    <div className="col-12 col-md-10 col-lg-5">
+                      <div className="form-group">
+                        <TextField
+                          required
+                          id={`membership_${index}`}
+                          label="Membership"
+                          error={errors?.['memberships']?.[index]?.['membership'] == undefined ? false : true}
+                          helperText={errors?.['memberships']?.[index]?.['membership'] && errors['memberships'][index]['membership']['message'] as ReactNode}
+                          {
+                          ...control.register(`memberships.${index}.membership`, {
+                            required: `This field is required `,
+                          })
+                          }
+                          fullWidth
+                          size='small'
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-12 col-md-2">
-                    <div className="delete-icon">
-                      <Link href="#0" className="btn btn-danger trash" onClick={(e) => {
-                        e.preventDefault()
-                        removeInputFields(index)
-                      }} >
-                        <i className="far fa-trash-alt"></i></Link>
+                    <div className="col-12 col-md-2 col-lg-1">
+                      <div className="delete-icon">
+                        <Link href="#0" className="btn btn-danger trash" onClick={(e) => {
+                          e.preventDefault()
+                          removeInputFields(index)
+                        }} >
+                          <i className="far fa-trash-alt"></i></Link>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+                  </Fragment>
+                );
+              })}
+            </div>
+          </div>
           {membershipsFields.length < 5 && <div className="add-more" >
             <Link href="#0" onClick={(e) => {
               e.preventDefault()

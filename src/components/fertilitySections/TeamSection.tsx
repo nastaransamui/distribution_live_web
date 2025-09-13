@@ -1,16 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect, useMemo } from 'react'
+import { FC, Fragment, useCallback, useEffect, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 import AOS from 'aos'
-import dynamic from 'next/dynamic'
-import { useTheme } from '@mui/material'
 import { ServeImageIconOneSvg, ServeImageIconTwoSvg } from '../../../public/assets/images/icons/IconsSvgs'
 import { doctor_15_aspect, doctor_16_aspect, doctor_17_aspect, doctors_profile } from '@/public/assets/imagepath'
 import { useSelector } from 'react-redux'
 import { AppState } from '@/redux/store'
 import { formatNumberWithCommas } from '../DoctorDashboardSections/ScheduleTiming'
-const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false })
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
+
 import Rating from '@mui/material/Rating'
 import Skeleton from '@mui/material/Skeleton'
 
@@ -18,7 +20,6 @@ import Skeleton from '@mui/material/Skeleton'
 const TeamSection: FC = (() => {
 
   const { muiVar } = useScssVar();
-  const theme = useTheme();
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -26,42 +27,27 @@ const TeamSection: FC = (() => {
     });
 
   }, []);
-  const doctersettings = {
-    items: 2,
-    loop: true,
-    margin: 15,
-    dots: false,
-    nav: true,
-    navContainer: '.slide-nav-14',
-    navText: ['<i class="fa-solid fa-caret-left "></i>', '<i class="fa-solid fa-caret-right"></i>'],
-    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
-    autoplay: false,
-    infinite: "true",
+  const doctersettings: SwiperOptions = {
+    slidesPerView: 2,
+    spaceBetween: 15,
+    watchOverflow: true,
+    centerInsufficientSlides: true,
+    loop: false,
+    modules: [Navigation],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+    breakpoints: {
+      1049: { slidesPerView: 2 },
+      992: { slidesPerView: 2 },
+      800: { slidesPerView: 2 },
+      776: { slidesPerView: 2 },
+      567: { slidesPerView: 1 },
+      200: { slidesPerView: 1 },
+    },
+  };
 
-    slidestoscroll: 1,
-    rtl: "true",
-    rows: 1,
-    responsive: {
-      1049: {
-        items: 2
-      },
-      992: {
-        items: 2
-      },
-      800: {
-        items: 2
-      },
-      776: {
-        items: 2
-      },
-      567: {
-        items: 1
-      },
-      200: {
-        items: 1
-      }
-    }
-  }
   const bestDoctorsData = useSelector((state: AppState) => state.bestDoctorsData)
   const { bestDoctors } = bestDoctorsData;
   const dummyDoctorData = useMemo(() => {
@@ -101,6 +87,15 @@ const TeamSection: FC = (() => {
       },
     ]
   }, [])
+  const swiperRef = useRef<SwiperInstance | null>(null);
+
+  const handlePrev = useCallback(() => {
+    swiperRef.current?.slidePrev();
+  }, []);
+
+  const handleNext = useCallback(() => {
+    swiperRef.current?.slideNext();
+  }, []);
   return (
     <Fragment>
       <div className="team-section-fourteen" style={muiVar}>
@@ -119,11 +114,22 @@ const TeamSection: FC = (() => {
               </div>
             </div>
             <div className="col-lg-6 aos" data-aos="fade-up">
-              <div className="owl-nav slide-nav-14 text-end nav-control" />
+              <div className="owl-nav slide-nav-14 text-end nav-control" >
+                <button className='owl-prev' onClick={handlePrev}>
+                  <i className="fa-solid fa-caret-left " />
+                </button>
+                <button className='owl-next' onClick={handleNext}>
+                  <i className="fa-solid fa-caret-right" />
+                </button>
+              </div>
             </div>
           </div>
           <div className="owl-theme team-fourteen-slider">
-            <OwlCarousel {...doctersettings}>
+            <Swiper
+              {...doctersettings}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }}>
               {
                 bestDoctors == null ?
                   (Array(2).fill(0).map((_, index) => (
@@ -132,7 +138,7 @@ const TeamSection: FC = (() => {
                   bestDoctors.length == 0 ?
                     (dummyDoctorData.map((doctor, index) => {
                       return (
-                        <div className="articles-grid articles-grid-fourteen w-100" key={index}>
+                        <SwiperSlide className="articles-grid articles-grid-fourteen w-100" key={index}>
                           <div className="articles-info">
                             <div className="articles-left">
                               <Link href="/doctors/search" aria-label='search'>
@@ -178,66 +184,68 @@ const TeamSection: FC = (() => {
                               </div>
                             </div>
                           </div>
-                        </div>
+                        </SwiperSlide>
                       )
                     })) :
                     (bestDoctors.map((doctor, index) => {
                       return (
-                        <div className="articles-grid articles-grid-fourteen " style={{ width: '99%' }} key={index}>
-                          <div className="articles-info">
-                            <div className="articles-left">
-                              <Link href={`/doctors/profile/${btoa(doctor._id)}`} aria-label='search'>
-                                <div className="articles-img articles-img-fourteen">
-                                  <img
-                                    src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile}
-                                    alt=""
-                                    className="img-fluid"
-                                  />
+                        <SwiperSlide key={index}>
+                          <div className="articles-grid articles-grid-fourteen " >
+                            <div className="articles-info">
+                              <div className="articles-left">
+                                <Link href={`/doctors/profile/${btoa(doctor._id)}`} aria-label='search'>
+                                  <div className="articles-img articles-img-fourteen">
+                                    <img
+                                      src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile}
+                                      alt=""
+                                      className="img-fluid"
+                                    />
+                                  </div>
+                                </Link>
+                              </div>
+                              <div className="articles-right">
+                                <div className="articles-content articles-content-fourteen">
+                                  <Link href={`/doctors/profile/${btoa(doctor._id)}`} aria-label='search'>{doctor.fullName}</Link>
+                                  <ul className="articles-list nav">
+                                    <li className="Qualified-doctors-fourteen">
+                                      {doctor?.specialities?.[0]?.specialities}
+                                    </li>
+                                    <li className="Qualified-doctors-fourteentwo">
+                                      +{doctor.patientCount} Patients
+                                    </li>
+                                  </ul>
+                                  <div className="rating rating-fourteen" style={{ display: 'flex' }}>
+                                    <Rating
+                                      name="read-only"
+                                      precision={0.5}
+                                      value={doctor.avgRate}
+                                      readOnly
+                                      size='small' />
+                                    <span className="d-inline-block average-rating">({doctor.totalVote})</span>
+                                  </div>
+                                  <p className="text-muted">
+                                    <i className="feather-map-pin" />
+                                    {doctor.city}
+                                  </p>
+                                  <p className="text-muted">
+                                    <i className="feather-map-pin" />
+                                    {doctor.country}
+                                  </p>
+                                  <ul className="articles-list nav mb-0">
+                                    <li className="Qualified-doctors-fourteenthree">{doctor?.currency?.[0]?.currency_symbol} {formatNumberWithCommas(doctor?.timeslots?.[0]?.averageHourlyPrice?.toFixed(0) || "0")}</li>
+                                    <li className="Qualified-doctors-fourteenfour">
+                                      <Link href={`/doctors/profile/${btoa(doctor._id)}`} aria-label='search'>Consult Now</Link>
+                                    </li>
+                                  </ul>
                                 </div>
-                              </Link>
-                            </div>
-                            <div className="articles-right">
-                              <div className="articles-content articles-content-fourteen">
-                                <Link href={`/doctors/profile/${btoa(doctor._id)}`} aria-label='search'>{doctor.fullName}</Link>
-                                <ul className="articles-list nav">
-                                  <li className="Qualified-doctors-fourteen">
-                                    {doctor?.specialities?.[0]?.specialities}
-                                  </li>
-                                  <li className="Qualified-doctors-fourteentwo">
-                                    +{doctor.patientCount} Patients
-                                  </li>
-                                </ul>
-                                <div className="rating rating-fourteen" style={{ display: 'flex' }}>
-                                  <Rating
-                                    name="read-only"
-                                    precision={0.5}
-                                    value={doctor.avgRate}
-                                    readOnly
-                                    size='small' />
-                                  <span className="d-inline-block average-rating">({doctor.totalVote})</span>
-                                </div>
-                                <p className="text-muted">
-                                  <i className="feather-map-pin" />
-                                  {doctor.city}
-                                </p>
-                                <p className="text-muted">
-                                  <i className="feather-map-pin" />
-                                  {doctor.country}
-                                </p>
-                                <ul className="articles-list nav mb-0">
-                                  <li className="Qualified-doctors-fourteenthree">{doctor?.currency?.[0]?.currency_symbol} {formatNumberWithCommas(doctor?.timeslots?.[0]?.averageHourlyPrice?.toFixed(0) || "0")}</li>
-                                  <li className="Qualified-doctors-fourteenfour">
-                                    <Link href={`/doctors/profile/${btoa(doctor._id)}`} aria-label='search'>Consult Now</Link>
-                                  </li>
-                                </ul>
                               </div>
                             </div>
                           </div>
-                        </div>
+                        </SwiperSlide>
                       )
                     }))
               }
-            </OwlCarousel>
+            </Swiper>
           </div>
         </div>
         <div className="banner-imgfourteenseven">

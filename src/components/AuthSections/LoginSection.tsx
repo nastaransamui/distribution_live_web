@@ -23,7 +23,7 @@ import { useRouter } from 'next/router';
 import { useGoogleLogin } from '@react-oauth/google';
 
 //Mui
-import { Transition, BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
+import { BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -144,7 +144,7 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
             //Handle logout other users
             if (msg?.status == 410) {
               toast.error(() => (
-                <div style={muiVar}>
+                <div style={{ ...muiVar, width: '100%' }}>
                   <Typography align='center' >{msg.reason}</Typography>
                   <br />
                   <div style={{ display: 'flex', gap: 5 }}>
@@ -476,7 +476,6 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
   return (
     <Fragment>
       {openUserType && <BootstrapDialog
-        TransitionComponent={Transition}
         onClose={() => {
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
           setTimeout(() => {
@@ -578,7 +577,7 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
                   helperText={errors.email && errors['email']['message'] as ReactNode}
                   fullWidth
                   ref={ref}
-                  inputProps={{ style: { textTransform: 'lowercase' }, autoComplete: 'email' }}
+                  slotProps={{ htmlInput: { style: { textTransform: 'lowercase' }, autoComplete: 'email' } }}
                   onChange={(e: any) => {
                     e.target.value = e.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
                     onChange(e)
@@ -603,20 +602,22 @@ export const LoginBox: FC<LoginBoxType> = (({ closeDialog }) => {
               }
             })}
             type={showPassword ? 'text' : 'password'}
-            InputProps={{
-              endAdornment: <InputAdornment position="end">
-                <IconButton
-                  disableFocusRipple
-                  disableRipple
-                  disableTouchRipple
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                  aria-label='password toggle'
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
+            slotProps={{
+              input: {
+                endAdornment: <InputAdornment position="end">
+                  <IconButton
+                    disableFocusRipple
+                    disableRipple
+                    disableTouchRipple
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                    aria-label='password toggle'
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
             }}
             fullWidth
           />

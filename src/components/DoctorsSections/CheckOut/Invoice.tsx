@@ -4,7 +4,6 @@ import useScssVar from '@/hooks/useScssVar'
 import { logo } from '@/public/assets/imagepath';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { formatNumberWithCommas } from '@/components/DoctorDashboardSections/ScheduleTiming';
@@ -33,7 +32,6 @@ const Invoice: FC = (() => {
   const router = useRouter()
   const theme = useTheme();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -42,14 +40,13 @@ const Invoice: FC = (() => {
   const [reload, setReload] = useState<boolean>(false)
   const [reservation, setReservation] = useState<AppointmentReservationExtendType | null>(null)
 
-
-  const searchParams = useSearchParams();
-  const encryptID = searchParams.get('_id')
+  const encryptID = router.query.invoice
 
   useEffect(() => {
+    if (!router.isReady) return;
     let active = true;
     if (encryptID) {
-      if (base64regex.test(encryptID)) {
+      if (base64regex.test(encryptID as string)) {
         let _id = atob(encryptID as string)
         if (active && homeSocket?.current) {
           homeSocket.current.emit(`findReservationById`, { _id })
@@ -83,7 +80,7 @@ const Invoice: FC = (() => {
       active = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [encryptID, homeSocket, reload, router])
+  }, [encryptID, homeSocket, reload, router, router.isReady, router.query.invoice])
   const handleExport = async () => {
     if (!exportRef.current) return;
 
@@ -241,6 +238,9 @@ const Invoice: FC = (() => {
       setIsClient(false)
     }
   }, [])
+
+  let isSameDoctor = userProfile?.roleName == 'patient' ? true : userProfile?._id == reservation?.doctorId;
+
   return (
     <Fragment>
       <div className="content" style={muiVar}>
@@ -255,6 +255,7 @@ const Invoice: FC = (() => {
                 }} />
                 :
                 <div className={`col-lg-8 offset-lg-2 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
+                  {/*  */}
                   <button onClick={handleExport} style={{ width: '100%', marginBottom: 30 }} className='btn btn-primary'>Export as PDF</button>
                   <div className="invoice-content" ref={exportRef} id="pdf-content">
                     <span ref={invoiceHeaderRef}>
@@ -276,7 +277,7 @@ const Invoice: FC = (() => {
                       </div>
                       <div className="invoice-item">
                         <div className="row">
-                          <div className="col-md-4">
+                          <div className={`col-md-${isSameDoctor ? '4' : '6'}`}>
                             <div className="invoice-info">
                               <strong className="customer-text">Invoice From</strong>
                               <p className="invoice-details invoice-details-two">
@@ -294,7 +295,7 @@ const Invoice: FC = (() => {
                               </p>
                             </div>
                           </div>
-                          <div className="col-md-4">
+                          <div className={`col-md-${isSameDoctor ? '4' : '6'}`}>
                             <div className="invoice-info invoice-info2">
                               <strong className="customer-text" style={{ textAlign: "left" }}>Invoice To</strong>
                               <p className="invoice-details" style={{ textAlign: 'left' }}>
@@ -310,7 +311,7 @@ const Invoice: FC = (() => {
                               </p>
                             </div>
                           </div>
-                          <div className="col-md-4">
+                          {isSameDoctor && <div className="col-md-4">
                             <div className="invoice-info">
                               <strong className="customer-text">Payment Method</strong>
                               <Tooltip title={reservation?.paymentToken} arrow placement='top'>
@@ -321,7 +322,7 @@ const Invoice: FC = (() => {
                                 </p>
                               </Tooltip>
                             </div>
-                          </div>
+                          </div>}
                         </div>
                       </div>
                     </span>
@@ -334,33 +335,34 @@ const Invoice: FC = (() => {
                                 <tr>
                                   <th>Description</th>
                                   <th className="text-center">Quantity</th>
-                                  <th className="text-center">Price</th>
-                                  <th className="text-end">Total</th>
+                                  {isSameDoctor && <th className="text-center">Price</th>}
+                                  {isSameDoctor && <th className="text-end">Total</th>}
                                 </tr>
                               </thead>
                               <tbody style={{ borderTop: "none" }}>
                                 <tr>
                                   <td style={{ padding: '10px 0px' }}>{dayjs(reservation.selectedDate).format('DD MMM YYYY')} - {reservation.timeSlot?.period}</td>
                                   <td className="text-center">1</td>
-                                  <td className="text-center">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price.toString())}</td>
-                                  <td className="text-end">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price.toString())}</td>
+                                  {isSameDoctor && <td className="text-center">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price.toString())}</td>}
+                                  {isSameDoctor && <td className="text-end">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(reservation?.timeSlot?.price.toString())}</td>}
                                 </tr>
-                                <tr>
-                                  <td style={{ padding: '10px 0px' }}>Booking Fee</td>
-                                  <td className="text-center">1</td>
-                                  <td className="text-center">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                    reservation?.timeSlot?.bookingsFeePrice.toString()
-                                  )}</td>
-                                  <td className="text-end">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                    reservation?.timeSlot?.bookingsFeePrice.toString()
-                                  )}</td>
-                                </tr>
-
+                                {isSameDoctor &&
+                                  <tr>
+                                    <td style={{ padding: '10px 0px' }}>Booking Fee</td>
+                                    <td className="text-center">1</td>
+                                    <td className="text-center">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                      reservation?.timeSlot?.bookingsFeePrice.toString()
+                                    )}</td>
+                                    <td className="text-end">{reservation?.timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                      reservation?.timeSlot?.bookingsFeePrice.toString()
+                                    )}</td>
+                                  </tr>
+                                }
                               </tbody>
                             </table>
                           </div>
                         </div>
-                        {userProfile?.roleName == 'doctors' ?
+                        {userProfile?.roleName == 'doctors' && isSameDoctor ?
                           <div className="col-md-6 col-xl-6 " style={{ minHeight: '300px', position: 'relative' }}>
                             <div id={
                               reservation?.doctorPaymentStatus == "Awaiting Request"
@@ -378,7 +380,7 @@ const Invoice: FC = (() => {
                         }
                         <div className="col-md-6 col-xl-6 ">
                           <div className="table-responsive">
-                            <table className="invoice-table-two table">
+                            {isSameDoctor ? <table className="invoice-table-two table">
                               <tbody>
                                 <tr>
                                   <th >Subtotal:</th>
@@ -403,7 +405,9 @@ const Invoice: FC = (() => {
                                   </td>
                                 </tr>
                               </tbody>
-                            </table>
+                            </table> :
+                              <table className='invoice-table-two table'></table>
+                            }
                           </div>
                         </div>
                       </div>

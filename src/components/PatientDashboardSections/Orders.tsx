@@ -147,7 +147,6 @@ const Orders: FC = (() => {
               <div className="card-body">
                 <div className="table-responsive">
                   <DataGrid
-                    experimentalFeatures={{ ariaV7: true }}
                     slotProps={{
                       pagination: {
                         SelectProps: {

@@ -2,7 +2,6 @@ import { FC, Fragment, useEffect, useState } from 'react'
 import { PatientProfile } from '../DoctorDashboardSections/MyPtients'
 import PatientSidebarDoctorDashboard from '../shared/PatientSidebarDoctorDashboard'
 import { useRouter } from 'next/router'
-import { useSearchParams } from 'next/navigation'
 import { AppState } from '@/redux/store'
 import { useSelector } from 'react-redux'
 import { base64regex } from '../DoctorsSections/Profile/PublicProfilePage'
@@ -54,10 +53,9 @@ export interface DoctorPatientProfileTypes {
   pageType: 'edit' | 'add' | 'see'
 }
 const PrescriptionPage: FC<DoctorPatientProfileTypes> = (({ userType, pageType }) => {
-  const searchParams = useSearchParams();
   const { bounce, } = useScssVar();
-  const encryptID = searchParams.get('_id')
   const router = useRouter()
+  const encryptID = router.query._id;
   const [profile, setProfile] = useState<PatientProfileExtendType>();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [reload, setReload] = useState<boolean>(false)
@@ -67,7 +65,7 @@ const PrescriptionPage: FC<DoctorPatientProfileTypes> = (({ userType, pageType }
   useEffect(() => {
     let active = true;
     if (encryptID) {
-      if (base64regex.test(encryptID)) {
+      if (base64regex.test(encryptID as string)) {
         let _id = atob(encryptID as string)
         if (active && homeSocket?.current) {
           setIsLoading(true)

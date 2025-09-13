@@ -1,7 +1,9 @@
 
 //Styles
+import '../../node_modules/@mui/x-data-grid/index.css';
 import '@/styles/globals.css'
-// import '@/styles/custom-bars.css';
+import 'react-circular-progressbar/dist/styles.css';
+import 'swiper/css/bundle';
 import '@/styles/component.css'
 import '@/styles/404.scss'
 import '@/styles/login.scss'
@@ -24,7 +26,7 @@ import { wrapper } from '@/redux/store'
 
 
 //theme
-import createEmotionCache from '@/theme/createEmotionCache'
+// import createEmotionCache from '@/theme/createEmotionCache'
 import { EmotionCache } from '@emotion/react';
 import AppWrapper from '@/theme/AppWrapper';
 
@@ -38,7 +40,7 @@ export interface MyAppProps extends AppProps {
 }
 
 
-const clientSideEmotionCache = createEmotionCache();
+// const clientSideEmotionCache = createEmotionCache();
 
 export const loadStylesheet = (href: string) => {
   const link = document.createElement('link');
@@ -51,7 +53,9 @@ export const loadStylesheet = (href: string) => {
 
 const App = ({ Component, ...rest }: MyAppProps) => {
   const { store, props } = wrapper.useWrappedStore(rest);
-  const { router, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const { router,
+    // emotionCache = clientSideEmotionCache, 
+    pageProps } = props;
 
   useEffect(() => {
     loadStylesheet('/css/owl.carousel.min.css');

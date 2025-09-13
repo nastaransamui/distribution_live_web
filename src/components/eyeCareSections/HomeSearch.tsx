@@ -96,7 +96,7 @@ const HomeSearch: FC = (() => {
               <div className="banner-header">
 
                 <Grid container spacing={{ lg: 1, xl: 1, md: 1, sm: 2, xs: 7 }}>
-                  <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                  <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                     <FormControl fullWidth id="KeyWord" className='animate__animated '
                       sx={{
                         position: 'absolute',
@@ -117,36 +117,38 @@ const HomeSearch: FC = (() => {
                           }),
                         }}
                         size="small"
-                        InputLabelProps={{
-                          shrink: keyWord !== ''
-                        }}
-                        onChange={(e) => setKeyWord(e.target.value)}
-                        InputProps={{
-                          autoComplete: 'off',
-                          startAdornment:
-                            <InputAdornment position="start" >
-                              <IconButton disableTouchRipple onClick={() => {
-                                keyWord !== '' && setKeyWord('')
-                              }}>
-                                {keyWord == '' ? <Search
-                                  style={{ width: "16px", color: theme.palette.secondary.main }}
-                                /> :
-                                  <X
+                        slotProps={{
+                          inputLabel: {
+                            shrink: keyWord !== ''
+                          },
+                          input: {
+                            autoComplete: 'off',
+                            startAdornment:
+                              <InputAdornment position="start" >
+                                <IconButton aria-label='search' disableTouchRipple onClick={() => {
+                                  keyWord !== '' && setKeyWord('')
+                                }}>
+                                  {keyWord == '' ? <Search
                                     style={{ width: "16px", color: theme.palette.secondary.main }}
-                                  />}
+                                  /> :
+                                    <X
+                                      style={{ width: "16px", color: theme.palette.secondary.main }}
+                                    />}
+                                </IconButton>
+                              </InputAdornment>,
+                            endAdornment: <InputAdornment position='end'>
+                              <IconButton aria-label='filter' disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
+                                <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
                               </IconButton>
                             </InputAdornment>,
-                          endAdornment: <InputAdornment position='end'>
-                            <IconButton disableTouchRipple
-                              onClick={() => setShowFilter(!showFilter)}>
-                              <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
-                            </IconButton>
-                          </InputAdornment>,
+                          }
                         }}
+                        onChange={(e) => setKeyWord(e.target.value)}
+
                       />
                     </FormControl>
                   </Grid>
-                  <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                  <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                     <FormControl fullWidth className='animate__animated ' id="availablity" sx={{
                       position: 'absolute',
                       visibility: 'hidden',
@@ -221,7 +223,7 @@ const HomeSearch: FC = (() => {
                       visibility: showFilter ? 'visible' : 'hidden',
                     }}
                   >
-                    <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                    <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                       {specialities.length !== 0 &&
                         <FormControl fullWidth >
                           <InputLabel id="specialities" size='small'>
@@ -262,7 +264,7 @@ const HomeSearch: FC = (() => {
                         </FormControl>
                       }
                     </Grid>
-                    <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                    <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                       <FormControl fullWidth >
                         <InputLabel id="gender" size='small'>
                           Gender
@@ -292,7 +294,7 @@ const HomeSearch: FC = (() => {
                         </Select>
                       </FormControl>
                     </Grid>
-                    <Grid item xl={6} lg={6} md={6} sm={6} xs={12} >
+                    <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }} >
                       <GeoLocationAutocomplete
                         errors={errors}
                         register={register}
@@ -312,7 +314,7 @@ const HomeSearch: FC = (() => {
                         textFieldSX={{ sx: { bgcolor: theme.palette.background.default, } }}
                       />
                     </Grid>
-                    <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                    <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                       <GeoLocationAutocomplete
                         errors={errors}
                         register={register}
@@ -332,7 +334,7 @@ const HomeSearch: FC = (() => {
                         textFieldSX={{ sx: { bgcolor: theme.palette.background.default, } }}
                       />
                     </Grid>
-                    <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+                    <Grid size={12}>
                       <GeoLocationAutocomplete
                         errors={errors}
                         register={register}
@@ -358,7 +360,8 @@ const HomeSearch: FC = (() => {
                 <Grid
                   className="form-search-btn"
                   sx={{
-                    position: 'absolute'
+                    position: 'absolute',
+                    minWidth: '100%'
                   }}>
                   <FormControl fullWidth
                     id="buttons_cosmetic"

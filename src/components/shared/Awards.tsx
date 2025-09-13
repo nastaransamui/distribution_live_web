@@ -56,9 +56,9 @@ const Awards: FC<AwardsProps> = ((props: AwardsProps) => {
             return (
               <div className="education-info" key={index + data?.id} >
                 <div className="row form-row education-cont">
-                  <div className="col-12 col-md-10 col-lg-11">
+                  <div className="col-12 col-md-10 col-lg-12">
                     <div className="row form-row">
-                      <div className="col-12 col-md-5">
+                      <div className="col-12 col-md-5 col-lg-8">
                         <div className="form-group">
                           <TextField
                             required
@@ -76,7 +76,7 @@ const Awards: FC<AwardsProps> = ((props: AwardsProps) => {
                           />
                         </div>
                       </div>
-                      <div className="col-12 col-md-5">
+                      <div className="col-12 col-md-5 col-lg-3">
                         <div className="form-group">
                           <Controller
                             rules={{ required: 'This field is required' }}
@@ -119,7 +119,7 @@ const Awards: FC<AwardsProps> = ((props: AwardsProps) => {
                           />
                         </div>
                       </div>
-                      <div className="col-12 col-md-2">
+                      <div className="col-12 col-md-2 col-lg-1">
                         <div className="delete-icon">
                           <Link
                             href="#0"

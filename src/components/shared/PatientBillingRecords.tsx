@@ -1,7 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, forwardRef, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import { DataGrid, GridActionsCellItem, GridRowParams, GridRenderCellParams, GridValueGetterParams, GridColumnVisibilityModel, GridColDef, GridAlignment, GridFilterModel, GridSortModel, GridRowId } from '@mui/x-data-grid';
+import {
+  DataGrid, GridActionsCellItem, GridRowParams, GridRenderCellParams,
+  GridColumnVisibilityModel, GridColDef, GridAlignment, GridFilterModel, GridSortModel, GridRowId,
+  GridColType,
+  GridRowSelectionModel
+} from '@mui/x-data-grid';
 
 import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
@@ -21,7 +26,7 @@ import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 
 
 import CustomNoRowsOverlay from './CustomNoRowsOverlay';
-import CustomPagination from './CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from './CustomPagination';
 import { formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
@@ -29,10 +34,11 @@ import Chip from '@mui/material/Chip';
 import DeleteForever from '@mui/icons-material/DeleteForever';
 import { BootstrapDialog, BootstrapDialogTitle, Transition } from './Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from './CustomToolbar';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from './CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/router';
+import muiSelectionModelToArray from '@/helpers/muiSelectionModelToArray';
 
 export function isNotNull<T>(value: T | null): value is T {
   return value !== null;
@@ -423,14 +429,11 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         width: 100,
         align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
-        type: 'number',
+        type: 'number' as GridColType,
         sortable: true,
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.id
-        },
       },
       {
         field: 'invoiceId',
@@ -458,23 +461,18 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         field: 'doctorProfile.fullName',
         headerName: "Doctor",
         width: 250,
-        // align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
         searchAble: false,
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
-          return row?.doctorProfile?.fullName
-        },
         sortComparator: (v1: any, v2: any) => v1.toLowerCase() > v2.toLowerCase() ? 1 : -1,
         renderCell: (params: GridRenderCellParams) => {
           const { row, } = params;
 
           const doctorName = `Dr. ${row?.doctorProfile?.fullName}`
           return (
-            <>
+            <span style={{ display: 'flex', height: '100%', width: '100%', alignItems: 'center' }}>
               <Link aria-label='link' className="avatar mx-2" href={`/doctors/profile/${btoa(row?.doctorId)}`} target='_blank'>
                 <StyledBadge
                   overlap="circular"
@@ -488,7 +486,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                   </Avatar>
                 </StyledBadge>
               </Link>
-              <Stack >
+              <Stack sx={{ height: '100%', justifyContent: 'center' }}>
                 <Link href={`/doctors/profile/${btoa(row?.doctorId)}`}
                   target='_blank' style={{ justifyContent: 'center', display: 'flex' }}>
                   {doctorName}
@@ -496,7 +494,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                 <small> {row?.doctorProfile?.specialities[0]?.specialities}</small>
 
               </Stack>
-            </>
+            </span>
           )
         },
       } : null,
@@ -504,23 +502,18 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         field: 'patientProfile.fullName',
         headerName: "Patient",
         width: 250,
-        // align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
         searchAble: false,
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
-          return row?.patientProfile?.fullName
-        },
         sortComparator: (v1: any, v2: any) => v1.toLowerCase() > v2.toLowerCase() ? 1 : -1,
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           const profileImage = row?.patientProfile?.profileImage == '' ? patient_profile : row?.patientProfile?.profileImage
           const online = row?.patientProfile?.online || false;
           return (
-            <>
+            <span style={{ display: 'flex', height: '100%', width: '100%', alignItems: 'center' }}>
               <Link className="avatar mx-2" onClick={(e) => {
                 if (router.asPath.includes('patient-profile')) {
                   e.preventDefault()
@@ -537,7 +530,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                   <Avatar alt="" src={profileImage} />
                 </StyledBadge>
               </Link>
-              <Stack>
+              <Stack sx={{ height: '100%', justifyContent: 'center' }}>
                 <Link
                   onClick={(e) => {
                     if (router.asPath.includes('patient-profile')) {
@@ -551,7 +544,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                 </Link>
                 <small>{row?.patientProfile?.userName}</small>
               </Stack>
-            </>
+            </span>
           )
         },
       } : null,
@@ -561,7 +554,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         width: 100,
         align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
-        type: 'number',
+        type: 'number' as GridColType,
         sortable: true,
         searchAble: true,
         filterable: true,
@@ -569,7 +562,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         renderCell: (params: GridRenderCellParams) => {
           const isSameDoctor = userProfile?._id == params?.row?.doctorId;
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{isSameDoctor ? formatNumberWithCommas(params?.row?.price) : 'N/A'}</span>
               <span className="d-block">
                 <span style={{ justifyContent: 'center', display: 'flex' }}>{isSameDoctor ? params?.row?.currencySymbol : ''}</span>
@@ -584,15 +577,14 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         width: 100,
         align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
-        type: 'number',
+        type: 'number' as GridColType,
         sortable: true,
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params
-          const isSameDoctor = userProfile?._id == params?.row?.doctorId;
-          return isSameDoctor ? `${row?.bookingsFee} %` : `N/A`
+        valueGetter(_: string, row: any) {
+          const isSameDoctor = userProfile?._id == row?.doctorId;
+          return isSameDoctor ? `${row?.bookingsFee}%` : `N/A`
         }
       } : null,
       userType == 'doctor' ? {
@@ -601,7 +593,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         width: 100,
         align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
-        type: 'number',
+        type: 'number' as GridColType,
         sortable: true,
         searchAble: true,
         filterable: true,
@@ -610,7 +602,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
           const { row } = params;
           const isSameDoctor = userProfile?._id == row?.doctorId;
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>
                 {isSameDoctor ? formatNumberWithCommas(params?.row?.bookingsFeePrice) : 'N/A'}
               </span>
@@ -627,7 +619,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         width: 100,
         align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
-        type: 'number',
+        type: 'number' as GridColType,
         sortable: true,
         searchAble: true,
         filterable: true,
@@ -636,7 +628,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
 
 
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>
                 {formatNumberWithCommas(params?.row?.total)}
               </span>
@@ -653,13 +645,12 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         width: 200,
         align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
-        type: 'dateTime',
+        type: 'dateTime' as GridColType,
         searchAble: true,
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueGetter(_: string, row: any) {
           return row.dueDate ? dayjs(row.dueDate).toDate() : null;
         },
         renderCell: (params: GridRenderCellParams) => {
@@ -683,14 +674,10 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         width: 100,
         align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
-        type: 'string',
+        type: 'string' as GridColType,
         searchAble: false,
         sortable: false,
         filterable: false,
-        valueGetter: (params: GridValueGetterParams) => {
-          const billDetailsArray = params?.row?.billDetailsArray;
-          return billDetailsArray.length;
-        },
         sortComparator: (v1: any, v2: any) => {
           return v1 > v2 ? -1 : 1
         },
@@ -748,6 +735,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         searchAble: true,
         sortable: true,
         filterable: true,
+        type: 'string' as GridColType,
         filterOperators: createCustomOperators().string,
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
@@ -770,19 +758,18 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         width: 200,
         headerAlign: 'center' as GridAlignment,
         align: 'center' as GridAlignment,
-        type: 'dateTime',
+        type: 'dateTime' as GridColType,
         searchAble: true,
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueGetter(_: any, row: any) {
           return row.createdAt ? dayjs(row.createdAt).toDate() : null;
         },
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`DD MMM YYYY`)}</span>
               <span className="d-block">
                 <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`HH:mm`)}</span>
@@ -797,19 +784,18 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
         width: 200,
         headerAlign: 'center' as GridAlignment,
         align: 'center' as GridAlignment,
-        type: 'dateTime',
+        type: 'dateTime' as GridColType,
         searchAble: true,
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueGetter(_: any, row: any) {
           return row.updateAt ? dayjs(row.updateAt).toDate() : null;
         },
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`DD MMM YYYY`)}</span>
               <span className="d-block">
                 <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`HH:mm`)}</span>
@@ -820,7 +806,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
       },
       {
         field: "actions",
-        type: 'actions',
+        type: 'actions' as GridColType,
         headerName: "Action",
         headerAlign: 'center' as GridAlignment,
         align: "center" as GridAlignment,
@@ -1036,6 +1022,8 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
   }, [homeSocket, patientId, reload, paginationModel, sortModel, mongoFilterModel,])
 
   const [deleteId, setDeleteId] = useState<GridRowId[]>([])
+  const [rowSelectionModel, setRowSelectionModel] =
+    useState<GridRowSelectionModel>({ type: 'include', ids: new Set() });
   const [showDelete, setShowDelete] = useState<boolean>(false);
 
   const deleteSubmited = () => {
@@ -1073,7 +1061,15 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
 
   }
 
-
+  // remove ids from select upon change page
+  useEffect(() => {
+    const exists = deleteId.some(id => rows.map(a => a._id).includes(id as string));
+    if (!exists) {
+      setDeleteId([])
+      setRowSelectionModel({ type: 'include', ids: new Set() })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows])
   return (
     <Fragment>
       <iframe style={{ height: 0, width: 0, position: 'absolute' }}>
@@ -1091,16 +1087,36 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
             </div>
           </div> :
           <div className="card">
-            <div ref={dataGridRef} className="tab-content schedule-cont">
+            <div ref={dataGridRef} className="tab-content schedule-cont  animate__animated animate__lightSpeedInRight">
               <Box className="dataGridOuterBox" >
-                <Typography className="totalTypo"
-                  variant='h5' align='center' gutterBottom >
+                <span style={{ position: "relative", display: 'flex', justifyContent: 'center' }}>
+                  <Typography className="totalTypo"
+                    variant='h5' align='center' gutterBottom sx={{
+                      marginLeft:
+                        userDoctorProfile?.currency && userDoctorProfile?.currency.length > 0 ?
+                          'auto' :
+                          'unset'
+                    }}>
+                    {
+                      rowCount !== 0 ?
+                        `Total Bills: ${rowCount}` :
+                        `Not any Bills yet`
+                    }
+                  </Typography>
                   {
-                    rowCount !== 0 ?
-                      `Total Bills: ${rowCount}` :
-                      `Not any Bills yet`
+                    userDoctorProfile?.currency &&
+                    <>{
+                      userDoctorProfile?.currency.length > 0 ?
+                        <div className="text-end" style={{ marginLeft: 'auto' }} >
+                          <Link href={`/doctors/dashboard/add-billing/${btoa(patientId!)}`} className="add-new-btn">
+                            Add Bill
+                          </Link>
+                        </div> :
+                        <div className="text-end" style={{ position: 'absolute', right: '15px', transform: "translateY(15px)" }}>
+                          <span style={{ color: theme.palette.text.color }}>Add currency to your profile then can add Bills</span>
+                        </div>}</>
                   }
-                </Typography>
+                </span>
                 <div className="table-responsive" style={{ height: paginationModel?.pageSize == 5 ? 600 : 1000, width: '100%' }}>
 
 
@@ -1124,10 +1140,11 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                       setColumnVisibilityModel(newModel)
                     }}
                     loading={isLoading}
-                    experimentalFeatures={{ ariaV7: true }}
+                    showToolbar
                     slots={{
-                      toolbar: CustomToolbar,
-                      pagination: CustomPagination,
+                      toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                      pagination: CustomPagination as CustomPaginationSlotType,
                       noResultsOverlay: CustomNoRowsOverlay,
                       noRowsOverlay: CustomNoRowsOverlay
                     }}
@@ -1137,7 +1154,7 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                         deleteId: userType == 'doctor' ? deleteId : [],
                         deleteClicked: userType == 'doctor' ? () => { setShowDelete(true) } : () => { },
                         columnVisibilityModel: columnVisibilityModel,
-                      },
+                      } as CustomToolbarPropsType,
                       pagination: {
                         onRowsPerPageChange: handleChangeRowsPerPage,
                         page: paginationModel.page,
@@ -1151,20 +1168,6 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                           },
                         },
                       },
-                      filterPanel: {
-                        filterFormProps: {
-                          deleteIconProps: {
-                            sx: {
-                              justifyContent: 'flex-start'
-                            },
-                          },
-                        },
-                      },
-                      baseCheckbox: {
-                        inputProps: {
-                          name: "select-checkbox"
-                        }
-                      }
                     }}
                     getRowId={(params) => params._id}
                     rows={rows}
@@ -1183,16 +1186,32 @@ const PatientBillingRecords: FC<{ userType: 'patient' | 'doctor', patientId?: st
                       }
                     }}
                     onRowSelectionModelChange={(newRowSelectionModel) => {
-                      const { page, pageSize } = paginationModel
-                      let start = page == 0 ? page : page * pageSize
-                      let end = pageSize * (1 + page)
-                      let currrenPageId = newRowSelectionModel.slice(start, end)
-                      setDeleteId(() => {
-                        let newState = currrenPageId.length > 0 ? [...currrenPageId] : [...newRowSelectionModel]
-                        return newState
-                      });
+                      const { ids, type } = newRowSelectionModel;
+                      setRowSelectionModel(newRowSelectionModel);
+                      if (type == 'include') {
+                        const selectedIdsArray = muiSelectionModelToArray(newRowSelectionModel);
+                        setDeleteId(selectedIdsArray)
+                      } else {
+                        if (ids.size == 0) {
+                          setDeleteId((prevState) => {
+                            prevState = [];
+                            prevState = rows.map((a) => a._id as string);
+                            return [...prevState]
+                          })
+                        } else {
+                          const exists = deleteId.some(id => Array.from(ids).includes(id as string));
+                          if (exists) {
+                            setDeleteId((prevState) => {
+                              return prevState.filter((a) => !Array.from(ids).includes(a))
+                            })
+                          } else {
+                            const allNewIds = rows.map((a) => a._id as string).filter((a) => !Array.from(ids).includes(a))
+                            setDeleteId(allNewIds)
+                          }
+                        }
+                      }
                     }}
-                    rowSelectionModel={deleteId}
+                    rowSelectionModel={rowSelectionModel}
                     paginationModel={paginationModel}
                     pageSizeOptions={[5, 10]}
                     showCellVerticalBorder

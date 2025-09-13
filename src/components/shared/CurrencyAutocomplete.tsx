@@ -205,11 +205,48 @@ const CurrencyAutocomplete: FC<CurrencyAutocompleteProps> = ({
             <Fragment >
               <TextField
                 {...params}
-                inputProps={{
-                  ...params.inputProps,
-                  autoComplete: 'off',
-                  required: required == undefined ? true : required,
-                  'aria-autocomplete': "none"
+                slotProps={{
+                  input: {
+                    autoComplete: 'off',
+                    required: required == undefined ? true : required,
+                    'aria-autocomplete': 'none',
+                    ...params.InputProps,
+                    endAdornment: (
+                      <Fragment>
+                        {loadingOption ? (
+                          <CircularProgress color='primary' size={20} />
+                        ) :
+                          (inputValue !== '' && !disable) &&
+
+                          <IconButton
+                            disableFocusRipple
+                            disableRipple
+                            disableTouchRipple
+                            sx={{ padding: '1px' }}
+                            onClick={() => {
+                              setInputValue(() => "")
+                              setValue(() => null)
+                              setFormValue(name, '')
+                              if (required) {
+                                setError(name, {
+                                  type: 'required',
+                                  message: `This is required`,
+                                });
+                              }
+                              setDisable(() => false)
+                            }}
+                          >
+                            <Close color='secondary' />
+                          </IconButton>
+                        }
+                        {params.InputProps.endAdornment}
+                      </Fragment>
+                    ),
+                  },
+                  htmlInput: {
+                    ...params.inputProps,
+                    name: '_noAutoComplete'
+                  }
                 }}
                 {...textFieldSX}
                 label={`Currency`}
@@ -223,41 +260,6 @@ const CurrencyAutocomplete: FC<CurrencyAutocompleteProps> = ({
                   required: required == undefined || required ? "This field is required" : '',
                 })
                 }
-                InputProps={{
-                  ...params.InputProps,
-                  name: `_noAutoComplete`,
-                  endAdornment: (
-                    <Fragment>
-                      {loadingOption ? (
-                        <CircularProgress color='primary' size={20} />
-                      ) :
-                        (inputValue !== '' && !disable) &&
-
-                        <IconButton
-                          disableFocusRipple
-                          disableRipple
-                          disableTouchRipple
-                          sx={{ padding: '1px' }}
-                          onClick={() => {
-                            setInputValue(() => "")
-                            setValue(() => null)
-                            setFormValue(name, '')
-                            if (required) {
-                              setError(name, {
-                                type: 'required',
-                                message: `This is required`,
-                              });
-                            }
-                            setDisable(() => false)
-                          }}
-                        >
-                          <Close color='secondary' />
-                        </IconButton>
-                      }
-                      {params.InputProps.endAdornment}
-                    </Fragment>
-                  ),
-                }}
                 autoComplete='off'
                 placeholder={`Currency`} />
             </Fragment>
@@ -275,11 +277,11 @@ const CurrencyAutocomplete: FC<CurrencyAutocompleteProps> = ({
                     {`⚠️ ${option?.errorMessage}`}
                   </>
                   : <Grid container alignItems="center">
-                    <Grid item sx={{ fontSize: '20px' }}>
+                    <Grid sx={{ fontSize: '20px' }}>
                       {option.emoji}
                       &nbsp;&nbsp;&nbsp;
                     </Grid>
-                    <Grid item xs>
+                    <Grid >
                       {parts.map((part: PartType, index: number) => {
                         return (
                           <span

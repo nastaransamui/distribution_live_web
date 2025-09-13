@@ -1,14 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect } from 'react'
-import dynamic from 'next/dynamic'
-const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
-  ssr: false,
-})
+import { FC, Fragment, useCallback, useEffect, useRef } from 'react'
+import type { Swiper as SwiperInstance } from 'swiper';
 
 import AOS from 'aos'
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 import { useTheme } from '@mui/material'
+import { SwiperOptions } from 'swiper/types'
+import { Autoplay, FreeMode, Navigation } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 
 const PartnersSection: FC = (() => {
@@ -23,38 +23,29 @@ const PartnersSection: FC = (() => {
     });
 
   }, []);
-  const specialitysettings = {
-    items: 6,
+  const partnerSettings: SwiperOptions = {
+    slidesPerView: 6,
+    spaceBetween: 15,
     loop: true,
-    margin: 15,
-    dots: false,
-    nav: true,
-    navContainer: '.slide-nav-3',
+    autoplay: {
+      delay: 1500,
+      disableOnInteraction: false,
+    },
+    modules: [Navigation, FreeMode, Autoplay],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+    breakpoints: {
+      992: { slidesPerView: 6 },
+      800: { slidesPerView: 3 },
+      776: { slidesPerView: 2 },
+      567: { slidesPerView: 2 },
+      200: { slidesPerView: 1 },
+    },
+  };
 
-    autoplay: true,
-    infinite: "true",
-
-    slidestoscroll: 1,
-    rtl: "true",
-    rows: 6,
-    responsive: {
-      992: {
-        items: 6
-      },
-      800: {
-        items: 3
-      },
-      776: {
-        items: 3
-      },
-      567: {
-        items: 1
-      },
-      200: {
-        items: 1
-      }
-    }
-  }
+  const swiperRef = useRef<SwiperInstance | null>(null);
 
   return (
     <Fragment>
@@ -72,116 +63,144 @@ const PartnersSection: FC = (() => {
           </div>
           <div className="partners-info aos" data-aos="fade-up">
             <span className="owl-carousel partners-slider d-flex">
-              <OwlCarousel {...specialitysettings}>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-                <span>
-                  <Link href="#">
-                    <img
-                      className="img-fluid"
-                      src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
-                      alt="partners"
-                    />
-                  </Link>
-                </span>
-              </OwlCarousel>
+              <Swiper
+                {...partnerSettings}
+                onSwiper={(swiper) => {
+                  swiperRef.current = swiper;
+                }}>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.secondary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <span>
+                    <Link href="#">
+                      <img
+                        className="img-fluid"
+                        src={`https://placehold.co/124x45/${theme.palette.primary.main.slice(1)}/white`}
+                        alt="partners"
+                      />
+                    </Link>
+                  </span>
+                </SwiperSlide>
+              </Swiper>
             </span>
           </div>
         </div>

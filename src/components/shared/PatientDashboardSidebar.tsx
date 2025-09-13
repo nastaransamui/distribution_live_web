@@ -11,7 +11,6 @@ import { toast } from 'react-toastify'
 import { deleteCookie, getCookie, hasCookie, setCookie } from 'cookies-next'
 import { updateHomeAccessToken } from '@/redux/homeAccessToken'
 import dayjs from 'dayjs'
-import preciseDiff from 'dayjs-precise-range'
 import Avatar from '@mui/material/Avatar'
 import { DoctorDashboardSidebarType, Drawer, DrawerHeader, OverflowTooltip } from './DoctorDashboardSidebar'
 import { updateHomeSideBarOpen } from '@/redux/homeSideBarOpen'
@@ -31,6 +30,7 @@ import { updateHomeIAT } from '@/redux/homeIAT'
 import { updateHomeRoleName } from '@/redux/homeRoleName'
 import { updateHomeServices } from '@/redux/homeServices'
 import { updateHomeUserId } from '@/redux/homeUserId'
+import ageParts from '@/helpers/ageParts'
 
 
 const PatientDashboardSidebar: FC = (() => {
@@ -167,13 +167,13 @@ const PatientDashboardSidebar: FC = (() => {
         hasFunction: false,
         subUrlForActivation: []
       },
-      {
-        href: "/patient/dashboard/orders",
-        iconClass: "fas fa-list-alt",
-        title: "Orders",
-        hasFunction: false,
-        subUrlForActivation: []
-      },
+      // {
+      //   href: "/patient/dashboard/orders",
+      //   iconClass: "fas fa-list-alt",
+      //   title: "Orders",
+      //   hasFunction: false,
+      //   subUrlForActivation: []
+      // },
       {
         href: "/patient/dashboard/medicalrecords",
         iconClass: "fas fa-clipboard",
@@ -216,10 +216,8 @@ const PatientDashboardSidebar: FC = (() => {
     }
   }, [isMobile, dispatch, homeSideBarOpen])
 
-  dayjs.extend(preciseDiff)
 
-  //@ts-ignore
-  let { years, months, days } = dayjs.preciseDiff(userProfile?.dob, dayjs(), true)
+  const { years, months, days } = ageParts(userProfile?.dob ?? null);
   const handlesidebar = () => {
     dispatch(updateHomeSideBarOpen(!homeSideBarOpen))
     setCookie('homeMiniSidebarOpen', !homeSideBarOpen)

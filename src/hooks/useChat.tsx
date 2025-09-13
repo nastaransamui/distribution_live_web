@@ -10,7 +10,7 @@ import { AppState } from "@/redux/store";
 import useScssVar from "./useScssVar";
 import { Image_placeholder } from "@/public/assets/imagepath";
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useAudioRecorder } from "react-audio-voice-recorder";
+// import { useAudioRecorder } from "react-audio-voice-recorder";
 import { AttachmentType, ChatDataType, ChatUserType, IncomingCallType, MessageType } from "../../@types/chatTypes";
 
 import sortLatestMessage from "./useChatHelpers/sortLatestMessage";
@@ -114,13 +114,13 @@ interface ChatContextType {
 
   setAudioBlob: React.Dispatch<React.SetStateAction<Blob | null>>;
   audioBlob: Blob | null;
-  startRecording: () => void;
-  stopRecording: () => void;
-  togglePauseResume: () => void;
-  recordingBlob?: Blob;
-  isRecording: boolean;
-  isPaused: boolean;
-  recordingTime: number;
+  // startRecording: () => void;
+  // stopRecording: () => void;
+  // togglePauseResume: () => void;
+  // recordingBlob?: Blob;
+  // isRecording: boolean;
+  // isPaused: boolean;
+  // recordingTime: number;
   mediaRecorder?: MediaRecorder;
   clearRecording: () => void;
   handleDownload: () => void;
@@ -209,16 +209,16 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const routerRoomId: string | string[] | undefined = router.query.roomId
   const [endCall, setEndCall] = useState<boolean>(false);
   const [isAnswerable, setIsAnswerable] = useState<boolean>(false);
-  let {
-    startRecording,
-    stopRecording,
-    togglePauseResume,
-    recordingBlob,
-    isRecording,
-    isPaused,
-    recordingTime,
-    mediaRecorder
-  } = useAudioRecorder();
+  // let {
+  //   startRecording,
+  //   stopRecording,
+  //   togglePauseResume,
+  //   recordingBlob,
+  //   isRecording,
+  //   isPaused,
+  //   recordingTime,
+  //   mediaRecorder
+  // } = useAudioRecorder();
 
   // Declare peerConnection and remoteStream with types
   const peerConnection: React.MutableRefObject<RTCPeerConnection | null> = useRef(null); // Type it correctly as RTCPeerConnection or null
@@ -325,8 +325,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setEndCall,
       endCall,
       setIsAnswerable,
-      isRecording,
-      stopRecording,
+      // isRecording,
+      // stopRecording,
       setShowSnakBar,
       setAudioBlob,
       audioBlobRef,
@@ -462,8 +462,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setVoiceCallActive,
     setCallReceiverUserData,
     setIsAnswerable,
-    isRecording,
-    stopRecording,
+    // isRecording,
+    // stopRecording,
     setShowSnakBar,
     setAudioBlob,
     audioBlobRef,
@@ -481,9 +481,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   })
   // Ensure audioBlob updates when recordingBlob is available
   useAudioBlobUpdate({
-    isRecording,
+    // isRecording,
     setAudioBlob,
-    recordingBlob,
+    // recordingBlob,
     audioBlobRef,
   })
 
@@ -637,12 +637,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setEndCall,
       setAudioBlob,
       audioBlob,
-      recordingTime,
-      startRecording,
-      isRecording,
-      stopRecording,
-      togglePauseResume,
-      isPaused,
+      // recordingTime,
+      // startRecording,
+      // isRecording,
+      // stopRecording,
+      // togglePauseResume,
+      // isPaused,
       clearRecording,
       handleDownload,
       makeCallAudioRef,

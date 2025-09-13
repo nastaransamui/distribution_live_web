@@ -2,27 +2,16 @@
 //next
 import Head from 'next/head'
 import { GetServerSideProps, NextPage } from 'next'
-import { hasCookie, getCookie, deleteCookie } from 'cookies-next';
+import { getCookie } from 'cookies-next';
 //Redux
 import { wrapper } from '@/redux/store'
 import { AppState } from '@/redux/store'
 import { connect } from 'react-redux';
-import { updateHomeThemeName } from '@/redux/homeThemeName';
-import { updateHomeThemeType } from '@/redux/homeThemeType';
-import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import Footer from '@/components/sections/Footer';
-import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import useScssVar from '@/hooks/useScssVar';
 import CookieConsentComponent from '@/components/shared/CookieConsentComponent';
 import BillCheckOut from '@/components/PatientSection/BillPayment/BillCheckOut';
-import { updateHomeExp } from '@/redux/homeExp';
-import { updateHomeIAT } from '@/redux/homeIAT';
-import { updateHomeRoleName } from '@/redux/homeRoleName';
-import { updateHomeServices } from '@/redux/homeServices';
-import { updateHomeUserId } from '@/redux/homeUserId';
-import { updateUserPatientProfile } from '@/redux/userPatientProfile';
-import { ErrorComponent } from '@/pages/404';
 
 import { fetchJSON, getAndDispatchUserData, handleProtectedAuth, setThemeCookiesNoRedirect } from '@/helpers/getServerSidePropsHelpers';
 

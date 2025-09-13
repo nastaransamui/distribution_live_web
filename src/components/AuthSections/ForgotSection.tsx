@@ -120,29 +120,27 @@ const ForgotSection: FC = (() => {
                             }
                           }}
                           render={({ field }) => {
-                            // const { field, fieldState, formState } = props;
-                            // const { ref, onChange } = field;
                             return (
                               <TextField
                                 required
                                 id="email"
                                 label="Email"
                                 fullWidth
-                                // pass react-hook-form field props to TextField
                                 {...field}
-                                // MUI prefers inputRef for forwarding the ref to native input
                                 inputRef={field.ref}
-                                // trim on blur instead of on every keystroke (safer UX)
                                 onBlur={(e) => {
                                   const trimmed = (e.target as HTMLInputElement).value.trim();
-                                  field.onChange(trimmed); // update RHF value with trimmed
-                                  field.onBlur(); // preserve onBlur behavior
+                                  field.onChange(trimmed);
+                                  field.onBlur();
                                 }}
-                                // If you prefer trimming on each change uncomment below and remove onBlur above:
-                                // onChange={(e) => field.onChange((e.target as HTMLInputElement).value.replace(/^\s+|\s+$/g, ''))}
                                 error={!!errors.email}
                                 helperText={errors.email?.message ?? ''}
-                                inputProps={{ autoComplete: 'email' }}
+                                size='small'
+                                slotProps={{
+                                  input: {
+                                    autoComplete: 'email'
+                                  }
+                                }}
                               />
                             )
                           }} />

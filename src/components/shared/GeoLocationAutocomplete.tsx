@@ -310,12 +310,6 @@ const GeoLocationAutocomplete: FC<GeoLocationAutocompleteProps> = ((props: GeoLo
             <Fragment >
               <TextField
                 {...params}
-                inputProps={{
-                  ...params.inputProps,
-                  autoComplete: 'new-password',
-                  required: required == undefined ? true : required,
-                  'aria-autocomplete': "none"
-                }}
                 {...textFieldSX}
                 label={name.charAt(0).toUpperCase() + name.slice(1)}
                 type="text"
@@ -328,40 +322,48 @@ const GeoLocationAutocomplete: FC<GeoLocationAutocompleteProps> = ((props: GeoLo
                   required: required == undefined || required ? "This field is required" : '',
                 })
                 }
-                InputProps={{
-                  ...params.InputProps,
-                  name: `_noAutoComplete`,
-                  endAdornment: (
-                    <Fragment>
-                      {loadingOption ? (
-                        <CircularProgress color='primary' size={20} />
-                      ) :
-                        (inputValue[name as keyof typeof inputValue] !== '' && !disable[name]) &&
+                slotProps={{
+                  htmlInput: {
+                    ...params.inputProps,
+                    autoComplete: 'new-password',
+                    required: required == undefined ? true : required,
+                    'aria-autocomplete': "none",
+                  },
+                  input: {
+                    ...params.InputProps,
+                    name: `_noAutoComplete`,
+                    endAdornment: (
+                      <Fragment>
+                        {loadingOption ? (
+                          <CircularProgress color='primary' size={20} />
+                        ) :
+                          (inputValue[name as keyof typeof inputValue] !== '' && !disable[name]) &&
 
-                        <IconButton
-                          disableFocusRipple
-                          disableRipple
-                          disableTouchRipple
-                          sx={{ padding: '1px' }}
-                          onClick={() => {
-                            setInputValue((prevState: any) => ({ ...prevState, [name]: "" }))
-                            setValue((prevState: any) => ({ ...prevState, [name]: null }))
-                            setFormValue(name, undefined)
-                            setDisable(() => {
-                              return {
-                                city: false,
-                                state: false,
-                                country: false,
-                              }
-                            })
-                          }}
-                        >
-                          <Close color='secondary' />
-                        </IconButton>
-                      }
-                      {params.InputProps.endAdornment}
-                    </Fragment>
-                  ),
+                          <IconButton
+                            disableFocusRipple
+                            disableRipple
+                            disableTouchRipple
+                            sx={{ padding: '1px' }}
+                            onClick={() => {
+                              setInputValue((prevState: any) => ({ ...prevState, [name]: "" }))
+                              setValue((prevState: any) => ({ ...prevState, [name]: null }))
+                              setFormValue(name, undefined)
+                              setDisable(() => {
+                                return {
+                                  city: false,
+                                  state: false,
+                                  country: false,
+                                }
+                              })
+                            }}
+                          >
+                            <Close color='secondary' />
+                          </IconButton>
+                        }
+                        {params.InputProps.endAdornment}
+                      </Fragment>
+                    ),
+                  }
                 }}
                 autoComplete='off'
                 placeholder={name.charAt(0).toUpperCase() + name.slice(1)} />
@@ -380,11 +382,11 @@ const GeoLocationAutocomplete: FC<GeoLocationAutocompleteProps> = ((props: GeoLo
                     {`⚠️ ${option?.errorMessage}`}
                   </>
                   : <Grid container alignItems="center">
-                    <Grid item sx={{ fontSize: '20px' }}>
+                    <Grid sx={{ fontSize: '20px' }}>
                       {option.emoji}
                       &nbsp;&nbsp;&nbsp;
                     </Grid>
-                    <Grid item xs>
+                    <Grid >
                       {parts.map((part: PartType, index: number) => {
                         return (
                           <span

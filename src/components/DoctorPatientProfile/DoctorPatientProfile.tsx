@@ -54,8 +54,8 @@ const DoctorPatientProfile: FC = (() => {
   const homeSideBarOpen = useSelector((state: AppState) => state.homeSideBarOpen.value)
 
   const { bounce, muiVar } = useScssVar();
-  const encryptID = searchParams.get('_id')
   const router = useRouter()
+  const encryptID = router.query._id;
   const [profile, setProfile] = useState<PatientProfileExtendType>();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
   const [reload, setReload] = useState<boolean>(false)
@@ -66,7 +66,7 @@ const DoctorPatientProfile: FC = (() => {
   useEffect(() => {
     let active = true;
     if (encryptID) {
-      if (base64regex.test(encryptID)) {
+      if (base64regex.test(encryptID as string)) {
         let _id = atob(encryptID as string)
         if (active && homeSocket?.current) {
           homeSocket.current.emit(`findDocterPatientProfileById`, { _id, ...dataGridFilters })
@@ -105,10 +105,6 @@ const DoctorPatientProfile: FC = (() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encryptID, homeSocket, reload, dataGridFilters])
 
-  const [isMobile, setIsmobile] = useState(false)
-  useEffect(() => {
-    setIsmobile(typeof window !== 'undefined' && window.mobileCheck())
-  }, [])
 
   const [isClient, setIsClient] = useState(false)
 
@@ -138,7 +134,7 @@ const DoctorPatientProfile: FC = (() => {
 
                   <div className={`col-md-12 col-lg-12 col-xl-12 dct-appoinment ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} >
                     {
-                      profile && isClient && <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='doctor' />
+                      profile && isClient && <PatientProfileTabs doctorPatientProfile={profile} userType='doctor' />
                     }
                   </div>
 

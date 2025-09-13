@@ -19,7 +19,7 @@ import { AppState } from '@/redux/store';
 import { ClinicStatusType } from '@/redux/clinicStatus';
 //Mui
 import { useTheme } from '@mui/material';
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import HeaderNotification from './HeaderNotification';
 import HeaderCart from './HeaderCart';

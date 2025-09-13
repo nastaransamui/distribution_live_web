@@ -1,14 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect } from 'react'
+import { FC, Fragment, useCallback, useEffect, useRef } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
 import { useTheme } from '@mui/material';
 import { EyeIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import { DoctThumb1_small, DoctThumb10, DoctThumb2, DoctThumb8, DoctThumb9, EyeBlog01, EyeBlog02, EyeBlog03, EyeBlog04 } from '@/public/assets/imagepath';
-const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
-  ssr: false,
-})
+import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperInstance } from 'swiper';
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation } from 'swiper/modules';
+
+
 import AOS from 'aos'
 const BlogPost: FC = (() => {
   const theme = useTheme();
@@ -20,41 +22,34 @@ const BlogPost: FC = (() => {
     });
 
   }, []);
-  const doctersettings = {
-    items: 4,
-    loop: true,
-    margin: 15,
-    dots: false,
-    nav: true,
-    navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
-    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
-    autoplay: false,
-    infinite: "true",
+  const specialitySettings: SwiperOptions = {
+    slidesPerView: 4,
+    spaceBetween: 15,
+    loop: false,
+    modules: [Navigation, FreeMode],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+    breakpoints: {
+      1049: { slidesPerView: 4 },
+      992: { slidesPerView: 3 },
+      800: { slidesPerView: 3 },
+      776: { slidesPerView: 3 },
+      567: { slidesPerView: 1 },
+      200: { slidesPerView: 1 },
+    },
+  };
 
-    slidestoscroll: 1,
-    rtl: "true",
-    rows: 1,
-    responsive: {
-      1049: {
-        items: 4
-      },
-      992: {
-        items: 3
-      },
-      800: {
-        items: 3
-      },
-      776: {
-        items: 3
-      },
-      567: {
-        items: 1
-      },
-      200: {
-        items: 1
-      }
-    }
-  }
+  const swiperRef = useRef<SwiperInstance | null>(null);
+
+  const handlePrev = useCallback(() => {
+    swiperRef.current?.slidePrev();
+  }, []);
+
+  const handleNext = useCallback(() => {
+    swiperRef.current?.slideNext();
+  }, []);
   return (
     <Fragment>
       <section className="our-blog-section eye-blog" style={muiVar}>
@@ -71,8 +66,22 @@ const BlogPost: FC = (() => {
             </div>
           </div>
           <div className="eye-blogslider owl-them aos" data-aos="fade-up" >
-            <OwlCarousel {...doctersettings}>
-              <div className="item">
+            <div className="owl-nav " id='slide-nav-1' >
+
+              <button className='owl-prev' onClick={handlePrev} style={{ position: 'absolute', zIndex: 2, transform: 'translateY(50%)' }} >
+                <i className="fas fa-chevron-left " />
+              </button>
+              <button className='owl-next' onClick={handleNext} style={{ position: 'absolute', zIndex: 2, transform: 'translateY(50%)' }} >
+                <i className="fas fa-chevron-right " />
+              </button>
+            </div>
+            <Swiper
+              {...specialitySettings}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }}>
+
+              <SwiperSlide className="item">
                 <div className="our-blogs">
                   <div className="blogs-img" style={{ borderRadius: `15px 15px 0px 0px` }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
@@ -113,8 +122,10 @@ const BlogPost: FC = (() => {
                     </Link>
                   </div>
                 </div>
-              </div>
-              <div className="item">
+              </SwiperSlide>
+
+
+              <SwiperSlide className="item">
                 <div className="our-blogs">
                   <div className="blogs-img" style={{ borderRadius: `15px 15px 0px 0px` }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
@@ -152,8 +163,10 @@ const BlogPost: FC = (() => {
                     </Link>
                   </div>
                 </div>
-              </div>
-              <div className="item">
+              </SwiperSlide>
+
+
+              <SwiperSlide className="item">
                 <div className="our-blogs">
                   <div className="blogs-img" style={{ borderRadius: `15px 15px 0px 0px` }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
@@ -192,8 +205,10 @@ const BlogPost: FC = (() => {
                     </Link>
                   </div>
                 </div>
-              </div>
-              <div className="item">
+              </SwiperSlide>
+
+
+              <SwiperSlide className="item">
                 <div className="our-blogs">
                   <div className="blogs-img" style={{ borderRadius: `15px 15px 0px 0px` }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
@@ -232,8 +247,10 @@ const BlogPost: FC = (() => {
                     </Link>
                   </div>
                 </div>
-              </div>
-              <div className="item">
+              </SwiperSlide>
+
+
+              <SwiperSlide className="item">
                 <div className="our-blogs">
                   <div className="blogs-img" style={{ borderRadius: `15px 15px 0px 0px` }}>
                     <Link href="/blog/blog-details" aria-label='blog post'>
@@ -272,8 +289,9 @@ const BlogPost: FC = (() => {
                     </Link>
                   </div>
                 </div>
-              </div>
-            </OwlCarousel>
+              </SwiperSlide>
+
+            </Swiper>
           </div>
         </div>
       </section>

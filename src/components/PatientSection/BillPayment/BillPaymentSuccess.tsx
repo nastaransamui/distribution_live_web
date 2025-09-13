@@ -39,12 +39,12 @@ const BillPaymentSuccess: FC = (() => {
 
 
   const searchParams = useSearchParams();
-  const encryptID = searchParams.get('_id')
+  const encryptID = router.query._id;
 
   useEffect(() => {
     let active = true;
     if (encryptID) {
-      if (base64regex.test(encryptID)) {
+      if (base64regex.test(encryptID as string)) {
         let _id = atob(encryptID as string)
         if (active && homeSocket?.current) {
           homeSocket.current.emit(`getSingleBillingForPatient`, { billing_id: _id, patientId: userProfile?._id })

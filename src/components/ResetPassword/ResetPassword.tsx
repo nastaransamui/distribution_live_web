@@ -23,7 +23,6 @@ import { useForm } from 'react-hook-form';
 import { paswordRegex } from '../PatientDashboardSections/ChangePassword';
 import { toast } from 'react-toastify';
 
-import { updateUserProfile } from '@/redux/userProfile';
 
 const ResetPassword: FC = ((props) => {
   const router = useRouter();
@@ -39,13 +38,11 @@ const ResetPassword: FC = ((props) => {
     register,
     handleSubmit,
     clearErrors,
-    unregister,
     formState: { errors },
     watch,
     reset,
     setError,
     getValues,
-    control
   } = useForm({
     defaultValues: {
       password: '',
@@ -166,6 +163,7 @@ const ResetPassword: FC = ((props) => {
                   <div className="form-group">
                     <TextField
                       variant='outlined'
+                      size='small'
                       fullWidth
                       required
                       error={errors.password == undefined ? false : true}
@@ -180,17 +178,19 @@ const ResetPassword: FC = ((props) => {
                           message: "Password should be at least 8 characters long and should contain one number,one character and one special character"
                         }
                       })}
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
+                      slotProps={{
+                        input: {
+                          endAdornment: <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        }
                       }}
                     />
                   </div>
@@ -214,17 +214,20 @@ const ResetPassword: FC = ((props) => {
                           passwordMissMatch: value => (value === getValues().password) || "New password and confirm password should be same.",
                         }
                       })}
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowRepeatPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            edge="end"
-                          >
-                            {showRepeatPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
+                      size='small'
+                      slotProps={{
+                        input: {
+                          endAdornment: <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowRepeatPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showRepeatPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        }
                       }}
                     />
                   </div>

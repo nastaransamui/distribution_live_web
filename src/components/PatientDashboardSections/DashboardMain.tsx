@@ -86,7 +86,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
         newState[0][name].push(m)
       } else {
         //if prev vital availbe but not current vital
-        if (newState[0][name] !== undefined) {
+        if (Array.isArray(newState[0][name])) {
           newState[0][name].push(m)
         } else {
           newState[0][name] = []
@@ -165,10 +165,6 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, homeSocket, userProfile, dataGridFilters, doctorPatientProfile, reload])
 
-  const [isMobile, setIsmobile] = useState(false)
-  useEffect(() => {
-    setIsmobile(typeof window !== 'undefined' && window.mobileCheck())
-  }, [])
 
   const [isClient, setIsClient] = useState(false)
 
@@ -216,14 +212,11 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                               }
                             }}
                             placeholder={values?.heartRate == undefined || values?.heartRate == 0 ? '--' : ''}
-                            InputProps={{
-                              disableUnderline: true,
-                              autoComplete: 'off'
-                            }}
-                            inputProps={{
-                              style: {
-                                marginRight: -30,
-                              }
+                            slotProps={{
+                              input: {
+                                disableUnderline: true,
+                                autoComplete: 'off'
+                              },
                             }}
                             sx={{ maxWidth: 35, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900, } }} />
                           <sub style={{ marginLeft: 4 }}>bpm</sub></h6>
@@ -253,9 +246,11 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                             size='small'
                             variant="standard"
                             placeholder={values?.bodyTemp == undefined || values?.bodyTemp == 0 ? '--' : ''}
-                            InputProps={{
-                              disableUnderline: true,
-                              autoComplete: 'off'
+                            slotProps={{
+                              input: {
+                                disableUnderline: true,
+                                autoComplete: 'off'
+                              },
                             }}
                             sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} /> <sub>C</sub></h6>
                       </div>
@@ -283,9 +278,11 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                             size='small'
                             variant="standard"
                             placeholder={values?.weight == undefined || values?.weight == 0 ? '--' : ''}
-                            InputProps={{
-                              disableUnderline: true,
-                              autoComplete: 'off'
+                            slotProps={{
+                              input: {
+                                disableUnderline: true,
+                                autoComplete: 'off'
+                              },
                             }}
                             sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} />
                           <sub>Kg</sub>
@@ -315,9 +312,11 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
                             size='small'
                             variant="standard"
                             placeholder={values?.height == undefined || values?.height == 0 ? '--' : ''}
-                            InputProps={{
-                              disableUnderline: true,
-                              autoComplete: 'off'
+                            slotProps={{
+                              input: {
+                                disableUnderline: true,
+                                autoComplete: 'off'
+                              },
                             }}
                             sx={{ maxWidth: 30, input: { fontSize: `18px`, color: muiVar['--secondaryLight'], cursor: 'pointer', fontWeight: 900 } }} />
                           <sub>cm</sub>
@@ -403,7 +402,7 @@ const DashboardMain: FC<DoctorPatientProfileTypes> = (({ doctorPatientProfile })
               <></>
               :
               <div className={`col-md-12 col-lg-12 col-xl-12 dct-appoinment    ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} >
-                <PatientProfileTabs isMobile={isMobile} doctorPatientProfile={profile} userType='patient' />
+                <PatientProfileTabs doctorPatientProfile={profile} userType='patient' />
               </div>
           }
         </AnimationWrapper>

@@ -1,17 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect, useMemo } from 'react'
+import { FC, Fragment, useEffect, useMemo, useRef } from 'react'
 import AOS from 'aos'
 import useScssVar from '@/hooks/useScssVar'
-import dynamic from 'next/dynamic'
 import { EyeIconSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import { client03, client04, client06_small, client07, eye_care_testimonial, eyeTestimonial } from '@/public/assets/imagepath'
 import { useTheme } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import Skeleton from '@mui/material/Skeleton'
-const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
-  ssr: false,
-})
+import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperInstance } from 'swiper';
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation } from 'swiper/modules';
+
 
 
 const Testimonials: FC = (() => {
@@ -24,44 +25,17 @@ const Testimonials: FC = (() => {
     });
 
   }, []);
-  const doctersettings = {
-    items: 1,
-    loop: true,
-    margin: 15,
-    dots: false,
-    dotelement: "button  aria-labelledby='slide-nav-1-dot' aria-label='slide-nav-1-dot'",
-    nav: true,
-    navContainer: '.slide-nav-2',
-    navText: ['<i class="fas fa-chevron-left custom-arrow"></i>', '<i class="fas fa-chevron-right custom-arrow"></i>'],
-    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
+  const specialitySettings: SwiperOptions = {
+    slidesPerView: 1,
+    spaceBetween: 15,
+    loop: false,
+    modules: [Navigation, FreeMode],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+  };
 
-    autoplay: false,
-    infinite: "true",
-
-    slidestoscroll: 1,
-    rtl: "true",
-    rows: 1,
-    responsive: {
-      1049: {
-        items: 1
-      },
-      992: {
-        items: 1
-      },
-      800: {
-        items: 1
-      },
-      776: {
-        items: 1
-      },
-      567: {
-        items: 1
-      },
-      200: {
-        items: 1
-      }
-    }
-  }
   const lastReviewsData = useSelector((state: AppState) => state.lastReviewsData)
   const { lastReviews } = lastReviewsData;
 
@@ -114,6 +88,9 @@ const Testimonials: FC = (() => {
   }, [])
 
   const dummyImages = [client04, client03, client06_small, client07]
+  const swiperRef = useRef<SwiperInstance | null>(null);
+
+
 
   return (
     <Fragment>
@@ -153,7 +130,11 @@ const Testimonials: FC = (() => {
             </div>
             <div className="col-md-7">
               <div className="eye-testislider">
-                <OwlCarousel {...doctersettings}>
+                <Swiper
+                  {...specialitySettings}
+                  onSwiper={(swiper) => {
+                    swiperRef.current = swiper;
+                  }}>
                   {
                     lastReviews == null ?
                       (<EyeTestimonialSkeleton />) :
@@ -161,7 +142,7 @@ const Testimonials: FC = (() => {
                         (
                           dummyReviewData.map((review, index) => {
                             return (
-                              <div className="testimonial-wrap" key={index}>
+                              <SwiperSlide className="testimonial-wrap" key={index}>
                                 <h3>{review.title}</h3>
                                 <p style={{
                                   minHeight: '270px',
@@ -171,14 +152,14 @@ const Testimonials: FC = (() => {
                                   <h4>{review.name}</h4>
                                   <p>{review.city}, {review.country}</p>
                                 </div>
-                              </div>
+                              </SwiperSlide>
                             )
                           })
                         ) :
                         (
                           lastReviews.map((review, index) => {
                             return (
-                              <div className="testimonial-wrap" key={index}>
+                              <SwiperSlide className="testimonial-wrap" key={index}>
                                 <h3>{review.title}</h3>
                                 <p style={{
                                   minHeight: '270px',
@@ -188,12 +169,12 @@ const Testimonials: FC = (() => {
                                   <h4>{review.authorProfile?.fullName}</h4>
                                   <p>{review?.authorProfile?.city}, {review?.authorProfile?.country}</p>
                                 </div>
-                              </div>
+                              </SwiperSlide>
                             )
                           })
                         )
                   }
-                </OwlCarousel>
+                </Swiper>
               </div>
             </div>
             <div className="ban-bg" style={{ opacity: 0.3, position: 'relative', top: -280, left: -270 }}>

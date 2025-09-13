@@ -1,7 +1,4 @@
 
-//Mui
-import Button from '@mui/material/Button'
-
 //next
 import Head from 'next/head'
 import { GetServerSideProps, NextPage } from 'next'

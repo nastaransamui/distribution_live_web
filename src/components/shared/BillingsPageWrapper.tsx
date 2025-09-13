@@ -5,7 +5,7 @@ import PatientBillingRecords from './PatientBillingRecords'
 import { useRouter } from 'next/router'
 
 const BillingsPageWrapper: FC = () => {
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
+
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)

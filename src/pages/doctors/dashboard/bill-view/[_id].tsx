@@ -15,8 +15,6 @@ import DoctorDashboardSidebar from '@/components/shared/DoctorDashboardSidebar';
 
 import { getAndDispatchUserData, handleProtectedAuth, setThemeCookiesNoRedirect } from '@/helpers/getServerSidePropsHelpers';
 import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfilePage';
-import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
-
 
 
 const InvoiceViewPage: NextPage = (props: any) => {
@@ -68,7 +66,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     props.currentPath = ctx.resolvedUrl ?? ctx.req?.url ?? '';
     try {
       const { params } = ctx
-      const { _id: encryptID } = params as Params
+      const { _id: encryptID } = params as any
       if (!base64regex.test(encryptID)) return { props }
       let prescription_id = atob(encryptID as string)
       const res = await fetch(`${process.env.NEXT_PUBLIC_adminUrl}/methods/findBillingForDoctorProfileById`, {

@@ -1,8 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useState, useEffect } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 
-import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 
 import { useSelector } from 'react-redux';
@@ -11,7 +9,7 @@ import { base64regex } from '@/components/DoctorsSections/Profile/PublicProfileP
 import { toast } from 'react-toastify';
 import Summary from './Summary';
 import Calendar, { OccupyTimeType } from './Calendar';
-import { AvailableType, LoadingComponent } from '@/components/DoctorDashboardSections/ScheduleTiming';
+import { AvailableType } from '@/components/DoctorDashboardSections/ScheduleTiming';
 import { SpecialitiesType } from '@/redux/specialities';
 import { CurrenciesType } from '@/components/shared/CurrencyAutocomplete';
 import BeatLoader from 'react-spinners/BeatLoader';
@@ -56,10 +54,9 @@ export interface BookingTimeSlotType {
 
 
 const BookingPage: FC = (() => {
-  const searchParams = useSearchParams();
-  const encryptID = searchParams.get('_id')
   const { bounce, muiVar } = useScssVar();
   const router = useRouter()
+  const { _id: encryptID } = router.query;
   const theme = useTheme();
   const [profile, setProfile] = useState<BookingDoctorProfile>();
   const [bookingTimeSlot, setBookingTimeSlot] = useState<BookingTimeSlotType>();
@@ -70,7 +67,7 @@ const BookingPage: FC = (() => {
   useEffect(() => {
     let active = true;
     if (encryptID) {
-      if (base64regex.test(encryptID)) {
+      if (base64regex.test(encryptID as string)) {
         let _id = atob(encryptID as string)
         if (active && homeSocket?.current) {
           homeSocket.current.emit(`getBookingPageInformation`, { doctorId: _id })

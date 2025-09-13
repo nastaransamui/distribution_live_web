@@ -4,7 +4,7 @@ import Lightbox from "yet-another-react-lightbox";
 import Link from 'next/link'
 import useScssVar from '@/hooks/useScssVar'
 import { doctors_profile } from '@/public/assets/imagepath';
-import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
+import { ClinicImagesType, DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
 import Avatar from '@mui/material/Avatar';
 import Rating from '@mui/material/Rating';
 import Grid from '@mui/material/Grid';
@@ -29,6 +29,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
   const { muiVar } = useScssVar();
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
+  const [Images, setImages] = useState<ClinicImagesType[]>([]);
   const router = useRouter();
   // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
@@ -122,6 +123,11 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
                                   e.preventDefault();
                                   setOpen(true);
                                   setIndex(index)
+                                  setImages((prevState) => {
+                                    prevState = []
+                                    prevState = [...profile.clinicImages]
+                                    return prevState;
+                                  })
                                 }} >
                                   <img src={img.src} alt='' />
                                 </Link>
@@ -192,7 +198,7 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
               {profile?.specialitiesServices &&
                 profile?.specialitiesServices.map((s: string, i: number) => {
                   return (
-                    <Grid key={s + i} item component="span" >{s}</Grid>
+                    <Grid key={s + i} component="span" >{s}</Grid>
                   )
                 })
               }
@@ -201,96 +207,17 @@ const PageContent: FC<{ profile: DoctorProfileType }> = (({ profile }) => {
         </div>
 
       </div>
-      <div className="modal fade call-modal" id="voice_call" style={muiVar}>
-        <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content">
-            <div className="modal-body">
-              <div className="call-box incoming-box">
-                <div className="call-wrapper">
-                  <div className="call-inner">
-                    <div className="call-user">
-                      <img
-                        alt=""
-                        src={profile?.profileImage || doctors_profile}
-                        className="call-avatar"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = doctors_profile; // Set fallback image
-                        }}
-                      />
-                      <h4>Dr. {profile?.firstName} {" "} {profile?.lastName}</h4>
-                      <span>Connecting...</span>
-                    </div>
-                    <div className="call-items">
-                      <Link
-                        href="#"
-                        className=" call-item call-end"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                      >
-                        <i className="material-icons">call_end</i>
-                      </Link>
-                      <Link href="/voice-call" className=" call-item call-start">
-                        <i className="material-icons">call</i>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* Outgoing Call */}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="modal fade call-modal" id="video_call" style={muiVar}>
-        <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content">
-            <div className="modal-body">
-              {/* Incoming Call */}
-              <div className="call-box incoming-box">
-                <div className="call-wrapper">
-                  <div className="call-inner">
-                    <div className="call-user">
-                      <img
-                        alt=""
-                        src={profile?.profileImage || doctors_profile}
-                        className="call-avatar"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = doctors_profile; // Set fallback image
-                        }}
-                      />
-                      <h4>Dr. {profile?.firstName} {" "} {profile?.lastName}</h4>
-                      <span>Calling ...</span>
-                    </div>
-                    <div className="call-items">
-                      <Link
-                        href="#"
-                        className=" call-item call-end"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                      >
-                        <i className="material-icons">call_end</i>
-                      </Link>
-                      <Link href="/video-call" className=" call-item call-start">
-                        <i className="material-icons">videocam</i>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* /Incoming Call */}
-            </div>
-          </div>
-        </div>
-      </div>
 
       <Lightbox
         open={open}
         close={() => setOpen(false)}
-        slides={profile?.clinicImages}
+        slides={Images}
         index={index}
       />
       <Dialog
-        TransitionComponent={Transition}
+        slotProps={{
+          transition: Transition
+        }}
         open={loginDialog}
         onClose={() => {
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')

@@ -259,7 +259,7 @@ const Calendar: FC<{ bookingTimeSlot: BookingTimeSlotType }> = (({ bookingTimeSl
           } else {
             // dispatch(updateHomeFormSubmit(false))
             const { newOccupy } = msg;
-            router.push(`/doctors/check-out/${btoa(newOccupy._id!)}`)
+            router.push(`/doctors/check-out/${encodeURIComponent(btoa(newOccupy._id!))}`)
           }
       })
     }

@@ -63,7 +63,7 @@ const Experience: FC<ExperienceProps> = ((props: ExperienceProps) => {
               return (
                 <div className="experience-info" key={index + data?.id} >
                   <div className="row form-row experience-cont">
-                    <div className="col-12 col-md-10 col-lg-11">
+                    <div className="col-12 col-md-10 col-lg-12">
                       <div className="row form-row">
                         <div className="col-12 col-md-6 col-lg-3">
                           <div className="form-group">

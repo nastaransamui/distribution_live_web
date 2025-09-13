@@ -1,7 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, forwardRef, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridValueFormatterParams, GridRenderCellParams, GridRowId, GridColumnVisibilityModel, GridFilterModel, GridSortModel } from '@mui/x-data-grid';
+import {
+  DataGrid, GridColDef, GridActionsCellItem, GridRowParams
+  , GridRenderCellParams, GridRowId, GridColumnVisibilityModel,
+  GridFilterModel, GridSortModel,
+  GridRowSelectionModel
+} from '@mui/x-data-grid';
 import { logo, patient_profile, } from '@/public/assets/imagepath';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone'
@@ -26,15 +31,16 @@ import { PatientProfile } from './MyPtients';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 import { formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor, StyledBadge } from './ScheduleTiming';
 import Avatar from '@mui/material/Avatar';
-import CustomPagination from '../shared/CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from '../shared/CustomPagination';
 import { useReactToPrint } from 'react-to-print';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container'
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import RenderExpandableCell from '../shared/RenderExpandableCell';
+import muiSelectionModelToArray from '@/helpers/muiSelectionModelToArray';
 dayjs.extend(utc)
 dayjs.extend(timezone)
 type InputProps = {
@@ -91,6 +97,7 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
     timeSlot,
     paymentType,
     paymentToken,
+    isSameDoctor
   } = printProps
 
   // const userProfile = useSelector((state: AppState) => state.userProfile.value)
@@ -132,7 +139,7 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                   {/* Invoice Item */}
                   <div className="invoice-item">
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <div className="col-md-4">
+                      <div className={`col-md-${isSameDoctor ? '4' : '6'}`}>
                         <div className="invoice-info">
                           <strong className="customer-text">Doctor information</strong>
                           <p className="invoice-details invoice-details-two" style={{ color: '#000' }}>
@@ -148,7 +155,7 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                           </p>
                         </div>
                       </div>
-                      <div className="col-md-4">
+                      <div className={`col-md-${isSameDoctor ? '4' : '6'}`}>
                         <div className="invoice-info invoice-info2">
                           <strong className="customer-text">Patient information</strong>
                           <p className="invoice-details" style={{ color: '#000' }}>
@@ -164,7 +171,7 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                           </p>
                         </div>
                       </div>
-                      <div className="col-md-4">
+                      {isSameDoctor && <div className="col-md-4">
                         <div className="invoice-info invoice-info2">
                           <strong className="customer-text">Payment Method</strong>
                           <p className="invoice-details invoice-details-two" style={{ color: '#000' }}>
@@ -173,7 +180,7 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                             <br />
                           </p>
                         </div>
-                      </div>
+                      </div>}
                     </div>
                   </div>
                   <div className="invoice-item invoice-table-wrap">
@@ -185,18 +192,18 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                               <tr>
                                 <th>Description</th>
                                 <th className="text-center">Quantity</th>
-                                <th className="text-center">Price</th>
-                                <th className="text-end">Total</th>
+                                {isSameDoctor && <th className="text-center">Price</th>}
+                                {isSameDoctor && <th className="text-end">Total</th>}
                               </tr>
                             </thead>
                             <tbody style={{ borderTop: "none", }}>
                               <tr>
                                 <td style={{ padding: '10px 0px', color: '#000' }}>{selectedDate} - {timeSlot?.period}</td>
                                 <td className="text-center" style={{ color: '#000' }} >1</td>
-                                <td className="text-center" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(timeSlot?.price)}</td>
-                                <td className="text-end" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(timeSlot?.price)}</td>
+                                {isSameDoctor && <td className="text-center" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(timeSlot?.price)}</td>}
+                                {isSameDoctor && <td className="text-end" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(timeSlot?.price)}</td>}
                               </tr>
-                              <tr>
+                              {isSameDoctor && <tr>
                                 <td style={{ padding: '10px 0px', color: '#000' }}>Booking Fee</td>
                                 <td className="text-center" style={{ color: '#000' }} >1</td>
                                 <td className="text-center" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
@@ -205,56 +212,62 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
                                 <td className="text-end" style={{ color: '#000' }} >{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
                                   timeSlot?.bookingsFeePrice
                                 )}</td>
-                              </tr>
+                              </tr>}
                             </tbody>
                           </table>
                         </div>
                       </div>
 
-                      <div style={{ maxWidth: '50%', ...muiVar }}>
-                        {userProfile?.roleName == 'doctors' ?
-                          <div className="col-md-6 col-xl-6 ms-auto" style={{ minHeight: '310px', position: 'relative' }}>
-                            <div style={{ left: "50px" }} className={
-                              `${doctorPaymentStatus == "Awaiting Request"
-                                ? "rubber_stamp_await"
-                                : doctorPaymentStatus == "Paid"
-                                  ? "rubber_stamp_paid" : "rubber_stamp_pendign"}
+                      {
+                        isSameDoctor ?
+                          <>
+                            <div style={{ maxWidth: '50%', ...muiVar }}>
+                              {userProfile?.roleName == 'doctors' ?
+                                <div className="col-md-6 col-xl-6 ms-auto" style={{ minHeight: '310px', position: 'relative' }}>
+                                  <div style={{ left: "50px" }} className={
+                                    `${doctorPaymentStatus == "Awaiting Request"
+                                      ? "rubber_stamp_await"
+                                      : doctorPaymentStatus == "Paid"
+                                        ? "rubber_stamp_paid" : "rubber_stamp_pendign"}
                               `}>{doctorPaymentStatus}</div>
-                          </div> :
-                          <div className="col-md-6 col-xl-6 ms-auto" style={{ minHeight: '350px', position: 'relative' }}></div>
-                        }
+                                </div> :
+                                <div className="col-md-6 col-xl-6 ms-auto" style={{ minHeight: '350px', position: 'relative' }}></div>
+                              }
 
-                      </div>
-                      <div style={{ maxWidth: '50%' }}>
-                        <div className="table-responsive">
-                          <table className="invoice-table-two table">
-                            <tbody>
-                              <tr>
-                                <th>Subtotal:</th>
-                                <td style={{ padding: '10px 20px', color: '#000' }}>
-                                  <span>{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                    timeSlot?.total
-                                  )}</span>
-                                </td>
-                              </tr>
-                              <tr>
-                                <th>Discount:</th>
-                                <td style={{ color: "#000" }}>
-                                  <span>---</span>
-                                </td>
-                              </tr>
-                              <tr>
-                                <th>Total Amount:</th>
-                                <td style={{ padding: '10px 20px', color: '#000' }}>
-                                  <span>{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
-                                    timeSlot?.total
-                                  )}</span>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
+                            </div>
+                            <div style={{ maxWidth: '50%' }}>
+                              <div className="table-responsive">
+                                <table className="invoice-table-two table">
+                                  <tbody>
+                                    <tr>
+                                      <th>Subtotal:</th>
+                                      <td style={{ padding: '10px 20px', color: '#000' }}>
+                                        <span>{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                          timeSlot?.total
+                                        )}</span>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th>Discount:</th>
+                                      <td style={{ color: "#000" }}>
+                                        <span>---</span>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th>Total Amount:</th>
+                                      <td style={{ padding: '10px 20px', color: '#000' }}>
+                                        <span>{timeSlot?.currencySymbol || 'THB'}&nbsp; {formatNumberWithCommas(
+                                          timeSlot?.total
+                                        )}</span>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </> :
+                          <div style={{ height: 300 }} />
+                      }
                     </div>
                   </div>
                   <div className="other-info">
@@ -307,7 +320,9 @@ const Invoices: FC = (() => {
   const [reload, setReload] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const perPage = 10
-  const [updateStatusArray, setUpdateStatusArray] = useState<GridRowId[]>([])
+  const [updateStatusArray, setUpdateStatusArray] = useState<string[]>([])
+  const [rowSelectionModel, setRowSelectionModel] =
+    useState<GridRowSelectionModel>({ type: 'include', ids: new Set() });
 
   const [req, setReq] = useState(false);
   const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
@@ -345,7 +360,7 @@ const Invoices: FC = (() => {
     const { firstName, lastName, country, city, state, address1, address2 } = userProfile!
     const { gender, firstName: paFirstName, lastName: paLastName, country: paCountry,
       city: paCity, state: paState, address1: paAddress1, address2: paAddress2 } = patientProfile
-
+    let isSameDoctor = userProfile?.roleName == 'patient' ? true : userProfile?._id == row.doctorId;
     setPrintProps(() => {
       let newState = {}
       newState = {
@@ -367,6 +382,7 @@ const Invoices: FC = (() => {
         timeSlot: row?.timeSlot,
         paymentType: row?.paymentType,
         paymentToken: row?.paymentToken,
+        isSameDoctor
       }
       return newState
     })
@@ -401,8 +417,8 @@ const Invoices: FC = (() => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.id
+        valueGetter: (_, row) => {
+          return row?.id
         },
       },
       {
@@ -416,8 +432,7 @@ const Invoices: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueGetter: (_, row) => {
           return row.createdDate ? dayjs(row.createdDate).toDate() : null;
         },
         renderCell: (data: any) => {
@@ -440,9 +455,8 @@ const Invoices: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { value } = params
-          return value?.charAt(0).toUpperCase() + value?.slice(1)
+        valueGetter: (_, row) => {
+          return row?.dayPeriod?.charAt(0).toUpperCase() + row?.dayPeriod?.slice(1)
         }
       },
       {
@@ -456,13 +470,12 @@ const Invoices: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueGetter: (_, row) => {
           return row.selectedDate ? dayjs(row.selectedDate).toDate() : null;
         },
         renderCell: (params) => {
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(params?.row?.selectedDate).format(`DD MMM YYYY`)}</span>
               <span style={{ color: theme.palette.primary.main }} >{params?.row?.timeSlot?.period}</span>
             </Stack>
@@ -500,7 +513,7 @@ const Invoices: FC = (() => {
         filterOperators: createCustomOperators().number,
         renderCell: (params) => {
           return (
-            <Stack >
+            <Stack sx={{ height: "100%", justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(params?.row?.timeSlot?.price)}</span>
               <span className="d-block">
                 <span style={{ justifyContent: 'center', display: 'flex' }}>{params?.row?.timeSlot?.currencySymbol || 'THB'}</span>
@@ -520,9 +533,8 @@ const Invoices: FC = (() => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params
-          return `${row?.timeSlot?.bookingsFee} %`
+        valueGetter: (_, row) => {
+          return `${row?.timeSlot?.bookingsFee}%`
         }
       },
       {
@@ -538,7 +550,7 @@ const Invoices: FC = (() => {
         filterOperators: createCustomOperators().number,
         renderCell: (params) => {
           return (
-            <Stack >
+            <Stack sx={{ height: "100%", justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
                 params?.row?.timeSlot?.bookingsFeePrice
               )}</span>
@@ -562,7 +574,7 @@ const Invoices: FC = (() => {
         filterOperators: createCustomOperators().number,
         renderCell: (params) => {
           return (
-            <Stack >
+            <Stack sx={{ height: "100%", justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
                 params?.row?.timeSlot?.total
               )}</span>
@@ -616,13 +628,12 @@ const Invoices: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter: (params: GridRenderCellParams) => {
-          // If the value is empty, you might want to return a default date or null
-          return params.value !== '' ? new Date(params.value) : params?.value;
+        valueGetter: (_, row) => {
+          return row.paymentDate !== '' ? new Date(row.paymentDate) : row?.paymentDate;
         },
         // Render the cell with your desired format
         renderCell: (params: GridRenderCellParams) => {
-          return params.value == "" ? "=====" : dayjs(params.value).format('DD MMM YYYY  HH:mm');
+          return params?.value == "" ? "=====" : dayjs(params.value).format('DD MMM YYYY  HH:mm');
         }
       },
       {
@@ -634,11 +645,6 @@ const Invoices: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
-          const { patientProfile } = row
-          return patientProfile?.firstName + " " + patientProfile?.lastName
-        },
         sortComparator: (v1: any, v2: any) => v1 > v2 ? -1 : 1,
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
@@ -646,7 +652,7 @@ const Invoices: FC = (() => {
           const profileImage = patientProfile?.profileImage == '' ? patient_profile : patientProfile?.profileImage
 
           return (
-            <>
+            <span style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center' }}>
               <Link onClick={() => {
                 sessionStorage.setItem('doctorPatientTabValue', '0')
               }} className="avatar mx-2" href={`/doctors/dashboard/patient-profile/${btoa(row?.patientId)}`}>
@@ -670,7 +676,7 @@ const Invoices: FC = (() => {
                 </Link>
                 <small>{row?.patientProfile?.userName}</small>
               </Stack>
-            </>
+            </span>
           )
         }
       },
@@ -733,9 +739,6 @@ const Invoices: FC = (() => {
 
           <GridActionsCellItem
             key={params.row.toString()}
-            disableFocusRipple
-            disableRipple
-            disableTouchRipple
             onClick={() => {
               printButtonClicked(params.row)
             }}
@@ -933,6 +936,16 @@ const Invoices: FC = (() => {
     }
   }, [])
 
+  // remove ids from select upon change page
+  useEffect(() => {
+    const exists = updateStatusArray.some(id => rows.map(a => a._id).includes(id as string));
+    if (!exists) {
+      setUpdateStatusArray([])
+      setRowSelectionModel({ type: 'include', ids: new Set() })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows])
+
   return (
     <Fragment>
       <iframe style={{ height: 0, width: 0, position: 'absolute' }}>
@@ -1007,10 +1020,11 @@ const Invoices: FC = (() => {
                         setColumnVisibilityModel(newModel)
                       }}
                       loading={isLoading}
-                      experimentalFeatures={{ ariaV7: true }}
+                      showToolbar
                       slots={{
-                        toolbar: CustomToolbar,
-                        pagination: CustomPagination,
+                        toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                        pagination: CustomPagination as CustomPaginationSlotType,
                         noResultsOverlay: CustomNoRowsOverlay,
                         noRowsOverlay: CustomNoRowsOverlay
                       }}
@@ -1020,7 +1034,7 @@ const Invoices: FC = (() => {
                           deleteId: updateStatusArray,
                           deleteClicked: () => { setReq(true) },
                           columnVisibilityModel: columnVisibilityModel,
-                        },
+                        } as CustomToolbarPropsType,
                         pagination: {
                           onRowsPerPageChange: handleChangeRowsPerPage,
                           page: paginationModel.page,
@@ -1034,20 +1048,6 @@ const Invoices: FC = (() => {
                             },
                           },
                         },
-                        filterPanel: {
-                          filterFormProps: {
-                            deleteIconProps: {
-                              sx: {
-                                justifyContent: 'flex-start'
-                              },
-                            },
-                          },
-                        },
-                        baseCheckbox: {
-                          inputProps: {
-                            name: "select-checkbox"
-                          }
-                        }
                       }}
                       getRowId={(params) => params._id}
                       rows={rows}
@@ -1065,16 +1065,43 @@ const Invoices: FC = (() => {
                         }
                       }}
                       onRowSelectionModelChange={(newRowSelectionModel) => {
-                        const { page, pageSize } = paginationModel
-                        let start = page == 0 ? page : page * pageSize
-                        let end = pageSize * (1 + page)
-                        let currrenPageId = newRowSelectionModel.slice(start, end)
-                        setUpdateStatusArray(() => {
-                          let newState = currrenPageId.length > 0 ? [...currrenPageId] : [...newRowSelectionModel]
-                          return newState
-                        });
+                        const { ids, type } = newRowSelectionModel;
+                        setRowSelectionModel(newRowSelectionModel);
+                        if (type == 'include') {
+                          const selectedIdsArray = muiSelectionModelToArray(newRowSelectionModel);
+                          setUpdateStatusArray(selectedIdsArray)
+                        } else {
+                          if (ids.size == 0) {
+                            setUpdateStatusArray((prevState) => {
+                              prevState = [];
+                              prevState = rows.map((a) => a._id as string);
+                              return [...prevState]
+                            })
+                          } else {
+                            const exists = updateStatusArray.some(id => Array.from(ids).includes(id as string));
+                            if (exists) {
+                              setUpdateStatusArray((prevState) => {
+                                return prevState.filter((a) => !Array.from(ids).includes(a))
+                              })
+                            } else {
+                              const allNewIds = rows.map((a) => a._id as string).filter((a) => !Array.from(ids).includes(a))
+                              setUpdateStatusArray(allNewIds)
+                            }
+                          }
+                        }
                       }}
-                      rowSelectionModel={updateStatusArray}
+                      rowSelectionModel={rowSelectionModel}
+                      // onRowSelectionModelChange={(newRowSelectionModel) => {
+                      //   const { page, pageSize } = paginationModel
+                      //   let start = page == 0 ? page : page * pageSize
+                      //   let end = pageSize * (1 + page)
+                      //   let currrenPageId = newRowSelectionModel.slice(start, end)
+                      //   setUpdateStatusArray(() => {
+                      //     let newState = currrenPageId.length > 0 ? [...currrenPageId] : [...newRowSelectionModel]
+                      //     return newState
+                      //   });
+                      // }}
+                      // rowSelectionModel={updateStatusArray}
                       paginationModel={paginationModel}
                       pageSizeOptions={[5, 10]}
                       showCellVerticalBorder
@@ -1112,12 +1139,12 @@ const Invoices: FC = (() => {
         }
       </div>
       {req && <BootstrapDialog
-        TransitionComponent={Transition}
         onClose={() => {
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
           setTimeout(() => {
             setReq(false)
             setUpdateStatusArray([]);
+            setRowSelectionModel({ type: 'include', ids: new Set() })
           }, 500);
         }}
         aria-labelledby="edit_invoice_details"
@@ -1129,6 +1156,7 @@ const Invoices: FC = (() => {
             setTimeout(() => {
               setReq(false)
               setUpdateStatusArray([]);
+              setRowSelectionModel({ type: 'include', ids: new Set() })
             }, 500);
           }}>
           Payment Request

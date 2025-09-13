@@ -1,4 +1,4 @@
-//@ts-nocheck
+
 /* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useEffect } from "react";
 import Slider from "react-slick";

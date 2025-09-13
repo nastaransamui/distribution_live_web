@@ -2,12 +2,10 @@
 //next
 import Head from 'next/head'
 import { GetServerSideProps, NextPage } from 'next'
-import { hasCookie, getCookie, deleteCookie } from 'cookies-next';
 //Redux
 import { wrapper } from '@/redux/store'
 import { AppState } from '@/redux/store'
 import { connect } from 'react-redux';
-import DoctorsSections from '@/components/DoctorsSections/DoctorsSections';
 import { getAndDispatchUserData, setAuthCookiesNoRedirect, setThemeCookiesNoRedirect } from '@/helpers/getServerSidePropsHelpers';
 
 
@@ -32,7 +30,6 @@ const DoctorsPage: NextPage = () => {
         <title>Welcome to Health Care page</title>
       </Head>
       <div className="main-wrapper" id="scrollableDiv">
-        <DoctorsSections />
       </div>
     </>
   )

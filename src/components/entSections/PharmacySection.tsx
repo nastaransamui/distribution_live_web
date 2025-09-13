@@ -1,12 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect } from 'react'
+import { FC, Fragment, useCallback, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
 import { VscHeart } from 'react-icons/vsc'
 import useScssVar from '@/hooks/useScssVar'
-import AOS from 'aos'
 
-const Owlcarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false })
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { pharmacy_1, pharmacy_2, pharmacy_3, } from "../../../public/assets/imagepath";
 import { useTheme } from '@mui/material'
@@ -14,43 +15,35 @@ import { useTheme } from '@mui/material'
 const PharmacySection: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme()
-  useEffect(() => {
-    AOS.init({
-      duration: 1200,
-      once: true
-    });
 
-  }, []);
-  const options = {
-    loop: true,
-    margin: 24,
-    dots: false,
-    nav: true,
-    smartSpeed: 2000,
-    navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
-    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
-    responsive: {
-      0: {
-        items: 1
-      },
-      500: {
-        items: 1
-      },
-      575: {
-        items: 1
-      },
-      768: {
-        items: 2
-      },
-      1000: {
-        items: 3
-      },
-      1300: {
-        items: 3
-      }
-    }
+  const doctersettings: SwiperOptions = {
+    spaceBetween: 24,
+    loop: false,
+
+    modules: [Navigation, FreeMode],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+    breakpoints: {
+      1300: { slidesPerView: 3 },
+      1000: { slidesPerView: 3 },
+      768: { slidesPerView: 2 },
+      575: { slidesPerView: 1 },
+      500: { slidesPerView: 1 },
+      0: { slidesPerView: 1 },
+    },
   };
 
+  const swiperRef = useRef<SwiperInstance | null>(null);
+
+  const handlePrev = useCallback(() => {
+    swiperRef.current?.slidePrev();
+  }, []);
+
+  const handleNext = useCallback(() => {
+    swiperRef.current?.slideNext();
+  }, []);
   return (
     <Fragment>
       <section className="pharmacy-section-fifteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
@@ -69,205 +62,227 @@ const PharmacySection: FC = (() => {
             className="pharmacy-slider-fifteen owl-theme aos"
             data-aos="fade-up"
           >
-            <Owlcarousel className="pharmacy-slider-fifteen owl-theme aos"
-              data-aos="fade-up"{...options}>
-              <div className="item item-fifteen">
-                <div className="doctor-profile-widget doctor-profile-widget-fift">
-                  <div className="doc-pro-img doc-pro-img-fifteen">
-                    <Link href="/doctors/search">
-                      <div className="doctor-profile-img doctor-profile-img-fifteen">
-                        <img
-                          src={pharmacy_1}
-                          className="img-fluid"
-                          alt=""
-                        />
-                      </div>
-                    </Link>
-                    <div className="doctor-amount">
-                      <Link
-                        href="#"
-                        onClick={(e) => e.preventDefault()}
-                        className="fav-icon fav-icon-fifteen"
-                      >
-                        <VscHeart className="feather-heart" />
+            <Swiper
+              {...doctersettings}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }} className="pharmacy-slider-fifteen owl-theme aos"
+              data-aos="fade-up">
+              <SwiperSlide>
+                <div className="item item-fifteen">
+                  <div className="doctor-profile-widget doctor-profile-widget-fift">
+                    <div className="doc-pro-img doc-pro-img-fifteen">
+                      <Link href="/doctors/search">
+                        <div className="doctor-profile-img doctor-profile-img-fifteen">
+                          <img
+                            src={pharmacy_1}
+                            className="img-fluid"
+                            alt=""
+                          />
+                        </div>
                       </Link>
-                    </div>
-                    <div className="item-info">
-                      <h6>10% Off</h6>
-                    </div>
-                  </div>
-                  <div className="doc-content-fift">
-                    <Link href="#"
-                      onClick={(e) => e.preventDefault()}>Otogesic Ear Drops</Link>
-                    <p>
-                      <span>Sold by:</span> ERIS LIFESCIENCES LTD
-                    </p>
-                    <div className="rate-fifteen">
-                      <div className="rate-four">
-                        <span>In Stock</span>
+                      <div className="doctor-amount">
+                        <Link
+                          href="#"
+                          onClick={(e) => e.preventDefault()}
+                          className="fav-icon fav-icon-fifteen"
+                        >
+                          <VscHeart className="feather-heart" />
+                        </Link>
                       </div>
-                      <ul className="fift-rate">
-                        <li>5ml</li>
-                        <li>10ml</li>
-                      </ul>
+                      <div className="item-info">
+                        <h6>10% Off</h6>
+                      </div>
                     </div>
-                    <div className="fift-bottom-content">
-                      <h3>
-                        $25.00<span className="ms-2">$35.00</span>
-                      </h3>
-                      <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
+                    <div className="doc-content-fift">
+                      <Link href="#"
+                        onClick={(e) => e.preventDefault()}>Otogesic Ear Drops</Link>
+                      <p>
+                        <span>Sold by:</span> ERIS LIFESCIENCES LTD
+                      </p>
+                      <div className="rate-fifteen">
+                        <div className="rate-four">
+                          <span>In Stock</span>
+                        </div>
+                        <ul className="fift-rate">
+                          <li>5ml</li>
+                          <li>10ml</li>
+                        </ul>
+                      </div>
+                      <div className="fift-bottom-content">
+                        <h3>
+                          $25.00<span className="ms-2">$35.00</span>
+                        </h3>
+                        <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="item item-fifteen">
-                <div className="doctor-profile-widget doctor-profile-widget-fift">
-                  <div className="doc-pro-img doc-pro-img-fifteen">
-                    <Link href="/doctors/search">
-                      <div className="doctor-profile-img doctor-profile-img-fifteen">
-                        <img
-                          src={pharmacy_2}
-                          className="img-fluid"
-                          alt=""
-                        />
-                      </div>
-                    </Link>
-                    <div className="doctor-amount">
-                      <Link
-                        href="#"
-                        onClick={(e) => e.preventDefault()}
-                        className="fav-icon fav-icon-fifteen"
-                      >
-                        <VscHeart className="feather-heart" />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="item item-fifteen">
+                  <div className="doctor-profile-widget doctor-profile-widget-fift">
+                    <div className="doc-pro-img doc-pro-img-fifteen">
+                      <Link href="/doctors/search">
+                        <div className="doctor-profile-img doctor-profile-img-fifteen">
+                          <img
+                            src={pharmacy_2}
+                            className="img-fluid"
+                            alt=""
+                          />
+                        </div>
                       </Link>
-                    </div>
-                    <div className="item-info">
-                      <h6>15% Off</h6>
-                    </div>
-                  </div>
-                  <div className="doc-content-fift">
-                    <Link href="#"
-                      onClick={(e) => e.preventDefault()}>Himalaya Bresol</Link>
-                    <p>
-                      <span>Sold by:</span>THE HIMALAYA DRUG
-                    </p>
-                    <div className="rate-fifteen">
-                      <div className="rate-four">
-                        <span>In Stock</span>
+                      <div className="doctor-amount">
+                        <Link
+                          href="#"
+                          onClick={(e) => e.preventDefault()}
+                          className="fav-icon fav-icon-fifteen"
+                        >
+                          <VscHeart className="feather-heart" />
+                        </Link>
                       </div>
-                      <ul className="fift-rate">
-                        <li>5ml</li>
-                        <li>10ml</li>
-                      </ul>
+                      <div className="item-info">
+                        <h6>15% Off</h6>
+                      </div>
                     </div>
-                    <div className="fift-bottom-content">
-                      <h3>
-                        $85.00<span className="ms-2">$65.00</span>
-                      </h3>
-                      <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
+                    <div className="doc-content-fift">
+                      <Link href="#"
+                        onClick={(e) => e.preventDefault()}>Himalaya Bresol</Link>
+                      <p>
+                        <span>Sold by:</span>THE HIMALAYA DRUG
+                      </p>
+                      <div className="rate-fifteen">
+                        <div className="rate-four">
+                          <span>In Stock</span>
+                        </div>
+                        <ul className="fift-rate">
+                          <li>5ml</li>
+                          <li>10ml</li>
+                        </ul>
+                      </div>
+                      <div className="fift-bottom-content">
+                        <h3>
+                          $85.00<span className="ms-2">$65.00</span>
+                        </h3>
+                        <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="item item-fifteen">
-                <div className="doctor-profile-widget doctor-profile-widget-fift">
-                  <div className="doc-pro-img doc-pro-img-fifteen">
-                    <Link href="/doctors/search">
-                      <div className="doctor-profile-img doctor-profile-img-fifteen">
-                        <img
-                          src={pharmacy_3}
-                          className="img-fluid"
-                          alt=""
-                        />
-                      </div>
-                    </Link>
-                    <div className="doctor-amount">
-                      <Link
-                        href="#"
-                        onClick={(e) => e.preventDefault()}
-                        className="fav-icon fav-icon-fifteen"
-                      >
-                        <VscHeart className="feather-heart" />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="item item-fifteen">
+                  <div className="doctor-profile-widget doctor-profile-widget-fift">
+                    <div className="doc-pro-img doc-pro-img-fifteen">
+                      <Link href="/doctors/search">
+                        <div className="doctor-profile-img doctor-profile-img-fifteen">
+                          <img
+                            src={pharmacy_3}
+                            className="img-fluid"
+                            alt=""
+                          />
+                        </div>
                       </Link>
-                    </div>
-                    <div className="item-info">
-                      <h6>10% Off</h6>
-                    </div>
-                  </div>
-                  <div className="doc-content-fift">
-                    <Link href="#"
-                      onClick={(e) => e.preventDefault()}>Boiron, ThroatCalm</Link>
-                    <p>
-                      <span>Sold by:</span> BOIRON
-                    </p>
-                    <div className="rate-fifteen">
-                      <div className="rate-four">
-                        <span>In Stock</span>
+                      <div className="doctor-amount">
+                        <Link
+                          href="#"
+                          onClick={(e) => e.preventDefault()}
+                          className="fav-icon fav-icon-fifteen"
+                        >
+                          <VscHeart className="feather-heart" />
+                        </Link>
                       </div>
-                      <ul className="fift-rate">
-                        <li>5ml</li>
-                        <li>10ml</li>
-                      </ul>
+                      <div className="item-info">
+                        <h6>10% Off</h6>
+                      </div>
                     </div>
-                    <div className="fift-bottom-content">
-                      <h3>
-                        $55.00<span className="ms-2">$95.00</span>
-                      </h3>
-                      <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
+                    <div className="doc-content-fift">
+                      <Link href="#"
+                        onClick={(e) => e.preventDefault()}>Boiron, ThroatCalm</Link>
+                      <p>
+                        <span>Sold by:</span> BOIRON
+                      </p>
+                      <div className="rate-fifteen">
+                        <div className="rate-four">
+                          <span>In Stock</span>
+                        </div>
+                        <ul className="fift-rate">
+                          <li>5ml</li>
+                          <li>10ml</li>
+                        </ul>
+                      </div>
+                      <div className="fift-bottom-content">
+                        <h3>
+                          $55.00<span className="ms-2">$95.00</span>
+                        </h3>
+                        <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="item item-fifteen">
-                <div className="doctor-profile-widget doctor-profile-widget-fift">
-                  <div className="doc-pro-img doc-pro-img-fifteen">
-                    <Link href="/doctors/search">
-                      <div className="doctor-profile-img doctor-profile-img-fifteen">
-                        <img
-                          src={pharmacy_1}
-                          className="img-fluid"
-                          alt=""
-                        />
-                      </div>
-                    </Link>
-                    <div className="doctor-amount">
-                      <Link
-                        href="#"
-                        onClick={(e) => e.preventDefault()}
-                        className="fav-icon fav-icon-fifteen"
-                      >
-                        <VscHeart className="feather-heart" />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="item item-fifteen">
+                  <div className="doctor-profile-widget doctor-profile-widget-fift">
+                    <div className="doc-pro-img doc-pro-img-fifteen">
+                      <Link href="/doctors/search">
+                        <div className="doctor-profile-img doctor-profile-img-fifteen">
+                          <img
+                            src={pharmacy_1}
+                            className="img-fluid"
+                            alt=""
+                          />
+                        </div>
                       </Link>
-                    </div>
-                    <div className="item-info">
-                      <h6>10% Off</h6>
-                    </div>
-                  </div>
-                  <div className="doc-content-fift">
-                    <Link href="#"
-                      onClick={(e) => e.preventDefault()}>Otogesic Ear Drops</Link>
-                    <p>
-                      <span>Sold by:</span> ERIS LIFESCIENCES LTD
-                    </p>
-                    <div className="rate-fifteen">
-                      <div className="rate-four">
-                        <span>In Stock</span>
+                      <div className="doctor-amount">
+                        <Link
+                          href="#"
+                          onClick={(e) => e.preventDefault()}
+                          className="fav-icon fav-icon-fifteen"
+                        >
+                          <VscHeart className="feather-heart" />
+                        </Link>
                       </div>
-                      <ul className="fift-rate">
-                        <li>5ml</li>
-                        <li>10ml</li>
-                      </ul>
+                      <div className="item-info">
+                        <h6>10% Off</h6>
+                      </div>
                     </div>
-                    <div className="fift-bottom-content">
-                      <h3>
-                        $25.00<span className="ms-2">$35.00</span>
-                      </h3>
-                      <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
+                    <div className="doc-content-fift">
+                      <Link href="#"
+                        onClick={(e) => e.preventDefault()}>Otogesic Ear Drops</Link>
+                      <p>
+                        <span>Sold by:</span> ERIS LIFESCIENCES LTD
+                      </p>
+                      <div className="rate-fifteen">
+                        <div className="rate-four">
+                          <span>In Stock</span>
+                        </div>
+                        <ul className="fift-rate">
+                          <li>5ml</li>
+                          <li>10ml</li>
+                        </ul>
+                      </div>
+                      <div className="fift-bottom-content">
+                        <h3>
+                          $25.00<span className="ms-2">$35.00</span>
+                        </h3>
+                        <Link href="add-prescription" onClick={(e) => e.preventDefault()}>Add to Cart</Link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </Owlcarousel>
+              </SwiperSlide>
+
+            </Swiper>
+            <div className="owl-nav" >
+
+              <button className='owl-prev' onClick={handlePrev}>
+                <i className="fas fa-chevron-left" />
+              </button>
+              <button className='owl-next' onClick={handleNext}>
+                <i className="fas fa-chevron-right" />
+              </button>
+            </div>
           </div>
         </div>
       </section>

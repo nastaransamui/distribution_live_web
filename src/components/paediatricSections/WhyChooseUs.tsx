@@ -2,7 +2,7 @@
 import { FC, Fragment } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import { FiUploadCloud, FiUnderline, FiType, FiMessageSquare } from 'react-icons/fi';
-import { atom_bond, doctor_bg, rainbow_2 } from '../../../public/assets/imagepath'
+import { doctor_bg, rainbow_2 } from '../../../public/assets/imagepath'
 import { AtomBondSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import { useTheme } from '@mui/material';
 

@@ -1,6 +1,6 @@
 import "@mui/material/styles";
-import { createTheme } from "@mui/material";
-import palette from "./palette";
+import { createTheme } from "@mui/material/styles";
+import palettes from "./palette";
 
 import type {} from "@mui/x-data-grid/themeAugmentation";
 import { PaletteMode } from "@mui/material";
@@ -42,8 +42,8 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
         paper: mode === "dark" ? "#212121" : "#fff",
         default: mode === "dark" ? "#424242" : "#EEEEEE",
       },
-      primary: palette[color].palette.primary,
-      secondary: palette[color].palette.secondary,
+      primary: palettes[color].primary,
+      secondary: palettes[color].secondary,
       action: {
         hover:
           mode === "dark"
@@ -52,8 +52,16 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
         hoverOpacity: 0.05,
       },
       text: {
-        hint: palette[color].palette.primary.light,
+        hint: palettes[color].primary.light,
         color: mode === "dark" ? "#fff" : "#000000",
+      },
+      DataGrid: {
+        // Container background
+        bg: mode === "dark" ? "#212121" : "#fff",
+        // Pinned rows and columns background
+        pinnedBg: mode === "dark" ? "#212121" : "#fff",
+        // Column header background
+        headerBg: mode === "dark" ? "#212121" : "#fff",
       },
     },
     direction: dir,
@@ -138,31 +146,25 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
         background-color: ${mode === "dark" ? "#212121" : "#fff"};
       }
       #cc-main{
-        --cc-btn-primary-bg: ${palette[color].palette.primary.main};
-        --cc-btn-primary-border-color: ${palette[color].palette.secondary.main};
-        --cc-btn-primary-hover-bg: ${palette[color].palette.secondary.main};
-        --cc-btn-primary-hover-border-color: ${
-          palette[color].palette.primary.main
-        };
-        --cc-btn-primary-color: ${palette[color].palette.primary.contrastText};
+        --cc-btn-primary-bg: ${palettes[color].primary.main};
+        --cc-btn-primary-border-color: ${palettes[color].secondary.main};
+        --cc-btn-primary-hover-bg: ${palettes[color].secondary.main};
+        --cc-btn-primary-hover-border-color: ${palettes[color].primary.main};
+        --cc-btn-primary-color: ${palettes[color].primary.contrastText};
         /** Also make toggles the same color as the button **/
-        --cc-toggle-on-bg: ${palette[color].palette.primary.light};
+        --cc-toggle-on-bg: ${palettes[color].primary.light};
       
         /** Make the buttons a bit rounder **/
         --cc-btn-border-radius: 10px;
     
-        --cc-btn-secondary-bg: ${palette[color].palette.secondary.main};
-        --cc-btn-secondary-border-color: ${palette[color].palette.primary.main};
-        --cc-btn-secondary-color: ${
-          palette[color].palette.primary.contrastText
-        };
-        --cc-btn-secondary-hover-bg: ${palette[color].palette.primary.main};
+        --cc-btn-secondary-bg: ${palettes[color].secondary.main};
+        --cc-btn-secondary-border-color: ${palettes[color].primary.main};
+        --cc-btn-secondary-color: ${palettes[color].primary.contrastText};
+        --cc-btn-secondary-hover-bg: ${palettes[color].primary.main};
         --cc-btn-secondary-hover-border-color: ${
-          palette[color].palette.secondary.main
+          palettes[color].secondary.main
         };
-      --cc-btn-secondary-hover-color: ${
-        palette[color].palette.primary.contrastText
-      };
+      --cc-btn-secondary-hover-color: ${palettes[color].primary.contrastText};
       }
           .Toastify__toast{
             justify-content: flex-start !important
@@ -170,16 +172,16 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
       .Toastify__progress-bar--warning {
         background-color: ${
           mode === "dark"
-            ? palette[color].palette.secondary.light
-            : palette[color].palette.secondary.dark
+            ? palettes[color].secondary.light
+            : palettes[color].secondary.dark
         } !important;
       }
       .Toastify__toast-icon {
        svg{
         fill: ${
           mode === "dark"
-            ? palette[color].palette.primary.light
-            : palette[color].palette.primary.dark
+            ? palettes[color].primary.light
+            : palettes[color].primary.dark
         } !important;
        }
       }
@@ -195,7 +197,7 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
           background: crimson !important
         }
       .Toastify__progress-bar--info{
-        background: ${palette[color].palette.secondary.main} !important
+        background: ${palettes[color].secondary.main} !important
       }
       ::-webkit-scrollbar {
         width: 8px;
@@ -209,8 +211,8 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
         box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
         background-color: ${
           mode === "dark"
-            ? palette[color].palette.primary.light
-            : palette[color].palette.primary.dark
+            ? palettes[color].primary.light
+            : palettes[color].primary.dark
         };
       }
 
@@ -243,7 +245,7 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
         styleOverrides: {
           root: {
             // "&&:hover:not(.Mui-disabled):not(.Mui-error):before": {
-            //   borderColor: palette[color].palette.secondary.main,
+            //   borderColor: palettes[color].secondary.main,
             // },
           },
         },
@@ -259,7 +261,7 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
       //   styleOverrides: {
       //     select: {
       //       ":hover": {
-      //         borderColor: palette[color].palette.secondary.main,
+      //         borderColor: palettes[color].secondary.main,
       //         background: mode === "dark" ? "#424242" : "#fff",
       //       },
       //     },
@@ -297,11 +299,11 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
           root: {
             "&:hover .MuiOutlinedInput-notchedOutline": {
               // borderRadius: 10,
-              borderColor: palette[color].palette.secondary.main,
+              borderColor: palettes[color].secondary.main,
             },
             "&:focus .MuiOutlinedInput-notchedOutline": {
               // borderRadius: 10,
-              borderColor: palette[color].palette.secondary.main,
+              borderColor: palettes[color].secondary.main,
             },
           },
         },
@@ -333,7 +335,7 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
               display: "none",
             },
             "&$focused": {
-              borderColor: palette[color].palette.primary.main,
+              borderColor: palettes[color].primary.main,
             },
           },
         },
@@ -375,9 +377,12 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
       },
       MuiDataGrid: {
         styleOverrides: {
-          footerContainer: {
+          footerContainer: ({ theme }) => ({
             borderTop: "none",
-          },
+            [theme.breakpoints.down("sm")]: {
+              minHeight: "auto",
+            },
+          }),
           virtualScrollerContent: {
             "&:last-child": {
               borderBottom: `1px solid ${
@@ -387,6 +392,68 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
               }`,
             },
           },
+          filterFormColumnInput: ({ theme }) => ({
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderRadius: "0px !important",
+              borderTop: `unset`,
+              borderLeft: `unset`,
+              borderRight: `unset`,
+              borderBottom: `1px solid ${mode === "dark" ? "#fff" : "#000000"}`,
+            },
+            [theme.breakpoints.down("sm")]: {
+              width: "100%",
+            },
+          }),
+          filterFormOperatorInput: ({ theme }) => ({
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderRadius: "0px !important",
+              borderTop: `unset`,
+              borderLeft: `unset`,
+              borderRight: `unset`,
+              borderBottom: `1px solid ${mode === "dark" ? "#fff" : "#000000"}`,
+            },
+            [theme.breakpoints.down("sm")]: {
+              width: "100%",
+            },
+          }),
+          filterFormDeleteIcon: ({ theme }) => ({
+            alignItems: "flex-start",
+            marginTop: "-10px",
+            "& .MuiSvgIcon-root": { color: "#d32f2f" },
+            [theme.breakpoints.down("sm")]: {
+              justifyContent: "flex-start",
+              marginTop: "unset",
+            },
+          }),
+          panel: ({ theme }) => ({
+            [theme.breakpoints.up("sm")]: {
+              margin: hasCookie("homeMiniSidebarOpen")
+                ? getCookie("homeMiniSidebarOpen") == "true"
+                  ? "19px -297px 120px 150px !important"
+                  : "19px -297px 120px -150px !important"
+                : "-103px !important",
+            },
+          }),
+          filterFormValueInput: ({ theme }) => ({
+            [theme.breakpoints.down("sm")]: {
+              width: "100%",
+              "& .MuiButton-root": {
+                minWidth: "100% !important",
+                float: "unset !important",
+                margin: `10px 0px 0px 0px !important`,
+              },
+            },
+          }),
+          panelContent: {
+            borderRadius: "18px",
+          },
+          filterForm: ({ theme }) => ({
+            gap: 0,
+            [theme.breakpoints.down("sm")]: {
+              gap: "16px",
+              flexDirection: "column",
+            },
+          }),
         },
       },
       MuiIconButton: {
@@ -407,11 +474,11 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
             whiteSpace: "pre-line",
             borderRadius: 4,
             color: mode === "dark" ? "#fff" : "#000000", //theme.palette.text.color,
-            border: `solid 0.5px ${palette[color].palette.secondary.main}`,
+            border: `solid 0.5px ${palettes[color].secondary.main}`,
           },
           arrow: {
             "&:before": {
-              border: `0.5px solid ${palette[color].palette.secondary.main}`, //${theme.palette.secondary.main}
+              border: `0.5px solid ${palettes[color].secondary.main}`, //${theme.palette.secondary.main}
             },
             color: mode === "dark" ? "#424242" : "#f5f5f5", //theme.palette.background.default,
           },
@@ -422,8 +489,8 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
           colorPrimary: {
             backgroundColor:
               mode === "dark"
-                ? palette[color].palette.primary.main
-                : palette[color].palette.secondary.main,
+                ? palettes[color].primary.main
+                : palettes[color].secondary.main,
           },
         },
       },
@@ -434,7 +501,7 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
               height: "40px",
               padding: "0 20px",
               boxSizing: "border-box",
-              background: `linear-gradient(125deg, ${palette[color].palette.primary.main} 0%, ${palette[color].palette.secondary.main} 100%)`,
+              background: `linear-gradient(125deg, ${palettes[color].primary.main} 0%, ${palettes[color].secondary.main} 100%)`,
               border: 0,
               color: mode === "dark" ? "#fff" : "#000000",
               fontSize: "16px",
@@ -459,6 +526,13 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
           },
         },
       },
+      MuiStack: {
+        styleOverrides: {
+          root: {
+            lineHeight: "24px",
+          },
+        },
+      },
     },
   });
   return theme;
@@ -467,6 +541,7 @@ const appTheme = (color: string, mode: PaletteMode, dir: string) => {
 export default appTheme;
 
 import { Roboto_Condensed } from "next/font/google";
+import { getCookie, hasCookie } from "cookies-next";
 
 export const roboto = Roboto_Condensed({
   weight: ["300", "400", "700"],

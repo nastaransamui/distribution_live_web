@@ -1,8 +1,9 @@
 import { DoctorsTimeSlotType, AvailableType } from "@/components/DoctorDashboardSections/ScheduleTiming";
 import { AppointmentReservationType } from "@/components/DoctorsSections/CheckOut/PaymentSuccess";
-import { convertFilterToMongoDB, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from "@/components/shared/CustomToolbar";
-import { GridColumnVisibilityModel, GridFilterModel, GridSortItem } from "@mui/x-data-grid";
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { DataGridMongoDBQuery, useDataGridServerFilter } from "@/components/shared/CustomToolbar";
+import { GridColumnVisibilityModel, GridFilterModel, } from "@mui/x-data-grid";
+import { GridSortItem } from "@mui/x-data-grid/models/gridSortModel";
+import React, { createContext, useContext, useRef, useState } from "react";
 
 import { Control, useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 

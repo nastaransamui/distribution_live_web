@@ -2,7 +2,7 @@ import React, { FC } from "react";
 
 //Mui
 
-import { GridFooterContainer, useGridApiContext, useGridSelector, gridPaginationModelSelector } from '@mui/x-data-grid';
+import { GridFooterContainer, PaginationPropsOverrides, } from '@mui/x-data-grid';
 import MuiPagination from '@mui/material/Pagination';
 import TablePagination from '@mui/material/TablePagination';
 
@@ -14,6 +14,7 @@ interface PaginationPropsType {
   onPageChange: (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => void;
   count: number;
 }
+export type CustomPaginationSlotType = React.JSXElementConstructor<PaginationPropsOverrides>
 const CustomPagination: FC<PaginationPropsType> = (props) => {
   const {
     onRowsPerPageChange,
@@ -44,12 +45,6 @@ const CustomPagination: FC<PaginationPropsType> = (props) => {
         rowsPerPageOptions={[5, 10]}
         showFirstButton
         showLastButton
-        SelectProps={{
-          inputProps: {
-            id: 'rows-per-page-select', // Unique ID
-            name: 'rows-per-page', // Name attribute
-          },
-        }}
         ActionsComponent={() => {
           return (
             <MuiPagination

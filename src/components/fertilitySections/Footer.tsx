@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton'
 import Language from '@mui/icons-material/Language'
 import Menu from '@mui/material/Menu';
 import Box from '@mui/material/Box'
+import { useRouter } from 'next/router';
 
 const Footer: FC = (() => {
   const { muiVar } = useScssVar();
@@ -22,10 +23,11 @@ const Footer: FC = (() => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+  const router = useRouter()
   const handleChange = (event: SelectChangeEvent) => { }
   return (
     <Fragment>
-      <footer className="footer footer-one footer-fourteen" style={muiVar}>
+      <footer className="footer footer-one footer-fourteen" style={{ ...muiVar, padding: router.asPath == '/fertilityhome' ? 'unset' : '200px 0 0 0' }}>
         <div className="footer-top aos" data-aos="fade-up">
           <div className="container">
             <div className="row">

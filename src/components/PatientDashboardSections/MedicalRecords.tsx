@@ -6,9 +6,12 @@ import useScssVar from '@/hooks/useScssVar'
 import { patient_profile } from '@/public/assets/imagepath';
 
 //Mui
-import { Transition, BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
+import { BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
 import DialogContent from '@mui/material/DialogContent'
-import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridValueFormatterParams, GridColumnVisibilityModel, GridAlignment, GridRenderCellParams, GridFilterModel, GridSortModel, GridValueGetterParams } from '@mui/x-data-grid';
+import {
+  DataGrid, GridColDef, GridActionsCellItem, GridRowParams,
+  GridColumnVisibilityModel, GridAlignment, GridRenderCellParams, GridFilterModel, GridSortModel,
+} from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
 import dayjs, { Dayjs } from 'dayjs';
 import timezone from 'dayjs/plugin/timezone'
@@ -16,7 +19,6 @@ import utc from 'dayjs/plugin/utc'
 import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -36,7 +38,7 @@ import { AppState } from '@/redux/store';
 import { toast } from 'react-toastify';
 import { Controller, useForm } from 'react-hook-form';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
-import CustomPagination from '../shared/CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from '../shared/CustomPagination';
 import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent } from '../DoctorDashboardSections/ScheduleTiming';
 import FormLabel from '@mui/material/FormLabel';
 import Tooltip from '@mui/material/Tooltip';
@@ -49,7 +51,7 @@ import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import { PatientProfile } from '../DoctorDashboardSections/MyPtients';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import RenderExpandableCell from '../shared/RenderExpandableCell';
@@ -165,9 +167,6 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.id
-        },
       },
       {
         field: 'isForDependent',
@@ -222,15 +221,14 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         filterable: true,
         filterOperators: createCustomOperators().date,
         headerAlign: 'center',
-        valueGetter(params: GridValueGetterParams) {
-          const { row } = params;
+        valueGetter(_, row) {
           return row.date ? dayjs(row.date).toDate() : null;
         },
         renderCell: (data: any) => {
           const { row } = data;
           return (
             <>
-              <Stack >
+              <Stack sx={{ height: '100%', justifyContent: 'center' }}>
                 <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.date).format(`MMM D, YYYY`)}</span>
                 <span style={{ justifyContent: 'center', display: 'flex', color: theme.palette.secondary.main }}>{dayjs(row.date).format(`HH:mm`)}</span>
               </Stack>
@@ -249,8 +247,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueFormatter(_, row) {
           return row?.description == '' ? '===' : row?.description
         },
         renderCell(params: GridRenderCellParams) {
@@ -268,8 +265,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueFormatter(_, row) {
           return row?.symptoms == '' ? '===' : row?.symptoms
         },
         renderCell(params: GridRenderCellParams) {
@@ -287,8 +283,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueFormatter(_, row) {
           return row?.hospitalName == '' ? '===' : row?.hospitalName
         },
         renderCell(params: GridRenderCellParams) {
@@ -303,8 +298,8 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         align: 'center',
         filterable: false,
         searchAble: false,
-        valueFormatter: (params: GridValueFormatterParams<string>) => {
-          return params.value == '' ? '--' : `${params.value}`
+        valueFormatter: (_, row) => {
+          return row?.documentLink == '' ? '--' : `${row.documentLink}`
         },
         renderCell: (params: any) => {
           const { formattedValue } = params;
@@ -341,14 +336,13 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridValueGetterParams) {
-          const { row } = params;
+        valueGetter(_, row) {
           return row.createdAt ? dayjs(row.createdAt).toDate() : null;
         },
         renderCell: (data: any) => {
           const { row } = data;
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`DD MMM YYYY`)}</span>
               <span className="d-block">
                 <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`HH:mm`)}</span>
@@ -368,14 +362,13 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridValueGetterParams) {
-          const { row } = params;
+        valueGetter(_, row) {
           return row.updateAt ? dayjs(row.updateAt).toDate() : null;
         },
         renderCell: (data: any) => {
           const { row } = data;
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.updateAt).format(`DD MMM YYYY`)}</span>
               <span className="d-block">
                 <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.updateAt).format(`HH:mm`)}</span>
@@ -780,7 +773,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
           <div className="card">
             <div ref={dataGridRef} className="tab-content schedule-cont   animate__animated animate__lightSpeedInRight">
               <Box className="dataGridOuterBox" >
-                <span style={{ position: "relative" }}>
+                <span className='medical-record-top-container'>
                   <Typography className="totalTypo"
                     variant='h5' align='center' gutterBottom >
                     {
@@ -790,7 +783,6 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                     }
                   </Typography>
                   <Link href=""
-                    style={{ lineHeight: `25px`, margin: 0, position: 'absolute', top: 0, right: 0 }}
                     className="add-new-btn float-end" onClick={(e) => {
                       e.preventDefault();
                       openMedicalModalWithGetDependents()
@@ -819,10 +811,11 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                       setColumnVisibilityModel(newModel)
                     }}
                     loading={isLoading}
-                    experimentalFeatures={{ ariaV7: true }}
+                    showToolbar
                     slots={{
-                      toolbar: CustomToolbar,
-                      pagination: CustomPagination,
+                      toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                      pagination: CustomPagination as CustomPaginationSlotType,
                       noResultsOverlay: CustomNoRowsOverlay,
                       noRowsOverlay: CustomNoRowsOverlay
                     }}
@@ -832,7 +825,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                         deleteId: [],
                         deleteClicked: () => { },
                         columnVisibilityModel: columnVisibilityModel,
-                      },
+                      } as CustomToolbarPropsType,
                       pagination: {
                         onRowsPerPageChange: handleChangeRowsPerPage,
                         page: paginationModel.page,
@@ -846,20 +839,6 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                           },
                         },
                       },
-                      filterPanel: {
-                        filterFormProps: {
-                          deleteIconProps: {
-                            sx: {
-                              justifyContent: 'flex-start'
-                            },
-                          },
-                        },
-                      },
-                      baseCheckbox: {
-                        inputProps: {
-                          name: "select-checkbox"
-                        }
-                      }
                     }}
                     getRowId={(params) => params._id}
                     rows={rows}
@@ -902,8 +881,7 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
           </div>
       }
       {edit && <BootstrapDialog
-        TransitionComponent={Transition}
-        onClose={(event, reason) => {
+        onClose={(_, reason) => {
           if (reason == 'backdropClick') return false;
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
           reset();
@@ -1030,8 +1008,8 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                     disabled={isView || getFormValues('isForDependent')}
                     fullWidth
                     id="firstName"
-                    inputProps={{
-                      autoComplete: 'off'
+                    slotProps={{
+                      input: { autoComplete: 'off' }
                     }}
                     error={errors.firstName == undefined ? false : true}
                     helperText={errors.firstName && errors['firstName']['message'] as ReactNode}
@@ -1051,8 +1029,8 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                     label="Last Name"
                     fullWidth
                     id="lastName"
-                    inputProps={{
-                      autoComplete: 'off'
+                    slotProps={{
+                      input: { autoComplete: 'off' }
                     }}
                     error={errors.lastName == undefined ? false : true}
                     helperText={errors.lastName && errors['lastName']['message'] as ReactNode}
@@ -1132,8 +1110,8 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                     fullWidth
                     disabled={isView}
                     id="hospital"
-                    inputProps={{
-                      autoComplete: 'off'
+                    slotProps={{
+                      input: { autoComplete: 'off' }
                     }}
                     error={errors.hospitalName == undefined ? false : true}
                     helperText={errors.hospitalName && errors['hospitalName']['message'] as ReactNode}
@@ -1195,8 +1173,8 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                     required
                     disabled={isView}
                     id="symptoms"
-                    inputProps={{
-                      autoComplete: "off"
+                    slotProps={{
+                      input: { autoComplete: 'off' }
                     }}
                     label={`Symptoms`}
                     error={errors.symptoms == undefined ? false : true}
@@ -1218,8 +1196,8 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                     required
                     disabled={isView}
                     id="description"
-                    inputProps={{
-                      autoComplete: "off"
+                    slotProps={{
+                      input: { autoComplete: 'off' }
                     }}
                     label={`Description`}
                     error={errors.description == undefined ? false : true}
@@ -1239,23 +1217,23 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
                     required
                     value={docName}
                     id="docName"
-                    inputProps={{
-                      autoComplete: "off"
+                    slotProps={{
+                      input: {
+                        autoComplete: 'off',
+                        endAdornment:
+                          <InputAdornment position="start" onClick={() => {
+                            if (!isView) {
+                              handleClickInputFile()
+                            }
+                          }} style={{ cursor: isView ? 'unset' : "pointer" }}>
+                            <UploadFile sx={{
+                              color: isView ? theme.palette.text.disabled : theme.palette.primary.main
+                            }} />
+                          </InputAdornment>,
+                      }
                     }}
                     disabled
                     label={'Document'}
-                    InputProps={{
-                      endAdornment:
-                        <InputAdornment position="start" onClick={() => {
-                          if (!isView) {
-                            handleClickInputFile()
-                          }
-                        }} style={{ cursor: isView ? 'unset' : "pointer" }}>
-                          <UploadFile sx={{
-                            color: isView ? theme.palette.text.disabled : theme.palette.primary.main
-                          }} />
-                        </InputAdornment>,
-                    }}
                   />
                   <input
                     type="file"
@@ -1289,7 +1267,6 @@ const MedicalRecords: FC<MedicalRecordsComponentType> = (({ patientProfile }) =>
         </DialogContent>
       </BootstrapDialog>}
       {showDelete && <BootstrapDialog
-        TransitionComponent={Transition}
         onClose={(event, reason) => {
           if (reason == 'backdropClick') return false;
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')

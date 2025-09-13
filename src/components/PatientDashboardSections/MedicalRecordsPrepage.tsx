@@ -1,4 +1,4 @@
-
+/* eslint-disable @next/next/no-img-element */
 import React, { FC, Fragment, useEffect, useState } from 'react'
 import MuiSwipeableTabs from '../shared/MuiSwipeableTabs';
 import MedicalRecords from './MedicalRecords';

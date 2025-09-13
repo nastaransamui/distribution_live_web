@@ -20,8 +20,8 @@ type VoiceCallToggleFunctionProps = {
   setEndCall: React.Dispatch<React.SetStateAction<boolean>>;
   endCall: boolean;
   setIsAnswerable: React.Dispatch<React.SetStateAction<boolean>>;
-  isRecording: boolean;
-  stopRecording: () => void;
+  // isRecording: boolean;
+  // stopRecording: () => void;
   setShowSnakBar: React.Dispatch<React.SetStateAction<{ show: boolean, text: string }>>;
   setAudioBlob: React.Dispatch<React.SetStateAction<Blob | null>>,
   audioBlobRef: React.MutableRefObject<Blob | null>;
@@ -48,8 +48,8 @@ const voiceCallToggleFunction = (
     setEndCall,
     endCall,
     setIsAnswerable,
-    isRecording,
-    stopRecording,
+    // isRecording,
+    // stopRecording,
     setShowSnakBar,
     setAudioBlob,
     audioBlobRef,
@@ -95,8 +95,8 @@ const voiceCallToggleFunction = (
       setVoiceCallActive,
       setCallReceiverUserData,
       setIsAnswerable,
-      isRecording,
-      stopRecording,
+      // isRecording,
+      // stopRecording,
       setShowSnakBar,
       setAudioBlob,
       audioBlobRef,

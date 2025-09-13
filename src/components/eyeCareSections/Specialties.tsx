@@ -1,12 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect } from 'react'
+import { FC, Fragment, useCallback, useEffect, useRef } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
 import { useTheme } from '@mui/material';
-const OwlCarousel = dynamic(() => import('react-owl-carousel'), {
-  ssr: false,
-})
+import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperInstance } from 'swiper';
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation } from 'swiper/modules';
+
 
 import {
   clinic_011,
@@ -21,41 +22,25 @@ import AOS from 'aos'
 const Specialities: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme()
-  const doctersettings = {
-    items: 4,
-    loop: true,
-    margin: 15,
-    dots: false,
-    nav: true,
-    navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
-    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
-    autoplay: false,
-    infinite: "true",
+  const specialitySettings: SwiperOptions = {
+    slidesPerView: 4,
+    spaceBetween: 15,
+    loop: false,
+    modules: [Navigation, FreeMode],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+    breakpoints: {
+      1049: { slidesPerView: 4 },
+      992: { slidesPerView: 3 },
+      800: { slidesPerView: 3 },
+      776: { slidesPerView: 3 },
+      567: { slidesPerView: 1 },
+      200: { slidesPerView: 1 },
+    },
+  };
 
-    slidestoscroll: 1,
-    rtl: "true",
-    rows: 1,
-    responsive: {
-      1049: {
-        items: 4
-      },
-      992: {
-        items: 3
-      },
-      800: {
-        items: 3
-      },
-      776: {
-        items: 3
-      },
-      567: {
-        items: 1
-      },
-      200: {
-        items: 1
-      }
-    }
-  }
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -63,7 +48,15 @@ const Specialities: FC = (() => {
     });
 
   }, []);
+  const swiperRef = useRef<SwiperInstance | null>(null);
 
+  const handlePrev = useCallback(() => {
+    swiperRef.current?.slidePrev();
+  }, []);
+
+  const handleNext = useCallback(() => {
+    swiperRef.current?.slideNext();
+  }, []);
   return (
     <Fragment>
       <section className="special-section" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
@@ -83,117 +76,140 @@ const Specialities: FC = (() => {
             </div>
           </div>
           <div className=" special owl-them aos" data-aos="fade-up">
-            <OwlCarousel {...doctersettings}>
-              <div className="item">
-                <div className="special-item">
-                  <div className="special-img">
-                    <Link href="/doctors/search" aria-label='cunsultation'>
-                      <img
-                        src={clinic_014}
-                        alt=""
-                        className="img-fluid"
-                      />
-                    </Link>
+            <div className="owl-nav " id='slide-nav-1' >
+
+              <button className='owl-prev' onClick={handlePrev} style={{ position: 'absolute', zIndex: 2, transform: 'translateY(50%)' }} >
+                <i className="fas fa-chevron-left " />
+              </button>
+              <button className='owl-next' onClick={handleNext} style={{ position: 'absolute', zIndex: 2, transform: 'translateY(50%)' }} >
+                <i className="fas fa-chevron-right " />
+              </button>
+            </div>
+            <Swiper
+              {...specialitySettings}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }}>
+              <SwiperSlide>
+                <div className="item">
+                  <div className="special-item">
+                    <div className="special-img">
+                      <Link href="/doctors/search" aria-label='cunsultation'>
+                        <img
+                          src={clinic_014}
+                          alt=""
+                          className="img-fluid"
+                        />
+                      </Link>
+                    </div>
+                    <div className="special-icon">
+                      <Link href="/doctors/search" aria-label='cunsultation'>
+                        <i className="fa-solid fa-circle-chevron-right" />
+                      </Link>
+                    </div>
+                    <h3>
+                      <Link href="/doctors/search" aria-label='cunsultation'>Cataract</Link>
+                    </h3>
                   </div>
-                  <div className="special-icon">
-                    <Link href="/doctors/search" aria-label='cunsultation'>
-                      <i className="fa-solid fa-circle-chevron-right" />
-                    </Link>
-                  </div>
-                  <h3>
-                    <Link href="/doctors/search" aria-label='cunsultation'>Cataract</Link>
-                  </h3>
                 </div>
-              </div>
-              <div className="item">
-                <div className="special-item">
-                  <div className="special-img">
-                    <Link href="/doctors/search" aria-label='cunsultation'>
-                      <img
-                        // src="assets/img/clinic/clinic-02.webp"
-                        src={clinic_012}
-                        alt=""
-                        className="img-fluid"
-                      />
-                    </Link>
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="item">
+                  <div className="special-item">
+                    <div className="special-img">
+                      <Link href="/doctors/search" aria-label='cunsultation'>
+                        <img
+                          // src="assets/img/clinic/clinic-02.webp"
+                          src={clinic_012}
+                          alt=""
+                          className="img-fluid"
+                        />
+                      </Link>
+                    </div>
+                    <div className="special-icon">
+                      <Link href="/doctors/search" aria-label='cunsultation'>
+                        <i className="fa-solid fa-circle-chevron-right" />
+                      </Link>
+                    </div>
+                    <h3>
+                      <Link href="/doctors/search">Corneal Ulcer </Link>
+                    </h3>
                   </div>
-                  <div className="special-icon">
-                    <Link href="/doctors/search" aria-label='cunsultation'>
-                      <i className="fa-solid fa-circle-chevron-right" />
-                    </Link>
-                  </div>
-                  <h3>
-                    <Link href="/doctors/search">Corneal Ulcer </Link>
-                  </h3>
                 </div>
-              </div>
-              <div className="item">
-                <div className="special-item">
-                  <div className="special-img">
-                    <Link href="/doctors/search" aria-label='cunsultation'>
-                      <img
-                        // src="assets/img/clinic/clinic-03.webp"
-                        src={clinic_013}
-                        alt=""
-                        className="img-fluid"
-                      />
-                    </Link>
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="item">
+                  <div className="special-item">
+                    <div className="special-img">
+                      <Link href="/doctors/search" aria-label='cunsultation'>
+                        <img
+                          // src="assets/img/clinic/clinic-03.webp"
+                          src={clinic_013}
+                          alt=""
+                          className="img-fluid"
+                        />
+                      </Link>
+                    </div>
+                    <div className="special-icon">
+                      <Link href="/doctors/search" aria-label='cunsultation'>
+                        <i className="fa-solid fa-circle-chevron-right" />
+                      </Link>
+                    </div>
+                    <h3>
+                      <Link href="/doctors/search" aria-label='cunsultation'>Keratoconus</Link>
+                    </h3>
                   </div>
-                  <div className="special-icon">
-                    <Link href="/doctors/search" aria-label='cunsultation'>
-                      <i className="fa-solid fa-circle-chevron-right" />
-                    </Link>
-                  </div>
-                  <h3>
-                    <Link href="/doctors/search" aria-label='cunsultation'>Keratoconus</Link>
-                  </h3>
                 </div>
-              </div>
-              <div className="item">
-                <div className="special-item">
-                  <div className="special-img">
-                    <Link href="/doctors/search" aria-label='cunsultation'>
-                      <img
-                        // src="assets/img/clinic/clinic-01.webp"
-                        src={clinic_011}
-                        alt=""
-                        className="img-fluid"
-                      />
-                    </Link>
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="item">
+                  <div className="special-item">
+                    <div className="special-img">
+                      <Link href="/doctors/search" aria-label='cunsultation'>
+                        <img
+                          // src="assets/img/clinic/clinic-01.webp"
+                          src={clinic_011}
+                          alt=""
+                          className="img-fluid"
+                        />
+                      </Link>
+                    </div>
+                    <div className="special-icon">
+                      <Link href="/doctors/search" aria-label='cunsultation'>
+                        <i className="fa-solid fa-circle-chevron-right" />
+                      </Link>
+                    </div>
+                    <h3>
+                      <Link href="/doctors/search" aria-label='cunsultation'>Glaucoma</Link>
+                    </h3>
                   </div>
-                  <div className="special-icon">
-                    <Link href="/doctors/search" aria-label='cunsultation'>
-                      <i className="fa-solid fa-circle-chevron-right" />
-                    </Link>
-                  </div>
-                  <h3>
-                    <Link href="/doctors/search" aria-label='cunsultation'>Glaucoma</Link>
-                  </h3>
                 </div>
-              </div>
-              <div className="item">
-                <div className="special-item">
-                  <div className="special-img">
-                    <Link href="/doctors/search" aria-label='cunsultation'>
-                      <img
-                        // src="assets/img/clinic/clinic-05.webp"
-                        src={clinic_015}
-                        alt=""
-                        className="img-fluid"
-                      />
-                    </Link>
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="item">
+                  <div className="special-item">
+                    <div className="special-img">
+                      <Link href="/doctors/search" aria-label='cunsultation'>
+                        <img
+                          // src="assets/img/clinic/clinic-05.webp"
+                          src={clinic_015}
+                          alt=""
+                          className="img-fluid"
+                        />
+                      </Link>
+                    </div>
+                    <div className="special-icon">
+                      <Link href="/doctors/search" aria-label='cunsultation'>
+                        <i className="fa-solid fa-circle-chevron-right" />
+                      </Link>
+                    </div>
+                    <h3>
+                      <Link href="/doctors/search">Keratoconus</Link>
+                    </h3>
                   </div>
-                  <div className="special-icon">
-                    <Link href="/doctors/search" aria-label='cunsultation'>
-                      <i className="fa-solid fa-circle-chevron-right" />
-                    </Link>
-                  </div>
-                  <h3>
-                    <Link href="/doctors/search">Keratoconus</Link>
-                  </h3>
                 </div>
-              </div>
-            </OwlCarousel>
+              </SwiperSlide>
+            </Swiper>
           </div>
         </div>
       </section>

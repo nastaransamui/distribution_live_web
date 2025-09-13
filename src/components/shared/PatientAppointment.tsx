@@ -1,14 +1,21 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import { DataGrid, GridActionsCellItem, GridRowParams, GridRenderCellParams, GridValueFormatterParams, GridValueGetterParams, GridColumnVisibilityModel, GridColDef, GridAlignment, GridFilterModel, GridSortModel } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridRowParams,
+  GridRenderCellParams,
+  GridColumnVisibilityModel, GridColDef, GridAlignment, GridFilterModel, GridSortModel,
+  GridColType
+} from '@mui/x-data-grid';
 
 import dayjs from 'dayjs';
 import { doctors_profile } from '@/public/assets/imagepath';
 import Stack from '@mui/material/Stack';
 import Link from 'next/link';
 import Chip from '@mui/material/Chip';
-import { BootstrapDialog, BootstrapDialogTitle, Transition } from '../shared/Dialog';
+import { BootstrapDialog, BootstrapDialogTitle } from '../shared/Dialog';
 import { patient_profile } from '@/public/assets/imagepath';
 import Typography from '@mui/material/Typography';
 import { Box, DialogContent } from '@mui/material';
@@ -17,7 +24,7 @@ import CustomNoRowsOverlay from './CustomNoRowsOverlay';
 import { LoadingComponent, StyledBadge, formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor } from '../DoctorDashboardSections/ScheduleTiming';
 import Avatar from '@mui/material/Avatar';
 import { EditValueType } from '../DoctorDashboardSections/AvailableTiming';
-import CustomPagination from './CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from './CustomPagination';
 import { AppointmentReservationExtendType } from '../DoctorsSections/CheckOut/PaymentSuccess';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
@@ -25,9 +32,8 @@ import { toast } from 'react-toastify';
 import { useReactToPrint } from 'react-to-print';
 import { PrintInvoiceComponent } from '../DoctorDashboardSections/Invoices';
 import { useTheme } from '@mui/material/styles';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from './CustomToolbar';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from './CustomToolbar';
 import { isNotNull } from './PatientBillingRecords';
-
 
 const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string }> = (({ userType, patientId }) => {
   const { muiVar, bounce } = useScssVar();
@@ -74,6 +80,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
     const { gender, firstName: paFirstName, lastName: paLastName, country: paCountry,
       city: paCity, state: paState, address1: paAddress1, address2: paAddress2 } = patientProfile
 
+    let isSameDoctor = userProfile?.roleName == 'patient' ? true : userProfile?._id == row.doctorId;
     setPrintProps(() => {
       let newState = {}
       newState = {
@@ -95,6 +102,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
         timeSlot: row?.timeSlot,
         paymentType: row?.paymentType,
         paymentToken: row?.paymentToken,
+        isSameDoctor
       }
       return newState
     })
@@ -134,14 +142,12 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
         width: 100,
         align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
-        type: 'number',
+        type: 'number' as GridColType,
         sortable: true,
-        searchAble: true,
+        searchAble: false,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.id
-        },
+
       },
       {
         field: 'dayPeriod',
@@ -153,9 +159,9 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { value } = params
-          return value.charAt(0).toUpperCase() + value.slice(1)
+        valueFormatter: (_: any, row: any) => {
+
+          return row.dayPeriod.charAt(0).toUpperCase() + row.dayPeriod.slice(1)
         }
       },
       {
@@ -163,15 +169,16 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
         headerName: `Doctor Name`,
         width: 250,
         minWidth: 250,
+        flex: 1,
         align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
         searchAble: false,
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueFormatter(params: GridValueFormatterParams) {
-          const { api, id } = params;
-          let fullName = api.getCellValue(id as string, 'doctorProfile')?.fullName
+        valueFormatter(_: any, row: any) {
+
+          let fullName = row?.doctorProfile?.fullName
           return ` Dr. ${fullName}`
         },
         renderCell: (params: GridRenderCellParams) => {
@@ -179,7 +186,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
           const profileImage = row?.doctorProfile?.profileImage == '' ? doctors_profile : row?.doctorProfile?.profileImage
           const online = row?.doctorProfile?.online || false
           return (
-            <>
+            <span style={{ display: 'flex', height: '100%', width: '100%' }}>
               <Link aria-label='profile' className=" mx-2" href={`/doctors/profile/${btoa(row.doctorId)}`} >
                 <StyledBadge
                   overlap="circular"
@@ -193,7 +200,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                   </Avatar>
                 </StyledBadge>
               </Link>
-              <Stack>
+              <Stack sx={{ height: '100%', justifyContent: 'center' }}>
                 <Link aria-label='profile' href={`/doctors/profile/${btoa(row.doctorId)}`}
                   style={{ color: theme.palette.secondary.main, maxWidth: '70%', minWidth: '70%' }}>
                   {formattedValue}
@@ -206,7 +213,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                   {row.invoiceId}
                 </Link>
               </Stack>
-            </>
+            </span>
           )
         }
       },
@@ -215,21 +222,21 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
         headerName: `Selected Date`,
         align: 'center' as GridAlignment,
         width: 200,
-        type: 'dateTime',
+        flex: 1,
+        type: 'dateTime' as GridColType,
         searchAble: true,
         sortable: true,
         filterable: true,
         headerAlign: 'center' as GridAlignment,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridValueGetterParams) {
-          const { row } = params;
-          return new Date(row?.selectedDate)
-        },
         sortComparator: (v1: any, v2: any) => dayjs(v1).isAfter(dayjs(v2).format('YYYY MM DD HH:mm'), 'minutes') ? 1 : -1,
+        valueGetter(_: any, row: any) {
+          return row.selectedDate ? dayjs(row.selectedDate).toDate() : null;
+        },
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row?.selectedDate).format(`DD MMM YYYY`)}</span>
               <span className="d-block">{row?.timeSlot?.period}</span>
             </Stack>
@@ -240,16 +247,17 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
         field: 'timeSlot.total',
         headerName: 'Total',
         width: 90,
+        flex: 1,
         align: 'center' as GridAlignment,
         headerAlign: 'center' as GridAlignment,
-        type: 'number',
+        type: 'number' as GridColType,
         sortable: true,
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
         renderCell: (params: GridRenderCellParams) => {
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
                 params?.row?.timeSlot?.total
               )}</span>
@@ -266,13 +274,12 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
         width: 250,
         headerAlign: 'center' as GridAlignment,
         align: 'center' as GridAlignment,
-        type: 'date',
+        type: 'date' as GridColType,
         searchAble: true,
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueGetter(_: any, row: any) {
           return row.createdDate ? dayjs(row.createdDate).toDate() : null;
         },
         renderCell: (data: any) => {
@@ -300,27 +307,28 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
         },
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
-
+          const isSameDoctor = userProfile?.roleName == 'patient' ? true : userProfile?._id == row.doctorId
           return (
             <>
-
-              <Chip
-                label={row?.doctorPaymentStatus}
-                size="small"
-                sx={{
-                  color: theme.palette.primary.contrastText,
-                  backgroundColor: row.doctorPaymentStatus == 'Paid' ? '#5BC236' :
-                    row.doctorPaymentStatus == 'Awaiting Request' ? theme.palette.error.main :
-                      '#ffa500'
-                }} />
-
+              {isSameDoctor ?
+                <Chip
+                  label={row?.doctorPaymentStatus}
+                  size="small"
+                  sx={{
+                    color: theme.palette.primary.contrastText,
+                    backgroundColor: row.doctorPaymentStatus == 'Paid' ? '#5BC236' :
+                      row.doctorPaymentStatus == 'Awaiting Request' ? theme.palette.error.main :
+                        '#ffa500'
+                  }} />
+                : <>N/A</>
+              }
             </>
           )
         }
       } : null,
       {
         field: "actions",
-        type: 'actions',
+        type: 'actions' as GridColType,
         headerName: "Action",
         headerAlign: 'center' as GridAlignment,
         align: 'center' as GridAlignment,
@@ -366,9 +374,6 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                 }} label='View' />,
               <GridActionsCellItem
                 key={params.row.toString()}
-                disableFocusRipple
-                disableRipple
-                disableTouchRipple
                 onClick={() => {
                   printButtonClicked(params.row)
                 }}
@@ -414,9 +419,6 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                 }} label="Edit" />,
               <GridActionsCellItem
                 key={params.row.toString()}
-                disableFocusRipple
-                disableRipple
-                disableTouchRipple
                 onClick={() => {
                   printButtonClicked(params.row)
                 }}
@@ -428,7 +430,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
       }
     ].filter(isNotNull)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [theme.palette]);
 
 
   const handleChangePage = (
@@ -591,7 +593,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
               </div>
             </div> :
             <div className="card">
-              <div ref={dataGridRef} className="tab-content schedule-cont">
+              <div ref={dataGridRef} className="tab-content schedule-cont  animate__animated animate__lightSpeedInRight">
                 <Box className="dataGridOuterBox" >
                   <Typography className="totalTypo"
                     variant='h5' align='center' gutterBottom >
@@ -624,10 +626,11 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                         setColumnVisibilityModel(newModel)
                       }}
                       loading={isLoading}
-                      experimentalFeatures={{ ariaV7: true }}
+                      showToolbar
                       slots={{
-                        toolbar: CustomToolbar,
-                        pagination: CustomPagination,
+                        toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                        pagination: CustomPagination as CustomPaginationSlotType,
                         noResultsOverlay: CustomNoRowsOverlay,
                         noRowsOverlay: CustomNoRowsOverlay
                       }}
@@ -637,7 +640,7 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                           deleteId: [],
                           deleteClicked: () => { },
                           columnVisibilityModel: columnVisibilityModel,
-                        },
+                        } as CustomToolbarPropsType,
                         pagination: {
                           onRowsPerPageChange: handleChangeRowsPerPage,
                           page: paginationModel.page,
@@ -651,20 +654,6 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
                             },
                           },
                         },
-                        filterPanel: {
-                          filterFormProps: {
-                            deleteIconProps: {
-                              sx: {
-                                justifyContent: 'flex-start'
-                              },
-                            },
-                          },
-                        },
-                        baseCheckbox: {
-                          inputProps: {
-                            name: "select-checkbox"
-                          }
-                        }
                       }}
                       getRowId={(params) => params._id}
                       rows={rows}
@@ -709,7 +698,6 @@ const PatientAppointment: FC<{ userType: 'patient' | 'doctor', patientId: string
       </div>
       {
         show && <BootstrapDialog
-          TransitionComponent={Transition}
           onClose={() => {
             document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
             setTimeout(() => {

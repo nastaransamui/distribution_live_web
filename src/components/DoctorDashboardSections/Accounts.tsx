@@ -283,7 +283,7 @@ const Accounts: FC = (() => {
                                 setEdit(true)
                               }}
                             >
-                              <i className="fas fa-pencil" /> Edit Details
+                              <i className={`fas ${_.isEmpty(bankData) ? 'fa-add' : 'fa-pencil'}`} />&nbsp; &nbsp; &nbsp;{_.isEmpty(bankData) ? `Add your bank account` : `Edit Details`}
                             </Link>
                           </div>
                         </div>

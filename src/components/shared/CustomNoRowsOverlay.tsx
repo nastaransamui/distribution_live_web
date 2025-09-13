@@ -1,6 +1,7 @@
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { FC } from 'react';
+import { GridOverlayProps } from '@mui/x-data-grid';
 
 const StyledGridOverlay = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -27,7 +28,9 @@ const StyledGridOverlay = styled('div')(({ theme }) => ({
   },
 }));
 
-const CustomNoRowsOverlay: FC<{ text: string }> = (({ text }) => {
+type CustomNoRowsOverlayProps = GridOverlayProps & { text?: string };
+
+const CustomNoRowsOverlay: FC<CustomNoRowsOverlayProps> = ({ text = "No Rows", ...rest }) => {
   return (
     <StyledGridOverlay>
       <svg
@@ -69,9 +72,9 @@ const CustomNoRowsOverlay: FC<{ text: string }> = (({ text }) => {
           </g>
         </g>
       </svg>
-      <Box sx={{ mt: 1, color: (theme) => theme.palette.text.color, }}>{text || 'No Rows'}</Box>
+      <Box sx={{ mt: 1, color: (theme) => theme.palette.text.color, }}>{text}</Box>
     </StyledGridOverlay>
   );
-})
+}
 
 export default CustomNoRowsOverlay

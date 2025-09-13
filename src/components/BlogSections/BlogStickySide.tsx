@@ -58,10 +58,12 @@ const BlogListSearch: FC = (() => {
               defaultValue=""
               autoComplete='off'
               size="small"
-              InputProps={{
-                endAdornment: <InputAdornment position="end">
-                  <Search style={{ color: theme.palette.secondary.main }} />
-                </InputAdornment>
+              slotProps={{
+                input: {
+                  endAdornment: <InputAdornment position="end">
+                    <Search style={{ color: theme.palette.secondary.main }} />
+                  </InputAdornment>
+                }
               }}
             />
           </div>

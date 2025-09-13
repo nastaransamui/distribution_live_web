@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+
 import useScssVar from '@/hooks/useScssVar'
 import { FC, } from 'react'
 import Avatar from '@mui/material/Avatar'
@@ -9,7 +9,6 @@ import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid'
-import Box from '@mui/material/Box'
 
 import Link from 'next/link';
 import CardActions from '@mui/material/CardActions'
@@ -20,7 +19,7 @@ export const DoctorListSearchSkeleton: FC = (() => {
 
   return (
     <>
-      <Grid item lg={12} xs={12} sm={6} md={4} sx={{ mr: 2, mb: 2 }}>
+      <Grid size={{ lg: 12, md: 4, sm: 6, xs: 12 }} sx={{ mr: 2, mb: 2 }}>
         <Card sx={{
           transition: theme.transitions.create('all', { duration: 200, }),
           display: 'flex',
@@ -34,8 +33,8 @@ export const DoctorListSearchSkeleton: FC = (() => {
           boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
           minHeight: 260,
         }}>
-          <Grid container >
-            <Grid item xl={3} lg={2.87} md={2.87} sm={2} xs={12} >
+          <Grid container sx={{ minWidth: '100%' }}>
+            <Grid size={{ xl: 3, lg: 2.87, md: 2.87, sm: 2, xs: 12 }}>
               <CardMedia>
                 <Skeleton animation="wave" variant="rectangular" sx={{
                   bgcolor: theme.palette.background.paper,
@@ -75,7 +74,7 @@ export const DoctorListSearchSkeleton: FC = (() => {
                 </ul>
               </CardMedia>
             </Grid>
-            <Grid item xl={3} lg={2.5} md={2.5} sm={3} xs={12} >
+            <Grid size={{ xl: 3, lg: 2.5, md: 2.5, sm: 3, xs: 12 }}>
               <CardContent sx={{
                 flex: '1 0 auto',
                 maxHeight: 190,
@@ -93,7 +92,7 @@ export const DoctorListSearchSkeleton: FC = (() => {
                 }
               </CardContent>
             </Grid>
-            <Grid item xl={3} lg={3} md={2.5} sm={3} xs={12}>
+            <Grid size={{ xl: 3, lg: 3, md: 2.5, sm: 3, xs: 12 }} >
               <CardContent >
                 {
                   Array.from(Array(10).keys()).map((i) => (
@@ -107,7 +106,7 @@ export const DoctorListSearchSkeleton: FC = (() => {
                 }
               </CardContent>
             </Grid>
-            <Grid item xl={3} lg={3.63} md={4.03} sm={4} xs={12}>
+            <Grid size={{ xl: 3, lg: 3.63, md: 4.03, sm: 4, xs: 12 }}  >
               <CardContent sx={{ display: 'flex', flexDirection: 'column', }} >
                 <ul>
                   <li>

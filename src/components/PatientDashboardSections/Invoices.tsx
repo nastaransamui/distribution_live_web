@@ -17,12 +17,12 @@ import { AppointmentReservationType } from '@/components/DoctorsSections/CheckOu
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
 
 import Avatar from '@mui/material/Avatar';
-import CustomPagination from '../shared/CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from '../shared/CustomPagination';
 import { useReactToPrint } from 'react-to-print';
 import { DoctorProfileType } from '../SearchDoctorSections/SearchDoctorSection';
 import { formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent, StyledBadge } from '../DoctorDashboardSections/ScheduleTiming';
 import { useTheme } from '@mui/material/styles';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import RenderExpandableCell from '../shared/RenderExpandableCell';
@@ -65,7 +65,6 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
     paymentToken,
   } = printProps
 
-  // const userProfile = useSelector((state: AppState) => state.userProfile.value)
   const userPatientProfile = useSelector((state: AppState) => state.userPatientProfile.value)
   const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
   const homeRoleName = useSelector((state: AppState) => state.homeRoleName.value)
@@ -74,7 +73,6 @@ export const PrintInvoiceComponent = forwardRef<HTMLDivElement, PrintProps>((pro
   return (
     <div ref={ref} >
       <Fragment >
-        {/*  minHeight: '3508px' */}
         <div className="content" style={muiVar}>
           <div className="container">
             <div className="row" >
@@ -363,8 +361,8 @@ const Invoices: FC = (() => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.id
+        valueGetter: (_, row) => {
+          return row?.id
         },
       },
       {
@@ -378,8 +376,7 @@ const Invoices: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueGetter: (_, row) => {
           return row.createdDate ? dayjs(row.createdDate).toDate() : null;
         },
         renderCell: (data: any) => {
@@ -402,9 +399,8 @@ const Invoices: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { value } = params
-          return value?.charAt(0).toUpperCase() + value?.slice(1)
+        valueGetter: (_, row) => {
+          return row?.dayPeriod?.charAt(0).toUpperCase() + row?.dayPeriod?.slice(1)
         }
       },
       {
@@ -418,13 +414,12 @@ const Invoices: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueGetter: (_, row) => {
           return row.selectedDate ? dayjs(row.selectedDate).toDate() : null;
         },
         renderCell: (params) => {
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(params?.row?.selectedDate).format(`DD MMM YYYY`)}</span>
               <span style={{ color: theme.palette.primary.main }} >{params?.row?.timeSlot?.period}</span>
             </Stack>
@@ -458,17 +453,13 @@ const Invoices: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
-          return row?.doctorProfile.fullName
-        },
         sortComparator: (v1: any, v2: any) => v1 > v2 ? -1 : 1,
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           const profileImage = row?.doctorProfile?.profileImage == '' ? doctors_profile : row?.doctorProfile?.profileImage
 
           return (
-            <>
+            <span style={{ display: 'flex', width: '100%', height: '100%' }}>
               <Link aria-label='profile' className=" mx-2" target='_blank' href={`/doctors/profile/${btoa(row?.doctorId)}`} >
                 <StyledBadge
                   overlap="circular"
@@ -480,7 +471,7 @@ const Invoices: FC = (() => {
                   <Avatar alt="" src={profileImage} />
                 </StyledBadge>
               </Link>
-              <Stack>
+              <Stack sx={{ height: '100%', justifyContent: 'center' }}>
                 <Link target='_blank'
                   href={`/doctors/profile/${btoa(row?.doctorId)}`}
                   style={{ color: theme.palette.secondary.main, maxWidth: '100%', minWidth: '100%' }}>
@@ -488,7 +479,7 @@ const Invoices: FC = (() => {
                 </Link>
                 <small> {row?.doctorProfile?.specialities[0]?.specialities}</small>
               </Stack>
-            </>
+            </span>
           )
         }
       },
@@ -505,7 +496,7 @@ const Invoices: FC = (() => {
         filterOperators: createCustomOperators().number,
         renderCell: (params) => {
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
                 params?.row?.timeSlot?.total
               )}</span>
@@ -559,11 +550,9 @@ const Invoices: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter: (params: GridRenderCellParams) => {
-          // If the value is empty, you might want to return a default date or null
-          return params.value !== '' ? new Date(params.value) : params?.value;
+        valueGetter: (_, row) => {
+          return row?.paymentDate !== '' ? new Date(row?.paymentDate) : row?.paymentDate;
         },
-        // Render the cell with your desired format
         renderCell: (params: GridRenderCellParams) => {
           return params.value == "" ? "=====" : dayjs(params.value).format('DD MMM YYYY  HH:mm');
         }
@@ -578,9 +567,6 @@ const Invoices: FC = (() => {
 
           <GridActionsCellItem
             key={params.row.toString()}
-            disableFocusRipple
-            disableRipple
-            disableTouchRipple
             onClick={() => {
               printButtonClicked(params.row)
             }}
@@ -590,7 +576,7 @@ const Invoices: FC = (() => {
       }
     ]
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [theme.palette]);
 
 
   const handleChangePage = (
@@ -811,10 +797,11 @@ const Invoices: FC = (() => {
                         setColumnVisibilityModel(newModel)
                       }}
                       loading={isLoading}
-                      experimentalFeatures={{ ariaV7: true }}
+                      showToolbar
                       slots={{
-                        toolbar: CustomToolbar,
-                        pagination: CustomPagination,
+                        toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                        pagination: CustomPagination as CustomPaginationSlotType,
                         noResultsOverlay: CustomNoRowsOverlay,
                         noRowsOverlay: CustomNoRowsOverlay
                       }}
@@ -824,7 +811,8 @@ const Invoices: FC = (() => {
                           deleteId: [],
                           deleteClicked: () => { },
                           columnVisibilityModel: columnVisibilityModel,
-                        },
+                        } as CustomToolbarPropsType,
+
                         pagination: {
                           onRowsPerPageChange: handleChangeRowsPerPage,
                           page: paginationModel.page,
@@ -838,20 +826,6 @@ const Invoices: FC = (() => {
                             },
                           },
                         },
-                        filterPanel: {
-                          filterFormProps: {
-                            deleteIconProps: {
-                              sx: {
-                                justifyContent: 'flex-start'
-                              },
-                            },
-                          },
-                        },
-                        baseCheckbox: {
-                          inputProps: {
-                            name: "select-checkbox"
-                          }
-                        }
                       }}
                       getRowId={(params) => params._id}
                       rows={rows}

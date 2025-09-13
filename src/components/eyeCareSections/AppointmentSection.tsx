@@ -16,7 +16,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker'
-// import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import dayjs from 'dayjs';
 
 
@@ -73,8 +72,20 @@ const AppointmentSection: FC = (() => {
                         size="small"
                         fullWidth
                         onFocus={() => setNameShrink(() => true)}
-                        InputLabelProps={{
-                          shrink: nameShrink,
+                        slotProps={{
+                          inputLabel: {
+                            shrink: nameShrink,
+
+                          },
+                          input: {
+                            autoComplete: 'off',
+                            startAdornment: <InputAdornment position="start">
+                              <i className="feather-user" style={{ width: "16px", color: theme.palette.primary.main }} />
+                            </InputAdornment>,
+                            classes: {
+                              adornedStart: 'adornedStart',
+                            }
+                          },
                         }}
                         onBlur={(e: any) => {
                           if (e.target.value == '') {
@@ -83,15 +94,6 @@ const AppointmentSection: FC = (() => {
                         }}
                         classes={{
                           root: 'adornedStart'
-                        }}
-                        InputProps={{
-                          autoComplete: 'off',
-                          startAdornment: <InputAdornment position="start">
-                            <i className="feather-user" style={{ width: "16px", color: theme.palette.primary.main }} />
-                          </InputAdornment>,
-                          classes: {
-                            adornedStart: 'adornedStart',
-                          }
                         }}
                       />
                     </div>
@@ -108,21 +110,24 @@ const AppointmentSection: FC = (() => {
                         size="small"
                         fullWidth
                         onFocus={() => setMailShrink(() => true)}
-                        InputLabelProps={{
-                          shrink: mailShrink,
+                        slotProps={{
+                          inputLabel: {
+                            shrink: mailShrink,
+
+                          },
+                          input: {
+                            autoComplete: 'off',
+                            startAdornment: <InputAdornment position="start">
+                              <i className="feather-mail" style={{ width: "16px", color: theme.palette.primary.main }} />
+                            </InputAdornment>,
+                            classes: {
+                              adornedStart: 'adornedStart',
+                            }
+                          },
                         }}
                         onBlur={(e: any) => {
                           if (e.target.value == '') {
                             setMailShrink(() => false)
-                          }
-                        }}
-                        InputProps={{
-                          autoComplete: 'off',
-                          startAdornment: <InputAdornment position="start">
-                            <i className="feather-mail" style={{ width: "16px", color: theme.palette.primary.main }} />
-                          </InputAdornment>,
-                          classes: {
-                            adornedStart: 'adornedStart',
                           }
                         }}
                       />
@@ -140,21 +145,24 @@ const AppointmentSection: FC = (() => {
                         size="small"
                         fullWidth
                         onFocus={() => setPhoneShrink(() => true)}
-                        InputLabelProps={{
-                          shrink: phoneShrink,
+                        slotProps={{
+                          inputLabel: {
+                            shrink: phoneShrink,
+
+                          },
+                          input: {
+                            autoComplete: 'off',
+                            startAdornment: <InputAdornment position="start">
+                              <i className="feather-phone" style={{ width: "16px", color: theme.palette.primary.main }} />
+                            </InputAdornment>,
+                            classes: {
+                              adornedStart: 'adornedStart',
+                            }
+                          },
                         }}
                         onBlur={(e: any) => {
                           if (e.target.value == '') {
                             setPhoneShrink(() => false)
-                          }
-                        }}
-                        InputProps={{
-                          autoComplete: 'off',
-                          startAdornment: <InputAdornment position="start">
-                            <i className="feather-phone" style={{ width: "16px", color: theme.palette.primary.main }} />
-                          </InputAdornment>,
-                          classes: {
-                            adornedStart: 'adornedStart',
                           }
                         }}
                       />
@@ -242,12 +250,12 @@ const AppointmentSection: FC = (() => {
                               fullWidth: true,
                               InputLabelProps: { shrink: true },
                               InputProps: {
-                                startAdornment: <InputAdornment position="start">
-                                  <i className="feather-calendar" style={{ width: "16px", color: theme.palette.primary.main }} />
-                                </InputAdornment>,
-                                classes: {
-                                  adornedStart: 'adornedStart',
-                                }
+                                sx: {
+                                  "& .MuiSvgIcon-root": {
+                                    color: theme.palette.primary.main,
+                                    fontSize: 20,
+                                  },
+                                },
                               },
                               placeholder: 'Date'
                             },
@@ -263,7 +271,7 @@ const AppointmentSection: FC = (() => {
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MobileTimePicker
                           closeOnSelect
-                          disablePast
+                          // disablePast
                           format="HH:mm"
                           views={['hours', 'minutes']}
                           onChange={(value) => {
@@ -274,20 +282,18 @@ const AppointmentSection: FC = (() => {
                             textField: {
                               size: "small",
                               fullWidth: true,
-                              InputLabelProps: { shrink: true },
+                              placeholder: "Select Time",
                               required: true,
-                              error: false,
+
                               InputProps: {
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <i className="feather-clock" style={{ width: "16px", color: theme.palette.primary.main }} />
-                                  </InputAdornment>
-                                ),
-                                classes: {
-                                  adornedStart: 'adornedStart',
+                                sx: {
+                                  "& .MuiSvgIcon-root": {
+                                    color: theme.palette.primary.main,
+                                    fontSize: 20,
+                                  },
                                 },
                               },
-                              placeholder: 'Select Time',
+                              error: false,
                             },
                           }}
                         />

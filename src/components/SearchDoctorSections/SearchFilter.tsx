@@ -162,24 +162,26 @@ const SearchFilter: FC<{ setPage: SetPage; filters: Filters; setFilters: SetFilt
                   borderColor: theme.palette.primary.main,
                 }
               }}
-              InputProps={{
-                autoComplete: 'off',
-                endAdornment:
-                  <InputAdornment position='end'>
-                    {
-                      filters.keyWord !== null &&
-                      <IconButton disableTouchRipple onClick={() => {
-                        setKeyWord(null);
-                        setFilters((prev: any) => {
-                          if (prev.keyWord === null) return prev;
-                          return { ...prev, keyWord: null };
-                        });
-                        setPage(1);
-                      }}>
-                        <X style={{ color: theme.palette.secondary.main }} />
-                      </IconButton>
-                    }
-                  </InputAdornment>
+              slotProps={{
+                input: {
+                  autoComplete: 'off',
+                  endAdornment:
+                    <InputAdornment position='end'>
+                      {
+                        filters.keyWord !== null &&
+                        <IconButton disableTouchRipple onClick={() => {
+                          setKeyWord(null);
+                          setFilters((prev: any) => {
+                            if (prev.keyWord === null) return prev;
+                            return { ...prev, keyWord: null };
+                          });
+                          setPage(1);
+                        }}>
+                          <X style={{ color: theme.palette.secondary.main }} />
+                        </IconButton>
+                      }
+                    </InputAdornment>
+                }
               }}
             />
           </div>

@@ -1,14 +1,14 @@
 
 
 import { SyntheticEvent, useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import TabContext from '@mui/lab/TabContext';
 import AppBar from '@mui/material/AppBar';
 import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Box from '@mui/material/Box';
 import { useRouter } from 'next/router';
 import _ from 'lodash'
-import TabList from '@mui/lab/TabList';
 import { SxProps, Theme, useTheme } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 interface TabPanelProps {
   children?: React.ReactNode;
   dir?: string;
@@ -16,7 +16,7 @@ interface TabPanelProps {
   value: number;
 }
 
-function TabPanel(props: TabPanelProps) {
+export function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
@@ -64,7 +64,7 @@ const MuiSwipeableTabs: React.FC<MuiSwipeableTabsProps> = ((
   }, [router.pathname]);
   const [sxProps, setSxProbs] = useState<SxProps<Theme>>()
   const [value, setValue] = useState<string>(`${activeTab}`);
-
+  const isSmalldevice = useMediaQuery('(max-width:600px)');
   // After hydration, read sessionStorage and update state if needed.
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -98,51 +98,65 @@ const MuiSwipeableTabs: React.FC<MuiSwipeableTabsProps> = ((
   useLayoutEffect(() => {
     if (typeof window !== 'undefined') {
       setSxProbs({
-        left: `${Number(value) * (100 / steps.length)}% !important`,
-        minWidth: '25%',
-        transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+        [theme.breakpoints.up('sm')]: {
+          left: `${Number(value) * (100 / steps.length)}% !important`,
+          minWidth: `${100 / steps.length}%`,
+          transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+        },
+        [theme.breakpoints.down('sm')]: {
+          display: 'none'
+        }
       })
     }
-  }, [steps.length, value])
+  }, [steps.length, value, theme.breakpoints])
 
   return (
     <Box key={steps.toString()}>
-      <TabContext value={value}>
-        <AppBar position="static">
-          <TabList
-            onChange={handleChangeTab}
-            aria-label="lab API tabs example" textColor="secondary"
-            indicatorColor="secondary"
-            TabIndicatorProps={{
-              sx: sxProps
-            }} >
-            {
-              steps.map((step: StepsType, index: number) => {
-                return (
-                  <Tab key={index} value={`${index}`} label={
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      {typeof step.stepId === "string" ? (
-                        <span>{step.stepId}</span>
-                      ) : (
-                        <>{step.stepId}</>
-                      )}
-                    </div>
-                  } disabled={step.isDisable} sx={{ minWidth: `${100 / steps.length}%` }} />
-                )
-              })
+      <AppBar position="static">
+        <Tabs
+          orientation={isSmalldevice ? 'vertical' : 'horizontal'}
+          value={value}
+          onChange={handleChangeTab}
+          aria-label="lab API tabs example" textColor="secondary"
+          indicatorColor="secondary"
+          slotProps={{
+            indicator: { sx: sxProps },
+            root: {
+              sx: {
+                [theme.breakpoints.down('sm')]: {
+                  '& .MuiTab-root': {
+                    maxWidth: 'unset !important',
+                  }
+                },
+              }
             }
-          </TabList>
-        </AppBar>
-        {
-          steps.map((step: StepsType, index: number) => {
-            return (
-              <TabPanel key={index} index={index} value={Number(value)} dir={theme.direction} >
-                {step.stepComponent}
-              </TabPanel>
-            )
-          })
-        }
-      </TabContext>
+          }}>
+          {
+            steps.map((step: StepsType, index: number) => {
+              return (
+                <Tab key={index} value={`${index}`} label={
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    {typeof step.stepId === "string" ? (
+                      <span style={{ color: index != Number(value) ? '#fff' : theme.palette.secondary.main, opacity: 1 }}>{step.stepId}</span>
+                    ) : (
+                      <span className={`${index != Number(value) ? 'stepid-text-color-not-active' : 'stepid-text-color-active'}`} style={{ opacity: 1 }}>{step.stepId}</span>
+                    )}
+                  </div>
+                } disabled={step.isDisable} sx={{ minWidth: `${100 / steps.length}%` }} />
+              )
+            })
+          }
+        </Tabs>
+      </AppBar>
+      {
+        steps.map((step: StepsType, index: number) => {
+          return (
+            <TabPanel key={index} index={index} value={Number(value)} dir={theme.direction} >
+              {step.stepComponent}
+            </TabPanel>
+          )
+        })
+      }
     </Box>
   );
 })

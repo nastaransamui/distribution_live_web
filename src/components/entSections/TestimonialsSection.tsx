@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useMemo } from 'react'
 import useScssVar from '@/hooks/useScssVar'

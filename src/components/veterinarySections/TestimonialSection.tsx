@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect, useMemo } from 'react'
+import { FC, Fragment, useCallback, useEffect, useMemo, useRef } from 'react'
 import AOS from 'aos'
-import dynamic from 'next/dynamic'
 import useScssVar from '@/hooks/useScssVar'
-import { useTheme } from '@mui/material'
-const Owlcarousel = dynamic(() => import('react-owl-carousel'), { ssr: false })
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { client09, client10, home_12_testimonial, two_paw } from "../../../public/assets/imagepath";
 import { useSelector } from 'react-redux'
@@ -15,7 +16,6 @@ import Skeleton from '@mui/material/Skeleton'
 const TestimonialSection: FC = (() => {
 
   const { muiVar } = useScssVar();
-  const theme = useTheme();
   useEffect(() => {
     AOS.init({
       duration: 1200,
@@ -23,32 +23,25 @@ const TestimonialSection: FC = (() => {
     });
 
   }, []);
-  const options = {
-    loop: true,
-    margin: 24,
-    dots: false,
-    nav: true,
-    smartSpeed: 2000,
-    navText: ['<i class="fa-solid fa-caret-left "></i>', '<i class="fa-solid fa-caret-right"></i>'],
-    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
-    responsive: {
-      0: {
-        items: 1
-      },
-      500: {
-        items: 1
-      },
-      768: {
-        items: 1
-      },
-      1000: {
-        items: 1
-      },
-      1300: {
-        items: 1
-      }
-    }
+  const doctersettings: SwiperOptions = {
+    slidesPerView: 3,
+    spaceBetween: 24,
+    loop: false,
+
+    modules: [Navigation, FreeMode],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+    breakpoints: {
+      1300: { slidesPerView: 1 },
+      1000: { slidesPerView: 1 },
+      768: { slidesPerView: 1 },
+      500: { slidesPerView: 1 },
+      0: { slidesPerView: 1 },
+    },
   };
+
   const lastReviewsData = useSelector((state: AppState) => state.lastReviewsData)
   const { lastReviews } = lastReviewsData;
 
@@ -75,6 +68,15 @@ const TestimonialSection: FC = (() => {
       },
     ]
   }, [])
+  const swiperRef = useRef<SwiperInstance | null>(null);
+
+  const handlePrev = useCallback(() => {
+    swiperRef.current?.slidePrev();
+  }, []);
+
+  const handleNext = useCallback(() => {
+    swiperRef.current?.slideNext();
+  }, []);
   return (
     <Fragment>
       <section className="clients-section-fourteen" style={muiVar}>
@@ -106,7 +108,11 @@ const TestimonialSection: FC = (() => {
                 className="feedback-slider-fourteen owl-theme aos"
                 data-aos="fade-up"
               >
-                <Owlcarousel className="feedback-slider-fourteen owl-theme aos" data-aos="fade-up"{...options}>
+                <Swiper
+                  {...doctersettings}
+                  onSwiper={(swiper) => {
+                    swiperRef.current = swiper;
+                  }} className="feedback-slider-fourteen owl-theme aos" data-aos="fade-up">
                   {
                     lastReviews == null ?
                       (Array(1).fill(0).map((_, index) => (
@@ -115,7 +121,7 @@ const TestimonialSection: FC = (() => {
                       lastReviews.length == 0 ?
                         dummyReviewData.map((review, index) => {
                           return (
-                            <div className="card feedback-card" key={index}>
+                            <SwiperSlide className="card feedback-card" key={index}>
                               <div className="card-body feedback-card-body">
                                 <div className="feedback-inner-main">
                                   <div className="feedback-inner-img">
@@ -140,13 +146,13 @@ const TestimonialSection: FC = (() => {
                                   <p>{review?.body}</p>
                                 </div>
                               </div>
-                            </div>
+                            </SwiperSlide>
                           )
                         })
                         :
                         lastReviews.map((review, index) => {
                           return (
-                            <div className="card feedback-card" key={index}>
+                            <SwiperSlide className="card feedback-card" key={index}>
                               <div className="card-body feedback-card-body">
                                 <div className="feedback-inner-main">
                                   <div className="feedback-inner-img">
@@ -171,11 +177,22 @@ const TestimonialSection: FC = (() => {
                                   <p>{review?.body}</p>
                                 </div>
                               </div>
-                            </div>
+                            </SwiperSlide>
                           )
                         })
                   }
-                </Owlcarousel>
+                </Swiper>
+
+                <div className="owl-nav" >
+
+                  <button className='owl-prev' onClick={handlePrev}>
+                    <i className="fa-solid fa-caret-left "></i>
+                  </button>
+                  <button className='owl-next' onClick={handleNext}>
+                    <i className="fa-solid fa-caret-right"></i>
+                  </button>
+
+                </div>
               </div>
             </div>
           </div>

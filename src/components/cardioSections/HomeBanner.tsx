@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable @next/next/no-img-element */
 import { FC, Fragment, useState, useEffect } from "react";
 import useScssVar from "@/hooks/useScssVar";
 import Link from "next/link";
@@ -119,7 +118,7 @@ const HomeBanner: FC = (() => {
                   autoComplete="off"
                 >
                   <Grid container spacing={{ lg: 1, xl: 1, md: 1, sm: 2, xs: 1 }}>
-                    <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                    <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
 
                       <TextField
                         required
@@ -130,33 +129,36 @@ const HomeBanner: FC = (() => {
                         fullWidth
                         sx={{ mt: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 }, mb: { xl: 1, lg: 1, md: 1, sm: 2, xs: 0 } }}
                         size="small"
-                        InputLabelProps={{
-                          shrink: keyWord !== ''
-                        }}
-                        onChange={(e) => setKeyWord(e.target.value)}
-                        InputProps={{
-                          startAdornment: //keyWord !== '' &&
-                            <InputAdornment position="start" >
-                              <IconButton aria-label="search" disableTouchRipple onClick={() => {
-                                keyWord !== '' && setKeyWord('')
-                              }}>
-                                {keyWord == '' ? <Search
-                                  style={{ width: "16px", color: theme.palette.secondary.main }}
-                                /> :
-                                  <X
+                        slotProps={{
+                          inputLabel: {
+                            shrink: keyWord !== ''
+                          },
+                          input: {
+                            startAdornment:
+                              <InputAdornment position="start" >
+                                <IconButton aria-label='search' disableTouchRipple onClick={() => {
+                                  keyWord !== '' && setKeyWord('')
+                                }}>
+                                  {keyWord == '' ? <Search
                                     style={{ width: "16px", color: theme.palette.secondary.main }}
-                                  />}
+                                  /> :
+                                    <X
+                                      style={{ width: "16px", color: theme.palette.secondary.main }}
+                                    />}
+                                </IconButton>
+                              </InputAdornment>,
+                            endAdornment: <InputAdornment position='end'>
+                              <IconButton aria-label='filter' disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
+                                <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
                               </IconButton>
                             </InputAdornment>,
-                          endAdornment: <InputAdornment position='end'>
-                            <IconButton aria-label="filter" disableTouchRipple onClick={() => setShowFilter(!showFilter)}>
-                              <Filter style={{ width: "16px", color: theme.palette.secondary.main }} />
-                            </IconButton>
-                          </InputAdornment>,
+                          }
                         }}
+                        onChange={(e) => setKeyWord(e.target.value)}
+
                       />
                     </Grid>
-                    <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                    <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                       <FormControl fullWidth >
                         <InputLabel id="availability-label" htmlFor="availability" size='small' sx={{ mt: { xl: 1, lg: 1, md: 1, sm: 2, xs: 2 }, mb: { xl: 1, lg: 1, md: 1, sm: 2, xs: 2 } }}>
                           Availablitity
@@ -210,7 +212,7 @@ const HomeBanner: FC = (() => {
                       transition: `visibility ${showFilter ? `0.75s` : `0s`} ease-in`,
                       transitionDelay: showFilter ? `0.75s` : `0s`
                     }} >
-                      <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
+                      <Grid size={{ xl: 4, lg: 4, md: 4, sm: 6, xs: 12 }}>
                         {specialities.length !== 0 &&
                           <FormControl fullWidth >
                             <InputLabel id="specialities-label" htmlFor="specialities" size='small'>
@@ -256,7 +258,7 @@ const HomeBanner: FC = (() => {
                           </FormControl>
                         }
                       </Grid>
-                      <Grid item xl={2} lg={2} md={2} sm={6} xs={12}>
+                      <Grid size={{ lg: 2, md: 2, sm: 6, xs: 12 }} >
                         <FormControl fullWidth >
                           <InputLabel id="gender-label" htmlFor="gender" size='small'>
                             Gender
@@ -291,7 +293,7 @@ const HomeBanner: FC = (() => {
                           </Select>
                         </FormControl>
                       </Grid>
-                      <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                      <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                         <GeoLocationAutocomplete
                           errors={errors}
                           register={register}
@@ -310,7 +312,7 @@ const HomeBanner: FC = (() => {
                           required={false}
                         />
                       </Grid>
-                      <Grid item xl={6} lg={6} md={6} sm={6} xs={12}>
+                      <Grid size={{ xl: 6, lg: 6, md: 6, sm: 6, xs: 12 }}>
                         <GeoLocationAutocomplete
                           errors={errors}
                           register={register}
@@ -329,7 +331,7 @@ const HomeBanner: FC = (() => {
                           required={false}
                         />
                       </Grid>
-                      <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                      <Grid size={{ xl: 6, lg: 6, md: 6, sm: 12, xs: 12 }}>
                         <GeoLocationAutocomplete
                           errors={errors}
                           register={register}

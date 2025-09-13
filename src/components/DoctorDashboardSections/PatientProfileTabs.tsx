@@ -1,19 +1,12 @@
-import { FC, Fragment, SyntheticEvent, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { FC, Fragment, useEffect, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
-
-import { SxProps, Theme, useTheme } from '@mui/material';
 import PatientAppointment from '../shared/PatientAppointment';
 import Link from 'next/link';
 import PatientBillingRecords from '../shared/PatientBillingRecords';
 
 
 //Mui
-import { Transition, BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
+import { BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
 import DialogContent from '@mui/material/DialogContent';
 import dayjs from 'dayjs';
 import TextField from '@mui/material/TextField';
@@ -25,8 +18,8 @@ import UploadFile from '@mui/icons-material/UploadFile';
 import { PatientProfileExtendType } from '../DoctorPatientProfile/DoctorPatientProfile';
 import MedicalRecords from '../PatientDashboardSections/MedicalRecords';
 import MedicalRecordsPriscription from '../PatientDashboardSections/MedicalRecordsPriscription';
-import { AppState } from '@/redux/store';
-import { useSelector } from 'react-redux';
+
+import MuiSwipeableTabs from '../shared/MuiSwipeableTabs';
 if (typeof window !== 'undefined') {
   window.mobileCheck = function () {
     let check = false;
@@ -57,26 +50,12 @@ const initialState: ValueType = {
 export interface PatientSidebarDoctorTypes {
   doctorPatientProfile: PatientProfileExtendType;
   userType: 'patient' | 'doctor'
-  isMobile: boolean;
 }
 const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfile, userType }) => {
   const { muiVar } = useScssVar();
-  const [sxProps, setSxProbs] = useState<SxProps<Theme>>()
-  const [value, setValue] = useState<string>(() => {
-    // init from sessionStorage on client synchronously to avoid jumping indicator
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("doctorPatientTabValue") || "0";
-    }
-    return "0";
-  });
-  const theme = useTheme();
 
   const [edit, setEdit] = useState(false);
-  const userDoctorProfile = useSelector((state: AppState) => state.userDoctorProfile.value)
-  const handleChangeTab = (event: SyntheticEvent, newValue: string) => {
-    setValue(newValue);
-    sessionStorage.setItem('doctorPatientTabValue', newValue)
-  };
+
   const [editValues, setEditValues] = useState<ValueType>(initialState)
   const [imageName, setImageName] = useState("")
   const inputFileRef = useRef<any>(null)
@@ -107,114 +86,70 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
     }
   }, [])
 
-  const [isMobile, setIsmobile] = useState(false)
-  useEffect(() => {
-    setIsmobile(typeof window !== 'undefined' && window.mobileCheck())
-    if (typeof window !== 'undefined') {
-      setValue(sessionStorage.getItem('doctorPatientTabValue') || '0')
-    }
-  }, [doctorPatientProfile])
-
-  useLayoutEffect(() => {
-    if (typeof window !== 'undefined') {
-      setSxProbs({
-        left: `${Number(value) * 25}% !important`,
-        minWidth: '25%',
-        transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-      })
-    }
-  }, [value])
-
   return (
     <Fragment>
-      <div className="card" style={muiVar}>
-        <div className="card-body pt-0">
-          <div className="user-tabs">
-            <Box sx={{ width: '100%', typography: 'body1' }}>
-              <TabContext value={value}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                  <TabList
-                    onChange={handleChangeTab}
-                    aria-label="lab API tabs example" textColor="secondary"
-                    indicatorColor="secondary"
-                    TabIndicatorProps={{
-                      sx: sxProps
-                    }} >
-                    <Tab label="Appointments" value="0" sx={{ minWidth: '25%' }} />
-                    <Tab label="Prescription" value="1" sx={{ minWidth: '25%' }} />
-                    <Tab label="Medical Records" value="2" sx={{ minWidth: '25%' }} />
-                    <Tab label="Billing" value="3" sx={{ minWidth: '25%' }} />
-                  </TabList>
-                </Box>
-
-                {
-                  isMobile ? <>
-                    <TabPanel value="0">
-                      <PatientAppointment userType={userType} patientId={doctorPatientProfile?._id} />
-                    </TabPanel>
-                    <TabPanel value="1">
-                      {userType == 'doctor' && <div className="text-end">
-                        <Link href={`/doctors/dashboard/add-prescription/${btoa(doctorPatientProfile._id)}`} className="add-new-btn">
-                          Add Prescription
-                        </Link>
-                      </div>}
-                      <MedicalRecordsPriscription patientProfile={doctorPatientProfile} />
-                    </TabPanel>
-                    <TabPanel value="2">
-                      <MedicalRecords patientProfile={doctorPatientProfile} />
-                    </TabPanel>
-                    <TabPanel value="3">
-                      {userDoctorProfile?.currency &&
-                        <>{userDoctorProfile?.currency.length > 0 ? <div className="text-end">
-                          <Link href={`/doctors/dashboard/add-billing/${btoa(doctorPatientProfile._id)}`} className="add-new-btn">
-                            Add Bill
-                          </Link>
-                        </div> : <div className="text-end" style={{ minHeight: "50px" }}>
-                          <span style={{ color: theme.palette.text.color }}>Add currency to your profile then can add Bill</span>
-                        </div>}</>
-                      }
-                      <PatientBillingRecords userType={userType} patientId={doctorPatientProfile?._id} />
-                    </TabPanel>
-                  </> :
-                    <>
-                      <TabPanel value="0" className={`${value == "0" && isClient ? "animate__animated animate__backInUp" : "pre-anim-hidden"}`}>
-                        <PatientAppointment userType={userType} patientId={doctorPatientProfile?._id} />
-                      </TabPanel>
-                      <TabPanel value="1" className={`${value == "1" && isClient ? "animate__animated animate__backInUp" : ""}`}>
-                        {userType == 'doctor' && <div className="text-end">
-                          <Link href={`/doctors/dashboard/add-prescription/${btoa(doctorPatientProfile._id)}`} className="add-new-btn">
-                            Add Prescription
-                          </Link>
-                        </div>}
-                        <MedicalRecordsPriscription patientProfile={doctorPatientProfile} />
-                      </TabPanel>
-                      <TabPanel value="2" className={`${value == "2" && isClient ? "animate__animated animate__backInUp" : ""}`}>
-                        <MedicalRecords patientProfile={doctorPatientProfile} />
-                      </TabPanel>
-                      <TabPanel value="3" className={`${value == "3" && isClient ? "animate__animated animate__backInUp" : ""}`}>
-                        {userDoctorProfile?.currency &&
-                          <>{userDoctorProfile?.currency.length > 0 ? <div className="text-end">
-                            <Link href={`/doctors/dashboard/add-billing/${btoa(doctorPatientProfile._id)}`} className="add-new-btn">
-                              Add Bill
-                            </Link>
-                          </div> : <div className="text-end" style={{ minHeight: "50px" }}>
-                            <span style={{ color: theme.palette.text.color }}>Add currency to your profile then can add Bills</span>
-                          </div>}</>
-                        }
-                        <PatientBillingRecords userType={userType} patientId={doctorPatientProfile?._id} />
-                      </TabPanel>
-                    </>
-                }
-
-
-              </TabContext>
-            </Box>
-          </div>
-        </div>
+      <div className={`card ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
+        <MuiSwipeableTabs
+          steps={
+            [
+              {
+                stepName: "Appointments",
+                stepComponent:
+                  <PatientAppointment
+                    userType={userType}
+                    patientId={doctorPatientProfile?._id}
+                  />,
+                stepId: 'Appointments',
+                isValidated: () => true,
+                isDisable: false,
+                hasParams: false,
+                paramsObj: {}
+              },
+              {
+                stepName: "Prescription",
+                stepComponent:
+                  <MedicalRecordsPriscription
+                    patientProfile={doctorPatientProfile}
+                    userType={userType}
+                  />,
+                stepId: 'Prescription',
+                isValidated: () => true,
+                isDisable: false,
+                hasParams: false,
+                paramsObj: {}
+              },
+              {
+                stepName: "Medical Records",
+                stepComponent:
+                  <MedicalRecords
+                    patientProfile={doctorPatientProfile}
+                  />,
+                stepId: 'Medical Records',
+                isValidated: () => true,
+                isDisable: false,
+                hasParams: false,
+                paramsObj: {}
+              },
+              {
+                stepName: "Billing",
+                stepComponent:
+                  <PatientBillingRecords
+                    userType={userType}
+                    patientId={doctorPatientProfile?._id}
+                  />,
+                stepId: 'Billing',
+                isValidated: () => true,
+                isDisable: false,
+                hasParams: false,
+                paramsObj: {}
+              },
+            ]
+          }
+          activeTab={0}
+        />
       </div>
 
       {edit && <BootstrapDialog
-        TransitionComponent={Transition}
         onClose={() => {
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
           setTimeout(() => {

@@ -1,10 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-// @ts-nocheck
 import useScssVar from '@/hooks/useScssVar';
 import { useTheme } from '@mui/material';
 import { FC, Fragment, useMemo } from 'react'
 import Slider from 'react-slick'
-import { client04, client03, client06, client07 } from '../../../public/assets/imagepath';
+import { client04, client06, client07 } from '../../../public/assets/imagepath';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import dayjs from 'dayjs';

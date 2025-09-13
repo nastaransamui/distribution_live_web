@@ -1,18 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useEffect, useMemo } from 'react'
+import { FC, Fragment, useCallback, useEffect, useMemo, useRef } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import dynamic from 'next/dynamic'
 import AOS from 'aos'
-const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false })
-import { useTheme } from '@mui/material'
-import { client03, client04, client09, clinet02, clinet05, feedback_six } from '../../../public/assets/imagepath'
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { client09, clinet02, clinet05, feedback_six } from '../../../public/assets/imagepath'
 import { useSelector } from 'react-redux'
 import { AppState } from '@/redux/store'
 import Rating from '@mui/material/Rating'
 import Skeleton from '@mui/material/Skeleton'
 import dayjs from 'dayjs'
 const TestimonialsSection: FC = (() => {
-  const theme = useTheme();
   const { muiVar } = useScssVar();
   const lastReviewsData = useSelector((state: AppState) => state.lastReviewsData)
   const { lastReviews } = lastReviewsData;
@@ -62,43 +62,26 @@ const TestimonialsSection: FC = (() => {
     });
 
   }, []);
+  const doctersettings: SwiperOptions = {
+    slidesPerView: 1,
+    spaceBetween: 15,
+    loop: false,
 
-  const doctersettings = {
-    items: 1,
-    loop: true,
-    margin: 15,
-    dots: false,
-    nav: true,
-    navText: ['<i class="fa-solid fa-caret-left "></i>', '<i class="fa-solid fa-caret-right"></i>'],
-    navElement: "button  aria-labelledby='slide-nav-1' aria-label='slide-nav-1'",
-    autoplay: false,
-    infinite: "true",
+    modules: [Navigation, FreeMode],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+  };
+  const swiperRef = useRef<SwiperInstance | null>(null);
 
-    slidestoscroll: 1,
-    rtl: "true",
-    rows: 1,
-    responsive: {
-      1049: {
-        items: 1
-      },
-      992: {
-        items: 1
-      },
-      800: {
-        items: 1
-      },
-      776: {
-        items: 1
-      },
-      567: {
-        items: 1
-      },
-      200: {
-        items: 1
-      }
-    }
+  const handlePrev = useCallback(() => {
+    swiperRef.current?.slidePrev();
+  }, []);
 
-  }
+  const handleNext = useCallback(() => {
+    swiperRef.current?.slideNext();
+  }, []);
   return (
     <Fragment>
       <section className="clients-section-fourteen" style={muiVar}>
@@ -125,7 +108,11 @@ const TestimonialsSection: FC = (() => {
                 <h2>Our Clients Feedback About Us</h2>
               </div>
               <div className=" feedback-slider-fourteen owl-theme aos" data-aos="fade-up" >
-                <OwlCarousel {...doctersettings}>
+                <Swiper
+                  {...doctersettings}
+                  onSwiper={(swiper) => {
+                    swiperRef.current = swiper;
+                  }}>
                   {
                     lastReviews == null ?
                       (Array(1).fill(0).map((_, index) => (
@@ -134,65 +121,77 @@ const TestimonialsSection: FC = (() => {
                       lastReviews.length == 0 ?
                         dummyReviewData.map((review, index) => {
                           return (
-                            <div className="card feedback-card" key={index}>
-                              <div className="card-body feedback-card-body">
-                                <div className="feedback-inner-main">
-                                  <div className="feedback-inner-img">
-                                    <h6>{review.date}</h6>
-                                    <img
-                                      src={review.img}
-                                      alt="image"
-                                      className="img-fluid"
-                                    />
+                            <SwiperSlide key={index}>
+                              <div className="card feedback-card">
+                                <div className="card-body feedback-card-body">
+                                  <div className="feedback-inner-main">
+                                    <div className="feedback-inner-img">
+                                      <h6>{review.date}</h6>
+                                      <img
+                                        src={review.img}
+                                        alt="image"
+                                        className="img-fluid"
+                                      />
+                                    </div>
+                                    <div className="rating rating-fourteen">
+                                      <Rating
+                                        name="read-only"
+                                        precision={0.5}
+                                        value={review?.rating}
+                                        readOnly
+                                        size='small' />
+                                    </div>
+                                    <p>{review.body}</p>
+                                    <h4>{review.name}</h4>
+                                    <h6>{review.city}, {review.country}</h6>
                                   </div>
-                                  <div className="rating rating-fourteen">
-                                    <Rating
-                                      name="read-only"
-                                      precision={0.5}
-                                      value={review?.rating}
-                                      readOnly
-                                      size='small' />
-                                  </div>
-                                  <p>{review.body}</p>
-                                  <h4>{review.name}</h4>
-                                  <h6>{review.city}, {review.country}</h6>
                                 </div>
                               </div>
-                            </div>
+                            </SwiperSlide>
                           )
                         })
                         :
                         lastReviews.map((review, index) => {
                           return (
-                            <div className="card feedback-card" key={index}>
-                              <div className="card-body feedback-card-body">
-                                <div className="feedback-inner-main">
-                                  <div className="feedback-inner-img">
-                                    <h6>{dayjs(review.createdAt).format('DD MMM YYYY')}</h6>
-                                    <img
-                                      src={review.authorProfile?.profileImage}
-                                      alt="image"
-                                      className="img-fluid"
-                                    />
+                            <SwiperSlide key={index}>
+                              <div className="card feedback-card">
+                                <div className="card-body feedback-card-body">
+                                  <div className="feedback-inner-main">
+                                    <div className="feedback-inner-img">
+                                      <h6>{dayjs(review.createdAt).format('DD MMM YYYY')}</h6>
+                                      <img
+                                        src={review.authorProfile?.profileImage}
+                                        alt="image"
+                                        className="img-fluid"
+                                      />
+                                    </div>
+                                    <div className="rating rating-fourteen">
+                                      <Rating
+                                        name="read-only"
+                                        precision={0.5}
+                                        value={review?.rating}
+                                        readOnly
+                                        size='small' />
+                                    </div>
+                                    <p>{review.body}</p>
+                                    <h4>{review?.authorProfile?.fullName}</h4>
+                                    <h6>{review?.authorProfile?.city}, {review?.authorProfile?.country}</h6>
                                   </div>
-                                  <div className="rating rating-fourteen">
-                                    <Rating
-                                      name="read-only"
-                                      precision={0.5}
-                                      value={review?.rating}
-                                      readOnly
-                                      size='small' />
-                                  </div>
-                                  <p>{review.body}</p>
-                                  <h4>{review?.authorProfile?.fullName}</h4>
-                                  <h6>{review?.authorProfile?.city}, {review?.authorProfile?.country}</h6>
                                 </div>
                               </div>
-                            </div>
+                            </SwiperSlide>
                           )
                         })
                   }
-                </OwlCarousel>
+                </Swiper>
+                <div className="owl-nav slide-nav-14 text-end nav-control" >
+                  <button className='owl-prev' onClick={handlePrev}>
+                    <i className="fa-solid fa-caret-left " />
+                  </button>
+                  <button className='owl-next' onClick={handleNext}>
+                    <i className="fa-solid fa-caret-right" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

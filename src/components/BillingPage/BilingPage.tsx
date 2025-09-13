@@ -32,8 +32,9 @@ const BillingPage: FC<DoctorPatientProfileBillingTypes> = (({ userType, pageType
   const searchParams = useSearchParams();
   const theme = useTheme();
   const { bounce, } = useScssVar();
-  const encryptID = searchParams.get('_id')
   const router = useRouter()
+
+  const encryptID = router.query._id
   const [profile, setProfile] = useState<any>();
   const [singleBill, setSingleBill] = useState<BillingTypeWithDoctorProfile>();
   const homeSocket = useSelector((state: AppState) => state.homeSocket.value)
@@ -49,7 +50,7 @@ const BillingPage: FC<DoctorPatientProfileBillingTypes> = (({ userType, pageType
   useEffect(() => {
     let active = true;
     if (encryptID) {
-      if (base64regex.test(encryptID)) {
+      if (base64regex.test(encryptID as string)) {
         let _id = atob(encryptID as string)
         if (active && homeSocket?.current) {
           if (pageType == 'add') {

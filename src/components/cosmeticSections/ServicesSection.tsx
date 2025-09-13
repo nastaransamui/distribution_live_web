@@ -1,63 +1,51 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useRef } from 'react'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
 import useScssVar from '@/hooks/useScssVar'
 import { servicesixteenicon } from '../../../public/assets/imagepath';
 import { DiscoverFiveSvg, DiscoverFourSvg, DiscoverOneSvg, DiscoverThreeSvg, DiscoverTwoSvg } from '../../../public/assets/images/icons/IconsSvgs';
-import $ from 'jquery'
 import { useTheme } from '@mui/material';
-const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
+import { SwiperOptions } from 'swiper/types';
+import { FreeMode, Navigation, Pagination } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 
 
 const ServicesSection: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
-  const settings = {
-    items: 5,
-    loop: true,
-    margin: 10,
-    dots: true,
-    dotData: true,
-    callbacks: true,
-    onInitialized: () => {
-      $('.owl-carousel').each(function () {
-        // Find each set of dots in this carousel
-        $(this).find('.owl-dots').each(function (index) {
-          // Add aria-label to the dots container
-          $(this).attr('aria-label', index + 1);
+  const doctersettings: SwiperOptions = {
+    slidesPerView: 4,
+    slidesPerGroup: 4,
+    spaceBetween: 10,
+    speed: 2800,
+    loop: false,
+    pagination: {
+      clickable: true,
+      el: '.owl-dots',
 
-          // Add aria-label to each dot button
-          $(this).find('.owl-dot').each(function (dotIndex) {
-            $(this).attr('aria-label', `Slide ${dotIndex + 1}`);
-          });
-        });
-      });
     },
-    nav: false,
-    smartSpeed: 2000,
-    responsive: {
-      0: {
-        items: 1
-      },
-      500: {
-        items: 1
-      },
-      575: {
-        items: 2
-      },
-      768: {
-        items: 2
-      },
-      1000: {
-        items: 5
-      },
-      1300: {
-        items: 4
-      }
-    }
+    modules: [Navigation, FreeMode, Pagination],
+    navigation: {
+      prevEl: null,
+      nextEl: null,
+    },
+    breakpoints: {
+      1300: { slidesPerView: 4 },
+      1000: { slidesPerView: 5 },
+      768: { slidesPerView: 2 },
+      575: { slidesPerView: 2 },
+      500: { slidesPerView: 1 },
+      0: { slidesPerView: 1 },
+    },
   };
+
+
+  const swiperRef = useRef<SwiperInstance | null>(null);
+
+
+
   return (
     <Fragment>
       <section className="services-section-sixteen" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
@@ -71,129 +59,156 @@ const ServicesSection: FC = (() => {
             </div>
           </div>
           <div className="discover-slider owl-theme">
-            <OwlCarousel {...settings}>
-              <div className="discover-you-main">
-                <div className="discover-you-image">
-                  <DiscoverFiveSvg />
+            <Swiper
+              {...doctersettings}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }}>
+              <SwiperSlide>
+                <div className="discover-you-main">
+                  <div className="discover-you-image">
+                    <DiscoverFiveSvg />
+                  </div>
+                  <Link href="#">Body</Link>
+                  <p>Lorem Ipsum is simply dummy typesetting industry.</p>
+                  <Link href="#" className="discov-innner">
+                    Get your answers
+                    <i className="fa-solid fa-chevron-right ms-2" />
+                  </Link>
                 </div>
-                <Link href="#">Body</Link>
-                <p>Lorem Ipsum is simply dummy typesetting industry.</p>
-                <Link href="#" className="discov-innner">
-                  Get your answers
-                  <i className="fa-solid fa-chevron-right ms-2" />
-                </Link>
-              </div>
-              <div className="discover-you-main">
-                <div className="discover-you-image">
-                  <DiscoverFourSvg />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="discover-you-main">
+                  <div className="discover-you-image">
+                    <DiscoverFourSvg />
+                  </div>
+                  <Link href="#">Face</Link>
+                  <p>Lorem Ipsum is simply dummy typesetting industry.</p>
+                  <Link href="#" className="discov-innner">
+                    Get your answers
+                    <i className="fa-solid fa-chevron-right ms-2" />
+                  </Link>
                 </div>
-                <Link href="#">Face</Link>
-                <p>Lorem Ipsum is simply dummy typesetting industry.</p>
-                <Link href="#" className="discov-innner">
-                  Get your answers
-                  <i className="fa-solid fa-chevron-right ms-2" />
-                </Link>
-              </div>
-              <div className="discover-you-main">
-                <div className="discover-you-image">
-                  <DiscoverThreeSvg />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="discover-you-main">
+                  <div className="discover-you-image">
+                    <DiscoverThreeSvg />
+                  </div>
+                  <Link href="#">Breast</Link>
+                  <p>Lorem Ipsum is simply dummy typesetting industry.</p>
+                  <Link href="#" className="discov-innner">
+                    Get your answers
+                    <i className="fa-solid fa-chevron-right ms-2" />
+                  </Link>
                 </div>
-                <Link href="#">Breast</Link>
-                <p>Lorem Ipsum is simply dummy typesetting industry.</p>
-                <Link href="#" className="discov-innner">
-                  Get your answers
-                  <i className="fa-solid fa-chevron-right ms-2" />
-                </Link>
-              </div>
-              <div className="discover-you-main">
-                <div className="discover-you-image">
-                  <DiscoverTwoSvg />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="discover-you-main">
+                  <div className="discover-you-image">
+                    <DiscoverTwoSvg />
+                  </div>
+                  <Link href="#">Nose</Link>
+                  <p>Lorem Ipsum is simply dummy typesetting industry.</p>
+                  <Link href="#" className="discov-innner">
+                    Get your answers
+                    <i className="fa-solid fa-chevron-right ms-2" />
+                  </Link>
                 </div>
-                <Link href="#">Nose</Link>
-                <p>Lorem Ipsum is simply dummy typesetting industry.</p>
-                <Link href="#" className="discov-innner">
-                  Get your answers
-                  <i className="fa-solid fa-chevron-right ms-2" />
-                </Link>
-              </div>
-              <div className="discover-you-main">
-                <div className="discover-you-image">
-                  <DiscoverOneSvg />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="discover-you-main">
+                  <div className="discover-you-image">
+                    <DiscoverOneSvg />
+                  </div>
+                  <Link href="#">Fillers</Link>
+                  <p>Lorem Ipsum is simply dummy typesetting industry.</p>
+                  <Link href="#" className="discov-innner">
+                    Get your answers
+                    <i className="fa-solid fa-chevron-right ms-2" />
+                  </Link>
                 </div>
-                <Link href="#">Fillers</Link>
-                <p>Lorem Ipsum is simply dummy typesetting industry.</p>
-                <Link href="#" className="discov-innner">
-                  Get your answers
-                  <i className="fa-solid fa-chevron-right ms-2" />
-                </Link>
-              </div>
-              <div className="discover-you-main">
-                <div className="discover-you-image">
-                  <DiscoverThreeSvg />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="discover-you-main">
+                  <div className="discover-you-image">
+                    <DiscoverThreeSvg />
+                  </div>
+                  <Link href="#">Face</Link>
+                  <p>Lorem Ipsum is simply dummy typesetting industry.</p>
+                  <Link href="#" className="discov-innner">
+                    Get your answers
+                    <i className="fa-solid fa-chevron-right ms-2" />
+                  </Link>
                 </div>
-                <Link href="#">Face</Link>
-                <p>Lorem Ipsum is simply dummy typesetting industry.</p>
-                <Link href="#" className="discov-innner">
-                  Get your answers
-                  <i className="fa-solid fa-chevron-right ms-2" />
-                </Link>
-              </div>
-              <div className="discover-you-main">
-                <div className="discover-you-image">
-                  <DiscoverFourSvg />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="discover-you-main">
+                  <div className="discover-you-image">
+                    <DiscoverFourSvg />
+                  </div>
+                  <Link href="#">Body</Link>
+                  <p>Lorem Ipsum is simply dummy typesetting industry.</p>
+                  <Link href="#" className="discov-innner">
+                    Get your answers
+                    <i className="fa-solid fa-chevron-right ms-2" />
+                  </Link>
                 </div>
-                <Link href="#">Body</Link>
-                <p>Lorem Ipsum is simply dummy typesetting industry.</p>
-                <Link href="#" className="discov-innner">
-                  Get your answers
-                  <i className="fa-solid fa-chevron-right ms-2" />
-                </Link>
-              </div>
-              <div className="discover-you-main">
-                <div className="discover-you-image">
-                  <DiscoverThreeSvg />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="discover-you-main">
+                  <div className="discover-you-image">
+                    <DiscoverThreeSvg />
+                  </div>
+                  <Link href="#">Nose</Link>
+                  <p>Lorem Ipsum is simply dummy typesetting industry.</p>
+                  <Link href="#" className="discov-innner">
+                    Get your answers
+                    <i className="fa-solid fa-chevron-right ms-2" />
+                  </Link>
                 </div>
-                <Link href="#">Nose</Link>
-                <p>Lorem Ipsum is simply dummy typesetting industry.</p>
-                <Link href="#" className="discov-innner">
-                  Get your answers
-                  <i className="fa-solid fa-chevron-right ms-2" />
-                </Link>
-              </div>
-              <div className="discover-you-main">
-                <div className="discover-you-image">
-                  <DiscoverTwoSvg />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="discover-you-main">
+                  <div className="discover-you-image">
+                    <DiscoverTwoSvg />
+                  </div>
+                  <Link href="#">Fillers</Link>
+                  <p>Lorem Ipsum is simply dummy typesetting industry.</p>
+                  <Link href="#" className="discov-innner">
+                    Get your answers
+                    <i className="fa-solid fa-chevron-right ms-2" />
+                  </Link>
                 </div>
-                <Link href="#">Fillers</Link>
-                <p>Lorem Ipsum is simply dummy typesetting industry.</p>
-                <Link href="#" className="discov-innner">
-                  Get your answers
-                  <i className="fa-solid fa-chevron-right ms-2" />
-                </Link>
-              </div>
-              <div className="discover-you-main">
-                <div className="discover-you-image">
-                  <DiscoverFourSvg />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="discover-you-main">
+                  <div className="discover-you-image">
+                    <DiscoverFourSvg />
+                  </div>
+                  <Link href="#">Breast</Link>
+                  <p>Lorem Ipsum is simply dummy typesetting industry.</p>
+                  <Link href="#" className="discov-innner">
+                    Get your answers
+                    <i className="fa-solid fa-chevron-right ms-2" />
+                  </Link>
                 </div>
-                <Link href="#">Breast</Link>
-                <p>Lorem Ipsum is simply dummy typesetting industry.</p>
-                <Link href="#" className="discov-innner">
-                  Get your answers
-                  <i className="fa-solid fa-chevron-right ms-2" />
-                </Link>
-              </div>
-              <div className="discover-you-main">
-                <div className="discover-you-image">
-                  <DiscoverTwoSvg />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="discover-you-main">
+                  <div className="discover-you-image">
+                    <DiscoverTwoSvg />
+                  </div>
+                  <Link href="#">Body</Link>
+                  <p>Lorem Ipsum is simply dummy typesetting industry.</p>
+                  <Link href="#" className="discov-innner">
+                    Get your answers
+                    <i className="fa-solid fa-chevron-right ms-2" />
+                  </Link>
                 </div>
-                <Link href="#">Body</Link>
-                <p>Lorem Ipsum is simply dummy typesetting industry.</p>
-                <Link href="#" className="discov-innner">
-                  Get your answers
-                  <i className="fa-solid fa-chevron-right ms-2" />
-                </Link>
-              </div>
-            </OwlCarousel>
+              </SwiperSlide>
+            </Swiper>
+            <div className="owl-dots" />
           </div>
         </div>
         <div className="service-sixteen-icon imgColorPrimary">

@@ -137,6 +137,8 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
     };
   }, [fetch, homeSocket, inputValue])
 
+
+  console.log({ width })
   return (
     <Fragment>
       <Autocomplete
@@ -158,6 +160,7 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
           setOpenOption(true);
         }}
         onClose={() => {
+          if ((window as any).__KEEP_POPPER_OPEN) return;
           setOpenOption(false);
         }}
         filterOptions={(x) => {
@@ -279,34 +282,35 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
                 size='small'
                 variant="standard"
                 type="text"
-                InputProps={{
-                  disableUnderline: true,
-                  ...params.InputProps,
+                slotProps={{
+                  input: {
+                    disableUnderline: true,
+                    ...params.InputProps,
+                    endAdornment: (
+                      <Fragment>
+                        {loadingOption ? (
+                          <CircularProgress color='primary' size={20} />
+                        ) :
+                          inputValue !== '' &&
 
-                  endAdornment: (
-                    <Fragment>
-                      {loadingOption ? (
-                        <CircularProgress color='primary' size={20} />
-                      ) :
-                        inputValue !== '' &&
-
-                        <IconButton
-                          disableFocusRipple
-                          disableRipple
-                          disableTouchRipple
-                          sx={{ padding: '1px' }}
-                          onClick={() => {
-                            setInputValue('')
-                            setValue(null)
-                            setOptions([])
-                          }}
-                        >
-                          <Close color='secondary' />
-                        </IconButton>
-                      }
-                      {params.InputProps.endAdornment}
-                    </Fragment>
-                  ),
+                          <IconButton
+                            disableFocusRipple
+                            disableRipple
+                            disableTouchRipple
+                            sx={{ padding: '1px' }}
+                            onClick={() => {
+                              setInputValue('')
+                              setValue(null)
+                              setOptions([])
+                            }}
+                          >
+                            <Close color='secondary' />
+                          </IconButton>
+                        }
+                        {params.InputProps.endAdornment}
+                      </Fragment>
+                    ),
+                  }
                 }}
                 className={openOption ? `dr-autocomplete-form-control dr-autocomplete-form-control-open` : 'dr-autocomplete-form-control'}
 
@@ -346,7 +350,7 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
                           <img src={option.roleName == 'doctors' ? doctors_profile : patient_profile} alt="" className="avatar" />
                         </Avatar>
                       </StyledBadge> &nbsp; &nbsp;
-                      <Grid item xs>
+                      <Grid >
                         {parts.map((part: PartType, index: number) => {
                           return (
                             <span
@@ -376,16 +380,28 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
             zIndex: 1199,
           },
         }}
-        disablePortal
-        PopperComponent={(props) => (
-          <Popper {...props} sx={{
-            zIndex: 13,
-            [theme.breakpoints.down(992)]: {
-              zIndex: 1100,
-            },
-          }} />
-        )}
+        // disablePortal
+        // slots={{
+        //   popper: (props) => {
+        //     return <Popper
+        //       {...props}
+        //       sx={{
+        //         // background: theme.palette.background.default,
+        //         // zIndex: theme.zIndex.modal + 1, // ensure it's above modals/overlays
+        //         [theme.breakpoints.down(992)]: {
+        //           zIndex: theme.zIndex.modal + 1,
+        //         },
+        //       }} />
+        //   }
+        // }}
         slotProps={{
+          //   popper: {
+          //     sx: {
+          //       '& .MuiAutocomplete-noOptions': {
+          //         background: 'red'
+          //       }
+          //     }
+          //   },
           paper: {
             sx: {
               backgroundColor: theme.palette.background.default,

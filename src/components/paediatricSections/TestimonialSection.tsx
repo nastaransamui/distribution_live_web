@@ -1,65 +1,47 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment } from 'react'
-import dynamic from 'next/dynamic'
+import { FC, Fragment, useRef } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import {
   clientSay1,
   clientSay2,
   clientSay3,
-  clientsays,
   cloud_2,
   rainbow_2,
   rainbow_3,
   rainbow_4,
-  re_image_7,
-  re_image_8
 } from '../../../public/assets/imagepath';
 import { AtomBondSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import { useTheme } from '@mui/material';
-const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
+import { SwiperOptions } from 'swiper/types';
+import { Pagination } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 
 const TestimonialSection: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme();
-  const settings = {
-    items: 1,
+
+  const doctersettings: SwiperOptions = {
+    slidesPerView: 1,
+    spaceBetween: 15,
     loop: true,
-    margin: 15,
-    dots: true,
-    nav: true,
-    navContainer: '.slide-nav-2',
-    navText: ['<i class="fas fa-chevron-left custom-arrow"></i>', '<i class="fas fa-chevron-right custom-arrow"></i>'],
 
-    autoplay: false,
-    infinite: "true",
+    modules: [Pagination],
+    navigation: false,
+    pagination: { clickable: true, el: '.testimonial-pagination', },
+    breakpoints: {
+      1049: { slidesPerView: 1 },
+      992: { slidesPerView: 1 },
+      800: { slidesPerView: 3 },
+      776: { slidesPerView: 3 },
+      567: { slidesPerView: 1 },
+      200: { slidesPerView: 1 },
+    },
+  };
 
-    slidestoscroll: 1,
-    rtl: "true",
-    rows: 1,
-    responsive: {
-      1049: {
-        items: 1
-      },
-      992: {
-        items: 3
-      },
-      800: {
-        items: 3
-      },
-      776: {
-        items: 3
-      },
-      567: {
-        items: 1
-      },
-      200: {
-        items: 1
-      }
-    }
+  const swiperRef = useRef<SwiperInstance | null>(null);
 
-
-  }
   return (
     <Fragment>
       <section className="client-us-section-thirteen common-padding" style={{ ...muiVar, backgroundColor: theme.palette.background.paper }}>
@@ -79,62 +61,73 @@ const TestimonialSection: FC = (() => {
             </div>
           </div>
           <div className="client-says-thirteen owl-theme">
-            <OwlCarousel {...settings}>
-              <div className="client-says-all">
-                <div className="clients-says-content">
-                  <p>I would like to thank everyone at Health care for the fantastic way you looked after me.
-                    I could not fault anyone during the time I spent with you - from the point I arrived in reception,
-                    to the catering team and every member of staff throughout the changes of shift during my stay.</p>
-                  <h4>
-                    Courtney Henry
-                  </h4>
-                  <p className="location-thirteen"><i className="fa-solid fa-location-dot" /> New York, USA</p>
-                  <div className="client-says-imagesone">
-                    <img src={rainbow_3} alt="#" />
-                    <img src={rainbow_4} alt="#" />
+            <Swiper
+              {...doctersettings}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }}>
+              <SwiperSlide>
+                <div className="client-says-all">
+                  <div className="clients-says-content">
+                    <p>I would like to thank everyone at Health care for the fantastic way you looked after me.
+                      I could not fault anyone during the time I spent with you - from the point I arrived in reception,
+                      to the catering team and every member of staff throughout the changes of shift during my stay.</p>
+                    <h4>
+                      Courtney Henry
+                    </h4>
+                    <p className="location-thirteen"><i className="fa-solid fa-location-dot" /> New York, USA</p>
+                    <div className="client-says-imagesone">
+                      <img src={rainbow_3} alt="#" />
+                      <img src={rainbow_4} alt="#" />
+                    </div>
+                  </div>
+                  <div className="client-says-images">
+                    <img src={clientSay1} alt="img-fluid" />
                   </div>
                 </div>
-                <div className="client-says-images">
-                  <img src={clientSay1} alt="img-fluid" />
-                </div>
-              </div>
-              <div className="client-says-all">
-                <div className="clients-says-content">
-                  <p>I would like to thank everyone at Health care for the fantastic way you looked after me.
-                    I could not fault anyone during the time I spent with you - from the point I arrived in reception,
-                    to the catering team and every member of staff throughout the changes of shift during my stay.</p>
-                  <h4>
-                    Courtney Henry
-                  </h4>
-                  <p className="location-thirteen"><i className="fa-solid fa-location-dot" /> New York, USA</p>
-                  <div className="client-says-imagesone">
-                    <img src={rainbow_3} alt="#" />
-                    <img src={rainbow_4} alt="#" />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="client-says-all">
+                  <div className="clients-says-content">
+                    <p>I would like to thank everyone at Health care for the fantastic way you looked after me.
+                      I could not fault anyone during the time I spent with you - from the point I arrived in reception,
+                      to the catering team and every member of staff throughout the changes of shift during my stay.</p>
+                    <h4>
+                      Courtney Henry
+                    </h4>
+                    <p className="location-thirteen"><i className="fa-solid fa-location-dot" /> New York, USA</p>
+                    <div className="client-says-imagesone">
+                      <img src={rainbow_3} alt="#" />
+                      <img src={rainbow_4} alt="#" />
+                    </div>
+                  </div>
+                  <div className="client-says-images">
+                    <img src={clientSay2} alt="img-fluid" />
                   </div>
                 </div>
-                <div className="client-says-images">
-                  <img src={clientSay2} alt="img-fluid" />
-                </div>
-              </div>
-              <div className="client-says-all">
-                <div className="clients-says-content">
-                  <p>I would like to thank everyone at Health care for the fantastic way you looked after me.
-                    I could not fault anyone during the time I spent with you - from the point I arrived in reception,
-                    to the catering team and every member of staff throughout the changes of shift during my stay.</p>
-                  <h4>
-                    Courtney Henry
-                  </h4>
-                  <p className="location-thirteen"><i className="fa-solid fa-location-dot" /> New York, USA</p>
-                  <div className="client-says-imagesone">
-                    <img src={rainbow_3} alt="#" />
-                    <img src={rainbow_4} alt="#" />
+              </SwiperSlide>
+              <SwiperSlide>
+                <div className="client-says-all">
+                  <div className="clients-says-content">
+                    <p>I would like to thank everyone at Health care for the fantastic way you looked after me.
+                      I could not fault anyone during the time I spent with you - from the point I arrived in reception,
+                      to the catering team and every member of staff throughout the changes of shift during my stay.</p>
+                    <h4>
+                      Courtney Henry
+                    </h4>
+                    <p className="location-thirteen"><i className="fa-solid fa-location-dot" /> New York, USA</p>
+                    <div className="client-says-imagesone">
+                      <img src={rainbow_3} alt="#" />
+                      <img src={rainbow_4} alt="#" />
+                    </div>
+                  </div>
+                  <div className="client-says-images">
+                    <img src={clientSay3} alt="img-fluid" />
                   </div>
                 </div>
-                <div className="client-says-images">
-                  <img src={clientSay3} alt="img-fluid" />
-                </div>
-              </div>
-            </OwlCarousel>
+              </SwiperSlide>
+            </Swiper>
+            <div className="testimonial-pagination" />
           </div>
         </div>
       </section>

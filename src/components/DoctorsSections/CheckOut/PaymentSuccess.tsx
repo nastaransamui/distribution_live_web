@@ -3,7 +3,6 @@ import { FC, Fragment, useEffect, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import Link from 'next/link';
 import dayjs from 'dayjs'
-import { useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { formatNumberWithCommas, TimeType } from '@/components/DoctorDashboardSections/ScheduleTiming';
@@ -15,8 +14,8 @@ import BeatLoader from 'react-spinners/BeatLoader';
 import { base64regex } from '../Profile/PublicProfilePage';
 import { DoctorProfileType } from '@/components/SearchDoctorSections/SearchDoctorSection';
 import { PatientProfile } from '@/components/DoctorDashboardSections/MyPtients';
-import { doctor_17, doctors_profile } from '@/public/assets/imagepath';
-import { AppImgSvg, DeviceMessageSvg, GoogleImgSvg, SmartPhoneSvg } from '@/public/assets/images/icons/IconsSvgs';
+import { doctors_profile } from '@/public/assets/imagepath';
+import { DeviceMessageSvg, GoogleImgSvg, SmartPhoneSvg } from '@/public/assets/images/icons/IconsSvgs';
 
 export interface AppointmentReservationType {
   _id?: string;
@@ -51,13 +50,13 @@ const PaymentSuccess: FC = (() => {
   const [reservation, setReservation] = useState<AppointmentReservationExtendType | null>(null)
 
 
-  const searchParams = useSearchParams();
-  const encryptID = searchParams.get('_id')
+  const encryptID = router.query.payment
 
   useEffect(() => {
+    if (!router.isReady) return;
     let active = true;
     if (encryptID) {
-      if (base64regex.test(encryptID)) {
+      if (base64regex.test(encryptID as string)) {
         let _id = atob(encryptID as string)
         if (active && homeSocket?.current) {
           homeSocket.current.emit(`findReservationById`, { _id })
@@ -91,7 +90,7 @@ const PaymentSuccess: FC = (() => {
       active = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [encryptID, homeSocket, reload, router])
+  }, [encryptID, homeSocket, reload, router, router.isReady, router.query.payment])
 
   const [isClient, setIsClient] = useState(false)
 

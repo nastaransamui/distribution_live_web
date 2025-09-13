@@ -10,11 +10,6 @@ import {
 import { BathTubSvg, BottelSvg, InjectionSvg, PetDoctorSvg } from '../../../public/assets/images/icons/IconsSvgs';
 import { useTheme } from '@mui/material';
 
-
-
-
-
-
 const ServiceSection: FC = (() => {
   const { muiVar } = useScssVar();
   const theme = useTheme()

@@ -2,27 +2,14 @@
 //next
 import Head from 'next/head'
 import { GetServerSideProps, NextPage } from 'next'
-import { hasCookie, getCookie, deleteCookie } from 'cookies-next';
 //Redux
 import { wrapper } from '@/redux/store'
 import { AppState } from '@/redux/store'
 import { connect, useSelector } from 'react-redux';
-import { updateHomeThemeName } from '@/redux/homeThemeName';
-import { updateHomeThemeType } from '@/redux/homeThemeType';
-import { updateUserData } from '@/redux/userData';
 import BreadCrumb from '@/components/shared/BreadCrumb';
 import DoctorDashboardSidebar from '@/components/shared/DoctorDashboardSidebar';
 import Favourits from '@/components/DoctorDashboardSections/Favourits';
-import { updateHomeAccessToken } from '@/redux/homeAccessToken';
 import useScssVar from '@/hooks/useScssVar';
-import { updateHomeExp } from '@/redux/homeExp';
-import { updateHomeIAT } from '@/redux/homeIAT';
-import { updateHomeRoleName } from '@/redux/homeRoleName';
-import { updateHomeServices } from '@/redux/homeServices';
-import { updateHomeUserId } from '@/redux/homeUserId';
-import { updateUserDoctorProfile } from '@/redux/userDoctorProfile';
-import { ErrorComponent } from '@/pages/404';
-import { updateHomeSideBarOpen } from '@/redux/homeSideBarOpen';
 import DashboardFooter from '@/components/sections/DashboardFooter';
 
 import { getAndDispatchUserData, handleProtectedAuth, setThemeCookiesNoRedirect } from '@/helpers/getServerSidePropsHelpers';

@@ -1,5 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable react/jsx-key */
+
 import { FC, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import {
@@ -9,7 +8,6 @@ import {
   GridColumnVisibilityModel,
   GridFilterModel,
   GridSortModel,
-  GridValueGetterParams
 } from '@mui/x-data-grid';
 
 import { useTheme } from '@mui/material/styles';
@@ -28,8 +26,8 @@ import CustomNoRowsOverlay from '@/shared/CustomNoRowsOverlay';
 import { LoadingComponent, StyledBadge, formatNumberWithCommas, getSelectedBackgroundColor, getSelectedHoverBackgroundColor } from './ScheduleTiming';
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
-import CustomPagination from '../shared/CustomPagination';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import CustomPagination, { CustomPaginationSlotType } from '../shared/CustomPagination';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
@@ -48,11 +46,12 @@ export interface PropType {
   isToday: boolean;
   total: number;
   setTotal: Function;
+  setIsToday: Function;
   isLoading: boolean;
   setIsLoading: Function;
 }
 
-const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, setIsLoading }) => {
+const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, setIsToday, isLoading, setIsLoading }) => {
 
   const theme = useTheme();
   const [boxMinHeight, setBoxMinHeight] = useState<string>('500px')
@@ -105,17 +104,13 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
-          return row?.patientProfile?.fullName
-        },
         sortComparator: (v1: any, v2: any) => v1.toLowerCase() > v2.toLowerCase() ? 1 : -1,
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           const profileImage = row?.patientProfile?.profileImage == '' ? patient_profile : row?.patientProfile?.profileImage
           const online = row?.patientProfile?.online || false
           return (
-            <>
+            <span style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center' }}>
               <Link className="avatar mx-2" onClick={() => {
                 sessionStorage.setItem('doctorPatientTabValue', '0')
               }}
@@ -133,7 +128,11 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
               <Link onClick={() => {
                 sessionStorage.setItem('doctorPatientTabValue', '0')
               }}
-                href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`} >{`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}{row?.patientProfile?.fullName}</Link></>
+                href={`/doctors/dashboard/patient-profile/${btoa(row.patientId)}`} >
+                {`${row?.patientProfile?.gender == '' ? '' : row?.patientProfile?.gender + '.'}`}
+                {row?.patientProfile?.fullName}
+              </Link>
+            </span>
           )
         }
       },
@@ -147,9 +146,8 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { value } = params
-          return value.charAt(0).toUpperCase() + value.slice(1)
+        valueGetter(_, row) {
+          return row?.dayPeriod.charAt(0).toUpperCase() + row?.dayPeriod.slice(1)
         }
       },
       {
@@ -159,19 +157,19 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
         width: 200,
         type: 'dateTime',
         searchAble: true,
+        flex: 1,
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
         headerAlign: 'center',
-        valueGetter(params: GridValueGetterParams) {
-          const { row } = params;
+        valueGetter(_, row) {
           return row.selectedDate ? dayjs(row.selectedDate).toDate() : null;
         },
         sortComparator: (v1: any, v2: any) => dayjs(v1).isAfter(dayjs(v2).format('YYYY MM DD HH:mm'), 'minutes') ? 1 : -1,
         renderCell: (params) => {
           const { row } = params
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row?.selectedDate).format(`DD MMM YYYY`)}</span>
               <span className="d-block">{row?.timeSlot?.period}</span>
             </Stack>
@@ -182,6 +180,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
         field: 'timeSlot.total',
         headerName: 'Total',
         width: 90,
+        flex: 1,
         align: 'center',
         headerAlign: 'center',
         type: 'number',
@@ -191,7 +190,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
         filterOperators: createCustomOperators().number,
         renderCell: (params) => {
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{formatNumberWithCommas(
                 params?.row?.timeSlot?.total.toString()
               )}</span>
@@ -206,6 +205,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
         field: "createdDate",
         headerName: 'Reserved At',
         width: 250,
+        flex: 1,
         headerAlign: 'center',
         align: 'center',
         type: 'date',
@@ -213,8 +213,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueGetter(_, row) {
           return row.createdDate ? dayjs(row.createdDate).toDate() : null;
         },
         renderCell: (data: any) => {
@@ -231,6 +230,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
         field: 'doctorPaymentStatus',
         headerName: 'Payment Status',
         width: 180,
+        flex: 1,
         align: 'center',
         headerAlign: 'center',
         searchAble: true,
@@ -298,6 +298,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
             if (totalCount.length !== 0) {
               const { count } = totalCount[0]
               setTotal(count)
+              setIsToday(isToday)
             } else {
               setTotal(0)
             }
@@ -451,10 +452,11 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
                       setColumnVisibilityModel(newModel)
                     }}
                     loading={isLoading}
-                    experimentalFeatures={{ ariaV7: true }}
+                    showToolbar
                     slots={{
-                      toolbar: CustomToolbar,
-                      pagination: CustomPagination,
+                      toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                      pagination: CustomPagination as CustomPaginationSlotType,
                       noResultsOverlay: CustomNoRowsOverlay,
                       noRowsOverlay: CustomNoRowsOverlay
                     }}
@@ -464,7 +466,7 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
                         deleteId: [],
                         deleteClicked: () => { },
                         columnVisibilityModel: columnVisibilityModel,
-                      },
+                      } as CustomToolbarPropsType,
                       pagination: {
                         onRowsPerPageChange: handleChangeRowsPerPage,
                         page: paginationModel.page,
@@ -478,20 +480,6 @@ const AppointmentTab: FC<PropType> = (({ isToday, total, setTotal, isLoading, se
                           },
                         },
                       },
-                      filterPanel: {
-                        filterFormProps: {
-                          deleteIconProps: {
-                            sx: {
-                              justifyContent: 'flex-start'
-                            },
-                          },
-                        },
-                      },
-                      baseCheckbox: {
-                        inputProps: {
-                          name: "select-checkbox"
-                        }
-                      }
                     }}
                     getRowId={(params) => params._id}
                     rows={dashAppointmentData}

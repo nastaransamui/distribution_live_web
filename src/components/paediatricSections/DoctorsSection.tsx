@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, Fragment, useMemo } from 'react'
+import { FC, Fragment, useMemo, useRef } from 'react'
 import useScssVar from '@/hooks/useScssVar'
-import dynamic from 'next/dynamic'
 import Link from 'next/link';
 import { AtomBondSvg } from '@/public/assets/images/icons/IconsSvgs';
 import {
@@ -12,48 +11,33 @@ import { useTheme } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import Skeleton from '@mui/material/Skeleton';
-const OwlCarousel = dynamic(() => import(`react-owl-carousel`), { ssr: false });
+import { SwiperOptions } from 'swiper/types';
+import { Pagination } from 'swiper/modules';
+import type { Swiper as SwiperInstance } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 
 const DoctorsSection: FC = (() => {
   const { muiVar } = useScssVar();
-  const settings = {
-    items: 3,
-    loop: true,
-    margin: 55,
-    dots: true,
-    nav: true,
-    navContainer: '.slide-nav-2',
-    navText: ['<i class="fas fa-chevron-left custom-arrow"></i>', '<i class="fas fa-chevron-right custom-arrow"></i>'],
 
-    autoplay: false,
-    infinite: "true",
+  const doctersettings: SwiperOptions = {
+    slidesPerView: 3,
+    spaceBetween: 55,
+    loop: false,
 
-    slidestoscroll: 1,
-    rtl: "true",
-    rows: 1,
-    responsive: {
-      1049: {
-        items: 3
-      },
-      992: {
-        items: 2
-      },
-      800: {
-        items: 2
-      },
-      776: {
-        items: 2
-      },
-      567: {
-        items: 1
-      },
-      200: {
-        items: 1
-      }
-    }
+    modules: [Pagination],
+    navigation: false,
+    pagination: { clickable: true, el: '.doctor-pagination', },
+    breakpoints: {
+      1049: { slidesPerView: 3 },
+      992: { slidesPerView: 2 },
+      800: { slidesPerView: 2 },
+      776: { slidesPerView: 2 },
+      567: { slidesPerView: 2 },
+      200: { slidesPerView: 1 },
+    },
+  };
 
-  }
   const theme = useTheme()
   const bestDoctorsData = useSelector((state: AppState) => state.bestDoctorsData)
   const { bestDoctors } = bestDoctorsData;
@@ -121,6 +105,9 @@ const DoctorsSection: FC = (() => {
       },
     ]
   }, [])
+
+  const swiperRef = useRef<SwiperInstance | null>(null);
+
   return (
     <Fragment>
       <div className="our-doctor-thirteen common-padding" style={{
@@ -140,7 +127,11 @@ const DoctorsSection: FC = (() => {
             </div>
           </div>
           <div className=" our-slider-thirteen owl-theme aos" data-aos="fade-up" >
-            <OwlCarousel {...settings}>
+            <Swiper
+              {...doctersettings}
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }}>
               {
                 bestDoctors == null ?
                   (Array(4).fill(0).map((_, index) => (
@@ -149,7 +140,7 @@ const DoctorsSection: FC = (() => {
                   bestDoctors.length == 0 ?
                     dummyDoctorData.map((doctor, index) => {
                       return (
-                        <div className="our-doctor-thirteen-all" key={index}>
+                        <SwiperSlide className="our-doctor-thirteen-all" key={index}>
                           <div className="our-doctor-thirteen-img">
                             <img
                               src={doctor.img}
@@ -182,13 +173,13 @@ const DoctorsSection: FC = (() => {
                               />
                             </div>
                           </div>
-                        </div>
+                        </SwiperSlide>
                       )
                     }) :
                     (
                       bestDoctors.slice(0, 4).map((doctor, index) => {
                         return (
-                          <div className="our-doctor-thirteen-all" key={index}>
+                          <SwiperSlide className="our-doctor-thirteen-all" key={index}>
                             <div className="our-doctor-thirteen-img">
                               <img
                                 src={doctor.profileImage !== '' ? doctor.profileImage : doctors_profile}
@@ -225,12 +216,14 @@ const DoctorsSection: FC = (() => {
                                 />
                               </div>
                             </div>
-                          </div>
+                          </SwiperSlide>
                         )
                       })
                     )
               }
-            </OwlCarousel>
+            </Swiper>
+
+            <div className="doctor-pagination" />
           </div>
         </div>
         <div className="our-doctor-thirteen-one">

@@ -8,11 +8,10 @@ import { useSelector } from 'react-redux';
 import { AppState } from '@/redux/store';
 import { AppointmentReservationExtendType } from './Appointment';
 import { toast } from 'react-toastify';
-import Box from '@mui/material/Box'
 import { BootstrapDialog, BootstrapDialogTitle, Transition } from '../shared/Dialog';
 import { PatientProfile } from './MyPtients';
 import Link from 'next/link';
-import { formatNumberWithCommas, LoadingComponent, StyledBadge } from './ScheduleTiming';
+import { formatNumberWithCommas, StyledBadge } from './ScheduleTiming';
 import Avatar from "@mui/material/Avatar";
 import { patient_profile } from '@/public/assets/imagepath';
 import Typography from '@mui/material/Typography';
@@ -21,6 +20,8 @@ import Chip from '@mui/material/Chip';
 import { useTheme } from '@mui/material/styles';
 import _ from 'lodash'
 import BeatLoader from 'react-spinners/BeatLoader';
+
+const BigCalendarSafe = BigCalendar as unknown as import('react').ComponentType<any>;
 export interface EditValueType {
   start: Date;
   end: Date;
@@ -152,10 +153,42 @@ const AvailableTiming: FC = (() => {
         const date = dayjs.tz(a.selectedDate, process.env.NEXT_PUBLIC_TZ).startOf('day');
         const total = a.timeSlot.total;
         const currencySymbol = a.timeSlot.currencySymbol
-        // create a time object with a specific time
-        const timeStarted = dayjs(startTime, 'HH:mm');
 
-        const timeFinished = dayjs(endTime, 'HH:mm');
+        // sanitize strings (remove NBSP, trim)
+        const sanitize = (v: any) => String(v ?? '').replace(/\u00A0/g, ' ').trim();
+
+        const startTimeStr = sanitize(startTime);
+        const endTimeStr = sanitize(endTime);
+
+        // try to extract hours/minutes with strict regex "H:MM" or "HH:MM"
+        const matchHM = (t: string) => {
+          const m = t.match(/^(\d{1,2}):(\d{2})$/);
+          if (!m) return null;
+          const hh = Number(m[1]);
+          const mm = Number(m[2]);
+          if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null;
+          if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
+          return { hh, mm };
+        };
+
+        const sHM = matchHM(startTimeStr);
+        const eHM = matchHM(endTimeStr);
+        // create a time object with a specific time
+        const timeStarted = sHM
+          ? dayjs().hour(sHM.hh).minute(sHM.mm).second(0)
+          : dayjs(startTimeStr, 'HH:mm');
+
+        const timeFinished = eHM
+          ? dayjs().hour(eHM.hh).minute(eHM.mm).second(0)
+          : dayjs(endTimeStr, 'HH:mm');
+
+        // If parsing failed (dayjs invalid), skip to avoid Invalid Date
+        if (!timeStarted.isValid() || !timeFinished.isValid()) {
+          // optional: log so you can see bad data (no variable renames)
+          // eslint-disable-next-line no-console
+          console.warn('Skipping appointment with invalid period:', a?._id, a?.timeSlot?.period);
+          return; // continue to next item (keeps original structure)
+        }
 
         // combine the date and time objects
         const startDateTime = date.hour(timeStarted.hour()).minute(timeStarted.minute()).second(0);
@@ -191,6 +224,7 @@ const AvailableTiming: FC = (() => {
       setIsClient(false)
     }
   }, [])
+
   return (
     <Fragment>
 
@@ -206,10 +240,9 @@ const AvailableTiming: FC = (() => {
               <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
                 <div className="card">
                   <div className='card-body'>
-                    {/* @ts-ignore */}
-                    <BigCalendar
+                    <BigCalendarSafe
                       localizer={localizer}
-                      onSelectEvent={(e) => handleShow(e)}
+                      onSelectEvent={(e: EditValueType) => handleShow(e)}
                       onView={handleViewChange}
                       events={myEventsList}
                       startAccessor="start"
@@ -221,6 +254,7 @@ const AvailableTiming: FC = (() => {
                       defaultView={currentView}
                       onNavigate={handleNavigate}
                       eventPropGetter={eventPropGetter}
+
                       style={{
                         height: `100vh`,
                         background: theme.palette.background.default,

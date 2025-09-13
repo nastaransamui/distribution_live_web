@@ -14,7 +14,12 @@ export const homeSideBarOpenSlice = createSlice({
   initialState,
   reducers: {
     updateHomeSideBarOpen: (state, action: PayloadAction<any>) => {
-      state.value = action.payload;
+      state.value =
+        typeof action.payload == "string"
+          ? action.payload == "false"
+            ? false
+            : true
+          : action.payload;
     },
   },
   extraReducers: (builder) => {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable @next/next/no-img-element */
 import { Fragment, FC, useEffect, useMemo } from "react";
 import Link from "next/link";
@@ -211,7 +210,7 @@ const HomeBookDoctor: FC = (() => {
                                     <img className="img-fluid" alt="User" src={doctor.profileImage == '' ? doctors_profile : doctor.profileImage} />
                                   </Link>
                                   <Link href="#" onClick={(e) => e.preventDefault()} className="fav-btn">
-                                    <FavButton />
+                                    <FavButton index={index} doctor={doctor} />
                                   </Link>
                                 </div>
                                 <div className="pro-content">
@@ -256,7 +255,7 @@ const HomeBookDoctor: FC = (() => {
                                     <li>
                                       <i className="far fa-money-bill-alt"></i>
                                       {" "} {doctor?.currency?.[0]?.currency_symbol}
-                                      {formatNumberWithCommas(doctor?.timeslots?.[0]?.averageHourlyPrice?.toFixed(0))} {" "}
+                                      {formatNumberWithCommas(doctor?.timeslots?.[0]?.averageHourlyPrice?.toFixed(0) || '0')} {" "}
 
                                     </li>
                                   </ul>

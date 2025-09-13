@@ -12,7 +12,11 @@ import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { Transition, BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
 import DialogContent from '@mui/material/DialogContent'
-import { DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridRowId, GridValueFormatterParams, GridColumnVisibilityModel, GridRenderCellParams, GridFilterModel, GridSortModel } from '@mui/x-data-grid';
+import {
+  DataGrid, GridColDef, GridActionsCellItem, GridRowParams, GridRowId,
+  GridColumnVisibilityModel, GridRenderCellParams, GridFilterModel, GridSortModel,
+  GridRowSelectionModel
+} from '@mui/x-data-grid';
 
 import { useTheme } from '@mui/material/styles';
 import dayjs, { Dayjs } from 'dayjs';
@@ -38,17 +42,19 @@ import { toast } from 'react-toastify';
 import FormHelperText from '@mui/material/FormHelperText';
 import { updateHomeFormSubmit } from '@/redux/homeFormSubmit';
 import CustomNoRowsOverlay from '../shared/CustomNoRowsOverlay';
-import CustomPagination from '../shared/CustomPagination';
+import CustomPagination, { CustomPaginationSlotType } from '../shared/CustomPagination';
 import { getSelectedBackgroundColor, getSelectedHoverBackgroundColor, LoadingComponent } from '../DoctorDashboardSections/ScheduleTiming';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
-import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
+import CustomToolbar, { convertFilterToMongoDB, createCustomOperators, CustomToolbarPropsType, CustomToolbarSlotType, DataGridMongoDBQuery, globalFilterFunctions, useDataGridServerFilter } from '../shared/CustomToolbar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Link from 'next/link';
+import ageParts from '@/helpers/ageParts';
+import muiSelectionModelToArray from '@/helpers/muiSelectionModelToArray';
 
 
 
@@ -143,6 +149,9 @@ const Dependent: FC = (() => {
   }
 
   const [deleteId, setDeleteId] = useState<GridRowId[]>([])
+  const [rowSelectionModel, setRowSelectionModel] =
+    useState<GridRowSelectionModel>({ type: 'include', ids: new Set() });
+
   const deleteClicked = () => {
 
     document.getElementById('delete_modal')?.classList.replace('animate__backOutDown', 'animate__backInDown')
@@ -195,8 +204,8 @@ const Dependent: FC = (() => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().number,
-        valueGetter: (params: GridRenderCellParams) => {
-          return params?.row?.id
+        valueGetter: (_, row) => {
+          return row?.id
         },
       },
       {
@@ -235,8 +244,7 @@ const Dependent: FC = (() => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueFormatter: (_, row) => {
           return row?.gender == '' ? '===' : row?.gender
         },
       },
@@ -251,8 +259,7 @@ const Dependent: FC = (() => {
         searchAble: true,
         filterable: true,
         filterOperators: createCustomOperators().string,
-        valueGetter(params: GridRenderCellParams) {
-          const { row } = params;
+        valueFormatter: (_, row) => {
           return row?.relationShip == '' ? '===' : row?.relationShip
         },
       },
@@ -267,8 +274,7 @@ const Dependent: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().date,
         headerAlign: 'center',
-        valueGetter: (params) => {
-          const { row } = params;
+        valueGetter: (_, row) => {
           return row?.dob ? dayjs(row?.dob).toDate() : null;
         },
         sortComparator: (v1, v2) => {
@@ -280,13 +286,13 @@ const Dependent: FC = (() => {
         renderCell: (params: GridRenderCellParams) => {
           const { row } = params;
           const { dob } = row;
-          //@ts-ignore
-          let { years, months, days } = dayjs.preciseDiff(dob, dayjs(), true)
+          let { years, } = ageParts(row?.dob)
           return (
             <Stack direction="column"
               justifyContent="center"
               alignItems="center"
-              spacing={0}>
+              spacing={0}
+              sx={{ height: '100%', justifyContent: 'center' }}>
               <Link href="#" onClick={(e) => e.preventDefault()} >
                 {dob !== '' ? dayjs(dob).format('DD MMM YYYY') : '---- -- --'}
               </Link>
@@ -309,8 +315,7 @@ const Dependent: FC = (() => {
         filterable: true,
         filterOperators: createCustomOperators().string,
         headerAlign: 'center',
-        valueGetter: (params) => {
-          const { row } = params;
+        valueFormatter: (_, row) => {
           return row?.bloodG == '' ? '===' : `🩸${row?.bloodG}`
         },
       },
@@ -325,14 +330,13 @@ const Dependent: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter: (params) => {
-          const { row } = params;
+        valueGetter: (_, row) => {
           return row?.createdAt ? dayjs(row?.createdAt).toDate() : null;
         },
         renderCell: (data: any) => {
           const { row } = data;
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`DD MMM YYYY`)}</span>
               <span className="d-block">
                 <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.createdAt).format(`HH:mm`)}</span>
@@ -352,14 +356,13 @@ const Dependent: FC = (() => {
         sortable: true,
         filterable: true,
         filterOperators: createCustomOperators().date,
-        valueGetter: (params) => {
-          const { row } = params;
+        valueGetter: (_, row) => {
           return row?.updateAt ? dayjs(row?.updateAt).toDate() : null;
         },
         renderCell: (data: any) => {
           const { row } = data;
           return (
-            <Stack >
+            <Stack sx={{ height: '100%', justifyContent: 'center' }}>
               <span className="user-name" style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.updateAt).format(`DD MMM YYYY`)}</span>
               <span className="d-block">
                 <span style={{ justifyContent: 'center', display: 'flex' }}>{dayjs(row.updateAt).format(`HH:mm`)}</span>
@@ -377,15 +380,12 @@ const Dependent: FC = (() => {
         filterable: false,
         sortable: true,
         searchAble: false,
-        valueGetter: (params) => {
-          const medicalRecordsArray = params?.row?.medicalRecordsArray;
-          return medicalRecordsArray.length;
-        },
+
         sortComparator: (v1: any, v2: any) => {
           return v1 > v2 ? 1 : -1
         },
-        valueFormatter: (params: GridValueFormatterParams<number>) => {
-          return `${params?.value} record${params?.value <= 1 ? "" : 's'}`
+        valueFormatter: (_, row) => {
+          return `${row?.medicalRecordsArray?.length} record${row?.medicalRecordsArray?.length <= 1 ? "" : 's'}`
         },
       },
       {
@@ -674,6 +674,16 @@ const Dependent: FC = (() => {
       setIsClient(false)
     }
   }, [])
+
+  // remove ids from select upon change page
+  useEffect(() => {
+    const exists = deleteId.some(id => rows.map(a => a._id).includes(id as string));
+    if (!exists) {
+      setDeleteId([])
+      setRowSelectionModel({ type: 'include', ids: new Set() })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows])
   return (
     <Fragment>
       <div className={`col-md-12 col-lg-12 col-xl-12 ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`}>
@@ -691,7 +701,7 @@ const Dependent: FC = (() => {
             <div className="card">
               <div ref={dataGridRef} className="tab-content schedule-cont">
                 <Box className="dataGridOuterBox" >
-                  <span style={{ position: "relative", display: 'block', marginBottom: '25px' }}>
+                  <span className='dependent-record-top-container'>
                     <Typography className="totalTypo"
                       variant='h5' align='center' gutterBottom >
                       {
@@ -702,7 +712,7 @@ const Dependent: FC = (() => {
                     </Typography>
                     {rowCount <= 20 &&
                       <button type="button"
-                        style={{ lineHeight: `25px`, margin: 0, position: 'absolute', top: 0, right: 0 }}
+
                         className="add-new-btn float-end" onClick={(e) => {
                           setEdit(true)
                         }} >Add Dependent</button>}
@@ -729,10 +739,11 @@ const Dependent: FC = (() => {
                         setColumnVisibilityModel(newModel)
                       }}
                       loading={isLoading}
-                      experimentalFeatures={{ ariaV7: true }}
+                      showToolbar
                       slots={{
-                        toolbar: CustomToolbar,
-                        pagination: CustomPagination,
+                        toolbar: CustomToolbar as CustomToolbarSlotType,
+
+                        pagination: CustomPagination as CustomPaginationSlotType,
                         noResultsOverlay: CustomNoRowsOverlay,
                         noRowsOverlay: CustomNoRowsOverlay
                       }}
@@ -742,7 +753,7 @@ const Dependent: FC = (() => {
                           deleteId: deleteId,
                           deleteClicked: deleteClicked,
                           columnVisibilityModel: columnVisibilityModel,
-                        },
+                        } as CustomToolbarPropsType,
                         pagination: {
                           onRowsPerPageChange: handleChangeRowsPerPage,
                           page: paginationModel.page,
@@ -756,20 +767,6 @@ const Dependent: FC = (() => {
                             },
                           },
                         },
-                        filterPanel: {
-                          filterFormProps: {
-                            deleteIconProps: {
-                              sx: {
-                                justifyContent: 'flex-start'
-                              },
-                            },
-                          },
-                        },
-                        baseCheckbox: {
-                          inputProps: {
-                            name: "select-checkbox"
-                          }
-                        }
                       }}
                       getRowId={(params) => params._id}
                       rows={rows}
@@ -780,16 +777,32 @@ const Dependent: FC = (() => {
                         return params?.row?.medicalRecordsArray?.length == 0;
                       }}
                       onRowSelectionModelChange={(newRowSelectionModel) => {
-                        const { page, pageSize } = paginationModel
-                        let start = page == 0 ? page : page * pageSize
-                        let end = pageSize * (1 + page)
-                        let currrenPageId = newRowSelectionModel.slice(start, end)
-                        setDeleteId(() => {
-                          let newState = currrenPageId.length > 0 ? [...currrenPageId] : [...newRowSelectionModel]
-                          return newState
-                        });
+                        const { ids, type } = newRowSelectionModel;
+                        setRowSelectionModel(newRowSelectionModel);
+                        if (type == 'include') {
+                          const selectedIdsArray = muiSelectionModelToArray(newRowSelectionModel);
+                          setDeleteId(selectedIdsArray)
+                        } else {
+                          if (ids.size == 0) {
+                            setDeleteId((prevState) => {
+                              prevState = [];
+                              prevState = rows.map((a) => a._id as string);
+                              return [...prevState]
+                            })
+                          } else {
+                            const exists = deleteId.some(id => Array.from(ids).includes(id as string));
+                            if (exists) {
+                              setDeleteId((prevState) => {
+                                return prevState.filter((a) => !Array.from(ids).includes(a))
+                              })
+                            } else {
+                              const allNewIds = rows.map((a) => a._id as string).filter((a) => !Array.from(ids).includes(a))
+                              setDeleteId(allNewIds)
+                            }
+                          }
+                        }
                       }}
-                      rowSelectionModel={deleteId}
+                      rowSelectionModel={rowSelectionModel}
                       paginationModel={paginationModel}
                       pageSizeOptions={[5, 10]}
                       showCellVerticalBorder

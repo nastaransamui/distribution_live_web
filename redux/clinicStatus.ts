@@ -22,8 +22,8 @@ export const clinicStatusSlice = createSlice({
   name: "clinicStatus",
   initialState,
   reducers: {
-    updateClinicStatus: (state, action: PayloadAction<any>) => {
-      state.value = action.payload;
+    updateClinicStatus: (state, action: PayloadAction<ClinicStatusType[]>) => {
+      state.value = action.payload.sort((a, b) => (a.name > b.name ? 1 : -1));
     },
   },
   extraReducers: (builder) => {

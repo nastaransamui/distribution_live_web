@@ -185,17 +185,19 @@ const ChangePassword: FC = (() => {
                               message: "Password should be at least 8 characters long and should contain one number,one character and one special character"
                             }
                           })}
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowOldPassword}
-                                onMouseDown={handleMouseDownOldPassword}
-                                edge="end"
-                              >
-                                {showOldPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
+                          slotProps={{
+                            input: {
+                              endAdornment: <InputAdornment position="end">
+                                <IconButton
+                                  aria-label="toggle password visibility"
+                                  onClick={handleClickShowOldPassword}
+                                  onMouseDown={handleMouseDownOldPassword}
+                                  edge="end"
+                                >
+                                  {showOldPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            }
                           }}
                         />
                       </div>
@@ -223,17 +225,19 @@ const ChangePassword: FC = (() => {
                               passwordMissMatch: value => (value === passwordGetValue().confirmPassword) || "New password and confirm password should be same.",
                             }
                           })}
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowNewPassword}
-                                onMouseDown={handleMouseDownOldPassword}
-                                edge="end"
-                              >
-                                {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
+                          slotProps={{
+                            input: {
+                              endAdornment: <InputAdornment position="end">
+                                <IconButton
+                                  aria-label="toggle password visibility"
+                                  onClick={handleClickShowNewPassword}
+                                  onMouseDown={handleMouseDownOldPassword}
+                                  edge="end"
+                                >
+                                  {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            }
                           }}
                         />
                       </div>
@@ -261,17 +265,19 @@ const ChangePassword: FC = (() => {
                               passwordMissMatch: value => (value === passwordGetValue().newPassword) || "New password and confirm password should be same.",
                             }
                           })}
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowConfirmPassword}
-                                onMouseDown={handleMouseDownOldPassword}
-                                edge="end"
-                              >
-                                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
+                          slotProps={{
+                            input: {
+                              endAdornment: <InputAdornment position="end">
+                                <IconButton
+                                  aria-label="toggle password visibility"
+                                  onClick={handleClickShowConfirmPassword}
+                                  onMouseDown={handleMouseDownOldPassword}
+                                  edge="end"
+                                >
+                                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            }
                           }}
                         />
                       </div>
