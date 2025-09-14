@@ -714,7 +714,6 @@ const ProfileSetting: FC = (() => {
                                     }}
                                     slotProps={{
                                       textField: {
-                                        inputProps: { value: value == '' ? 'Date of Birth' : dayjs(value).format('DD MMM YYYY') },
                                         fullWidth: true,
                                         required: false,
                                         label: 'Date of Birth',
@@ -724,7 +723,7 @@ const ProfileSetting: FC = (() => {
                                       },
                                     }}
 
-                                    value={dayjs(defaultValues.dob)}
+                                    value={value ? dayjs(value) : null}
                                   />
                                 </LocalizationProvider>
                               )

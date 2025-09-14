@@ -1,9 +1,10 @@
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 
 type ResizeObserverHookProps = {
-  inputGroupRef: React.RefObject<HTMLElement>;
-  chatFooterRef: React.RefObject<HTMLElement>;
+  inputGroupRef: React.RefObject<HTMLElement | null>;
+  chatFooterRef: React.RefObject<HTMLElement | null>;
   setSearchInputWidth: (width: number) => void;
   setFooterHeight: (height: number) => void;
 };
@@ -14,6 +15,7 @@ const useResizeObserver = ({
   setSearchInputWidth,
   setFooterHeight,
 }: ResizeObserverHookProps) => {
+  const router = useRouter();
   useEffect(() => {
 
     const resizeObserver = new ResizeObserver((entries) => {
@@ -42,7 +44,7 @@ const useResizeObserver = ({
       clearTimeout(timeoutId);
       resizeObserver.disconnect();
     };
-  }, [chatFooterRef, inputGroupRef, setFooterHeight, setSearchInputWidth]);
+  }, [chatFooterRef, inputGroupRef, setFooterHeight, setSearchInputWidth, router.asPath]);
 }
 
 export default useResizeObserver;

@@ -6,11 +6,11 @@ import { getChatFile } from "./useFetchUserRooms";
 type UseReceiveMessageProps = {
   homeSocket: any,
   currentUserId: string | undefined;
-  userChatDataRef: React.MutableRefObject<ChatDataType[]>;
-  reciveMessageAudioRef: React.MutableRefObject<HTMLAudioElement | null>;
-  sendMessageAudioRef: React.MutableRefObject<HTMLAudioElement | null>;
+  userChatDataRef: React.RefObject<ChatDataType[]>;
+  reciveMessageAudioRef: React.RefObject<HTMLAudioElement | null>;
+  sendMessageAudioRef: React.RefObject<HTMLAudioElement | null>;
   setCurrentRoom: React.Dispatch<React.SetStateAction<ChatDataType | null>>;
-  lastRef: RefObject<HTMLDivElement>,
+  lastRef: RefObject<HTMLDivElement | null>,
 }
 
 const useReceiveMessage = ({

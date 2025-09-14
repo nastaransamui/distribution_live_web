@@ -1,7 +1,7 @@
 import { RefObject } from "react";
 
 type HandleClickInputFileProps = {
-  inputFileRef: RefObject<HTMLInputElement>
+  inputFileRef: RefObject<HTMLInputElement | null>
 }
 const handleClickInputFile = (
   { inputFileRef }: HandleClickInputFileProps

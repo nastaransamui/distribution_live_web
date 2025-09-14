@@ -59,10 +59,10 @@ export const ITEM_HEIGHT = 48;
 interface ChatContextType {
   searchInputWidth: number;
   footerHeight: number;
-  inputGroupRef: RefObject<HTMLDivElement>;
-  chatFooterRef: RefObject<HTMLDivElement>;
-  lastRef: RefObject<HTMLDivElement>;
-  inputFileRef: RefObject<HTMLInputElement>;
+  inputGroupRef: RefObject<HTMLDivElement | null>;
+  chatFooterRef: RefObject<HTMLDivElement | null>;
+  lastRef: RefObject<HTMLDivElement | null>;
+  inputFileRef: RefObject<HTMLInputElement | null>;
   chatInputValue: MessageType;
   setChatInputValue: React.Dispatch<React.SetStateAction<MessageType>>;
   editChatInputValue: MessageType;

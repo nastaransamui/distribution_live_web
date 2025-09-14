@@ -1,5 +1,5 @@
 //Rect
-import { Fragment, useState } from 'react'
+import { Fragment, JSX, useState } from 'react'
 //Theme
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,16 +12,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 //Utill
 import LoadingBar from 'react-top-loading-bar';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, } from 'react-toastify';
 
 //Mui
 import Backdrop from '@mui/material/Backdrop';
 import appTheme from './appTheme';
 import { PaletteMode } from '@mui/material';
-import { StylesProvider } from '@mui/styles';
-import { create } from 'jss';
-import { jssPreset } from '@mui/styles'
-import rtl from 'jss-rtl';
 
 import Header from '@/components/shared/Header';
 import { useRouter } from 'next/router';
@@ -83,69 +79,68 @@ const AppWrapper = ({ children }: ChildrenProps) => {
     specialities,
   });
 
-  const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
   return (
     <Fragment >
       <ThemeProvider theme={homeTheme}>
 
-        <StylesProvider jss={jss}>
-          <CssBaseline />
-          <Backdrop
-            sx={{ color: '#fff', zIndex: (theme) => 4205 }}
-            open={homeFormSubmit}
-          >
-            <BeatLoader color={homeTheme.palette.primary.main} />
-          </Backdrop>
-          <LoadingBar
-            height={5}
-            shadow
-            color={homeTheme.palette.secondary.main}
-            progress={homeLoadingBar}
-            className='top-loading-bar'
-            data-testid="loadingBar"
-          />
-          <ToastContainer
-            transition={bounce}
-            position="bottom-center"
-            autoClose={5000}
-            limit={1}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable={false}
-            pauseOnHover
-            theme={homeTheme?.palette?.mode}
-          />
-          <>
-            {router.route !== '/404' ?
-              <Fragment>
-                {voiceCallActive &&
-                  <CallDialog callType='Voice' open={voiceCallActive} toggleFunction={() => {
-                    const roomId = router.query.roomId;
-                    voiceCallToggleFunction()
-                  }} />
-                }
-                {videoCallActive &&
-                  <CallDialog callType='Video' open={videoCallActive} toggleFunction={videoCallToggleFunction} />
-                }
-                {(!router.route.startsWith('/verify-email') && !router.route.startsWith('/reset-password')) && <Header />}
-                <div dir={homeTheme.direction} className='app-wrapper-div' style={{ background: homeTheme.palette.background.paper, }}>
-                  {/* overflowX: 'hidden' */}
+        {/* <StylesProvider jss={jss}> */}
+        <CssBaseline />
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => 4205 }}
+          open={homeFormSubmit}
+        >
+          <BeatLoader color={homeTheme.palette.primary.main} />
+        </Backdrop>
+        <LoadingBar
+          height={5}
+          shadow
+          color={homeTheme.palette.secondary.main}
+          progress={homeLoadingBar}
+          className='top-loading-bar'
+          data-testid="loadingBar"
+        />
+        <ToastContainer
+          transition={bounce}
+          position="bottom-center"
+          autoClose={5000}
+          limit={1}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable={false}
+          pauseOnHover
+          theme={homeTheme?.palette?.mode}
+        />
+        <>
+          {router.route !== '/404' ?
+            <Fragment>
+              {voiceCallActive &&
+                <CallDialog callType='Voice' open={voiceCallActive} toggleFunction={() => {
+                  const roomId = router.query.roomId;
+                  voiceCallToggleFunction()
+                }} />
+              }
+              {videoCallActive &&
+                <CallDialog callType='Video' open={videoCallActive} toggleFunction={videoCallToggleFunction} />
+              }
+              {(!router.route.startsWith('/verify-email') && !router.route.startsWith('/reset-password')) && <Header />}
+              <div dir={homeTheme.direction} className='app-wrapper-div' style={{ background: homeTheme.palette.background.paper, }}>
+                {/* overflowX: 'hidden' */}
 
-                  {children}
-
-                </div>
-              </Fragment>
-              :
-              <div dir={homeTheme.direction} >
                 {children}
-              </div>
-            }
-          </>
 
-        </StylesProvider>
+              </div>
+            </Fragment>
+            :
+            <div dir={homeTheme.direction} >
+              {children}
+            </div>
+          }
+        </>
+
+        {/* </StylesProvider> */}
       </ThemeProvider>
     </Fragment>
   )

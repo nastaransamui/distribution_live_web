@@ -7,7 +7,7 @@ type OnSendButtonClick = {
   currentUserId: string | undefined,
   currentRoomId: string | null,
   homeSocket: any,
-  lastRef: RefObject<HTMLDivElement>,
+  lastRef: RefObject<HTMLDivElement | null>,
   setChatInputValue: React.Dispatch<React.SetStateAction<MessageType>>
 }
 

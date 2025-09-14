@@ -169,7 +169,7 @@ const SearchDoctorSection: FC = (() => {
       sort: 'asc',
     },
   ]);
-  const componentRef = useRef<any>()
+  const componentRef = useRef<any>(null)
   const fetch = useMemo(() => (
     throttle((
       keyWord: string,
@@ -219,6 +219,7 @@ const SearchDoctorSection: FC = (() => {
           });
         } else {
           setDoctorResults((prevState) => {
+            console.log(doctors)
             if (doctors) {
               prevState = [...doctors]
             } else {
@@ -233,7 +234,7 @@ const SearchDoctorSection: FC = (() => {
       })
     }, 1000)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [])
+  ), [reload])
 
 
   useEffect(() => {

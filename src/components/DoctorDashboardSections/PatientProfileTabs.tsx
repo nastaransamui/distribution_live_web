@@ -1,20 +1,10 @@
 import { FC, Fragment, useEffect, useRef, useState } from 'react'
 import useScssVar from '@/hooks/useScssVar'
 import PatientAppointment from '../shared/PatientAppointment';
-import Link from 'next/link';
 import PatientBillingRecords from '../shared/PatientBillingRecords';
 
 
 //Mui
-import { BootstrapDialog, BootstrapDialogTitle } from "@/components/shared/Dialog";
-import DialogContent from '@mui/material/DialogContent';
-import dayjs from 'dayjs';
-import TextField from '@mui/material/TextField';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import InputAdornment from '@mui/material/InputAdornment';
-import UploadFile from '@mui/icons-material/UploadFile';
 import { PatientProfileExtendType } from '../DoctorPatientProfile/DoctorPatientProfile';
 import MedicalRecords from '../PatientDashboardSections/MedicalRecords';
 import MedicalRecordsPriscription from '../PatientDashboardSections/MedicalRecordsPriscription';
@@ -37,15 +27,15 @@ export interface ValueType {
   doctorName?: string;
   symptoms?: string;
 }
-const initialState: ValueType = {
-  id: 0,
-  name: "",
-  date: '',
-  description: "",
-  attachment: "",
-  orderBy: '',
-  doctorName: ''
-}
+// const initialState: ValueType = {
+//   id: 0,
+//   name: "",
+//   date: '',
+//   description: "",
+//   attachment: "",
+//   orderBy: '',
+//   doctorName: ''
+// }
 
 export interface PatientSidebarDoctorTypes {
   doctorPatientProfile: PatientProfileExtendType;
@@ -54,28 +44,28 @@ export interface PatientSidebarDoctorTypes {
 const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfile, userType }) => {
   const { muiVar } = useScssVar();
 
-  const [edit, setEdit] = useState(false);
+  // const [edit, setEdit] = useState(false);
 
-  const [editValues, setEditValues] = useState<ValueType>(initialState)
-  const [imageName, setImageName] = useState("")
-  const inputFileRef = useRef<any>(null)
-  const handleChangeInputFile = (e: any) => {
-    if (e.target.files[0]) {
-      setImageName(e.target.files[0].name)
-      setEditValues((prevState) => {
-        return {
-          ...prevState,
-          Photo: URL.createObjectURL(e.target.files[0])
-        }
-      })
-    }
-  }
-  const handleClickInputFile = () => {
-    if (inputFileRef.current !== null) {
-      inputFileRef.current.click()
-    }
+  // const [editValues, setEditValues] = useState<ValueType>(initialState)
+  // const [imageName, setImageName] = useState("")
+  // const inputFileRef = useRef<any>(null)
+  // const handleChangeInputFile = (e: any) => {
+  //   if (e.target.files[0]) {
+  //     setImageName(e.target.files[0].name)
+  //     setEditValues((prevState) => {
+  //       return {
+  //         ...prevState,
+  //         Photo: URL.createObjectURL(e.target.files[0])
+  //       }
+  //     })
+  //   }
+  // }
+  // const handleClickInputFile = () => {
+  //   if (inputFileRef.current !== null) {
+  //     inputFileRef.current.click()
+  //   }
 
-  }
+  // }
 
   const [isClient, setIsClient] = useState(false)
 
@@ -85,7 +75,6 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
       setIsClient(false)
     }
   }, [])
-
   return (
     <Fragment>
       <div className={`card ${isClient ? 'animate__animated animate__backInUp' : 'pre-anim-hidden'}`} style={muiVar}>
@@ -149,7 +138,7 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
         />
       </div>
 
-      {edit && <BootstrapDialog
+      {/* {edit && <BootstrapDialog
         onClose={() => {
           document.getElementById('edit_invoice_details')?.classList.replace('animate__backInDown', 'animate__backOutDown')
           setTimeout(() => {
@@ -179,8 +168,10 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                     fullWidth
                     required
                     id="name"
-                    inputProps={{
-                      autoComplete: 'off'
+                    slotProps={{
+                      input: {
+                        autoComplete: 'off'
+                      }
                     }}
                     label={`Name`}
                     onChange={(e) => {
@@ -204,8 +195,10 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                     fullWidth
                     required
                     id="doctorName"
-                    inputProps={{
-                      autoComplete: 'off'
+                    slotProps={{
+                      input: {
+                        autoComplete: 'off'
+                      }
                     }}
                     label={`Doctor name`}
                     value={editValues.doctorName}
@@ -231,17 +224,17 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                     value={imageName}
                     id="imageName"
 
-                    inputProps={{
-                      autoComplete: 'off'
+                    slotProps={{
+                      input: {
+                        autoComplete: 'off',
+                        endAdornment:
+                          <InputAdornment position="start" onClick={handleClickInputFile} style={{ cursor: "pointer" }}>
+                            <UploadFile color="primary" />
+                          </InputAdornment>,
+                      }
                     }}
                     disabled
                     label={'Photo'}
-                    InputProps={{
-                      endAdornment:
-                        <InputAdornment position="start" onClick={handleClickInputFile} style={{ cursor: "pointer" }}>
-                          <UploadFile color="primary" />
-                        </InputAdornment>,
-                    }}
                   />
                   <input type="file" ref={inputFileRef} onChange={handleChangeInputFile} style={{ display: "none" }} />
                 </div>
@@ -255,8 +248,10 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
                     required
                     id="symptoms"
 
-                    inputProps={{
-                      autoComplete: 'off'
+                    slotProps={{
+                      input: {
+                        autoComplete: 'off'
+                      }
                     }}
                     label={`Symptoms`}
                     value={editValues.symptoms}
@@ -311,7 +306,7 @@ const PatientProfileTabs: FC<PatientSidebarDoctorTypes> = (({ doctorPatientProfi
             </button>
           </form>
         </DialogContent>
-      </BootstrapDialog>}
+      </BootstrapDialog>} */}
     </Fragment>
   )
 })
