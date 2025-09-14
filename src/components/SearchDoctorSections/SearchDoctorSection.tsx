@@ -219,7 +219,6 @@ const SearchDoctorSection: FC = (() => {
           });
         } else {
           setDoctorResults((prevState) => {
-            console.log(doctors)
             if (doctors) {
               prevState = [...doctors]
             } else {

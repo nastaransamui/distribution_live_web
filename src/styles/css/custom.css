@@ -46062,7 +46062,7 @@ svg.feather {
 }
 
 .collapse-service {
-  transition: max-height visilbility 0.4s ease-in-out;
+  transition: max-height 0.4s ease-in-out, visibility 0s linear 0s;
 }
 
 .hide-service {
@@ -46073,7 +46073,7 @@ svg.feather {
 }
 
 .show-service {
-  max-height: 100px;
+  max-height: 500px;
   visibility: visible;
   transition: max-height 0.4s ease-in-out, visibility 0s linear 0s;
 }
