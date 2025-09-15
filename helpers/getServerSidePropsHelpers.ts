@@ -138,7 +138,7 @@ export async function fetchAndDispatchUserIfAuth(ctx: any, store: any) {
   store.dispatch(updateHomeIAT(iat));
   store.dispatch(updateHomeExp(exp));
 
-  console.log({ fitehanddispa: res });
+  // console.log({ fitehanddispa: res });
   // remove potential status field and dispatch profile to correct slice
 
   if (roleName === "patient") {

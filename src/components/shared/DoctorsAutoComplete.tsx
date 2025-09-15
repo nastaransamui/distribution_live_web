@@ -138,7 +138,6 @@ const DoctorsAutoComplete: FC<DoctorsAutoCompleteType> = ((
   }, [fetch, homeSocket, inputValue])
 
 
-  console.log({ width })
   return (
     <Fragment>
       <Autocomplete

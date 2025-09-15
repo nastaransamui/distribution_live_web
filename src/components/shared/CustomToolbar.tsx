@@ -778,7 +778,6 @@ function BooleanFilterInput(props: AllFilterInputProps) {
           label="Value"
           onChange={(e) => {
             setSelectedValue(e.target.value);
-            console.log({ tobolean: e.target.value })
             applyValue({ ...item, value: e.target.value == 'false' ? false : true });
           }}
           displayEmpty

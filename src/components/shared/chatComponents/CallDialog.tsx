@@ -51,7 +51,6 @@ export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, cal
 
   return (
     <BootstrapDialog
-      TransitionComponent={Transition}
       onClose={() => {
 
       }}
@@ -60,90 +59,13 @@ export const CallDialog: FC<CallDialogPropsType> = (({ open, toggleFunction, cal
       <div className="modal-body" style={{ ...muiVar, }}>
         <div className="call-box incoming-box">
 
-          <div className="recorder-container">
-            {/* <p>Recording Time: {recordingTime}s</p> */}
-
-            <div className="buttons">
-              <IconButton
-                disableFocusRipple
-                disableRipple
-                disableTouchRipple
-              // disabled={isRecording}
-              // onClick={startRecording}
-              >
-                {/* 🎙 */}
-                <RadioButtonCheckedIcon sx={{ fontSize: 36, color: 'crimson' }} />
-              </IconButton>
-              <IconButton
-                disableFocusRipple
-                disableRipple
-                disableTouchRipple
-              // disabled={!isRecording}
-              // onClick={stopRecording}
-              >
-                <StopCircleIcon sx={{ fontSize: 36, color: 'primary.main' }} />
-              </IconButton>
-              <IconButton
-                disableFocusRipple
-                disableRipple
-                disableTouchRipple
-              // disabled={!isRecording}
-              // onClick={togglePauseResume}
-              >
-                {
-                  // isPaused ?
-                  true ?
-                    <PlayCircleIcon sx={{ fontSize: 36, color: "secondary.main" }} /> :
-                    <PauseCircleFilledIcon sx={{ fontSize: 36, color: "secondary.main" }} />}
-              </IconButton>
-            </div>
-
-            {fakeMediaRecorder &&
-              //  isRecording &&
-              (
-                <span style={{ textAlign: 'center', display: 'flex', padding: '10px 0px', width: '100%', justifyContent: 'center' }}>
-                  {/* <LiveAudioVisualizer
-                  mediaRecorder={fakeMediaRecorder}
-                  width={100}
-                  height={5}
-                  barColor={theme.palette.secondary.main}
-
-                /> */}
-                </span>
-              )}
-            {audioBlob && (
-              <div className="audio-player">
-                <p>Recorded Audio:</p>
-                <span style={{ display: 'flex', justifyContent: "space-evenly" }}>
-                  <IconButton
-                    disableFocusRipple
-                    disableRipple
-                    disableTouchRipple
-                    disabled={!audioBlob}
-                    onClick={handleDownload}>
-                    <DownloadForOfflineIcon sx={{ fontSize: 36, color: 'primary.main' }} />
-                  </IconButton>
-                  <IconButton
-                    disableFocusRipple
-                    disableRipple
-                    disableTouchRipple
-                    disabled={!audioBlob}
-                    onClick={clearRecording}
-                    sx={{ color: "crimson", fontSize: 30 }}
-                  >
-                    🗑
-                  </IconButton>
-                </span>
-              </div>
-            )}
-          </div>
           <div className="call-wrapper">
             <div className="call-inner">
-              <div className="call-user">
+              <div className="call-user" style={{ paddingBlock: '20px' }}>
                 <img
                   alt="User Image"
                   src={callReceiverUserData?.profileImage}
-                  className="call-avatar"
+                  className={`${fakeMediaRecorder == null ? 'call-avatar' : 'call-avatar call-avatar-after-connect'}`}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.onerror = null;

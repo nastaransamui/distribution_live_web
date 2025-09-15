@@ -229,6 +229,9 @@ const SearchDoctorSection: FC = (() => {
           setTotalDoctors(total || 0)
           dispatch(updateHomeFormSubmit(false))
           setIsLoading(false)
+          homeSocket.current.on(`updateDoctorSearch`, (msg: any) => {
+            setReload(!reload)
+          })
         }
       })
     }, 1000)
@@ -260,18 +263,6 @@ const SearchDoctorSection: FC = (() => {
       active = false;
     }
   }, [filters, homeSocket, reload, page, sortModel, perPage, fetch])
-
-  useEffect(() => {
-    if (!homeSocket?.current) return;
-    const socket = homeSocket.current;
-    socket.on(`updateDoctorSearch`, (msg: any) => {
-      setReload(!reload)
-    })
-    return () => {
-      socket.off('updateDoctorSearch')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeSocket])
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

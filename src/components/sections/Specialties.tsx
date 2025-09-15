@@ -25,7 +25,7 @@ const Specialties: FC = (() => {
   const specialitySettings: SwiperOptions = {
     slidesPerView: 4,
     spaceBetween: 15,
-    loop: true,
+    loop: false,
     modules: [Navigation, FreeMode],
     navigation: {
       prevEl: null,

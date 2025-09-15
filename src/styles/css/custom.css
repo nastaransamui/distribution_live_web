@@ -20131,9 +20131,15 @@ chat-attachment-list li {
 }
 
 .call-box .call-wrapper .call-avatar {
-  margin-bottom: 30px;
+  margin-bottom: 60px;
   cursor: pointer;
   animation: ripple 2s infinite;
+}
+
+.call-box .call-wrapper .call-avatar-after-connect {
+  margin-bottom: 60px;
+  cursor: pointer;
+  animation: unset !important;
 }
 
 .call-box .call-wrapper .call-items .call-item {
