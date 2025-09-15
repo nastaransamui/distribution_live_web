@@ -17954,7 +17954,7 @@ call-btn:focus {
 }
 
 .exp-year {
-  color: #20c0f3;
+  color: var(--secondaryMain);
   margin-bottom: 2px;
 }
 
